@@ -1,0 +1,37 @@
+.n-large-title {
+  font-weight: 100;
+  font-size: 30px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 40px;
+  color: #fffefd; }
+
+.n-med-title {
+  font-weight: 100;
+  font-size: 30px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 30px;
+  color: #fffefd; }
+
+.n-small-title {
+  font-weight: 100;
+  font-size: 30px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 20px;
+  padding-bottom: 20px; }
+
+body {
+  background-color: #fffefd; }
+
+.n-component {
+  background-color: #fefcf9;
+  margin-top: 20px;
+  border: #f4d6bc 1px solid;
+  border-radius: 5px;
+  padding-top: 20px; }
+
+.header {
+  padding: 15px 0px 15px 0px;
+  background-color: #294052; }

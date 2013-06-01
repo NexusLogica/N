@@ -1,0 +1,65 @@
+$thin : 100
+$font-size-large: 40px
+$font-size-med: 30px
+$font-size-avg: 20px
+$font-size-text: 16px
+$font-size-small: 12px
+$helv-font: 'Raleway', sans-serif
+$text-color-light: #cccccc
+
+$color-darkest: #153450
+$color-dark: #294052
+$color-med-dark: #447294
+$color-med: #8FBCDB
+$color-light: #F4D6BC
+$color-lightest: #F8E4CC
+//$color-space: #F8F2EA
+$color-space: lighten($color-lightest, 10%)
+$color-body: lighten($color-lightest, 11%)
+
+$padding-med: 20px
+
+@mixin title-base
+  font-weight: $thin
+  font-size: $font-size-med
+  font-family: $helv-font
+  color: $color-dark
+
+.n-large-title
+  @include title-base
+  font-size: $font-size-large
+  color: $color-body
+
+.n-med-title
+  @include title-base
+  font-size: $font-size-med
+  color: $color-body
+
+.n-small-title
+  @include title-base
+  font-size: $font-size-avg
+  padding-bottom: $padding-med
+
+//******************************
+// Page
+body
+  background-color: $color-body
+
+.n-component
+  background-color: $color-space
+  margin-top: 20px
+  border: $color-light 1px solid
+  border-radius: 5px
+  padding-top: $padding-med
+
+//******************************
+// Header
+
+.header
+  padding: 15px 0px 15px 0px
+  background-color: $color-dark
+
+//******************************
+// Timing editor
+
+
