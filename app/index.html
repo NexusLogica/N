@@ -8,12 +8,15 @@
   <link rel="stylesheet" href="css/app.css"/>
   <link rel="stylesheet" href="css/n.css"/>
 </head>
-<body onload="WaveDrom.ProcessAll()">
+<body>
 
   <div ng-include src="'partials/titlebar.html'"></div>
   <div ng-include class="container" src="'partials/timing-editor.html'"></div>
 
+  <div id="WaveDrom_Display_0" class="WaveDrom_Display_0"></div>
+
   <script src="lib/wavedrom/skins/default.js"></script>
+  <script src="lib/wavedrom/JsonML.js"></script>
   <script src="lib/wavedrom/WaveDrom.js"></script>
   <script src="lib/bootstrap.min.js"></script>
   <script src="lib/angular/angular.js"></script>
@@ -22,11 +25,12 @@
   <script src="js/controllers.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/directives.js"></script>
-  <script type="WaveDrom">
+  <script type="WaveDrom" id="InputJSON_0">
     { "signal" : [
     { "name": "clk",  "wave": "p......" },
     { "name": "bus",  "wave": "x.==.=x",   "data": ["head", "body", "tail"] },
     { "name": "wire", "wave": "0.1..0." },
     ]}
-  </script></body>
+  </script>
+</body>
 </html>

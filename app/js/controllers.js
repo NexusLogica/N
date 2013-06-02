@@ -15,4 +15,13 @@ function HeaderController($scope) {
 }
 
 function TimingEditorController($scope) {
+    var x = new WaveDrom();
+    var src =
+      { "signal" : [
+        { "name": "clk",  "wave": "p......" },
+        { "name": "bus",  "wave": "x.==.=x",   "data": ["head", "body", "tail"] },
+        { "name": "wire", "wave": "0.1..0." },
+      ]};
+
+    x.RenderWaveForm(0, src);
 }
