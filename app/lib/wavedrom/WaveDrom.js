@@ -5,6 +5,8 @@ function WaveDrom() {}
 (function(WaveDrom, undefined) {
     ;
 
+    WaveDrom.nextIndex = 1;
+
     WaveDrom.prototype.version = "2013.04.23";
     WaveDrom.prototype.timer = 0;
     WaveDrom.prototype.lane = {
@@ -212,7 +214,7 @@ function WaveDrom() {}
         return ret;
     };
 
-    WaveDrom.prototype.RenderWaveLane = function (root, content, index) {
+    WaveDrom.prototype.RenderWaveLane = function (root, content) {
         "use strict";
         var i, j, k, g, gg, title, b, lanetext, labeltext, labels = [1], nxt_xgmax, scale,
         xmax     = 0,
@@ -227,7 +229,7 @@ function WaveDrom() {}
                 g = JsonML.parse(
                     ['g',
                         {
-                            id: ("wavelane_" + j + "_" + index),
+                            id: ("wavelane_" + j + "_" + this.uniqueIndex),
                             transform: ('translate(0,' + ((this.lane.y0) + j * this.lane.yo) + ')')
                         }
                     ]
@@ -258,7 +260,7 @@ function WaveDrom() {}
                 gg = JsonML.parse(
                     ['g',
                         {
-                            id: ("wavelane_draw_" + j + "_" + index),
+                            id: ("wavelane_draw_" + j + "_" + this.uniqueIndex),
                             transform: ('translate(' + (xoffset * this.lane.xs) + ', 0)')
                         }
                     ]
@@ -268,7 +270,7 @@ function WaveDrom() {}
                 if (content[j][1]) {
                     for (i = 0; i < content[j][1].length; i += 1) {
                         b    = document.createElementNS(svgns, "use");
-                        b.id = "use_" + i + "_" + j + "_" + index;
+                        b.id = "use_" + i + "_" + j + "_" + this.uniqueIndex;
                         b.setAttributeNS(xlinkns, 'xlink:href', '#' + content[j][1][i]);
     //					b.setAttribute('transform', 'translate(' + (i * this.lane.xs) + ')');
                         b.setAttribute('transform', 'translate(' + (i * this.lane.xs) + ')');
@@ -307,7 +309,7 @@ function WaveDrom() {}
         return glengths;
     };
 
-    WaveDrom.prototype.RenderMarks = function (root, content, index) {
+    WaveDrom.prototype.RenderMarks = function (root, content) {
         "use strict";
         var i, offset, g, marks, mstep, mmstep, gmark, tmark, labeltext, gy, margin,
         svgns = 'http://www.w3.org/2000/svg',
@@ -320,7 +322,7 @@ function WaveDrom() {}
     //	gy     = content.length * this.lane.yo + this.lane.y0 + this.lane.ys;
         gy     = content.length * this.lane.yo; //  + this.lane.y0 + this.lane.ys;
 
-        g = JsonML.parse(['g', {id: ("gmarks_" + index)}]);
+        g = JsonML.parse(['g', {id: ("gmarks_" + this.uniqueIndex)}]);
         root.insertBefore(g, root.firstChild);
 
         for (i = 0; i < (marks + 1); i += 1) {
@@ -328,7 +330,7 @@ function WaveDrom() {}
                 JsonML.parse(
                     ['path',
                         {
-                            id:    ("gmark_" + i + "_" + index),
+                            id:    ("gmark_" + i + "_" + this.uniqueIndex),
     //						d:     ('m ' + (i * mmstep) + ',' + 5 + ' 0,' + (gy - 2 * margin)),
                             d:     ('m ' + (i * mmstep) + ',' + 0 + ' 0,' + gy),
                             style: 'stroke:#888888;stroke-width:0.5;stroke-dasharray:1, 3'
@@ -394,7 +396,7 @@ function WaveDrom() {}
         }
     };
 
-    WaveDrom.prototype.RenderGroups = function (root, groups, index) {
+    WaveDrom.prototype.RenderGroups = function (root, groups) {
         "use strict";
         var g, i, group, grouplabel, label, x, y,
             svgns = 'http://www.w3.org/2000/svg',
@@ -402,7 +404,7 @@ function WaveDrom() {}
 
         for (i in groups) {
             group = document.createElementNS(svgns, "path");
-            group.id = ("group_" + i + "_" + index);
+            group.id = ("group_" + i + "_" + this.uniqueIndex);
             group.setAttribute('d', 'm ' + (groups[i].x + 0.5) + ',' + (groups[i].y * this.lane.yo + 3.5 + this.lane.yh0 + this.lane.yh1) + ' c -3,0 -5,2 -5,5 l 0,' + (groups[i].height * this.lane.yo - 16) + ' c 0,3 2,5 5,5');
             group.setAttribute('style', 'stroke:#0041c4;stroke-width:1;fill:none');
             root.insertBefore(group, null);
@@ -424,7 +426,7 @@ function WaveDrom() {}
         }
     };
 
-    WaveDrom.prototype.RenderGaps = function (root, source, index) {
+    WaveDrom.prototype.RenderGaps = function (root, source) {
         "use strict";
         var i, gg, g, b, pos, Stack = [], text,
             svgns   = 'http://www.w3.org/2000/svg',
@@ -433,7 +435,7 @@ function WaveDrom() {}
         if (source) {
 
             gg = document.createElementNS(svgns, 'g');
-            gg.id = "wavegaps_" + index;
+            gg.id = "wavegaps_" + this.uniqueIndex;
             //gg.setAttribute('transform', 'translate(' + this.lane.xg + ')');
             root.insertBefore(gg, null);
 
@@ -441,7 +443,7 @@ function WaveDrom() {}
                 this.lane.period = source[i].period ? source[i].period    : 1;
                 this.lane.phase  = source[i].phase  ? source[i].phase * 2 : 0;
                 g = document.createElementNS(svgns, 'g');
-                g.id = "wavegap_" + i + "_" + index;
+                g.id = "wavegap_" + i + "_" + this.uniqueIndex;
                 g.setAttribute('transform', 'translate(0,' + (this.lane.y0 + i * this.lane.yo) + ')');
                 gg.insertBefore(g, null);
 
@@ -452,7 +454,7 @@ function WaveDrom() {}
                     while (Stack.length) {
                         if (Stack.shift() === '|') {
                             b    = document.createElementNS(svgns, "use");
-                            b.id = "guse_" + pos + "_" + i + "_" + index;
+                            b.id = "guse_" + pos + "_" + i + "_" + this.uniqueIndex;
                             b.setAttributeNS(xlinkns, 'xlink:href', '#gap');
                             b.setAttribute('transform', 'translate(' + (this.lane.xs * ((2 * pos + 1) * this.lane.period * this.lane.hscale - this.lane.phase)) + ')');
                             g.insertBefore(b, null);
@@ -464,7 +466,7 @@ function WaveDrom() {}
         }
     };
 
-    WaveDrom.prototype.RenderArcs = function (root, source, index, top) {
+    WaveDrom.prototype.RenderArcs = function (root, source, top) {
         "use strict";
         var gg, i, k, text, Stack = [], Edge = {words: [], from: 0, shape: '', to: 0, label: ''}, Events = {}, pos, eventname, labeltext, label, underlabel, from, to, gmark, lwidth,
             svgns = 'http://www.w3.org/2000/svg',
@@ -498,7 +500,7 @@ function WaveDrom() {}
                 }
             }
             gg = document.createElementNS(svgns, 'g');
-            gg.id = "wavearcs_" + index;
+            gg.id = "wavearcs_" + this.uniqueIndex;
             root.insertBefore(gg, null);
             if (top.edge) {
                 for (i in top.edge) {
@@ -703,7 +705,7 @@ function WaveDrom() {}
         return state;
     };
 
-    WaveDrom.prototype.InsertSVGTemplate = function (index, parent, source) {
+    WaveDrom.prototype.InsertSVGTemplate = function (parent, source) {
         "use strict";
         var node, first, e;
 
@@ -717,66 +719,56 @@ function WaveDrom() {}
         if (source && source.config && source.config.skin && WaveSkin[source.config.skin]) {
             e = WaveSkin[source.config.skin];
         }
-        if (index === 0) {
-            this.lane.xs     = Number(e[3][1][2][1].width);
-            this.lane.ys     = Number(e[3][1][2][1].height);
-            this.lane.xlabel = Number(e[3][1][2][1].x);
-            this.lane.ym     = Number(e[3][1][2][1].y);
-        } else {
-            e = ["svg",{"id":"svg","xmlns":"http://www.w3.org/2000/svg","xmlns:xlink":"http://www.w3.org/1999/xlink","height":"0"},["g",{"id":"waves"},["g",{"id":"lanes"}],["g",{"id":"groups"}]]];
-        }
+        this.lane.xs     = Number(e[3][1][2][1].width);
+        this.lane.ys     = Number(e[3][1][2][1].height);
+        this.lane.xlabel = Number(e[3][1][2][1].x);
+        this.lane.ym     = Number(e[3][1][2][1].y);
 
-        e[e.length - 1][1].id    = "waves_"  + index;
-        e[e.length - 1][2][1].id = "lanes_"  + index;
-        e[e.length - 1][3][1].id = "groups_" + index;
-        e[1].id = "svgcontent_" + index;
+        e[e.length - 1][1].id    = "waves_"  + this.uniqueIndex;
+        e[e.length - 1][2][1].id = "lanes_"  + this.uniqueIndex;
+        e[e.length - 1][3][1].id = "groups_" + this.uniqueIndex;
+        e[1].id = "svgcontent_" + this.uniqueIndex;
         e[1].height = 0;
 
         node = JsonML.parse(e);
         parent.insertBefore(node, null);
     };
 
-    WaveDrom.prototype.RenderWaveForm = function (index, source) {
+    //*****************************************
+    // RenderWaveForm
+    //   container : the element that acts as the parent for the canvas.
+    //   source    : the object in WaveDrom format that specifies the signals.
+    //
+    WaveDrom.prototype.RenderWaveForm = function (container, source) {
         "use strict";
+
+        this.uniqueIndex = WaveDrom.nextIndex;
+        WaveDrom.nextIndex++;
+
+        this.container = container;
+
         var TheTextBox, ret,
         root, groups, svgcontent, content, width, height, uwidth, uheight,
         glengths, xmax = 0, i;
-/*
-        var source;
-        TheTextBox = document.getElementById("InputJSON_" + index);
 
-        if (TheTextBox.type && TheTextBox.type == 'textarea') {
-            try { source = eval('(' + TheTextBox.value + ')') } catch (err) { source = {signal:[{name:err}]}; };
-        } else {
-            try { source = eval('(' + TheTextBox.innerHTML + ')') } catch (err) { source = {signal:[{name:err}]}; };
-        }
-
-        if (Object.prototype.toString.call(source) !== '[object Object]') {
-            source = {signal:[{name:"SemanticError: The root has to be an Object: '{signal:[...]}'"}]};
-        } else if (!source.signal) {
-            source = {signal:[{name:"SemanticError: 'signal:[...]' property is missing inside the root Object"}]};
-        } else if (Object.prototype.toString.call(source.signal) !== '[object Array]') {
-            source = {signal:[{name:"SemanticError: 'signal' object has to be an Array 'signal:[]'"}]};
-        }
-*/
-        this.InsertSVGTemplate(index, document.getElementById('WaveDrom_Display_' + index), source);
+        this.InsertSVGTemplate(this.container, source);
 
         this.parseConfig (source);
 
         ret = this.rec(source.signal, {'x':0, 'y':0, 'xmax':0, 'width':[], 'lanes':[], 'groups':[]});
 
-        root          = document.getElementById("lanes_" + index);
-        groups        = document.getElementById("groups_" + index);
+        root          = document.getElementById("lanes_" + this.uniqueIndex);
+        groups        = document.getElementById("groups_" + this.uniqueIndex);
 
         content  = this.parseWaveLanes(ret.lanes);
-        glengths = this.RenderWaveLane(root, content, index);
+        glengths = this.RenderWaveLane(root, content);
         for (i in glengths) {
             xmax = Math.max(xmax, (glengths[i] + ret.width[i]));
         }
-        this.RenderMarks(root, content, index);
-        this.RenderArcs(root, ret.lanes, index, source);
-        this.RenderGaps(root, ret.lanes, index);
-        this.RenderGroups(groups, ret.groups, index);
+        this.RenderMarks(root, content);
+        this.RenderArcs(root, ret.lanes, source);
+        this.RenderGaps(root, ret.lanes);
+        this.RenderGroups(groups, ret.groups);
         this.lane.xg = Math.ceil((xmax - this.lane.tgo) / this.lane.xs) * this.lane.xs;
 
         width  = (this.lane.xg + (this.lane.xs * (this.lane.xmax + 1)));
@@ -796,7 +788,7 @@ function WaveDrom() {}
         uwidth  = width;
         uheight = height;
 
-        svgcontent = document.getElementById("svgcontent_" + index);
+        svgcontent = document.getElementById("svgcontent_" + this.uniqueIndex);
         svgcontent.setAttribute('viewBox', "0 0 " + width + " " + height);
         svgcontent.setAttribute('width', uwidth);
         svgcontent.setAttribute('height', uheight);
@@ -810,14 +802,14 @@ function WaveDrom() {}
         document.getElementById('PanelA').style.height = this.panela.ys + 'px';
     };
 
-    WaveDrom.prototype.ClearWaveLane = function (index) {
+    WaveDrom.prototype.ClearWaveLane = function () {
         "use strict";
         var root;
-        root = document.getElementById('lanes_' + index);
+        root = document.getElementById('lanes_' + this.uniqueIndex);
         while (root.childNodes.length) {
             root.removeChild(root.childNodes[0]);
         }
-        root = document.getElementById('groups_' + index);
+        root = document.getElementById('groups_' + this.uniqueIndex);
         while (root.childNodes.length) {
             root.removeChild(root.childNodes[0]);
         }

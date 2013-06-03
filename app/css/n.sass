@@ -28,11 +28,19 @@ $padding-med: 20px
 .n-large-title
   @include title-base
   font-size: $font-size-large
+  color: $color-darkest
+
+.n-large-title-light
+  @extend .n-large-title
   color: $color-body
 
 .n-med-title
   @include title-base
   font-size: $font-size-med
+  color: $color-darkest
+
+.n-med-title-light
+  @extend .n-med-title
   color: $color-body
 
 .n-small-title
@@ -47,10 +55,13 @@ body
 
 .n-component
   background-color: $color-space
-  margin-top: 20px
+  margin-top: $padding-med
   border: $color-light 1px solid
   border-radius: 5px
   padding-top: $padding-med
+
+textarea
+  margin-top: $padding-med
 
 //******************************
 // Header
@@ -62,4 +73,6 @@ body
 //******************************
 // Timing editor
 
+.wave-container
+  margin-top: $padding-med
 

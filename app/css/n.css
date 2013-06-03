@@ -1,17 +1,23 @@
-.n-large-title {
+.n-large-title, .n-large-title-light {
   font-weight: 100;
   font-size: 30px;
   font-family: "Raleway", sans-serif;
   color: #294052;
   font-size: 40px;
+  color: #153450; }
+
+.n-large-title-light {
   color: #fffefd; }
 
-.n-med-title {
+.n-med-title, .n-med-title-light {
   font-weight: 100;
   font-size: 30px;
   font-family: "Raleway", sans-serif;
   color: #294052;
   font-size: 30px;
+  color: #153450; }
+
+.n-med-title-light {
   color: #fffefd; }
 
 .n-small-title {
@@ -32,6 +38,12 @@ body {
   border-radius: 5px;
   padding-top: 20px; }
 
+textarea {
+  margin-top: 20px; }
+
 .header {
   padding: 15px 0px 15px 0px;
   background-color: #294052; }
+
+.wave-container {
+  margin-top: 20px; }

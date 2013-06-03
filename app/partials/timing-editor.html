@@ -1,10 +1,16 @@
 <div class="n-component">
-  <div class="row" ng-controller="TimingEditorController">
-    <div class="n-small-title span3 offset5">Timing editor</div>
+  <div class="row">
+    <div class="n-med-title span3 offset5">Timing editor</div>
+  </div>
+  <div>
+    <div class="row">
+      <div class="wave-container span5 offset6">
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="span8 offset5">
-      <textarea class="span6" name="timing-text"></textarea>
+      <textarea class="span6" ng-model="waveText" name="timing-text" ng-change="change()"></textarea>
     </div>
   </div>
 </div>

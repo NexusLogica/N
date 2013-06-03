@@ -2,26 +2,36 @@
 
 /* Controllers */
 
-angular.module('myApp.controllers', []).
-  controller('MyCtrl1', [function() {
-
-  }])
-  .controller('MyCtrl2', [function() {
-
-  }]);
+angular.module('myApp.controllers', []);
 
 function HeaderController($scope) {
   $scope.blah = "Hi there";
 }
 
 function TimingEditorController($scope) {
-    var x = new WaveDrom();
-    var src =
-      { "signal" : [
-        { "name": "clk",  "wave": "p......" },
-        { "name": "bus",  "wave": "x.==.=x",   "data": ["head", "body", "tail"] },
-        { "name": "wire", "wave": "0.1..0." },
-      ]};
+  $scope.renderWave = function(id) {
+    $scope.waveText = "p.";
+    $scope.makeWave($scope.waveText);
 
-    x.RenderWaveForm(0, src);
+    var parent = document.getElementById(id);
+    $scope.waveViewContainer = parent.getElementsByClassName("wave-container")[0];
+
+    $scope.waveDromView = new WaveDrom();
+    $scope.waveDromView.RenderWaveForm($scope.waveViewContainer, $scope.waveJson);
+  }
+
+  $scope.change = function() {
+    this.makeWave(this.waveText);
+    this.waveDromView.RenderWaveForm($scope.waveViewContainer, $scope.waveJson);
+  }
+
+  $scope.makeWave = function(wave) {
+    if(!this.waveJson) {
+      $scope.waveJson = { "signal" : [
+          { "name": "clock", "wave": "p......" },
+          { "name": "signal", "wave": "p." }
+      ]};
+    }
+    $scope.waveJson.signal[1].wave = wave;
+  }
 }
