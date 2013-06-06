@@ -1,0 +1,6 @@
+CREATE TABLE waveforms (
+  id VARCHAR(32) NOT NULL PRIMARY KEY,
+  name VARCHAR(256),
+  modification_date TIMESTAMP DEFAULT NOW(),
+  waveform LONGTEXT NOT NULL);
+  

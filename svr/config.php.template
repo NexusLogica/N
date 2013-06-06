@@ -1,0 +1,30 @@
+<?php
+/**********************************************************************
+
+File     : config.php
+Project  : NexusLogica PHP Server Library
+Purpose  : PHP file for configuration variables.
+Revisions: Original definition by Lawrence Gunn.
+           2013/06/04
+
+Copyright (c) 2013 by Lawrence Gunn.
+All Rights Reserved.
+
+*/
+
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+$DOMAIN               = '[www.example.com]';
+$PSAPI_SERVER_BASE    = 'http://'.$DOMAIN.'/N/srv';
+$LOG_FILE_PATH        = '[/usr/www/users/someone/nexuslogica]/N/srv/api.log';
+$MAX_LOG_SIZE         = 250000;
+$DB_HOST              = '[dbxxxx.example.com]';
+$DB_USER              = '[someone]';
+$DB_PW                = '[password]';
+$DB_NAME              = '[database_name]';
+$SESSION_TIMEOUT_DAYS = 2;
+
+$ERR_LOGIN_MISSING    = 9000;
+
+?>
