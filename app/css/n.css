@@ -28,6 +28,9 @@
   font-size: 20px;
   padding-bottom: 20px; }
 
+.form-vertical input {
+  display: block; }
+
 body {
   background-color: #fffefd; }
 

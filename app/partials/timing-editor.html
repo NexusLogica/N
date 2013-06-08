@@ -13,4 +13,14 @@
       <textarea class="span6" ng-model="waveText" name="timing-text" ng-change="change()"></textarea>
     </div>
   </div>
+  <div class="row">
+    <div class="span8 offset5">
+    <form class="form-vertical">
+    <fieldset>
+      <input class="wave-name-input" type="text" ng-model="waveName" name="wave-name" placeholder="Waveform name"></input>
+      <button type="submit" class="btn" ng-click="save()">Save</button>
+    </fieldset>
+  </form>
+  </div>
+  </div>
 </div>

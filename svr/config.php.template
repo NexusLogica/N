@@ -16,8 +16,8 @@ error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
 $DOMAIN               = '[www.example.com]';
-$PSAPI_SERVER_BASE    = 'http://'.$DOMAIN.'/N/srv';
-$LOG_FILE_PATH        = '[/usr/www/users/someone/nexuslogica]/N/srv/api.log';
+$PSAPI_SERVER_BASE    = 'http://'.$DOMAIN.'/N/svr';
+$LOG_FILE_PATH        = '[/usr/www/users/someone/nexuslogica]/N/svr/api.log';
 $MAX_LOG_SIZE         = 250000;
 $DB_HOST              = '[dbxxxx.example.com]';
 $DB_USER              = '[someone]';
