@@ -4,10 +4,23 @@
 
 angular.module('myApp.controllers', []);
 
-function HeaderController($scope) {
+function HeaderController($scope, $compile) {
   $scope.blah = "Hi there";
+  
+  $scope.waveformsNew = function() {
+    var html = $compile('<div id="editor-1" class="container" ng-include onload="renderWave(\'editor-1\')" src="\'partials/timing-editor.html\'"  ng-controller="TimingEditorController">HI</div>')($scope);
+    $("#main-app-container").html(html);
+  }
+
+  $scope.waveformsSearch = function() {
+    var html = $compile('<div id="search-1" class="container" ng-include onload="renderWave(\'search-1\')" src="\'partials/waveform-search.html\'"  ng-controller="WaveformSearchController">HI</div>')($scope);
+    $("#main-app-container").html(html);
+  }
 }
 
+//***************************************************
+// TimingEditorController
+//
 function TimingEditorController(guidGenerator, postNewWaveform,	 $scope) {
   $scope.renderWave = function(id) {
     $scope.id = id;
@@ -42,4 +55,20 @@ function TimingEditorController(guidGenerator, postNewWaveform,	 $scope) {
     var waveJson = angular.toJson($scope.waveJson, false); // No pretty printing...
     postNewWaveform.doPost(id, name, waveJson, function() {});
   }
+}
+
+//***************************************************
+// WaveformSearchController
+//
+function WaveformSearchController(getWaveforms,	 $scope) {
+  $scope.loadWaveforms = function() {
+  }
+
+  $scope.waveformList = [
+    { name: "first" },
+    { name: "second" },
+    { name: "third" },
+    { name: "fourth" },
+    { name: "fifth" }
+   ];
 }

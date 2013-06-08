@@ -20,7 +20,13 @@ app.service("guidGenerator", function() {
   }
 });
 
-
+//***************************************************
+// POST waveform
+// args:
+//   * id: GUID as string, with -'s but no {}
+//   * name: must be non-zero length
+//   * waveform: valid JSON waveform as string
+//
 app.service('postNewWaveform', function($http) {
 
   var postNewWaveform = {
@@ -48,4 +54,33 @@ app.service('postNewWaveform', function($http) {
 
   };
   return postNewWaveform;
+});
+
+//***************************************************
+// GET waveforms
+//
+app.service('getWaveforms', function($http) {
+
+  var getWaveforms = {
+    doPost: function() {
+      // $http returns a promise, which has a then function, which also returns a promise.
+      var url = "http://nexuslogica.com/N/svr/waveforms?callback=JSON_CALLBACK";
+      var callData = {
+        cache: false
+      };
+
+      var promise = $http.jsonp(url, data).then(function (response) {
+        // The then function here is an opportunity to modify the response
+        console.log(response);
+        // The return value gets picked up by the then in the controller.
+        return response.data;
+      });
+
+      // Return the promise to the controller
+      return promise;
+
+    }
+
+  };
+  return getWaveforms;
 });

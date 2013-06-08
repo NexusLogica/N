@@ -48,5 +48,32 @@ textarea {
   padding: 15px 0px 15px 0px;
   background-color: #294052; }
 
+.header .n-med-title-light {
+  margin-top: 7px; }
+
+.header .dropdown-toggle {
+  color: #8fbcdb; }
+
+.header .nav {
+  margin: 0px 0px 0px 0px; }
+
 .wave-container {
   margin-top: 20px; }
+
+.wave-list-container {
+  background-color: #fefdfb;
+  padding: 20px 20px;
+  margin-left: 0px;
+  margin-top: 20px;
+  border-radius: 5px; }
+
+.wave-list-item {
+  list-style-type: none;
+  padding: 4px 0px 4px 0px;
+  border-bottom: solid 1px gainsboro; }
+
+.wave-list-name, .wave-list-date {
+  display: inline-block; }
+
+.wave-list-name {
+  width: 60px; }

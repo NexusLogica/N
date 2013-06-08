@@ -2,6 +2,21 @@
   <div class="container" ng-controller="HeaderController">
     <div class="row">
       <div class="n-med-title-light span3">Nexus Logica</div>
-    </div>
+      <div class="span5"> 
+				<ul class="nav nav-pills">
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							Waveforms
+							<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+							<li><a tabindex="-1" href="#" ng-click="waveformNew()">New</a></li>
+							<li class="divider"></li>
+							<li><a tabindex="-1" href="#" ng-click="waveformsSearch()">Search</a></li>
+						</ul>
+					</li>
+				</ul>
+      </div>
+		</div>
   </div>
 </div>
