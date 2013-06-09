@@ -9,15 +9,15 @@ describe('NexusLogica App', function() {
   });
 
   //*************************************************************
-  // Timing Editor Testing
+  // Waveform Editor Testing
 
-  describe('Timing editor view', function() {
+  describe('Waveform editor view', function() {
 
     beforeEach(function() {
       browser().navigateTo('#');
     });
 
-    it('should set initial string of new timing wave to "p."', function() {
+    it('should set initial string of new waveform to "p."', function() {
       expect(element('#editor-1 textarea[name="timing-text"]').val()).
         toBe("p.");
     });

@@ -8,20 +8,20 @@ function HeaderController($scope, $compile) {
   $scope.blah = "Hi there";
   
   $scope.waveformsNew = function() {
-    var html = $compile('<div id="editor-1" class="container" ng-include onload="renderWave(\'editor-1\')" src="\'partials/timing-editor.html\'"  ng-controller="TimingEditorController">HI</div>')($scope);
+    var html = $compile('<div id="editor-1" class="container" ng-include onload="renderWave(\'editor-1\')" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
     $("#main-app-container").html(html);
   }
 
   $scope.waveformsSearch = function() {
-    var html = $compile('<div id="search-1" class="container" ng-include onload="renderWave(\'search-1\')" src="\'partials/waveform-search.html\'"  ng-controller="WaveformSearchController">HI</div>')($scope);
+    var html = $compile('<div id="search-1" class="container" ng-include onload="loadWaveforms()" src="\'partials/waveform-search.html\'"  ng-controller="WaveformSearchController"></div>')($scope);
     $("#main-app-container").html(html);
   }
 }
 
 //***************************************************
-// TimingEditorController
+// WaveformEditorController
 //
-function TimingEditorController(guidGenerator, postNewWaveform,	 $scope) {
+function WaveformEditorController(guidGenerator, postNewWaveform,	 $scope) {
   $scope.renderWave = function(id) {
     $scope.id = id;
     $scope.waveText = "p.";
@@ -62,13 +62,14 @@ function TimingEditorController(guidGenerator, postNewWaveform,	 $scope) {
 //
 function WaveformSearchController(getWaveforms,	 $scope) {
   $scope.loadWaveforms = function() {
+    getWaveforms.doGet().then(function(d) {
+      // Take the string date from the server, specify it as UTC, and create a Date
+      // object that Angular can work with.
+      d.forEach(function(entry) {
+        var nd = new Date((entry.modification_date + " UTC").replace(/-/g, "/"));
+        entry.date_object = nd;
+      });
+      $scope.waveformList = d;
+    });
   }
-
-  $scope.waveformList = [
-    { name: "first" },
-    { name: "second" },
-    { name: "third" },
-    { name: "fourth" },
-    { name: "fifth" }
-   ];
 }

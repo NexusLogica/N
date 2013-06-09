@@ -11,6 +11,10 @@ angular.module('myApp.services', []).
 
 var app = angular.module('myApp', []);
 
+//***************************************************
+// guidGenerator
+//   Creates a guid in string form.
+//
 app.service("guidGenerator", function() {
   this.CreateUUID = function() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -62,14 +66,14 @@ app.service('postNewWaveform', function($http) {
 app.service('getWaveforms', function($http) {
 
   var getWaveforms = {
-    doPost: function() {
+    doGet: function() {
       // $http returns a promise, which has a then function, which also returns a promise.
       var url = "http://nexuslogica.com/N/svr/waveforms?callback=JSON_CALLBACK";
       var callData = {
         cache: false
       };
 
-      var promise = $http.jsonp(url, data).then(function (response) {
+      var promise = $http.jsonp(url, callData).then(function (response) {
         // The then function here is an opportunity to modify the response
         console.log(response);
         // The return value gets picked up by the then in the controller.

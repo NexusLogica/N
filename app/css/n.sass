@@ -19,6 +19,20 @@ $color-body: lighten($color-lightest, 11%)
 $color-gray: #DCDCDC // Gainsboro
 $color-light-gray: lighten($color-gray, 11%)
 
+$placeholder-color: #DDD
+
+input::-webkit-input-placeholder
+  color: $placeholder-color
+
+input:-moz-placeholder
+  color: $placeholder-color
+
+input::-moz-placeholder
+  color: $placeholder-color
+
+input:-ms-input-placeholder
+  color: $placeholder-color
+
 $padding-med: 20px
 
 @mixin title-base
@@ -95,22 +109,45 @@ textarea
 //******************************
 // Waveform search
 
+.waveform-search
+  height: 600px
+  
 .wave-list-container
   background-color: lighten($color-space, 0.4%)
-  padding: 20px 20px
-  margin-left: 0px
+  padding: 5px 20px 0px 20px
   margin-top: 20px
   border-radius: 5px
+  height: 532px
 
-.wave-list-item
+.wave-list-header-name, .wave-list-header-date
+  font-weight: bold
+
+.wave-list
+  margin-left: 0px
+  height: 485px
+  overflow: hidden
+  overflow-y: auto
+
+.wave-list-item, .wave-list-header
   list-style-type: none
   padding: 4px 0px 4px 0px
   border-bottom: solid 1px $color-gray
+  white-space: nowrap
+  overflow: hidden
 
-.wave-list-name, .wave-list-date
-  display: inline-block
-
-.wave-list-name
-  width: 60px  
+.wave-list-header
+  border-bottom: 2px solid #FAFAFA
   
+.wave-list-item:hover
+  background-color: lighten($color-space, 0.05%)
+  
+.wave-list-name, .wave-list-date, .wave-list-header-name, .wave-list-header-date
+  display: inline-block
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+.wave-list-name, .wave-list-header-name
+  width: 330px  
+
 

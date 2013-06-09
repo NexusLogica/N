@@ -1,3 +1,15 @@
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input:-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
 .n-large-title, .n-large-title-light {
   font-weight: 100;
   font-size: 30px;
@@ -60,20 +72,43 @@ textarea {
 .wave-container {
   margin-top: 20px; }
 
+.waveform-search {
+  height: 600px; }
+
 .wave-list-container {
   background-color: #fefdfb;
-  padding: 20px 20px;
-  margin-left: 0px;
+  padding: 5px 20px 0px 20px;
   margin-top: 20px;
-  border-radius: 5px; }
+  border-radius: 5px;
+  height: 532px; }
 
-.wave-list-item {
+.wave-list-header-name, .wave-list-header-date {
+  font-weight: bold; }
+
+.wave-list {
+  margin-left: 0px;
+  height: 485px;
+  overflow: hidden;
+  overflow-y: auto; }
+
+.wave-list-item, .wave-list-header {
   list-style-type: none;
   padding: 4px 0px 4px 0px;
-  border-bottom: solid 1px gainsboro; }
+  border-bottom: solid 1px gainsboro;
+  white-space: nowrap;
+  overflow: hidden; }
 
-.wave-list-name, .wave-list-date {
-  display: inline-block; }
+.wave-list-header {
+  border-bottom: 2px solid #fafafa; }
 
-.wave-list-name {
-  width: 60px; }
+.wave-list-item:hover {
+  background-color: #fefcf9; }
+
+.wave-list-name, .wave-list-date, .wave-list-header-name, .wave-list-header-date {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.wave-list-name, .wave-list-header-name {
+  width: 330px; }

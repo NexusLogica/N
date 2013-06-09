@@ -1,16 +1,20 @@
-<div class="n-component">
+<div class="n-component waveform-search">
   <div class="row">
     <div class="n-med-title span3 offset2">Waveforms</div>
   </div>
   <div class="row">
-    <div class="span6 offset2">
-      <ul class="wave-list-container">
+    <div class="span6 offset2 wave-list-container">
+			<div class="wave-list-header">
+				<div class="wave-list-header-name">Name</div>
+				<div class="wave-list-header-date">Date</div>
+			</div>
+      <ul class="wave-list">
         <li class="wave-list-item" ng-repeat="waveformItem in waveformList">
           <div class="wave-list-name">
           {{waveformItem.name}}
           </div>
           <div class="wave-list-date">
-          {{waveformItem.name}}
+          {{waveformItem.date_object | date:'medium'}}
           </div>
         </li>
       </ul>
