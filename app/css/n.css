@@ -40,6 +40,17 @@ input:-ms-input-placeholder {
   font-size: 20px;
   padding-bottom: 20px; }
 
+ul::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background-color: #f8f8f8; }
+
+ul::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: #c1d5e3; }
+
 .form-vertical input {
   display: block; }
 
@@ -112,3 +123,6 @@ textarea {
 
 .wave-list-name, .wave-list-header-name {
   width: 330px; }
+
+.waveform-search-box {
+  margin-left: 100px; }

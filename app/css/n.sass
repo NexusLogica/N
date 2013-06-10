@@ -63,7 +63,20 @@ $padding-med: 20px
   @include title-base
   font-size: $font-size-avg
   padding-bottom: $padding-med
-  
+
+//*****************************
+// Scrollbars in webkit on OS-X. They disappear...
+ul::-webkit-scrollbar
+  -webkit-appearance: none
+  width: 11px
+  height: 11px
+  background-color: $color-light-gray
+
+ul::-webkit-scrollbar-thumb
+  border-radius: 8px
+  border: 2px solid white /* should match background, can't be transparent */
+  background-color: lighten($color-med-dark, 40%)
+
 //******************************
 // Inputs
 .form-vertical input
@@ -150,4 +163,5 @@ textarea
 .wave-list-name, .wave-list-header-name
   width: 330px  
 
-
+.waveform-search-box
+  margin-left: 100px

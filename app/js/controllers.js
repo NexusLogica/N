@@ -53,7 +53,10 @@ function WaveformEditorController(guidGenerator, postNewWaveform,	 $scope) {
     var id = guidGenerator.CreateUUID();
     var name = $(sel+"wave-name-input").val();
     var waveJson = angular.toJson($scope.waveJson, false); // No pretty printing...
-    postNewWaveform.doPost(id, name, waveJson, function() {});
+    postNewWaveform.doPost(id, name, waveJson).then(function(d) {
+      consol.log("Result returned");
+    });
+    return false;
   }
 }
 

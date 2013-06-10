@@ -1,6 +1,9 @@
 <div class="n-component waveform-search">
   <div class="row">
     <div class="n-med-title span3 offset2">Waveforms</div>
+    <div class="waveform-search-box span3">
+      <input type="text" ng-model="query" class="search-query" placeholder="Search">
+    </div>
   </div>
   <div class="row">
     <div class="span6 offset2 wave-list-container">
@@ -9,12 +12,12 @@
 				<div class="wave-list-header-date">Date</div>
 			</div>
       <ul class="wave-list">
-        <li class="wave-list-item" ng-repeat="waveformItem in waveformList">
+				<li class="wave-list-item" ng-repeat="waveformItem in waveformList | filter:query">
           <div class="wave-list-name">
-          {{waveformItem.name}}
+            {{waveformItem.name}}
           </div>
           <div class="wave-list-date">
-          {{waveformItem.date_object | date:'medium'}}
+            {{waveformItem.date_object | date:'medium'}}
           </div>
         </li>
       </ul>
