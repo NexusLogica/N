@@ -1,27 +1,38 @@
 <div class="n-component waveform-search">
-  <div class="row">
-    <div class="n-med-title span3 offset2">Waveforms</div>
-    <div class="waveform-search-box span3">
-      <input type="text" ng-model="query" class="search-query" placeholder="Search">
+  <div class="span7 well">
+    <div class="row">
+      <div class="span5 waveform-search-top-left"><div class="n-med-title">Waveforms</div><div class="wave-search-box-container"><input type="text" ng-model="query" class="search-query" placeholder="Search"></div></div>
+      <div class="span1 waveform-search-refresh-container"><a class="btn" href="#"><i class="icon-refresh"></i></a></div>
+    </div>
+    <div class="row">
+      <div class="span6 wave-list-container">
+        <div class="wave-list-header">
+          <div class="wave-list-header-name">Name</div>
+          <div class="wave-list-header-date">Date</div>
+        </div>
+        <ul class="wave-list">
+          <li class="wave-list-item" ng-repeat="waveformItem in waveformList | filter:query" ng-controller="WaveformSearchItemController" ng-click="itemClick(this)" ng-class="{'wave-item-selected' : highlighted }">
+            <div class="hidden wave-list-id" waveform-id="{{waveformItem.id}}"></div>
+            <div class="wave-list-name">
+              {{waveformItem.name}}
+            </div>
+            <div class="wave-list-date">
+              {{waveformItem.date_object | date:'short'}}
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
-  <div class="row">
-    <div class="span6 offset2 wave-list-container">
-			<div class="wave-list-header">
-				<div class="wave-list-header-name">Name</div>
-				<div class="wave-list-header-date">Date</div>
-			</div>
-      <ul class="wave-list">
-				<li class="wave-list-item" ng-repeat="waveformItem in waveformList | filter:query">
-          <div class="wave-list-name">
-            {{waveformItem.name}}
-          </div>
-          <div class="wave-list-date">
-            {{waveformItem.date_object | date:'medium'}}
-          </div>
-        </li>
-      </ul>
+  <div class="span6 well">
+    <div class="row">
+      <div class="waveform-viewer-container span6"></div>
     </div>
   </div>
-  
+  <div class="n-alert alert alert-block">
+    <a class="close" data-dismiss="alert">×</a>
+    <h4 class="alert-heading">Hmmmm</h4>
+    <p>{{errorMessage}}</p>
+    <p><a class="btn btn-info" ng-click="refresh()" href="javascript:void(0);">Retry</a></p>
+  </div>
 </div>

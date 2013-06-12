@@ -37,7 +37,7 @@ app.service('postNewWaveform', function($http) {
     doPost: function(id, name, waveform) {
       // $http returns a promise, which has a then function, which also returns a promise.
       var url = "http://nexuslogica.com/N/svr/waveform?callback=JSON_CALLBACK";
-      var data = "id="+ encodeURI(id) + "&name=" + encodeURI(name) + "&waveform=" + encodeURI(waveform);
+      var data = "id="+ encodeURIComponent(id) + "&name=" + encodeURIComponent(name) + "&waveform=" + encodeURIComponent(waveform);
       var callData = {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded"},
@@ -88,3 +88,41 @@ app.service('getWaveforms', function($http) {
   };
   return getWaveforms;
 });
+
+//***************************************************
+// GET waveform
+//
+app.service('getWaveform', function($http) {
+
+  var getWaveform = {
+    doGet: function(id) {
+      // $http returns a promise, which has a then function, which also returns a promise.
+      var url = "http://nexuslogica.com/N/svr/waveform?id="+encodeURIComponent(id)+"&callback=JSON_CALLBACK";
+      var callData = {
+        cache: false
+      };
+
+      var promise = $http.jsonp(url, callData).then(function (response) {
+        // The then function here is an opportunity to modify the response
+        console.log(response);
+        // The return value gets picked up by the then in the controller.
+        return response.data;
+      });
+
+      // Return the promise to the controller
+      return promise;
+
+    }
+
+  };
+  return getWaveform;
+});
+
+jQuery.fn.center = function () {
+  this.css("position","absolute");
+  this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) +
+      $(window).scrollTop()) + "px");
+  this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) +
+      $(window).scrollLeft()) + "px");
+  return this;
+}

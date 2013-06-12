@@ -19,6 +19,10 @@ The waveform editor is a composer/viewer for wavform/timing sequences.
 
 [WaveDrom](https://code.google.com/p/wavedrom/) has been used for sequence diagrams. The code has been modified for analog output and also to make it easier to use in a dynamic framework.
  
-    
-    
+`[
+    {"id":"15c1f427-8afb-420a-b777-86994d040517","name":"Simple wave","modification_date":"2013-06-07 19:19:55"},
+    {"id":"50ec6d79-c397-4a1e-af58-7f9ec24e9a47","name":"Reticular neuron output","modification_date":"2013-06-07 19:19:55"},
+    ...
+  ]
+`
     

@@ -8,7 +8,7 @@ function HeaderController($scope, $compile) {
   $scope.blah = "Hi there";
   
   $scope.waveformsNew = function() {
-    var html = $compile('<div id="editor-1" class="container" ng-include onload="renderWave(\'editor-1\')" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
+    var html = $compile('<div class="container" ng-include onload="renderWave()" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
     $("#main-app-container").html(html);
   }
 
@@ -21,13 +21,12 @@ function HeaderController($scope, $compile) {
 //***************************************************
 // WaveformEditorController
 //
-function WaveformEditorController(guidGenerator, postNewWaveform,	 $scope) {
-  $scope.renderWave = function(id) {
-    $scope.id = id;
+function WaveformEditorController(guidGenerator, postNewWaveform,	$scope, $element) {
+  $scope.renderWave = function() {
     $scope.waveText = "p.";
     $scope.makeWave($scope.waveText);
 
-    $scope.waveViewContainer = $('#'+id+' .wave-container')[0];
+    $scope.waveViewContainer = $($element).find(".wave-container")[0];
 
     $scope.waveDromView = new WaveDrom();
     $scope.waveDromView.RenderWaveForm($scope.waveViewContainer, $scope.waveJson);
@@ -49,9 +48,8 @@ function WaveformEditorController(guidGenerator, postNewWaveform,	 $scope) {
   }
   
   $scope.save = function() {
-    var sel = "#"+$scope.id+" .";
     var id = guidGenerator.CreateUUID();
-    var name = $(sel+"wave-name-input").val();
+    var name = $($element).find(".wave-name-input").val();
     var waveJson = angular.toJson($scope.waveJson, false); // No pretty printing...
     postNewWaveform.doPost(id, name, waveJson).then(function(d) {
       consol.log("Result returned");
@@ -63,16 +61,75 @@ function WaveformEditorController(guidGenerator, postNewWaveform,	 $scope) {
 //***************************************************
 // WaveformSearchController
 //
-function WaveformSearchController(getWaveforms,	 $scope) {
+function WaveformSearchController(getWaveforms,	 $scope , $element, $compile) {
+  $scope.highlightedScope = null;
+
   $scope.loadWaveforms = function() {
     getWaveforms.doGet().then(function(d) {
-      // Take the string date from the server, specify it as UTC, and create a Date
-      // object that Angular can work with.
-      d.forEach(function(entry) {
-        var nd = new Date((entry.modification_date + " UTC").replace(/-/g, "/"));
-        entry.date_object = nd;
-      });
-      $scope.waveformList = d;
+      if(d && d.status == "successx") {
+        var data = d.result;
+        data.forEach(function(entry) {
+          // Take the string date from the server, specify it as UTC, and create a Date
+          // object that Angular can work with.
+          var nd = new Date((entry.modification_date + " UTC").replace(/-/g, "/"));
+          entry.date_object = nd;
+        });
+        $scope.waveformList = data;
+      }
+      else {
+        $scope.errorMessage = ( (d && d.errorMsg && d.errorMsg.length > 0) ? d.errorMsg : "We were unable to connect to the server.");
+        $($element).find(".n-alert").center();
+        $($element).find(".n-alert").fadeIn(500);
+
+      }
+    });
+  }
+
+  $scope.childClicked = function(childScope, id) {
+    if($scope.highlightedScope) {
+      $scope.highlightedScope.dehighlight();
+    }
+    $scope.highlightedScope = childScope;
+
+    $scope.viewWaveform(id);
+  }
+
+  $scope.viewWaveform = function(id) {
+    var container = $($element).find(".waveform-viewer-container");
+    var html = $compile('<div class="container" ng-include onload="downloadWaveform(\''+id+'\')" src="\'partials/waveform-viewer.html\'"  ng-controller="WaveformViewerController"></div>')($scope);
+    $($element).find(".waveform-viewer-container").html(html);
+  }
+}
+
+//***************************************************
+// WaveformSearchItemController
+//
+function WaveformSearchItemController($scope , $element) {
+  $scope.itemClick = function(obj) {
+    $scope.$parent.childClicked($scope, $($element).find(".wave-list-id").attr("waveform-id"));
+    $scope.highlighted = !$scope.highlighted;
+  }
+  $scope.dehighlight = function() {
+    $scope.highlighted = !$scope.highlighted;
+  }
+}
+
+//***************************************************
+// WaveformViewerController
+//
+function WaveformViewerController(getWaveform, $scope , $element) {
+  $scope.downloadWaveform = function(id) {
+    getWaveform.doGet(id).then(function(d) {
+      if(d && d.status == "success") {
+        var data = d.result;
+        $scope.waveformName = data.name;
+      }
+      else {
+        $scope.errorMessge = (d ? d.errorMsg : "I was unable to connect to the server");
+        $($element).find(".n-alert").center();
+        $($element).find(".n-alert").fadeIn(500);
+
+      }
     });
   }
 }

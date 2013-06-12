@@ -12,6 +12,9 @@ All Rights Reserved.
 
 */
 
+$ERR_SQL_ERROR             = 1;
+$ERR_NO_WAVEFORM_WITH_ID   = 2;
+
 function PsSetting($settingName)
 {
   return $GLOBALS[$settingName];

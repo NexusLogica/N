@@ -14,10 +14,13 @@ $color-med: #8FBCDB
 $color-light: #F4D6BC
 $color-lightest: #F8E4CC
 //$color-space: #F8F2EA
-$color-space: lighten($color-lightest, 10%)
+$color-space: lighten($color-lightest, 9.5%)
 $color-body: lighten($color-lightest, 11%)
 $color-gray: #DCDCDC // Gainsboro
 $color-light-gray: lighten($color-gray, 11%)
+$color-dialog: lighten($color-lightest, 8.5%)
+
+$drop-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2)
 
 $placeholder-color: #DDD
 
@@ -94,6 +97,15 @@ body
   border-radius: 5px
   padding-top: $padding-med
 
+.n-alert
+  display: none
+  width: 400px
+  background-color: $color-dialog
+  border-color: $color-med-dark
+  -webkit-box-shadow: $drop-shadow
+  -moz-box-shadow: $drop-shadow
+  box-shadow: $drop-shadow
+
 textarea
   margin-top: $padding-med
 
@@ -124,11 +136,24 @@ textarea
 
 .waveform-search
   height: 600px
-  
+
+.waveform-search .well
+  height: 600px
+  margin: 0px
+  padding: 0px
+  border-style: none
+  border-width: 0px
+  background-color: transparent
+  -webkit-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05)
+  -moz-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05)
+  box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05)
+
+
 .wave-list-container
-  background-color: lighten($color-space, 0.4%)
+  background-color: lighten($color-space, 1.1%)
   padding: 5px 20px 0px 20px
   margin-top: 20px
+  margin-left: 44px
   border-radius: 5px
   height: 532px
 
@@ -153,6 +178,7 @@ textarea
   
 .wave-list-item:hover
   background-color: lighten($color-space, 0.05%)
+  cursor: pointer
   
 .wave-list-name, .wave-list-date, .wave-list-header-name, .wave-list-header-date
   display: inline-block
@@ -161,7 +187,29 @@ textarea
   text-overflow: ellipsis
 
 .wave-list-name, .wave-list-header-name
-  width: 330px  
+  width: 430px
+
+.waveform-search-top-left
+  margin-left: 50px
+
+.waveform-search-top-left div
+  display: inline-block
+
+.waveform-search-top-left .n-med-title
+  vertical-align: middle
+
+.waveform-search-top-left .wave-search-box-container
+  margin-left: 17px
 
 .waveform-search-box
   margin-left: 100px
+
+.waveform-search-refresh-container
+  margin-left: 91px
+
+.wave-item-selected
+  font-weight: bold
+  background-color: darken($color-space, 5%)
+
+.wave-item-selected:hover
+  background-color: darken($color-space, 5%)
