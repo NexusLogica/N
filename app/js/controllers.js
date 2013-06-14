@@ -66,7 +66,7 @@ function WaveformSearchController(getWaveforms,	 $scope , $element, $compile) {
 
   $scope.loadWaveforms = function() {
     getWaveforms.doGet().then(function(d) {
-      if(d && d.status == "successx") {
+      if(d && d.status == "success") {
         var data = d.result;
         data.forEach(function(entry) {
           // Take the string date from the server, specify it as UTC, and create a Date
@@ -117,8 +117,9 @@ function WaveformSearchItemController($scope , $element) {
 //***************************************************
 // WaveformViewerController
 //
-function WaveformViewerController(getWaveform, $scope , $element) {
+function WaveformViewerController(getWaveform, deleteWaveform, $scope , $element) {
   $scope.downloadWaveform = function(id) {
+    $scope.id = id;
     getWaveform.doGet(id).then(function(d) {
       if(d && d.status == "success") {
         var data = d.result;
@@ -129,6 +130,20 @@ function WaveformViewerController(getWaveform, $scope , $element) {
         $($element).find(".n-alert").center();
         $($element).find(".n-alert").fadeIn(500);
 
+      }
+    });
+  }
+
+  $scope.deleteWaveform = function() {
+    deleteWaveform.doDelete($scope.id).then(function(d) {
+      if(d && d.status == "success") {
+        var data = d.result;
+        $scope.waveformName = data.name;
+      }
+      else {
+        $scope.errorMessge = (d ? d.errorMsg : "I was unable to connect to the server");
+        $($element).find(".n-alert").center();
+        $($element).find(".n-alert").fadeIn(500);
       }
     });
   }

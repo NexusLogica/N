@@ -170,3 +170,6 @@ textarea {
 
 .wave-item-selected:hover {
   background-color: #fbefe0; }
+
+.waveform-viewer-container .waveform-name-container div {
+  display: inline-block; }

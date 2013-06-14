@@ -118,6 +118,42 @@ app.service('getWaveform', function($http) {
   return getWaveform;
 });
 
+//***************************************************
+// DELETE waveform
+//
+app.service('deleteWaveform', function($http) {
+
+  var deleteWaveform = {
+    doDelete: function(id) {
+        // $http returns a promise, which has a then function, which also returns a promise.
+        var urlToCall = "http://nexuslogica.com/N/svr/waveform?id="+encodeURIComponent(id)+"&callback=JSON_CALLBACK";
+        var callData = {
+          url: urlToCall,
+          method: "DELETE",
+          headers: { "Content-Type": "application/javascript"},
+          cache: false
+        };
+
+        var promise = $http(callData).then(function (response) {
+          // The then function here is an opportunity to modify the response
+          console.log(response);
+          // The return value gets picked up by the then in the controller.
+          return response.data;
+        });
+
+        // Return the promise to the controller
+        return promise;
+
+      }
+
+  };
+  return deleteWaveform;
+});
+
+
+//***************************************************
+// jQuery extensions
+//
 jQuery.fn.center = function () {
   this.css("position","absolute");
   this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) +

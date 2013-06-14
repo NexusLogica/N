@@ -1,1 +1,16 @@
-    <div>Name</div><div>{{waveformName}}</div><button>Delete</button>
+ <div class="waveform-viewer-container">
+   <div>
+     <div class="row waveform-name-container">
+       <div >Name: {{waveformName}}</div>
+     </div>
+     <div class="row waveform-action-container">
+       <button ng-click="deleteWaveform()")>Delete</button>
+     </div>
+   </div>
+   <div class="n-alert alert alert-block">
+     <a class="close" data-dismiss="alert">×</a>
+     <h4 class="alert-heading">Hmmmm</h4>
+     <p>{{errorMessage}}</p>
+     <p><a class="btn btn-info" ng-click="refresh()" href="javascript:void(0);">Retry</a></p>
+   </div>
+</div>

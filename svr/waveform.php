@@ -11,7 +11,12 @@
     // Return only the headers and not the content
     // Allow CORS for all access types (POST, GET, DELETE,...).
     header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: X-Requested-With');    
+    header('Access-Control-Allow-Headers: accept, origin, x-requested-with, content-type');
+//    header('Access-Control-Allow-Methods: POST GET DELETE OPTIONS');
+    $allHeaders = getallheaders();
+    if(isset($allHeaders['Access-Control-Request-Method'])) {
+      header('Access-Control-Allow-Methods: ' . $allHeaders['Access-Control-Request-Method']);
+    }
   }
   else {
     // Open the database. Needed for all the following calls.
@@ -59,7 +64,7 @@
       }
     }
     else if("DELETE" == $verb) {
-      $query = "DELETE FROM waveforms where id = " . $_REQUEST['id'];
+      $query = "DELETE FROM waveforms where id = '" . $_REQUEST['id'] . "'";
       PsLog($query);
       $result = mysql_query($query);
       if($result) {
@@ -91,5 +96,5 @@
     mysql_close($con);
   }
 
-  PsLog("Exiting: postWaveform.php");
+  PsLog("Exiting: waveform.php");
 ?>
