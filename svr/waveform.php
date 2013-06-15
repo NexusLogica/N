@@ -7,18 +7,17 @@
   PsLog("Entering: $verb waveform.php");
 
   // Respond to preflights (i.e. cross domain requests).
-  if ("OPTIONS" == $verb) {
-    // Return only the headers and not the content
-    // Allow CORS for all access types (POST, GET, DELETE,...).
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: accept, origin, x-requested-with, content-type');
+  // Return only the headers and not the content
+  // Allow CORS for all access types (POST, GET, DELETE,...).
+  header('Access-Control-Allow-Origin: *');
+  header('Access-Control-Allow-Headers: accept, origin, x-requested-with, content-type');
 //    header('Access-Control-Allow-Methods: POST GET DELETE OPTIONS');
-    $allHeaders = getallheaders();
-    if(isset($allHeaders['Access-Control-Request-Method'])) {
-      header('Access-Control-Allow-Methods: ' . $allHeaders['Access-Control-Request-Method']);
-    }
+  $allHeaders = getallheaders();
+  if(isset($allHeaders['Access-Control-Request-Method'])) {
+    header('Access-Control-Allow-Methods: ' . $allHeaders['Access-Control-Request-Method']);
   }
-  else {
+
+  if ("OPTIONS" != $verb) {
     // Open the database. Needed for all the following calls.
     $con = mysql_connect(PsSetting('DB_HOST'), PsSetting('DB_USER'), PsSetting('DB_PW'));
     if (!$con) {
@@ -77,10 +76,10 @@
     }
 
     if($success) {
-      $fullResult = '{ status: "success", result: ' . $jsonString . ' }';
+      $fullResult = '{ "status": "success", "result": ' . $jsonString . ' }';
     }
     else {
-      $fullResult = '{ status: "failure", errorCode: ' . $errorCode . ', errorMsg: "' . $errorMsg . '" }';
+      $fullResult = '{ "status": "failure", "errorCode": ' . $errorCode . ', "errorMsg": "' . $errorMsg . '" }';
       PsLog($fullResult);
     }
 

@@ -45,10 +45,10 @@
 		}
 
     if($success) {
-      $fullResult = '{ status: "success", result: ' . $jsonString . ' }';
+      $fullResult = '{ "status": "success", "result": ' . $jsonString . ' }';
     }
     else {
-      $fullResult = '{ status: "failure", errorCode: ' . $errorCode . ', errorMsg: "' . $errorMsg . '" }';
+      $fullResult = '{ "status": "failure", "errorCode": ' . $errorCode . ', "errorMsg": "' . $errorMsg . '" }';
       PsLog($fullResult);
     }
 

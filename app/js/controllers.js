@@ -4,6 +4,9 @@
 
 angular.module('myApp.controllers', []);
 
+//***************************************************
+// HeaderController
+//
 function HeaderController($scope, $compile) {
   $scope.blah = "Hi there";
   
@@ -65,6 +68,20 @@ function WaveformSearchController(getWaveforms,	 $scope , $element, $compile) {
   $scope.highlightedScope = null;
 
   $scope.loadWaveforms = function() {
+    $(".item-with-tooltip").tooltip();
+    $scope.refresh();
+  }
+
+  $scope.childClicked = function(childScope, id) {
+    if($scope.highlightedScope) {
+      $scope.highlightedScope.dehighlight();
+    }
+    $scope.highlightedScope = childScope;
+
+    $scope.viewWaveform(id);
+  }
+
+  $scope.refresh = function() {
     getWaveforms.doGet().then(function(d) {
       if(d && d.status == "success") {
         var data = d.result;
@@ -85,19 +102,18 @@ function WaveformSearchController(getWaveforms,	 $scope , $element, $compile) {
     });
   }
 
-  $scope.childClicked = function(childScope, id) {
-    if($scope.highlightedScope) {
-      $scope.highlightedScope.dehighlight();
+  $scope.viewWaveform = function(id) {
+    if($($element).find(".waveform-viewer").length != 0) {
+      $($element).find(".waveform-viewer").remove();
     }
-    $scope.highlightedScope = childScope;
-
-    $scope.viewWaveform(id);
+    var container = $($element).find(".waveform-viewer-container");
+    var html = $compile('<div class="container waveform-viewer" ng-include onload="downloadWaveform(\''+id+'\')" src="\'partials/waveform-viewer.html\'"  ng-controller="WaveformViewerController"></div>')($scope);
+    container.html(html);
   }
 
-  $scope.viewWaveform = function(id) {
-    var container = $($element).find(".waveform-viewer-container");
-    var html = $compile('<div class="container" ng-include onload="downloadWaveform(\''+id+'\')" src="\'partials/waveform-viewer.html\'"  ng-controller="WaveformViewerController"></div>')($scope);
-    $($element).find(".waveform-viewer-container").html(html);
+  $scope.onWaveformDeleted = function() {
+    $($element).find(".waveform-viewer").remove();
+    $scope.refresh();
   }
 }
 
@@ -124,6 +140,8 @@ function WaveformViewerController(getWaveform, deleteWaveform, $scope , $element
       if(d && d.status == "success") {
         var data = d.result;
         $scope.waveformName = data.name;
+        $scope.waveformDate = data.modification_date;
+        $scope.waveformID = data.id;
       }
       else {
         $scope.errorMessge = (d ? d.errorMsg : "I was unable to connect to the server");
@@ -135,16 +153,20 @@ function WaveformViewerController(getWaveform, deleteWaveform, $scope , $element
   }
 
   $scope.deleteWaveform = function() {
-    deleteWaveform.doDelete($scope.id).then(function(d) {
-      if(d && d.status == "success") {
-        var data = d.result;
-        $scope.waveformName = data.name;
+    deleteWaveform.doDelete($scope.id).then(
+      function(d) {
+        if(d && d.status == "success") {
+          $scope.$parent.onWaveformDeleted();
+        }
+        else {
+          $scope.errorMessge = (d ? d.errorMsg : "I was unable to connect to the server");
+          $($element).find(".n-alert").center();
+          $($element).find(".n-alert").fadeIn(500);
+        }
+      },
+      function(d) {
+        alert("ERROR");
       }
-      else {
-        $scope.errorMessge = (d ? d.errorMsg : "I was unable to connect to the server");
-        $($element).find(".n-alert").center();
-        $($element).find(".n-alert").fadeIn(500);
-      }
-    });
+    );
   }
 }

@@ -19,7 +19,7 @@ describe('NexusLogica App', function() {
 
     it('should allow creation, saving, and retrieval of a new waveform', function() {
       element('.waveforms-new-menu').click();
-      expect(element('#editor-1 textarea[name="timing-text"]').val()).
+      expect(element('textarea[name="timing-text"]').val()).
         toBe("p.");
       var randomName = "TEST-"+Date.now();
       input('waveName').enter(randomName);
@@ -33,7 +33,13 @@ describe('NexusLogica App', function() {
       
       input('query').enter(randomName);
       expect(repeater(".wave-list-item").count()).
-        toBe(1);
+          toBe(1);
+      element('.wave-list-item').click();
+
+      expect(element(".waveform-viewer-container .waveform-name-label").text()).
+          toBe("Name:");
+      expect(element(".waveform-viewer-container .waveform-name").text()).
+        toBe(randomName);
     });
 
   });

@@ -126,7 +126,7 @@ app.service('deleteWaveform', function($http) {
   var deleteWaveform = {
     doDelete: function(id) {
         // $http returns a promise, which has a then function, which also returns a promise.
-        var urlToCall = "http://nexuslogica.com/N/svr/waveform?id="+encodeURIComponent(id)+"&callback=JSON_CALLBACK";
+        var urlToCall = "http://nexuslogica.com/N/svr/waveform?id="+encodeURIComponent(id);
         var callData = {
           url: urlToCall,
           method: "DELETE",
@@ -134,12 +134,17 @@ app.service('deleteWaveform', function($http) {
           cache: false
         };
 
-        var promise = $http(callData).then(function (response) {
-          // The then function here is an opportunity to modify the response
-          console.log(response);
-          // The return value gets picked up by the then in the controller.
-          return response.data;
-        });
+        var promise = $http(callData).then(
+          function (response) {
+            // The then function here is an opportunity to modify the response
+            console.log("From doDelete: "+response);
+            // The return value gets picked up by the then in the controller.
+            return response.data;
+          },
+          function(d, status, headers) {
+            console.log("Error: doDelete: "+status);
+          }
+        );
 
         // Return the promise to the controller
         return promise;
