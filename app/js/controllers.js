@@ -7,17 +7,19 @@ angular.module('myApp.controllers', []);
 //***************************************************
 // HeaderController
 //
-function HeaderController($scope, $compile) {
-  $scope.blah = "Hi there";
-  
+function HeaderController($scope, $compile, $rootScope, guidGenerator) {
   $scope.waveformsNew = function() {
-    var html = $compile('<div class="container" ng-include onload="renderWave()" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
-    $("#main-app-container").html(html);
+    var guid = guidGenerator.CreateUUID();
+    var html = $compile('<div class="container" main-window-id="'+guid+'" ng-include onload="renderWave()" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
+    $("#main-app-container").append(html);
+    $rootScope.$broadcast("newMainWindow", "New Waveform", guid);
   }
 
   $scope.waveformsSearch = function() {
-    var html = $compile('<div id="search-1" class="container" ng-include onload="loadWaveforms()" src="\'partials/waveform-search.html\'"  ng-controller="WaveformSearchController"></div>')($scope);
-    $("#main-app-container").html(html);
+    var guid = guidGenerator.CreateUUID();
+    var html = $compile('<div id="search-1" class="container" main-window-id="'+guid+'" ng-include onload="loadWaveforms()" src="\'partials/waveform-search.html\'"  ng-controller="WaveformSearchController"></div>')($scope);
+    $("#main-app-container").append(html);
+    $rootScope.$broadcast("newMainWindow", "Waveforms", guid);
   }
 }
 
@@ -25,6 +27,23 @@ function HeaderController($scope, $compile) {
 // WaveformEditorController
 //
 function WaveformEditorController(guidGenerator, postNewWaveform,	$scope, $element) {
+
+  $scope.mainWindowId = $($element).attr('main-window-id');
+  $scope.$on("showMainWindow", function(event, showWindowId) {
+    if(showWindowId == $scope.mainWindowId) {
+      $($element).show();
+    }
+    else {
+      $($element).hide();
+    }
+  });
+
+  $scope.$on("closeMainWindow", function(event, showWindowId) {
+    if(showWindowId == $scope.mainWindowId) {
+      $($element).remove();
+    }
+  });
+
   $scope.renderWave = function() {
     $scope.waveText = "p.";
     $scope.makeWave($scope.waveText);
@@ -66,6 +85,22 @@ function WaveformEditorController(guidGenerator, postNewWaveform,	$scope, $eleme
 //
 function WaveformSearchController(getWaveforms,	 $scope , $element, $compile) {
   $scope.highlightedScope = null;
+
+  $scope.mainWindowId = $($element).attr('main-window-id');
+  $scope.$on("showMainWindow", function(event, showWindowId) {
+    if(showWindowId == $scope.mainWindowId) {
+      $($element).show();
+    }
+    else {
+      $($element).hide();
+    }
+  });
+
+  $scope.$on("closeMainWindow", function(event, showWindowId) {
+    if(showWindowId == $scope.mainWindowId) {
+      $($element).remove();
+    }
+  });
 
   $scope.loadWaveforms = function() {
     $(".item-with-tooltip").tooltip();
@@ -152,6 +187,14 @@ function WaveformViewerController(getWaveform, deleteWaveform, $scope , $element
     });
   }
 
+  $scope.editWaveform = function() {
+    var guid = guidGenerator.CreateUUID();
+    var html = $compile('<div class="container" main-window-id="'+guid+'" ng-include onload="renderWave()" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
+    $("#main-app-container").html(html);
+    $rootScope.$broadcast("newMainWindow", "New Waveform", guid);
+  }
+
+
   $scope.deleteWaveform = function() {
     deleteWaveform.doDelete($scope.id).then(
       function(d) {
@@ -169,4 +212,74 @@ function WaveformViewerController(getWaveform, deleteWaveform, $scope , $element
       }
     );
   }
+}
+
+//***************************************************
+// TabBarController
+//
+function TabBarController($scope , $element, $rootScope) {
+
+  $($element).hide();
+  $scope.mainWindowOrder = [];
+
+  $scope.navTabItems = [];
+  $scope.$on("newMainWindow", function(event, tabName, tabId) {
+    $($element).show();
+    $scope.navTabItems.push({ name: tabName, id: tabId});
+  });
+
+  $scope.removeChildTab = function(el, id) {
+    for(var i=0; i<$scope.navTabItems.length; i++) {
+      if($scope.navTabItems[i].id == id) {
+        $scope.navTabItems.splice(i, 1);
+        el.remove();
+        if($element.find('a').length == 0) {
+          $($element).hide();
+        }
+        break;
+      }
+    }
+  }
+
+  $scope.$on("showMainWindow", function(event, showWindowId) {
+    var index = $scope.mainWindowOrder.indexOf(showWindowId);
+    if(index != -1) {
+      $scope.mainWindowOrder.splice(index, 1);
+    }
+    $scope.mainWindowOrder.push(showWindowId);
+  });
+
+  $scope.$on("closeMainWindow", function(event, windowId) {
+    var index = $scope.mainWindowOrder.indexOf(windowId);
+    if(index != -1) {
+      $scope.mainWindowOrder.splice(index, 1);
+    }
+    $rootScope.$broadcast("activateTabForWindow", $scope.mainWindowOrder[$scope.mainWindowOrder.length-1]);
+  });
+}
+
+//***************************************************
+// TabBarItemController
+//
+function TabBarItemController($scope , $element, $rootScope) {
+  $scope.tabId = $scope.$parent.navTabItem.id;
+
+  // When the tab is created, make sure it is displayed.
+  $($element).find('a').tab('show');
+  $rootScope.$broadcast("showMainWindow", $scope.tabId);
+
+  $scope.$on("activateTabForWindow", function(event, showWindowId) {
+    if($scope.tabId == showWindowId) {
+      $($element).find('a').click();
+    }
+  });
+
+  $($element).click(function(e) {
+    $rootScope.$broadcast("showMainWindow", $scope.tabId);
+  });
+
+  $($element).find('div').click(function(e) {
+    $rootScope.$broadcast("closeMainWindow", $scope.tabId);
+    $scope.$parent.removeChildTab($($element), $scope.tabId);
+  });
 }

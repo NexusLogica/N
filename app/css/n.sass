@@ -92,9 +92,9 @@ body
 
 .n-component
   background-color: $color-space
-  margin-top: $padding-med
   border: $color-light 1px solid
-  border-radius: 5px
+  border-top-style: none
+  border-radius: 0px 0px 5px 5px
   padding-top: $padding-med
 
 .n-alert
@@ -124,6 +124,42 @@ textarea
 
 .header .nav
   margin: 0px 0px 0px 0px
+
+//******************************
+// Tabs
+
+.main-tabs-container
+  margin-top: 10px
+
+.main-tabs-container .nav
+  margin-bottom: 0px
+
+.main-tabs-container .nav-tabs>li
+  position: relative
+
+.main-tabs-container .nav-tabs>li.active a
+  background-color: $color-space
+
+.main-tabs-container .nav-tabs>li a
+  display: inline-block
+  max-width: 100px
+  text-overflow: ellipsis
+  white-space: nowrap
+  overflow:  hidden
+  padding-right: 23px
+
+.main-tabs-container .nav-tabs>li div
+  top: 8px
+  right: 9px
+  position: absolute
+  display: inline-block
+  margin-left: 8px
+  font-size: 12px
+  color: $color-med
+
+.main-tabs-container .nav-tabs>li div:hover
+  color: $color-dark
+  cursor: pointer
 
 //******************************
 // Waveform editor
