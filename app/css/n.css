@@ -102,7 +102,6 @@ textarea {
   background-color: #fefbf7; }
 
 .main-tabs-container .nav-tabs > li a {
-  display: inline-block;
   max-width: 100px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -203,6 +202,9 @@ textarea {
 
 .wave-item-selected:hover {
   background-color: #fbefe0; }
+
+.waveform-viewer-container.span6 .container {
+  width: 800px; }
 
 .waveform-viewer-container .waveform-name-container div {
   display: inline-block; }
