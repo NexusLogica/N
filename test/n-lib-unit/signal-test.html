@@ -22,6 +22,7 @@
 
   var sequence = [0.0, 0.5, 1.5, 2.0, 3.5, 3.6, 4.0];
   var values = [1.0, 0.5, 1.5, -1.0, -1.0, 2.5, 0.1];
+  var states = [1, 0, 0, 1, -1, -1, 1];
 
   test("TableSearch tests", function() {
     var search = new N.TableSearch;
@@ -41,6 +42,10 @@
     equal(signal.GetNumSamples(), 0, "No initial samples");
     QUnit.assert.near(signal.GetValue(1.0), 0.0, "Value with no samples");
 
+    var range = signal.GetRange();
+    equal(range.Min, 0.0, "Initial range minimum");
+    equal(range.Max, 0.0, "Initial range maximum");
+
     for(var i=0; i<sequence.length; i++) {
       signal.AppendData(sequence[i], values[i]);
       if(i == 0) {
@@ -54,11 +59,35 @@
     QUnit.assert.near(signal.GetValue(0.125), 0.875, "Value between first and second index");
     QUnit.assert.near(signal.GetValue(3.7), 1.90, "Value near the end");
     QUnit.assert.near(signal.GetValue(4.1), 0.1, "Value past the end");
+    signal.ToJSON();
   });
 
   test("DiscreteSignal tests", function() {
     var signal = new N.DiscreteSignal;
+    equal(signal.StateType, N.DiscreteSignal.BISTATE, "Initial state is bistate");
+    signal.SetStateType(N.DiscreteSignal.TRISTATE);
+    equal(signal.StateType, N.DiscreteSignal.TRISTATE, "Set state to tristate");
     equal(signal.GetNumSamples(), 0);
+    equal(signal.GetValue(1.0), 0, "Value with no samples");
+
+    var range = signal.GetRange();
+    equal(range.Min, 0, "Initial range minimum");
+    equal(range.Max, 0, "Initial range maximum");
+
+    for(var i=0; i<sequence.length; i++) {
+      signal.AppendStateChange(sequence[i], states[i]);
+      if(i == 0) {
+        QUnit.assert.near(signal.GetValue(1.0), 1, "Value with only one sample");
+      }
+    }
+    equal(signal.GetNumSamples(), sequence.length, "Added "+sequence.length+" samples");
+
+    equal(signal.GetValue(-1.0), 1, "Value at before first time index");
+    equal(signal.GetValue(0.0), 1, "Value at first time index");
+    equal(signal.GetValue(0.25), 1, "Value between first and second index");
+    equal(signal.GetValue(0.75), 0, "Value after second index");
+    equal(signal.GetValue(3.7), -1, "Value near the end");
+    equal(signal.GetValue(4.1), 1, "Value past the end");
   });
   </script>
 </head>

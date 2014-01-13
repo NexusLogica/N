@@ -32,7 +32,7 @@ N.Signal = function() {
 N.Signal.prototype.ANALOG = 1;
 N.Signal.prototype.DISCRETE = 2;
 
-N.Signal.prototype.Range = function() {
+N.Signal.prototype.GetRange = function() {
   return { "Min": this.Min, "Max": this.Max };
 }
 
@@ -95,10 +95,25 @@ N.AnalogSignal.prototype.AppendData = function(time, value) {
       throw new Error("N.AnalogSignal.AppendData sequence issue");
     }
   }
+  if(this.Values.length == 1) {
+    this.Max = value;
+    this.Min = value;
+  }
+  else if(value > this.Max) {
+    this.Max = value;
+  }
+  else if(value < this.Min) {
+    this.Min = value;
+  }
 }
 
 N.AnalogSignal.prototype.GetNumSamples = function() {
   return this.Values.length;
+}
+
+N.AnalogSignal.prototype.ToJSON = function() {
+  var str = '{Type="Times":['+this.Times.toString()+'],"Values":['+this.Values.toString()+'],"Min":'+this.Min+',"Max":'+this.Max+'}';
+  console.log(str);
 }
 
   //******************
@@ -120,11 +135,18 @@ N.DiscreteSignal.prototype = new N.Signal;
 
 N.DiscreteSignal.prototype.SetStateType = function(stateType) {
   this.StateType = stateType;
-  this.Min = (this.StateType == N.DiscreteSignal.prototype.TRISTATE ? -1 : 0);
 }
 
 N.DiscreteSignal.prototype.GetValue = function(time) {
+  if(this.Times.length < 2) {
+    if(this.Times.length == 1) {
+      return this.Values[0];
+    }
+    return 0;
+  }
   var i = this._Finder.Find(time, this.Times);
+  if(i < 0) { i = 0; }
+  if(i >= this.Times.length) { i = this.Times.length-1; }
   return this.Values[i];
 }
 
@@ -139,6 +161,17 @@ N.DiscreteSignal.prototype.GetStateChangeByIndex = function(index) {
 N.DiscreteSignal.prototype.AppendStateChange = function(time, newState) {
   this.Times.push(time);
   this.Values.push(newState);
+
+  if(this.Values.length == 1) {
+    this.Max = newState;
+    this.Min = newState;
+  }
+  if(newState > this.Max) {
+    this.Max = newState;
+  }
+  else if(newState < this.Min) {
+    this.Min = newState;
+  }
 }
 
 N.DiscreteSignal.prototype.GetNumSamples = function() {
