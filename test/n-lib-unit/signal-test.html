@@ -6,7 +6,9 @@
 
   <link rel="stylesheet" href="../../app/lib/qunit/qunit.css">
   <script src="../../app/lib/qunit/qunit.js"></script>
+  <script src="../../app/lib/json2.js"></script>
   <script src="../../app/lib/n/signal.js"></script>
+
 
   <script>
   QUnit.assert.near = function( actual, expected, eps, message ) {
@@ -59,7 +61,12 @@
     QUnit.assert.near(signal.GetValue(0.125), 0.875, "Value between first and second index");
     QUnit.assert.near(signal.GetValue(3.7), 1.90, "Value near the end");
     QUnit.assert.near(signal.GetValue(4.1), 0.1, "Value past the end");
-    signal.ToJSON();
+    var jsonString = signal.ToJSON();
+    var jsonObj = JSON.parse(jsonString);
+    var className = jsonObj.ClassName;
+    equal(className, "N.AnalogSignal");
+    var signal2 = N.CreateInstance(jsonObj);
+    equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");
   });
 
   test("DiscreteSignal tests", function() {

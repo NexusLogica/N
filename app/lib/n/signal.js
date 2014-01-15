@@ -12,25 +12,23 @@ All Rights Reserved.
 */
 
 var N = N || {}
+N.CreateInstance = function(json) {
+  var obj = new this[json.ClassName.substr(2)];
+  for(var key in json) {
+    obj[key] = json[key];
+  }
+  return obj;
+}
 
   //**********
   //* Signal *
   //**********
 
 N.Signal = function() {
-  this.Start        = 0.0;
-  this.Duration     = 0.0;
-  this.Repeat       = false;
-  this.RepeatTimes  = 1;
-  this.Name         = "";
-  this.ShortName    = "";
-  this.Category     = null;
-  this.Min          = 0.0;
-  this.Max          = 0.0;
 }
 
-N.Signal.prototype.ANALOG = 1;
-N.Signal.prototype.DISCRETE = 2;
+N.Signal.ANALOG = 1;
+N.Signal.DISCRETE = 2;
 
 N.Signal.prototype.GetRange = function() {
   return { "Min": this.Min, "Max": this.Max };
@@ -41,20 +39,23 @@ N.Signal.prototype.GetRange = function() {
   //****************
 
 N.AnalogSignal = function() {
-  this.Type = N.Signal.ANALOG;
-  this.Times = [];
-  this.Values = [];
-  this._Finder = new N.TableSearch;
+  this.ClassName  = "N.AnalogSignal";
+  this.Type       = N.Signal.ANALOG;
+  this.Times      = [];
+  this.Values     = [];
+  this._Finder    = new N.TableSearch;
+  this.Start      = 0.0;
+  this.Name       = "";
+  this.ShortName  = "";
+  this.Category   = "";
+  this.Min        = 0.0;
+  this.Max        = 0.0;
 }
 
 N.AnalogSignal.prototype = new N.Signal;
 
-N.AnalogSignal.prototype.SetStateType = function(stateType) {
-  this.StateType = stateType;
-  this.Min = (this.StateType == N.DiscreteSignal.prototype.TRISTATE ? -1 : 0);
-}
-
 N.AnalogSignal.prototype.GetValue = function(time) {
+  var t = time-this.Start;
   if(this.Times.length < 2) {
     if(this.Times.length < 1) {
       return 0.0;
@@ -62,7 +63,7 @@ N.AnalogSignal.prototype.GetValue = function(time) {
     return this.Values[0];
   }
 
-  var i = this._Finder.Find(time, this.Times);
+  var i = this._Finder.Find(t, this.Times);
   if(i < 0) {
     return this.Values[0];
   }
@@ -74,7 +75,7 @@ N.AnalogSignal.prototype.GetValue = function(time) {
   var x1 = this.Times[i+1];
   var y0 = this.Values[i];
   var y1 = this.Values[i+1];
-  var value = y0+(y1-y0)*(time-x0)/(x1-x0);
+  var value = y0+(y1-y0)*(t-x0)/(x1-x0);
   return value;
 }
 
@@ -112,8 +113,8 @@ N.AnalogSignal.prototype.GetNumSamples = function() {
 }
 
 N.AnalogSignal.prototype.ToJSON = function() {
-  var str = '{Type="Times":['+this.Times.toString()+'],"Values":['+this.Values.toString()+'],"Min":'+this.Min+',"Max":'+this.Max+'}';
-  console.log(str);
+  var str = JSON.stringify(this, function(k, v) { return (k == "_Finder" ? undefined : v); });
+  return str;
 }
 
   //******************
@@ -121,15 +122,22 @@ N.AnalogSignal.prototype.ToJSON = function() {
   //******************
 
 N.DiscreteSignal = function() {
-  this.Type = N.Signal.DISCRETE;
-  this.StateType = N.DiscreteSignal.BISTATE;
-  this.Times = [];
-  this.Values = [];
-  this._Finder = new N.TableSearch;
+  this.ClassName  = "N.DiscreteSignal";
+  this.Type       = N.Signal.DISCRETE;
+  this.StateType  = N.DiscreteSignal.BISTATE;
+  this.Times      = [];
+  this.Values     = [];
+  this._Finder    = new N.TableSearch;
+  this.Start      = 0.0;
+  this.Name       = "";
+  this.ShortName  = "";
+  this.Category   = "";
+  this.Min        = 0;
+  this.Max        = 0;
 }
 
-N.DiscreteSignal.prototype.BISTATE = 1;
-N.DiscreteSignal.prototype.TRISTATE = 2;
+N.DiscreteSignal.BISTATE = 1;
+N.DiscreteSignal.TRISTATE = 2;
 
 N.DiscreteSignal.prototype = new N.Signal;
 
@@ -138,13 +146,14 @@ N.DiscreteSignal.prototype.SetStateType = function(stateType) {
 }
 
 N.DiscreteSignal.prototype.GetValue = function(time) {
+  var t = time-this.Start;
   if(this.Times.length < 2) {
     if(this.Times.length == 1) {
       return this.Values[0];
     }
     return 0;
   }
-  var i = this._Finder.Find(time, this.Times);
+  var i = this._Finder.Find(t, this.Times);
   if(i < 0) { i = 0; }
   if(i >= this.Times.length) { i = this.Times.length-1; }
   return this.Values[i];
@@ -178,11 +187,17 @@ N.DiscreteSignal.prototype.GetNumSamples = function() {
   return this.Values.length;
 }
 
+N.DiscreteSignal.prototype.ToJSON = function() {
+  var str = JSON.stringify(this, function(k, v) { return (k == "_Finder" ? undefined : v); });
+  return str;
+}
+
   //***************
   //* TableSearch *
   //***************
 
 N.TableSearch = function() {
+  this.ClassName  = "N.TableSearch";
   this.indexLow = 0;
   this.indexHigh;
   this.ascending;
