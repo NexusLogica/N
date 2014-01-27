@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nexus Logica</title>
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="css/n.css"/>
+</head>
+<body  ng-app="myApp">
+
+  <div id="index-outer">
+    <div id="main-app-container" class="container" ><div>
+
+    <div id="timing-display"></div>
+  </div>
+
+  <myView1 ng-controller="MyCtrl1">xxbbb<span ng-bind="blah"></span></myView1>
+  <myView2 ng-controller="MyCtrl2">xxxxx{{blah}}</myView2>
+  <myView3 xxxng-include="'partials/partial1.html'" ng-controller="MyCtrl3"></myView3>
+  <ng-view></ng-view>
+
+
+  <script src="lib/jquery-2.0.2.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular-route/angular-route.js"></script>
+
+<script>
+
+'use strict';
+
+// Declare app level module which depends on filters, and services
+//angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers']).
+var myApp = angular.module('myApp', [/*'myApp.services',*/ 'myApp.controllers', 'ngRoute']);
+myApp.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.when('myView1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
+    $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
+    $routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
+    $routeProvider.otherwise({redirectTo: '/view1'});
+  }]);
+
+//var serv = angular.module('myApp.services', []);
+var ctrl = angular.module('myApp.controllers', []);
+
+ctrl.controller('MyCtrl1', ['$scope',
+  function MyCtrl1($scope) {
+    $scope.blah = "XXX";
+  }]);
+
+ctrl.controller('MyCtrl2', ['$scope',
+  function MyCtrl2($scope) {
+    $scope.blah = "YYY";
+  }]);
+
+ctrl.controller('MyCtrl3', ['$scope',
+  function MyCtrl3($scope) {
+    $scope.myData = "MY-DATA";
+  }]);
+
+
+
+</script>
+
+</body>
+</html>

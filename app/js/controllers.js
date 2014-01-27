@@ -1,8 +1,24 @@
 'use strict';
 
-/* Controllers */
+/**********************************************************************
+  Controllers
+*/
 
-angular.module('myApp.controllers', []);
+var nSimAppControllers = angular.module('nSimApp.controllers');
+
+nSimAppControllers.controller('SignalTraceController', ['$scope',
+  function SignalTraceController($scope) {
+    $scope.blah = "XXX";
+    $scope.setSignalTrace = function(trace) {
+      console.log(trace);
+    }
+  }
+]);
+
+nSimAppControllers.controller('SimulationCtrl', ['$scope',
+  function SimulationCtrl($scope) {
+    $scope.blah = "XXX";
+  }]);
 
 //***************************************************
 // HeaderController
@@ -29,6 +45,7 @@ function HeaderController($scope, $compile, $rootScope, guidGenerator) {
 function WaveformEditorController(guidGenerator, postNewWaveform,	$scope, $element) {
 
   $scope.mainWindowId = $($element).attr('main-window-id');
+  $scope.mainWindowId2 = $(scope.$element).attr('main-window-id');
   $scope.$on("showMainWindow", function(event, showWindowId) {
     if(showWindowId == $scope.mainWindowId) {
       $($element).show();
@@ -39,7 +56,7 @@ function WaveformEditorController(guidGenerator, postNewWaveform,	$scope, $eleme
   });
 
   $scope.$on("closeMainWindow", function(event, showWindowId) {
-    if(showWindowId == $scope.mainWindowId) {
+      if(showWindowId == $scope.mainWindowId) {
       $($element).remove();
     }
   });

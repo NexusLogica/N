@@ -1,0 +1,13 @@
+{
+  "name": "jquery-html5-placeholder-shim",
+  "homepage": "https://github.com/parndt/jquery-html5-placeholder-shim",
+  "_release": "412b4898c3",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "412b4898c3167ca0f546a32ad8b4fbb308768a09"
+  },
+  "_source": "git://github.com/parndt/jquery-html5-placeholder-shim.git",
+  "_target": "*",
+  "_originalSource": "git://github.com/parndt/jquery-html5-placeholder-shim"
+}

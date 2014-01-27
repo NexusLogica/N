@@ -11,15 +11,6 @@ All Rights Reserved.
 
 */
 
-var N = N || {}
-N.CreateInstance = function(json) {
-  var obj = new this[json.ClassName.substr(2)];
-  for(var key in json) {
-    obj[key] = json[key];
-  }
-  return obj;
-}
-
   //**********
   //* Signal *
   //**********
@@ -41,6 +32,7 @@ N.Signal.prototype.GetRange = function() {
 N.AnalogSignal = function() {
   this.ClassName  = "N.AnalogSignal";
   this.Type       = N.Signal.ANALOG;
+  this.Id         = N.M.GenerateUUID();
   this.Times      = [];
   this.Values     = [];
   this._Finder    = new N.TableSearch;
@@ -124,6 +116,7 @@ N.AnalogSignal.prototype.ToJSON = function() {
 N.DiscreteSignal = function() {
   this.ClassName  = "N.DiscreteSignal";
   this.Type       = N.Signal.DISCRETE;
+  this.Id         = N.M.GenerateUUID();
   this.StateType  = N.DiscreteSignal.BISTATE;
   this.Times      = [];
   this.Values     = [];

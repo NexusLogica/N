@@ -2,11 +2,18 @@
 
 /* Services */
 
+var nSimAppServices = angular.module('nSimApp.services', []);
 
 // Demonstrate how to register services
 // In this case it is a simple value service.
-angular.module('myApp.services', []).
-  value('version', '0.1');
+nSimAppServices.service("version", function() {
+  var version = function() {
+    return 0.2;
+  }
+  return version;
+});
+//nSimAppServices.
+//  value('version', '0.1');
 
 
 var app = angular.module('myApp', []);

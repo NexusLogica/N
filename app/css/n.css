@@ -224,3 +224,8 @@ textarea {
 
 .waveform-viewer-container dt {
   width: 90px; }
+
+.signal-trace-test-container .signal-trace-canvas .n-signal-trace-canvas {
+  width: 400px;
+  height: 200px;
+  border: solid 1px #DDD; }

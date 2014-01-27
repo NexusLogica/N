@@ -95,6 +95,13 @@
     equal(signal.GetValue(0.75), 0, "Value after second index");
     equal(signal.GetValue(3.7), -1, "Value near the end");
     equal(signal.GetValue(4.1), 1, "Value past the end");
+
+    var jsonString = signal.ToJSON();
+    var jsonObj = JSON.parse(jsonString);
+    var className = jsonObj.ClassName;
+    equal(className, "N.DiscreteSignal");
+    var signal2 = N.CreateInstance(jsonObj);
+    equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");
   });
   </script>
 </head>
