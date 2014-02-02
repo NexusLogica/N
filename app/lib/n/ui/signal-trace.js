@@ -97,14 +97,14 @@ N.UI.SignalTraceRenderer.prototype._RenderAnalogTrace = function() {
 
 N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
   var t = this.Signal.GetTimeByIndex(this._startIndex);
-  var prevState = this.Signal.GetStateChangeByIndex(this._startIndex);
+  var prevState = this.Signal.GetValueByIndex(this._startIndex);
   var tScaled = this.TimeToPixel(t);
   var statePrevScaled = this.YToPixel(prevState);
   var p = "M"+tScaled+" "+statePrevScaled;
 
   for(var i=this._startIndex+1; i <= this._endIndex; i++) {
     t = this.Signal.GetTimeByIndex(i);
-    var state = this.Signal.GetStateChangeByIndex(i);
+    var state = this.Signal.GetValueByIndex(i);
     if(state != prevState) {
       var tScaled = this.TimeToPixel(t);
       p += "L"+tScaled+" "+statePrevScaled;
@@ -113,13 +113,14 @@ N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
       statePrevScaled = stateScaled;
     }
     else if(i == this._endIndex) {
-
+      var tScaled = this.TimeToPixel(t);
+      p += "L"+tScaled+" "+statePrevScaled;
     }
     prevState = state;
   }
 
   if(!this._path) {
-    console.log(p);
+    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor });
     this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor });
   }
   else {

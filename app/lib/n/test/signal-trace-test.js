@@ -106,7 +106,7 @@ N.SignalTraceTest.prototype.CreatePulseDiscrete = function() {
   var time = 0.0;
   var nextState = 0;
   while(time < 0.100) {
-    signal.AppendStateChange(time, nextState);
+    signal.AppendValue(time, nextState);
     if(nextState == 1) {
       time += pulseWidth;
       nextState = 0;

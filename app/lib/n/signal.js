@@ -174,7 +174,7 @@ N.DiscreteSignal.prototype.GetTimeByIndex = function(index) {
   return this.Times[index];
 }
 
-N.DiscreteSignal.prototype.GetStateChangeByIndex = function(index) {
+N.DiscreteSignal.prototype.GetValueByIndex = function(index) {
   return this.Values[index];
 }
 
@@ -189,7 +189,7 @@ N.DiscreteSignal.prototype.GetIndexBeforeTime = function(t) {
   return i;
 }
 
-N.DiscreteSignal.prototype.AppendStateChange = function(time, newState) {
+N.DiscreteSignal.prototype.AppendValue = function(time, newState) {
   this.Times.push(time);
   this.Values.push(newState);
 
