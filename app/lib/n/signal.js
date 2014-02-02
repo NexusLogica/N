@@ -35,13 +35,16 @@ N.AnalogSignal = function() {
   this.Id         = N.M.GenerateUUID();
   this.Times      = [];
   this.Values     = [];
-  this._Finder    = new N.TableSearch;
+  this._finder    = new N.TableSearch;
   this.Start      = 0.0;
   this.Name       = "";
   this.ShortName  = "";
-  this.Category   = "";
+  this.Category   = 'Default';
   this.Min        = 0.0;
   this.Max        = 0.0;
+  this.MinLimit   = 0.0;
+  this.MaxLimit   = 100.0;
+  this.Unit       = "Hz";
 }
 
 N.AnalogSignal.prototype = new N.Signal;
@@ -55,7 +58,7 @@ N.AnalogSignal.prototype.GetValue = function(time) {
     return this.Values[0];
   }
 
-  var i = this._Finder.Find(t, this.Times);
+  var i = this._finder.Find(t, this.Times);
   if(i < 0) {
     return this.Values[0];
   }
@@ -100,12 +103,23 @@ N.AnalogSignal.prototype.AppendData = function(time, value) {
   }
 }
 
+N.AnalogSignal.prototype.GetIndexBeforeTime = function(t) {
+  var i = this._finder.Find(t, this.Times);
+  if(i < 0) {
+    return 0;
+  }
+  else if(i >= this.Times.length-1) {
+    return this.Times.length-1;
+  }
+  return i;
+}
+
 N.AnalogSignal.prototype.GetNumSamples = function() {
   return this.Values.length;
 }
 
 N.AnalogSignal.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k == "_Finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k == "_finder" ? undefined : v); });
   return str;
 }
 
@@ -120,13 +134,16 @@ N.DiscreteSignal = function() {
   this.StateType  = N.DiscreteSignal.BISTATE;
   this.Times      = [];
   this.Values     = [];
-  this._Finder    = new N.TableSearch;
+  this._finder    = new N.TableSearch;
   this.Start      = 0.0;
   this.Name       = "";
   this.ShortName  = "";
-  this.Category   = "";
+  this.Category   = 'Default';
   this.Min        = 0;
   this.Max        = 0;
+  this.MinLimit   = 0.0;
+  this.MaxLimit   = 1.0;
+  this.Unit       = "State";
 }
 
 N.DiscreteSignal.BISTATE = 1;
@@ -136,6 +153,7 @@ N.DiscreteSignal.prototype = new N.Signal;
 
 N.DiscreteSignal.prototype.SetStateType = function(stateType) {
   this.StateType = stateType;
+  this.MinLimit = (stateType == N.DiscreteSignal.BISTATE ? 0.0 : -1.0);
 }
 
 N.DiscreteSignal.prototype.GetValue = function(time) {
@@ -146,7 +164,7 @@ N.DiscreteSignal.prototype.GetValue = function(time) {
     }
     return 0;
   }
-  var i = this._Finder.Find(t, this.Times);
+  var i = this._finder.Find(t, this.Times);
   if(i < 0) { i = 0; }
   if(i >= this.Times.length) { i = this.Times.length-1; }
   return this.Values[i];
@@ -158,6 +176,17 @@ N.DiscreteSignal.prototype.GetTimeByIndex = function(index) {
 
 N.DiscreteSignal.prototype.GetStateChangeByIndex = function(index) {
   return this.Values[index];
+}
+
+N.DiscreteSignal.prototype.GetIndexBeforeTime = function(t) {
+  var i = this._finder.Find(t, this.Times);
+  if(i < 0) {
+    return 0;
+  }
+  else if(i >= this.Times.length-1) {
+    return this.Times.length-1;
+  }
+  return i;
 }
 
 N.DiscreteSignal.prototype.AppendStateChange = function(time, newState) {
@@ -181,7 +210,7 @@ N.DiscreteSignal.prototype.GetNumSamples = function() {
 }
 
 N.DiscreteSignal.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k == "_Finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k == "_finder" ? undefined : v); });
   return str;
 }
 

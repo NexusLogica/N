@@ -8,16 +8,11 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('SignalTraceController', ['$scope',
   function SignalTraceController($scope) {
-    $scope.blah = "XXX";
-    $scope.setSignalTrace = function(trace) {
-      console.log(trace);
-    }
   }
 ]);
 
 nSimAppControllers.controller('SimulationCtrl', ['$scope',
   function SimulationCtrl($scope) {
-    $scope.blah = "XXX";
   }]);
 
 //***************************************************

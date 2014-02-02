@@ -1,4 +1,2 @@
-<div id="signal-trace" x="{{signal.Id}}" ng-controller="SignalTraceController">XXX
-  <div id="main-tabs span16" app-version></div>YYY
-  <n-canvas  class="signal-trace-canvas"></n-canvas>
-</div>
+<n-canvas class="n-canvas signal-trace-canvas" n-type="signal-trace" n-renderer="N.Test.SignalTraceTestRenderer" n-signal-id="{{signal.Id}}">
+</n-canvas>

@@ -10,21 +10,24 @@ nSimAppDirectives.directive('appVersion', ['version', function(version) {
     };
   }]);
 
+nSimAppDirectives.directive('xxxxnSignalId', [function() {
+    function link($scope, $element, $attrs) {
+      $scope.signalId = $attrs['nSignalId'];
+      $scope.SetSignalTrace($scope.signalId);
+    }
+    return {
+      link: link
+    }
+  }]);
+
 nSimAppDirectives.directive('nCanvas', function() {
   function link($scope, $element, $attrs) {
-    $scope.blah = "XXX"
-    var paperParent = $($element).find("div");
-
-    $scope.paper = Raphael(paperParent[0], paperParent.width(), paperParent.height());
-    $scope.paper.text(20, 120, "Test").attr({ "font-size": 50, "text-anchor": "start", "font-family": "Arial" });
-    var c = $scope.paper.rect(10, 10, 50, 50);
+    $scope.paper = Raphael($element[0], $element.width(), $element.height());
     if($attrs["nRenderer"]) {
       var renderer = $attrs["nRenderer"];
-      console.log("Renderer = "+renderer);
-    }
-
-    $scope.showTrace = function(trace) {
-      console.log("showing "+trace);
+      $scope.renderer = eval("new "+renderer);
+      $scope.renderer.Configure($scope.paper, $attrs["nSignalId"]);
+      $scope.renderer.Render();
     }
   }
 
@@ -32,8 +35,6 @@ nSimAppDirectives.directive('nCanvas', function() {
     restrict: 'AE',
     transclude: true,
     scope: { title:'@' },
-    template: '<div class="n-signal-trace-canvas" signal-id="{{signal-id}}" ng-controller="SignalTraceController">' +
-              '</div>',
     link: link
   };
 });

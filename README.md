@@ -1,5 +1,9 @@
 #N
 
+NOTE: The waveforms are being rewritten as signals. The current UI may be broken, but I will be updating soon.
+
+-------
+
 A state based biological neural system simulator.
 
 There are two extremes when simulating neuronal systems. The first is to have an extremely detailed model, with spikes, compartments, ion channels,

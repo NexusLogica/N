@@ -22,7 +22,7 @@ var app = angular.module('myApp', []);
 // guidGenerator
 //   Creates a guid in string form.
 //
-app.service("guidGenerator", function() {
+nSimAppServices.service("guidGenerator", function() {
   this.CreateUUID = function() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -38,7 +38,7 @@ app.service("guidGenerator", function() {
 //   * name: must be non-zero length
 //   * waveform: valid JSON waveform as string
 //
-app.service('postNewWaveform', function($http) {
+nSimAppServices.service('postNewWaveform', function($http) {
 
   var postNewWaveform = {
     doPost: function(id, name, waveform) {
@@ -70,7 +70,7 @@ app.service('postNewWaveform', function($http) {
 //***************************************************
 // GET waveforms
 //
-app.service('getWaveforms', function($http) {
+nSimAppServices.service('getWaveforms', function($http) {
 
   var getWaveforms = {
     doGet: function() {
@@ -99,7 +99,7 @@ app.service('getWaveforms', function($http) {
 //***************************************************
 // GET waveform
 //
-app.service('getWaveform', function($http) {
+nSimAppServices.service('getWaveform', function($http) {
 
   var getWaveform = {
     doGet: function(id) {

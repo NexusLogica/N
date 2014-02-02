@@ -30,7 +30,7 @@ N.Signals = function() {
 }
 
 N.Signals.prototype.AddSignal = function(signal) {
-  return this._Signals[signal.uid] || null;
+  this._Signals[signal.Id] = signal;
 }
 
 N.Signals.prototype.GetSignal = function(uid) {

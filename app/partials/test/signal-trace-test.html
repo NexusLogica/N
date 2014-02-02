@@ -1,6 +1,10 @@
+<div ng-include="'partials/title-bar.html'"></div>
+<div class="row signal-trace-test-top">
+  <div class="n-large-title col-lg-5 col-lg-offset-1">Signal Trace UI Testing</div>
+</div>
 <div>
-  <div class="n-signal-trace-trace-parent"  ng-repeat="signal in signals">
-    Name: {{signal.Name}}
-    <div ng-include="'partials/signal-trace.html'" class="signal-trace-test-container"></div>
+  <div class="row signal-trace-test"  ng-repeat="signal in signals">
+    <div class="col-lg-3 col-lg-offset-3 n-small-title">Name: <span style="font-weight: normal">{{signal.Name}}</span> </div>
+    <div class="signal-trace-test-container col-lg-6" ng-include="'partials/signal-trace.html'"  ng-controller="SignalTraceTestController" ></div>
   </div>
 </div>
