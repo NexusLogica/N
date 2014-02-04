@@ -6,14 +6,26 @@
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
-nSimAppControllers.controller('SignalTraceController', ['$scope',
+nSimAppControllers.controller('SignalTraceController', ['$scope', '$rootScope',
   function SignalTraceController($scope) {
+
   }
 ]);
 
 nSimAppControllers.controller('SimulationCtrl', ['$scope',
   function SimulationCtrl($scope) {
   }]);
+
+nSimAppControllers.controller('SignalGraphControlsController', ['$scope', '$rootScope',
+  function SignalGraphControlsController($scope, $rootScope) {
+    $scope.onRangeModification = function($event) {
+      // Broadcast the event.
+      var min = $event.min;
+      var max = $event.max;
+    }
+  }
+]);
+
 
 //***************************************************
 // HeaderController

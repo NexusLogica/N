@@ -1,0 +1,60 @@
+<style>
+
+.signal-graph-controls {
+  border: 1px silver solid;
+  padding: 20px;
+}
+
+.range-slider {
+  width: 300px;
+}
+
+.pan-limits {
+  position:relative;
+  width: 100px;
+  height: 20px;
+  background-color: red;
+}
+
+.pan-slider {
+  position:relative;
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}
+
+</style>
+
+<div class="signal-graph-controls"  ng-controller="SignalGraphControlsController">
+  <div>Slider</div>
+  <div class="range-slider" n-slidestop="onRangeModification($event)"></div>
+  <div style="position:relative;">
+    <div class="pan-limits">
+      <div class="pan-slider"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+//  debugger;
+
+  $('.range-slider').slider({
+    min:0,
+    max:100,
+    value:[20, 80],
+    formater: function(val) {
+      return (""+val+" ms");
+    }
+  });
+  //.on('slideStop', function(event) {
+  //  var el = $('.signal-graph-controls');
+  //  el.scope().onRangeModification(event.target.value[0], event.target.value[1]);
+  //});
+
+  $('.pan-slider').draggable({
+    containment: "parent"
+  });
+
+
+</script>
+

@@ -40,3 +40,41 @@ nSimAppDirectives.directive('nCanvas', function() {
 });
 
 
+// The slide stop event.
+nSimAppDirectives.directive(
+  'nSlidestop',
+  ['$parse', function($parse) { return { compile: function($element, attr) {
+    var nattr = attr['nSlidestop'];
+    var fn = $parse(nattr);
+    return function(scope, element, attr) {
+      element.on(
+        'slideStop',
+        function(event) {
+          scope.$apply(
+            function() {
+              fn(scope, {$event:{ min:event.value[0], max:event.value[1]}});
+            }
+          );
+        }
+      );
+    }
+  }
+} }]
+);
+
+/*
+, function() {
+  return {
+    compile: function($element, attr) {
+      var fn = $parse(attr['n-slide-stop']);
+      return function(scope, element, attr) {
+        element.on('slideStop', function(event) {
+          scope.$apply(function() {
+            fn(scope, {$event:event});
+          });
+        }}
+        ;
+      };
+    }
+  }
+*/
