@@ -47,7 +47,18 @@ N.UI.SignalTraceRenderer.prototype.SetCanvasBoundary = function(box) {
   this._needsRecalc = true;
 }
 
-N.UI.SignalTraceRenderer.prototype.SetScale = function(timeAtOrigin, scale) {
+N.UI.SignalTraceRenderer.prototype.SetScale = function(min, max) {
+  var num = this.Signal.GetNumSamples();
+  if(num > 1) {
+    var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
+    this._scale = (this._boundary.width/range)/(max-min);
+    this._timeAtOrigin = range*min;
+  }
+  this._needsRecalc = true;
+  this.Render();
+}
+
+N.UI.SignalTraceRenderer.prototype.SetAbsoluteScale = function(timeAtOrigin, scale) {
   this._timeAtOrigin = timeAtOrigin;
   this._scale = scale;
   this._needsRecalc = true;
@@ -88,7 +99,8 @@ N.UI.SignalTraceRenderer.prototype._RenderAnalogTrace = function() {
   }
 
   if(!this._path) {
-    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor });
+    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor })
+        .attr({ 'clip-rect': this._boundary.x+' '+this._boundary.y+' '+this._boundary.width+' '+this._boundary.height });
   }
   else {
     this._path.attr({ 'path': p });
@@ -120,8 +132,8 @@ N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
   }
 
   if(!this._path) {
-    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor });
-    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor });
+    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor })
+        .attr({ 'clip-rect': this._boundary.x+' '+this._boundary.y+' '+this._boundary.width+' '+this._boundary.height });
   }
   else {
     this._path.attr({ 'path': p });
@@ -145,7 +157,7 @@ N.UI.SignalTraceRenderer.prototype._RenderXAxis = function() {
 // where scale is d(pixel)/d(time)
 //
 N.UI.SignalTraceRenderer.prototype.TimeToPixel = function(time) {
-  var pixel = this._scale*time-this._timeAtOrigin+this._boundary.x;
+  var pixel = this._scale*(time-this._timeAtOrigin)+this._boundary.x;
   return pixel;
 }
 

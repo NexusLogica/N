@@ -34,6 +34,8 @@ N.AnalogSignal = function() {
   this.Type       = N.Signal.ANALOG;
   this.Id         = N.M.GenerateUUID();
   this.Times      = [];
+  this.TimeMin    = 0.0;
+  this.TimeMax    = 0.0;
   this.Values     = [];
   this._finder    = new N.TableSearch;
   this.Start      = 0.0;
@@ -85,11 +87,15 @@ N.AnalogSignal.prototype.GetValueByIndex = function(index) {
 N.AnalogSignal.prototype.AppendData = function(time, value) {
   this.Times.push(time);
   this.Values.push(value);
-  if(this.Times > 1) {
+  if(this.Times.length == 0) {
+    this.TimeMin = this.TimeMax = time;
+  }
+  if(this.Times.length > 1) {
     if(this.Times[this.Times.length-2] == time) {
       N.LogError("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
       throw new Error("N.AnalogSignal.AppendData sequence issue");
     }
+    this.TimeMax = time;
   }
   if(this.Values.length == 1) {
     this.Max = value;
@@ -133,6 +139,8 @@ N.DiscreteSignal = function() {
   this.Id         = N.M.GenerateUUID();
   this.StateType  = N.DiscreteSignal.BISTATE;
   this.Times      = [];
+  this.TimeMin    = 0.0;
+  this.TimeMax    = 0.0;
   this.Values     = [];
   this._finder    = new N.TableSearch;
   this.Start      = 0.0;
@@ -192,6 +200,17 @@ N.DiscreteSignal.prototype.GetIndexBeforeTime = function(t) {
 N.DiscreteSignal.prototype.AppendValue = function(time, newState) {
   this.Times.push(time);
   this.Values.push(newState);
+
+  if(this.Times.length == 0) {
+    this.TimeMin = this.TimeMax = time;
+  }
+  if(this.Times.length > 1) {
+    if(this.Times[this.Times.length-2] == time) {
+      N.LogError("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
+      throw new Error("N.AnalogSignal.AppendData sequence issue");
+    }
+    this.TimeMax = time;
+  }
 
   if(this.Values.length == 1) {
     this.Max = newState;

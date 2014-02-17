@@ -6,22 +6,66 @@
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
+  //************************
+  //* SimulationController *
+  //************************
+
+nSimAppControllers.controller('SimulationController', ['$scope',
+  function SimulationController($scope) {
+  }]);
+
+  //*************************
+  //* SignalTraceController *
+  //*************************
+
 nSimAppControllers.controller('SignalTraceController', ['$scope', '$rootScope',
   function SignalTraceController($scope) {
-
+    $scope.$on('graph:range-modification', function(event, min, max) {
+      $scope.renderer.SetScale(min, max);
+    });
   }
 ]);
 
-nSimAppControllers.controller('SimulationCtrl', ['$scope',
-  function SimulationCtrl($scope) {
-  }]);
+  //*********************************
+  //* SignalGraphControlsController *
+  //*********************************
 
-nSimAppControllers.controller('SignalGraphControlsController', ['$scope', '$rootScope',
-  function SignalGraphControlsController($scope, $rootScope) {
-    $scope.onRangeModification = function($event) {
+nSimAppControllers.controller('SignalGraphControlsController', ['$scope', '$rootScope', '$attrs', '$timeout',
+  function SignalGraphControlsController($scope, $rootScope, $attrs, $timeout) {
+    // The min and max values are a ratio from 0.0 to 1.0.
+    $scope.min = 0.0;
+    $scope.max = 1.0;
+
+    // The minimum and maximum time values, defaulted ot something reasonable.
+    $scope.minTime = 0.0;
+    $scope.maxTime = 1.0;
+
+    // The label string values.
+    $scope.timeMinLabel = N.ToFixed($scope.minTime);
+    $scope.timeMaxLabel = N.ToFixed($scope.maxTime);
+
+    $scope.onRangeModification = function(min, max) {
       // Broadcast the event.
-      var min = $event.min;
-      var max = $event.max;
+      $scope.min = min;
+      $scope.max = max;
+      $scope.$emit('graph-controls:range-modification', min, max);
+      $scope.updateLabels();
+    }
+
+    $scope.setRangeLimits = function(minLimit, maxLimit) {
+      $scope.minTime = minLimit;
+      $scope.maxTime = maxLimit;
+      $scope.updateLabels();
+    }
+
+    $scope.updateLabels = function() {
+      $timeout(function() {
+        var minLabel = ($scope.maxTime-$scope.minTime)*$scope.min+$scope.minTime;
+        var maxLabel = ($scope.maxTime-$scope.minTime)*$scope.max+$scope.minTime;
+        $scope.timeMinLabel = N.ToFixed(minLabel, 3);
+        $scope.timeMaxLabel = N.ToFixed(maxLabel, 3);
+        $scope.$digest();
+      });
     }
   }
 ]);

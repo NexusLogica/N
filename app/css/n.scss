@@ -313,7 +313,7 @@ textarea {
 }
 
 .waveform-viewer-container .action-container .btn-warning {
-  margin-left: 31 px;
+  margin-left: 31px;
 }
 
 .waveform-viewer-container .action-container button {
@@ -346,6 +346,85 @@ textarea {
     }
   }
 }
+
+//*****************************
+// Signal graph controller
+
+.signal-graph-controls {
+  border: 1px silver solid;
+  padding: 20px;
+  $background-color: #f8f7f6;
+
+  .range-display {
+    margin-bottom: 10px;
+    div {
+      display: inline-block;
+    }
+  }
+
+  .range-display {
+    .range-label {
+      width: 81px;
+    }
+    .range-number {
+      width:100px;
+      text-align: center;
+      border: solid 1px #EEE;
+      margin-left:7px;
+    }
+  }
+
+  .pan-slider {
+    width: 200px;
+    left: 50px;
+  }
+
+  .range-slider {
+    margin-bottom: 10px;
+    width: 300px;
+    a.ui-slider-handle.ui-corner-all.ui-state-hover:hover,
+    a.ui-slider-handle.ui-corner-all.ui-state-focus {
+      background-image: none;
+      background-color: $background-color;
+      outline: 0;
+    }
+  }
+
+  .pan-slider {
+    visibility: hidden;
+    a.ui-slider-handle.ui-corner-all,
+    a.ui-slider-handle.ui-corner-all.ui-state-focus {
+      visibility: visible;
+      background-color: $background-color;
+      margin-left: -50px;
+      width: 100px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      color: #654b24;
+      text-align: center;
+      height: 23px;
+      background-image: none;
+      text-decoration: none;
+      outline: 0;
+    }
+
+    a.ui-slider-handle.ui-corner-all.ui-state-hover:hover {
+      visibility: visible;
+      background-color: $background-color;
+      text-decoration: none;
+      background-image: none;
+      color: #654b24;
+    }
+  }
+
+  .ui-widget-header {
+    background-image: none;
+  }
+}
+
+
+//*****************************
+// Canvas
 
 .n-canvas {
   position: relative;

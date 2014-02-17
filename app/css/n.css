@@ -214,7 +214,7 @@ textarea {
   border-top: solid #8fbcdb 1px; }
 
 .waveform-viewer-container .action-container .btn-warning {
-  margin-left: 31 px; }
+  margin-left: 31px; }
 
 .waveform-viewer-container .action-container button {
   margin-left: 6px; }
@@ -237,6 +237,56 @@ textarea {
       width: 600px;
       height: 100px;
       border: solid 1px #DDD; }
+
+.signal-graph-controls {
+  border: 1px silver solid;
+  padding: 20px; }
+  .signal-graph-controls .range-display {
+    margin-bottom: 10px; }
+    .signal-graph-controls .range-display div {
+      display: inline-block; }
+  .signal-graph-controls .range-display .range-label {
+    width: 81px; }
+  .signal-graph-controls .range-display .range-number {
+    width: 100px;
+    text-align: center;
+    border: solid 1px #EEE;
+    margin-left: 7px; }
+  .signal-graph-controls .pan-slider {
+    width: 200px;
+    left: 50px; }
+  .signal-graph-controls .range-slider {
+    margin-bottom: 10px;
+    width: 300px; }
+    .signal-graph-controls .range-slider a.ui-slider-handle.ui-corner-all.ui-state-hover:hover,
+    .signal-graph-controls .range-slider a.ui-slider-handle.ui-corner-all.ui-state-focus {
+      background-image: none;
+      background-color: #f8f7f6;
+      outline: 0; }
+  .signal-graph-controls .pan-slider {
+    visibility: hidden; }
+    .signal-graph-controls .pan-slider a.ui-slider-handle.ui-corner-all,
+    .signal-graph-controls .pan-slider a.ui-slider-handle.ui-corner-all.ui-state-focus {
+      visibility: visible;
+      background-color: #f8f7f6;
+      margin-left: -50px;
+      width: 100px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      color: #654b24;
+      text-align: center;
+      height: 23px;
+      background-image: none;
+      text-decoration: none;
+      outline: 0; }
+    .signal-graph-controls .pan-slider a.ui-slider-handle.ui-corner-all.ui-state-hover:hover {
+      visibility: visible;
+      background-color: #f8f7f6;
+      text-decoration: none;
+      background-image: none;
+      color: #654b24; }
+  .signal-graph-controls .ui-widget-header {
+    background-image: none; }
 
 .n-canvas {
   position: relative;

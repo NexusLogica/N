@@ -1,60 +1,53 @@
-<style>
-
-.signal-graph-controls {
-  border: 1px silver solid;
-  padding: 20px;
-}
-
-.range-slider {
-  width: 300px;
-}
-
-.pan-limits {
-  position:relative;
-  width: 100px;
-  height: 20px;
-  background-color: red;
-}
-
-.pan-slider {
-  position:relative;
-  width: 20px;
-  height: 20px;
-  background-color: green;
-}
-
-</style>
-
-<div class="signal-graph-controls"  ng-controller="SignalGraphControlsController">
-  <div>Slider</div>
-  <div class="range-slider" n-slidestop="onRangeModification($event)"></div>
-  <div style="position:relative;">
-    <div class="pan-limits">
-      <div class="pan-slider"></div>
-    </div>
+<div class="signal-graph-controls" data-n-signal-graph-range="{{signalsMinRange}},{{signalsMaxRange}}"  data-range-min="{{signalsMinRange}}" data-range-max="{{signalsMaxRange}}"  ng-controller="SignalGraphControlsController">
+  <div class="range-display">
+    <div class='range-label'>Time range:</div><div class='range-number'>{{timeMinLabel}}</div> <div class='range-number'>{{timeMaxLabel}}</div>
   </div>
+  <div class="range-slider" n-slidestop="onRangeModification($event)"></div>
+  <div class="pan-slider"></div>
 </div>
 
 <script>
-//  debugger;
 
-  $('.range-slider').slider({
-    min:0,
-    max:100,
-    value:[20, 80],
-    formater: function(val) {
-      return (""+val+" ms");
-    }
-  });
-  //.on('slideStop', function(event) {
-  //  var el = $('.signal-graph-controls');
-  //  el.scope().onRangeModification(event.target.value[0], event.target.value[1]);
-  //});
+$('.range-slider').slider({
+  min:0,
+  max:100,
+  values:[0, 100],
+  range: true,
+  slide: function(event, ui) {
+    var min = ui.values[0],
+        max = ui.values[1];
+    $(ui.handle.parentElement).scope().onRangeModification(min/100.0, max/100.0);
 
-  $('.pan-slider').draggable({
-    containment: "parent"
-  });
+    // Update the pan slider.
+    var diff = max-min;
+    var slider = $(ui.handle.parentElement.parentElement).find('.pan-slider');
+    slider.slider(diff == 100 ? 'disable' : 'enable');
+    slider.slider('option', { max: 100-(diff), values: [min]});
+  }
+});
 
+$('.pan-slider').slider({
+  min:0,
+  max:100,
+  values: [50],
+  slide: function(event, ui) {
+    var rangeSlider = $(ui.handle.parentElement.parentElement).find('.range-slider')
+    var rangeValues = rangeSlider.slider('values');
+    var diff = rangeValues[1]-rangeValues[0];
+
+    var min = ui.values[0];
+    var minLimit = (100-diff-1);
+    if(min > minLimit) { min = minLimit; }
+    var max = (ui.values[0]+diff);
+    if(max > 100) { max = 100; }
+
+    rangeSlider.slider('option', { values : [ui.values[0], ui.values[0]+diff] } );
+    $(ui.handle.parentElement).scope().onRangeModification(min/100, max/100);
+  }
+});
+
+$('.pan-slider a').html('Pan');
+$('.pan-slider').slider('disable');
 
 </script>
 

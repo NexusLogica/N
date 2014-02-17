@@ -24,12 +24,17 @@ nSimAppControllers.controller('SignalTraceTestController', ['$scope',
   function SignalTraceTestController($scope) {
     var testSignals = new N.SignalTraceTest();
     testSignals.CreateSignals();
+    $scope.signalsMinRange = 0.0;
+    $scope.signalsMaxRange = 0.090;
     $scope.signals = testSignals.Signals;
+    $scope.$on('graph-controls:range-modification', function(event, min, max) {
+      $scope.$broadcast('graph:range-modification', min, max);
+    });
   }
 ]);
 
-nSimAppControllers.controller('SignalTraceController', ['$scope',
-  function SignalTraceTestController($scope) {
+nSimAppControllers.controller('SignalTraceTestItemController', ['$scope',
+  function SignalTraceTestItemController($scope) {
   }
 ]);
 
@@ -141,3 +146,8 @@ N.Test.SignalTraceTestRenderer.prototype.Render = function() {
   this._backgroundRect = this._paper.rect(this._box.x, this._box.y, this._box.width, this._box.height).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
   this._traceRenderer.Render();
 }
+
+N.Test.SignalTraceTestRenderer.prototype.SetScale = function(min, max) {
+  this._traceRenderer.SetScale(min, max);
+}
+

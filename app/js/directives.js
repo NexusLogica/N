@@ -25,9 +25,9 @@ nSimAppDirectives.directive('nCanvas', function() {
     $scope.paper = Raphael($element[0], $element.width(), $element.height());
     if($attrs["nRenderer"]) {
       var renderer = $attrs["nRenderer"];
-      $scope.renderer = eval("new "+renderer);
-      $scope.renderer.Configure($scope.paper, $attrs["nSignalId"]);
-      $scope.renderer.Render();
+      $scope.$parent.renderer = eval("new "+renderer);
+      $scope.$parent.renderer.Configure($scope.paper, $attrs["nSignalId"]);
+      $scope.$parent.renderer.Render();
     }
   }
 
@@ -61,6 +61,37 @@ nSimAppDirectives.directive(
   }
 } }]
 );
+
+// The slide event.
+nSimAppDirectives.directive('nSlide', ['$parse', function($parse) {
+  return {
+    compile: function($element, attr) {
+      var nattr = attr['nSlide'];
+      var fn = $parse(nattr);
+      return function(scope, element, attr) {
+        element.on('slide', function(event) {
+          scope.$apply(function() {
+            fn(scope, {$event:{ min:event.value[0], max:event.value[1]}});
+          });
+        });
+      }
+    }
+  }
+}]);
+
+// Range attribute watcher.
+nSimAppDirectives.directive('nSignalGraphRange', [function() {
+  return {
+    replace: true,
+    scope: { nSignalGraphRange: '@' },
+    link: function(scope, element, attr) {
+      scope.$watch('nSignalGraphRange', function(value) {
+        var values = value.split(',');
+        scope.$parent.setRangeLimits(values[0], values[1]);
+      });
+    }
+  }
+}]);
 
 /*
 , function() {

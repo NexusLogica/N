@@ -21,6 +21,27 @@ N.CreateInstance = function(json) {
   return obj;
 }
 
+N.ToFixed = function(value, precision) {
+  if(value == 0.0) {
+    var stringValue = '0.';
+    for(var i=0; i<precision; i++) {
+      stringValue += '0';
+    }
+    return stringValue;
+  }
+  var power = Math.pow(10, precision || 0);
+  var stringValue = String(Math.round(value * power) / power);
+  var nZeros = precision+1-(stringValue.length-stringValue.indexOf('.'));
+  for(var i=0; i<nZeros; i++) {
+    stringValue += '0';
+  }
+  return stringValue;
+}
+
+N.L = function(logText) {
+  console.log(logText);
+}
+
   //***********
   //* Signals *
   //***********
