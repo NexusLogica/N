@@ -92,20 +92,3 @@ nSimAppDirectives.directive('nSignalGraphRange', [function() {
     }
   }
 }]);
-
-/*
-, function() {
-  return {
-    compile: function($element, attr) {
-      var fn = $parse(attr['n-slide-stop']);
-      return function(scope, element, attr) {
-        element.on('slideStop', function(event) {
-          scope.$apply(function() {
-            fn(scope, {$event:event});
-          });
-        }}
-        ;
-      };
-    }
-  }
-*/

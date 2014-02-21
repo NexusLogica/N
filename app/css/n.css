@@ -77,17 +77,14 @@ textarea {
   margin-top: 20px; }
 
 .header {
-  padding: 15px 0px 15px 0px;
+  padding: 0px 0px 7px 0px;
   background-color: #294052; }
-
-.header .n-med-title-light {
-  margin-top: 7px; }
-
-.header .dropdown-toggle {
-  color: #8fbcdb; }
-
-.header .nav {
-  margin: 0px 0px 0px 0px; }
+  .header .n-med-title-light {
+    margin-top: 4px; }
+  .header .dropdown-toggle {
+    color: #8fbcdb; }
+  .header .nav {
+    margin: 7px 0px 0px 0px; }
 
 .main-tabs-container {
   margin-top: 10px; }
@@ -225,9 +222,9 @@ textarea {
 .waveform-viewer-container dt {
   width: 90px; }
 
-.signal-trace-test-top {
+.test-top {
   line-height: normal;
-  margin: 20px auto 50px auto; }
+  margin: 5px auto 30px auto; }
 
 .signal-trace-test {
   margin-bottom: 40px; }

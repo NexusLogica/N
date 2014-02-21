@@ -131,20 +131,20 @@ textarea {
 // Header
 
 .header {
-  padding: 15px 0px 15px 0px;
+  padding: 0px 0px 7px 0px;
   background-color: $color-dark;
-}
 
-.header .n-med-title-light {
-  margin-top: 7px;
-}
+  .n-med-title-light {
+    margin-top: 4px;
+  }
 
-.header .dropdown-toggle {
-  color: $color-med;
-}
+  .dropdown-toggle {
+    color: $color-med;
+  }
 
-.header .nav {
-  margin: 0px 0px 0px 0px;
+  .nav {
+    margin: 7px 0px 0px 0px;
+  }
 }
 
 //*****************************
@@ -328,9 +328,12 @@ textarea {
   width: 90px;
 }
 
-.signal-trace-test-top {
+//*****************************
+// Signal graph controller
+
+.test-top {
   line-height: normal;
-  margin: 20px auto 50px auto;
+  margin: 5px auto 30px auto;
 }
 
 .signal-trace-test {

@@ -10,6 +10,9 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
+'use strict';
+
+var N = N || {};
 
   //**********
   //* Signal *
@@ -37,7 +40,7 @@ N.AnalogSignal = function() {
   this.TimeMin    = 0.0;
   this.TimeMax    = 0.0;
   this.Values     = [];
-  this._finder    = new N.TableSearch;
+  this._finder    = new N.TableSearch();
   this.Start      = 0.0;
   this.Name       = "";
   this.ShortName  = "";
@@ -49,7 +52,7 @@ N.AnalogSignal = function() {
   this.Unit       = "Hz";
 }
 
-N.AnalogSignal.prototype = new N.Signal;
+N.AnalogSignal.prototype = new N.Signal();
 
 N.AnalogSignal.prototype.GetValue = function(time) {
   var t = time-this.Start;
@@ -87,17 +90,17 @@ N.AnalogSignal.prototype.GetValueByIndex = function(index) {
 N.AnalogSignal.prototype.AppendData = function(time, value) {
   this.Times.push(time);
   this.Values.push(value);
-  if(this.Times.length == 0) {
+  if(this.Times.length === 0) {
     this.TimeMin = this.TimeMax = time;
   }
   if(this.Times.length > 1) {
-    if(this.Times[this.Times.length-2] == time) {
+    if(this.Times[this.Times.length-2] === time) {
       N.LogError("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
       throw new Error("N.AnalogSignal.AppendData sequence issue");
     }
     this.TimeMax = time;
   }
-  if(this.Values.length == 1) {
+  if(this.Values.length === 1) {
     this.Max = value;
     this.Min = value;
   }
@@ -106,6 +109,13 @@ N.AnalogSignal.prototype.AppendData = function(time, value) {
   }
   else if(value < this.Min) {
     this.Min = value;
+  }
+}
+
+N.AnalogSignal.prototype.AppendDataArray = function(dataArray) {
+  for(var i=0; i<dataArray.length; i++) {
+    var dataSet = dataArray[i];
+    this.AppendData(dataSet.t, dataSet.v);
   }
 }
 
@@ -125,7 +135,7 @@ N.AnalogSignal.prototype.GetNumSamples = function() {
 }
 
 N.AnalogSignal.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k == "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
   return str;
 }
 
@@ -142,7 +152,7 @@ N.DiscreteSignal = function() {
   this.TimeMin    = 0.0;
   this.TimeMax    = 0.0;
   this.Values     = [];
-  this._finder    = new N.TableSearch;
+  this._finder    = new N.TableSearch();
   this.Start      = 0.0;
   this.Name       = "";
   this.ShortName  = "";
@@ -157,17 +167,17 @@ N.DiscreteSignal = function() {
 N.DiscreteSignal.BISTATE = 1;
 N.DiscreteSignal.TRISTATE = 2;
 
-N.DiscreteSignal.prototype = new N.Signal;
+N.DiscreteSignal.prototype = new N.Signal();
 
 N.DiscreteSignal.prototype.SetStateType = function(stateType) {
   this.StateType = stateType;
-  this.MinLimit = (stateType == N.DiscreteSignal.BISTATE ? 0.0 : -1.0);
+  this.MinLimit = (stateType === N.DiscreteSignal.BISTATE ? 0.0 : -1.0);
 }
 
 N.DiscreteSignal.prototype.GetValue = function(time) {
   var t = time-this.Start;
   if(this.Times.length < 2) {
-    if(this.Times.length == 1) {
+    if(this.Times.length === 1) {
       return this.Values[0];
     }
     return 0;
@@ -197,22 +207,22 @@ N.DiscreteSignal.prototype.GetIndexBeforeTime = function(t) {
   return i;
 }
 
-N.DiscreteSignal.prototype.AppendValue = function(time, newState) {
+N.DiscreteSignal.prototype.AppendData = function(time, newState) {
   this.Times.push(time);
   this.Values.push(newState);
 
-  if(this.Times.length == 0) {
+  if(this.Times.length === 0) {
     this.TimeMin = this.TimeMax = time;
   }
   if(this.Times.length > 1) {
-    if(this.Times[this.Times.length-2] == time) {
+    if(this.Times[this.Times.length-2] === time) {
       N.LogError("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
       throw new Error("N.AnalogSignal.AppendData sequence issue");
     }
     this.TimeMax = time;
   }
 
-  if(this.Values.length == 1) {
+  if(this.Values.length === 1) {
     this.Max = newState;
     this.Min = newState;
   }
@@ -224,12 +234,19 @@ N.DiscreteSignal.prototype.AppendValue = function(time, newState) {
   }
 }
 
+N.DiscreteSignal.prototype.AppendDataArray = function(dataArray) {
+  for(var i=0; i<dataArray.length; i++) {
+    var dataSet = dataArray[i];
+    this.AppendData(dataSet.t, dataSet.v);
+  }
+}
+
 N.DiscreteSignal.prototype.GetNumSamples = function() {
   return this.Values.length;
 }
 
 N.DiscreteSignal.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k == "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
   return str;
 }
 
@@ -240,9 +257,9 @@ N.DiscreteSignal.prototype.ToJSON = function() {
 N.TableSearch = function() {
   this.ClassName  = "N.TableSearch";
   this.indexLow = 0;
-  this.indexHigh;
-  this.ascending;
-  this.size;
+  this.indexHigh = 0;
+  this.ascending = true;
+  this.size = 0;
 }
 
 N.TableSearch.prototype.GetIndexLow = function() {
@@ -263,14 +280,14 @@ N.TableSearch.prototype.Find = function(xTarget, x) {
     this.indexHigh = this.size;
   }
   else {
-    if ((xTarget >= x[this.indexLow]) == this.ascending) {
-      if(this.indexLow == this.size-1) {
+    if ((xTarget >= x[this.indexLow]) === this.ascending) {
+      if(this.indexLow === this.size-1) {
         return this.indexLow;
       }
       this._HuntUp(xTarget,x);
     }
     else {
-      if(this.indexLow == 0)  {
+      if(this.indexLow === 0)  {
         this.indexLow = -1;
         return this.indexLow;
       }
@@ -286,7 +303,7 @@ N.TableSearch.prototype._HuntUp = function(xTarget, x) {
   var increment = 1;
   this.indexHigh = this.indexLow+1;
 
-  while((xTarget >= x[this.indexHigh]) == this.ascending) {
+  while((xTarget >= x[this.indexHigh]) === this.ascending) {
 
     // Double the hunting increment.
     this.indexLow = this.indexHigh;
@@ -306,7 +323,7 @@ N.TableSearch.prototype._HuntDown = function(xTarget, x) {
   this.indexHigh = this.indexLow;
   this.indexLow -= 1;
 
-  while(xTarget < x[this.indexLow] == this.ascending) {
+  while(xTarget < x[this.indexLow] === this.ascending) {
     // Double the hunting increment.
     this.indexHigh = this.indexLow;
     increment += increment;
@@ -321,10 +338,10 @@ N.TableSearch.prototype._HuntDown = function(xTarget, x) {
 }
 
 N.TableSearch.prototype._Bisection = function(xTarget, x) { // xTarget is float, x is array of floats
-  while(this.indexHigh-this.indexLow != 1) {
+  while(this.indexHigh-this.indexLow !== 1) {
     var indexMiddle = (this.indexHigh+this.indexLow) >> 1;
 
-    if((xTarget > x[indexMiddle]) == this.ascending) {
+    if((xTarget > x[indexMiddle]) === this.ascending) {
       this.indexLow = indexMiddle;
     }
     else {

@@ -1,3 +1,21 @@
+<!--
+
+  File     : signal-graph-controls.js
+  Project  : N Simulator Library
+  Purpose  : Template file for signal graph control user interface.
+  Revisions: Original definition by Lawrence Gunn.
+             2014/02/02
+
+  Notes    : This is for setting and modifying display limits. On change this emits 'graph-controls:range-modification' with
+             the minimum and maximum values (currently as a fraction with values between 0.0 and 1.0 respectively).
+
+  Usage    : <div ng-include="'partials/signal-graph-controls.html'"></div>
+
+  Copyright (c) 2014 by Lawrence Gunn
+  All Rights Reserved.
+
+-->
+
 <div class="signal-graph-controls" data-n-signal-graph-range="{{signalsMinRange}},{{signalsMaxRange}}"  data-range-min="{{signalsMinRange}}" data-range-max="{{signalsMaxRange}}"  ng-controller="SignalGraphControlsController">
   <div class="range-display">
     <div class='range-label'>Time range:</div><div class='range-number'>{{timeMinLabel}}</div> <div class='range-number'>{{timeMaxLabel}}</div>

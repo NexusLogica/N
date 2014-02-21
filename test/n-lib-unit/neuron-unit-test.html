@@ -2,12 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>N Signal Unit Tests</title>
+  <title>N Neuron Unit Tests</title>
 
   <link rel="stylesheet" href="../../app/lib/qunit/qunit.css">
   <script src="../../app/lib/qunit/qunit.js"></script>
   <script src="../../app/lib/json2.js"></script>
   <script src="../../app/lib/n/n.js"></script>
+  <script src="../../app/lib/n/neuron.js"></script>
+  <script src="../../app/lib/n/compartments.js"></script>
   <script src="../../app/lib/n/signal.js"></script>
 
 
@@ -23,53 +25,28 @@
     QUnit.push(diff < tolerance, actual, expected, actualMessage);
   };
 
-  var sequence = [0.0, 0.5, 1.5, 2.0, 3.5, 3.6, 4.0];
-  var values = [1.0, 0.5, 1.5, -1.0, -1.0, 2.5, 0.1];
-  var states = [1, 0, 0, 1, -1, -1, 1];
+  test("Neuron test", function() {
+    var neuron = new N.Neuron();
 
-  test("TableSearch tests", function() {
-    var search = new N.TableSearch;
+    equal(neuron.GetNumCompartments(), 0, "No initial compartments");
 
-    equal(search.GetIndexLow(), 0, "Initially zero");
-    equal(search.Find(-0.5, sequence), -1, "Target before sequence");
-    equal(search.Find(0.25, sequence), 0, "Target first in sequence");
-    equal(search.Find(3.9, sequence), sequence.length-2, "Target just before end of sequence");
-    equal(search.Find(4.1, sequence), sequence.length-1, "Target after sequence");
+    var outputCompartment = new N.Comp.StateOutput(neuron, 'StateOutput');
+    neuron.AddCompartment(outputCompartment);
 
-    // Test hunting down the sequence
-    equal(search.Find(1.0, sequence), 1);
+    equal(neuron.GetNumCompartments(), 1, "One compartment");
+    equal(neuron.Compartments[0].Name, 'StateOutput', "Compartment name");
+    equal(neuron.Compartments[0].ShortName, 'SO', 'Compartment short name');
+
+    var signalInput = new N.Comp.SignalInput(outputCompartment);
+    outputCompartment.SetInput(signalInput);
+    equal(neuron.Compartments[0].Input.ClassName, 'N.Comp.SignalInput', 'Compartment class name');
+
+    var signal = new N.DiscreteSignal();
+    signal.AppendDataArray( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
+    equal(neuron.Compartments[0].Input.ClassName, 'N.Comp.SignalInput', 'Component imput class name');
+
   });
-  test("AnalogSignal tests", function() {
-    var signal = new N.AnalogSignal;
-
-    equal(signal.GetNumSamples(), 0, "No initial samples");
-    QUnit.assert.near(signal.GetValue(1.0), 0.0, "Value with no samples");
-
-    var range = signal.GetRange();
-    equal(range.Min, 0.0, "Initial range minimum");
-    equal(range.Max, 0.0, "Initial range maximum");
-
-    for(var i=0; i<sequence.length; i++) {
-      signal.AppendData(sequence[i], values[i]);
-      if(i == 0) {
-        QUnit.assert.near(signal.GetValue(1.0), 1.0, "Value with only one sample");
-      }
-    }
-    equal(signal.GetNumSamples(), sequence.length, "Added "+sequence.length+" samples");
-
-    QUnit.assert.near(signal.GetValue(0.0), 1.0, "Value at first time index");
-    QUnit.assert.near(signal.GetValue(0.25), 0.75, "Value between first and second index");
-    QUnit.assert.near(signal.GetValue(0.125), 0.875, "Value between first and second index");
-    QUnit.assert.near(signal.GetValue(3.7), 1.90, "Value near the end");
-    QUnit.assert.near(signal.GetValue(4.1), 0.1, "Value past the end");
-    var jsonString = signal.ToJSON();
-    var jsonObj = JSON.parse(jsonString);
-    var className = jsonObj.ClassName;
-    equal(className, "N.AnalogSignal");
-    var signal2 = N.CreateInstance(jsonObj);
-    equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");
-  });
-
+/*
   test("DiscreteSignal tests", function() {
     var signal = new N.DiscreteSignal;
     equal(signal.StateType, N.DiscreteSignal.BISTATE, "Initial state is bistate");
@@ -104,6 +81,7 @@
     var signal2 = N.CreateInstance(jsonObj);
     equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");
   });
+*/
   </script>
 </head>
 <body>
