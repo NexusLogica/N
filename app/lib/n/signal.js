@@ -32,7 +32,7 @@ N.Signal.prototype.GetRange = function() {
   //* AnalogSignal *
   //****************
 
-N.AnalogSignal = function() {
+N.AnalogSignal = function(name, shortName) {
   this.ClassName  = "N.AnalogSignal";
   this.Type       = N.Signal.ANALOG;
   this.Id         = N.M.GenerateUUID();
@@ -42,8 +42,8 @@ N.AnalogSignal = function() {
   this.Values     = [];
   this._finder    = new N.TableSearch();
   this.Start      = 0.0;
-  this.Name       = "";
-  this.ShortName  = "";
+  this.Name       = (typeof name === 'string' ? name : "");
+  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : "");
   this.Category   = 'Default';
   this.Min        = 0.0;
   this.Max        = 0.0;
@@ -95,7 +95,7 @@ N.AnalogSignal.prototype.AppendData = function(time, value) {
   }
   if(this.Times.length > 1) {
     if(this.Times[this.Times.length-2] === time) {
-      N.LogError("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
+      N.L("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
       throw new Error("N.AnalogSignal.AppendData sequence issue");
     }
     this.TimeMax = time;
@@ -134,6 +134,56 @@ N.AnalogSignal.prototype.GetNumSamples = function() {
   return this.Values.length;
 }
 
+N.AnalogSignal.prototype.Average = function() {
+  if(this.Times.length < 2) {
+    if(this.Times.length === 1) {
+      return this.Values[0];
+    }
+    return 0.0;
+  }
+
+  var sum = 0.0;
+  var t0 = this.Times[0];
+  var tPrev = t0;
+  var vPrev = this.Values[0];
+  for(var i=1; i<this.Times.length; i++) {
+    var t = this.Times[i];
+    var v = this.Values[i];
+    sum += 0.5*(v+vPrev)*(t-tPrev);
+    tPrev = t;
+    vPrev = v;
+  }
+  var avg = sum/(tPrev-t0);
+  return avg;
+}
+
+N.AnalogSignal.prototype.AvgAbsDeviation = function(otherSignal) {
+  var tMinSelf = this.Times[0];
+  var tMinOth  = otherSignal.Times[0];
+  var tMaxSelf = this.Times[this.Times.length-1];
+  var tMaxOth  = otherSignal.Times[otherSignal.Times.length-1];
+
+  var tMin = (tMinSelf < tMinOth ? tMinSelf : tMinOth);
+  var tMax = (tMaxSelf < tMaxOth ? tMaxSelf : tMaxOth);
+  if(tMax <= tMin) {
+    return 0.0;
+  }
+  return this.AvgAbsDeviationWithInterval(otherSignal, tMin, tMax);
+}
+
+N.AnalogSignal.prototype.AvgAbsDeviationWithInterval = function(otherSignal, tMin, tMax) {
+  var sum = 0.0;
+  var t = tMin;
+  var tMaxPlus = tMax+0.1* N.TimeStep;
+  while(t < tMaxPlus) {
+    var vDiff = (this.GetValue(t)-otherSignal.GetValue(t));
+    sum += Math.abs(vDiff)*(N.TimeStep);
+    t += N.TimeStep;
+  }
+  var dev = sum/(tMax-tMin+ N.TimeStep);
+  return dev;
+}
+
 N.AnalogSignal.prototype.ToJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
   return str;
@@ -143,7 +193,7 @@ N.AnalogSignal.prototype.ToJSON = function() {
   //* DiscreteSignal *
   //******************
 
-N.DiscreteSignal = function() {
+N.DiscreteSignal = function(name, shortName) {
   this.ClassName  = "N.DiscreteSignal";
   this.Type       = N.Signal.DISCRETE;
   this.Id         = N.M.GenerateUUID();
@@ -154,8 +204,8 @@ N.DiscreteSignal = function() {
   this.Values     = [];
   this._finder    = new N.TableSearch();
   this.Start      = 0.0;
-  this.Name       = "";
-  this.ShortName  = "";
+  this.Name       = (typeof name === 'string' ? name : "");
+  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : "");
   this.Category   = 'Default';
   this.Min        = 0;
   this.Max        = 0;
@@ -245,14 +295,77 @@ N.DiscreteSignal.prototype.GetNumSamples = function() {
   return this.Values.length;
 }
 
+N.DiscreteSignal.prototype.Average = function() {
+  if(this.Times.length < 2) {
+    if(this.Times.length === 1) {
+      return this.Values[0];
+    }
+    return 0.0;
+  }
+
+  var sum = 0.0;
+  var t0 = this.Times[0];
+  var tPrev = t0;
+  var vPrev = this.Values[0];
+  for(var i=1; i<this.Times.length; i++) {
+    var t = this.Times[i];
+    var v = this.Values[i];
+    sum += vPrev*(t-tPrev);
+    tPrev = t;
+    vPrev = v;
+  }
+  var avg = sum/(tPrev-t0);
+  return avg;
+}
+
+N.DiscreteSignal.prototype.AvgAbsDeviation = function(otherSignal) {
+  var tMinSelf = this.Times[0];
+  var tMinOth  = otherSignal.Times[0];
+  var tMaxSelf = this.Times[this.Times.length-1];
+  var tMaxOth  = otherSignal.Times[otherSignal.Times.length-1];
+
+  var tMin = (tMinSelf < tMinOth ? tMinSelf : tMinOth);
+  var tMax = (tMaxSelf < tMaxOth ? tMaxSelf : tMaxOth);
+  if(tMax <= tMin) {
+    return 0.0;
+  }
+  return this.AvgAbsDeviationWithInterval(otherSignal, tMin, tMax);
+}
+
+N.DiscreteSignal.prototype.AvgAbsDeviationWithInterval = function(otherSignal, tMin, tMax) {
+  var sum = 0.0;
+  var t = tMin;
+  var tMaxPlus = tMax+0.1* N.TimeStep;
+  while(t < tMaxPlus) {
+    var vDiff = (this.GetValue(t)-otherSignal.GetValue(t));
+    sum += Math.abs(vDiff)*(N.TimeStep);
+    t += N.TimeStep;
+  }
+  var dev = sum/(tMax-tMin+2*N.TimeStep);
+  return dev;
+}
+
 N.DiscreteSignal.prototype.ToJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
   return str;
 }
 
-  //***************
-  //* TableSearch *
-  //***************
+  //*******************
+  //* N.SignalCompare *
+  //*******************
+
+N.SignalCompare = function() {
+  this.Tolerance = 0.01;
+}
+
+N.SignalCompare.prototype.Compare = function(expected, actual) {
+
+}
+
+
+  //*****************
+  //* N.TableSearch *
+  //*****************
 
 N.TableSearch = function() {
   this.ClassName  = "N.TableSearch";
@@ -349,3 +462,4 @@ N.TableSearch.prototype._Bisection = function(xTarget, x) { // xTarget is float,
     }
   }
 }
+

@@ -63,6 +63,8 @@ N.L = function(logText) {
   console.log(logText);
 }
 
+N.TimeStep = 0.001;
+
   //*************
   //* N.Signals *
   //*************

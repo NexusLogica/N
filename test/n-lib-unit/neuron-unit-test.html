@@ -45,6 +45,15 @@
     signal.AppendDataArray( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
     equal(neuron.Compartments[0].Input.ClassName, 'N.Comp.SignalInput', 'Component imput class name');
 
+    var outputSignal = new N.AnalogSignal();
+    var t = 0.0;
+    while(t <= 0.25+0.0001) {
+      neuron.Update(t);
+      outputSignal.AppendData(t, outputCompartment.Output);
+      t += N.TimeStep;
+    }
+
+    QUnit.assert.near(signal.AvgAbsDeviation(outputSignal), 0.0, "Deviation of output from input signal");
   });
 /*
   test("DiscreteSignal tests", function() {

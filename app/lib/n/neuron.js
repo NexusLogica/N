@@ -35,6 +35,13 @@ N.Neuron.prototype.GetNumCompartments = function() {
   return this.Compartments.length;
 }
 
+N.Neuron.prototype.Update = function(time) {
+  var num = this.Compartments.length;
+  for(var i=0; i<num; i++) {
+    this.Compartments[i].Update(time);
+  }
+}
+
 N.Neuron.prototype.ToJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
   return str;
