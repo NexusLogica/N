@@ -1,4 +1,3 @@
-'use strict';
 /**********************************************************************
 
 File     : signal-trace-test.js
@@ -11,7 +10,9 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
+'use strict';
 
+var N = N || {};
 N.Test = N.Test || {};
 
   //************************
@@ -55,8 +56,8 @@ N.SignalTraceTest.prototype.CreateSignals = function() {
 
 N.SignalTraceTest.prototype.CreateSinAnalog = function() {
   var signal = new N.AnalogSignal();
-  signal.Name = "Simple sine wave";
-  signal.Category = "Excitatory";
+  signal.Name = 'Simple sine wave';
+  signal.Category = 'Excitatory';
   this.Signals.push(signal);
 
   signal.MinLimit = -1.5;
@@ -75,8 +76,8 @@ N.SignalTraceTest.prototype.CreateSinAnalog = function() {
 
 N.SignalTraceTest.prototype.CreateSawAnalog = function() {
   var signal = new N.AnalogSignal();
-  signal.Name = "Simple saw wave";
-  signal.Category = "Inhibitory";
+  signal.Name = 'Simple saw wave';
+  signal.Category = 'Inhibitory';
   this.Signals.push(signal);
 
   signal.MinLimit = -1.0;
@@ -104,15 +105,15 @@ N.SignalTraceTest.prototype.CreateSawAnalog = function() {
 
 N.SignalTraceTest.prototype.CreatePulseDiscrete = function() {
   var signal = new N.DiscreteSignal();
-  signal.Name = "Discrete pulse";
+  signal.Name = 'Discrete pulse';
   this.Signals.push(signal);
 
   var pulseWidth = 0.006; // seconds
   var time = 0.0;
   var nextState = 0;
   while(time < 0.100) {
-    signal.AppendValue(time, nextState);
-    if(nextState == 1) {
+    signal.AppendData(time, nextState);
+    if(nextState === 1) {
       time += pulseWidth;
       nextState = 0;
     }

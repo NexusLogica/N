@@ -10,7 +10,9 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
+'use strict';
 
+var N = N || {};
 N.UI = N.UI || {};
 
   //****************************
@@ -74,7 +76,7 @@ N.UI.SignalTraceRenderer.prototype.Render = function() {
   this._RenderXAxis();
 
   if(this.Signal.GetNumSamples() > 1) {
-    if(this.Signal.Type == N.Signal.ANALOG) {
+    if(this.Signal.Type === N.Signal.ANALOG) {
       this._RenderAnalogTrace();
     }
     else {
@@ -88,14 +90,14 @@ N.UI.SignalTraceRenderer.prototype._RenderAnalogTrace = function() {
   var val = this.Signal.GetValueByIndex(this._startIndex);
   var tScaled = this.TimeToPixel(t);
   var valScaled = this.YToPixel(val);
-  var p = "M"+tScaled+" "+valScaled;
+  var p = 'M'+tScaled+' '+valScaled;
 
   for(var i=this._startIndex+1; i <= this._endIndex; i++) {
     t = this.Signal.GetTimeByIndex(i);
     val = this.Signal.GetValueByIndex(i);
-    var tScaled = this.TimeToPixel(t);
-    var valScaled = this.YToPixel(val);
-    p += "L"+tScaled+" "+valScaled;
+    tScaled = this.TimeToPixel(t);
+    valScaled = this.YToPixel(val);
+    p += 'L'+tScaled+' '+valScaled;
   }
 
   if(!this._path) {
@@ -112,21 +114,21 @@ N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
   var prevState = this.Signal.GetValueByIndex(this._startIndex);
   var tScaled = this.TimeToPixel(t);
   var statePrevScaled = this.YToPixel(prevState);
-  var p = "M"+tScaled+" "+statePrevScaled;
+  var p = 'M'+tScaled+' '+statePrevScaled;
 
   for(var i=this._startIndex+1; i <= this._endIndex; i++) {
     t = this.Signal.GetTimeByIndex(i);
     var state = this.Signal.GetValueByIndex(i);
-    if(state != prevState) {
-      var tScaled = this.TimeToPixel(t);
-      p += "L"+tScaled+" "+statePrevScaled;
+    if(state !== prevState) {
+      tScaled = this.TimeToPixel(t);
+      p += 'L'+tScaled+' '+statePrevScaled;
       var stateScaled = this.YToPixel(state);
-      p += "L"+tScaled+" "+stateScaled;
+      p += 'L'+tScaled+' '+stateScaled;
       statePrevScaled = stateScaled;
     }
-    else if(i == this._endIndex) {
-      var tScaled = this.TimeToPixel(t);
-      p += "L"+tScaled+" "+statePrevScaled;
+    else if(i === this._endIndex) {
+      tScaled = this.TimeToPixel(t);
+      p += 'L'+tScaled+' '+statePrevScaled;
     }
     prevState = state;
   }

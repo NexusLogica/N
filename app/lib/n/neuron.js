@@ -19,10 +19,10 @@ var N = N || {};
   //************
 
 N.Neuron = function() {
-  this.ClassName  = "N.Neuron";
+  this.ClassName  = 'N.Neuron';
   this.Id         = N.M.GenerateUUID();
-  this.Name       = "";
-  this.ShortName  = "";
+  this.Name       = '';
+  this.ShortName  = '';
   this.Category   = 'Default';
   this.Compartments = [];
 }
@@ -42,9 +42,30 @@ N.Neuron.prototype.Update = function(time) {
   }
 }
 
-N.Neuron.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
+N.Neuron.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    if(i === 'Compartments') {
+      for(var j=0; j<json.Compartments.length; j++) {
+        var compartmentJson = json.Compartments[j];
+        var compartment = N.NewN(compartmentJson.ClassName).LoadFrom(compartmentJson);
+        this.Compartments.push(compartment);
+      }
+    }
+    else {
+      this[i] = json[i];
+    }
+  }
+
+  return this;
+}
+
+N.Neuron.prototype.ToData = function() {
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
+}
+
+N.Neuron.prototype.FromData = function(json) {
+
 }
 
   //***********************
@@ -52,5 +73,5 @@ N.Neuron.prototype.ToJSON = function() {
   //***********************
 
 N.OutputCompartment = function() {
-  this.ClassName  = "N.OutputCompartment";
+  this.ClassName  = 'N.OutputCompartment';
 }

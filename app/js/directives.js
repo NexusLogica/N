@@ -1,5 +1,7 @@
 'use strict';
 
+var N = N || {};
+
 /* Directives */
 
 var nSimAppDirectives = angular.module('nSimApp.directives', []);
@@ -12,7 +14,7 @@ nSimAppDirectives.directive('appVersion', ['version', function(version) {
 
 nSimAppDirectives.directive('xxxxnSignalId', [function() {
     function link($scope, $element, $attrs) {
-      $scope.signalId = $attrs['nSignalId'];
+      $scope.signalId = $attrs.nSignalId;
       $scope.SetSignalTrace($scope.signalId);
     }
     return {
@@ -23,12 +25,32 @@ nSimAppDirectives.directive('xxxxnSignalId', [function() {
 nSimAppDirectives.directive('nCanvas', function() {
   function link($scope, $element, $attrs) {
     $scope.paper = Raphael($element[0], $element.width(), $element.height());
-    if($attrs["nRenderer"]) {
-      var renderer = $attrs["nRenderer"];
-      $scope.$parent.renderer = eval("new "+renderer);
-      $scope.$parent.renderer.Configure($scope.paper, $attrs["nSignalId"]);
+    if($attrs.nRenderer) {
+      var renderer = $attrs.nRenderer;
+      $scope.$parent.renderer = N.NewN(renderer);
+      $scope.$parent.renderer.Configure($scope.paper, $attrs.nSignalId);
       $scope.$parent.renderer.Render();
     }
+  }
+
+  return {
+    restrict: 'AE',
+    transclude: true,
+    scope: { title:'@' },
+    link: link
+  };
+});
+
+nSimAppDirectives.directive('piCanvas', function() {
+  function link($scope, $element, $attrs) {
+    var width = $attrs.piWidth;
+    var height = $attrs.piHeight;
+    var sceneId = $attrs.piSceneId;
+    $($element[0]).addClass('pi-canvas').width(width).height(height);
+    $scope.paper = Raphael($element[0], width, height);
+    $scope.$parent.renderer = new N.UI.PiCanvasRenderer();
+    $scope.$parent.renderer.Configure($scope.paper, sceneId);
+    $scope.$parent.renderer.Render();
   }
 
   return {
@@ -44,7 +66,7 @@ nSimAppDirectives.directive('nCanvas', function() {
 nSimAppDirectives.directive(
   'nSlidestop',
   ['$parse', function($parse) { return { compile: function($element, attr) {
-    var nattr = attr['nSlidestop'];
+    var nattr = attr.nSlidestop;
     var fn = $parse(nattr);
     return function(scope, element, attr) {
       element.on(
@@ -66,7 +88,7 @@ nSimAppDirectives.directive(
 nSimAppDirectives.directive('nSlide', ['$parse', function($parse) {
   return {
     compile: function($element, attr) {
-      var nattr = attr['nSlide'];
+      var nattr = attr.nSlide;
       var fn = $parse(nattr);
       return function(scope, element, attr) {
         element.on('slide', function(event) {

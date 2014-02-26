@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JSHintConfiguration" version="2.1.10" use-config-file="false">
+  <component name="JSHintConfiguration" version="2.1.10" use-config-file="false" default-config-file-path="$PROJECT_DIR$/.jshintrc">
     <option bitwise="true" />
     <option camelcase="false" />
     <option curly="true" />
     <option eqeqeq="true" />
     <option es3="false" />
-    <option forin="true" />
+    <option forin="false" />
     <option immed="false" />
     <option latedef="true" />
     <option newcap="false" />
@@ -19,6 +19,7 @@
     <option unused="false" />
     <option strict="true" />
     <option trailing="false" />
+    <option quotmark="single" />
     <option asi="true" />
     <option boss="false" />
     <option debug="false" />
@@ -48,7 +49,7 @@
     <option couch="false" />
     <option devel="false" />
     <option dojo="false" />
-    <option jquery="false" />
+    <option jquery="true" />
     <option mootools="false" />
     <option node="false" />
     <option nonstandard="false" />
@@ -62,6 +63,7 @@
     <option passfail="false" />
     <option white="false" />
     <option maxerr="50" />
+    <option predef="_" />
   </component>
 </project>
 

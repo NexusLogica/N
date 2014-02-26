@@ -19,8 +19,8 @@ N.Comp = N.Comp || {};
   //* N.Comp.StateOutput *
   //**********************
 
-N.Comp.StateOutput = function(neuron, name, shortName, inputObject) {
-  this.ClassName  = "N.Comp.StateOutput";
+N.Comp.StateOutput = function(neuron, name, shortName) {
+  this.ClassName  = 'N.Comp.StateOutput';
   this.Name       = name;
   this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category   = 'StateOutput';
@@ -45,9 +45,14 @@ N.Comp.StateOutput.prototype.Update = function(t) {
   return this.Output;
 }
 
-N.Comp.StateOutput.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
-  return str;
+N.Comp.StateOutput.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    if(i === 'Input') {
+      this.Input = N.NewN(json[i].ClassName).LoadFrom(json[i]);
+    }
+    else { this[i] = json[i]; }
+  }
+  return this;
 }
 
   //****************
@@ -56,7 +61,7 @@ N.Comp.StateOutput.prototype.ToJSON = function() {
 
 N.Comp.Input = function(component) {
   this.Component   = component;
-  this.ClassName   = "N.Comp.Input";
+  this.ClassName   = 'N.Comp.Input';
   this.Sum         = 0.0;
   this.Connections = [];
 }
@@ -75,7 +80,7 @@ N.Comp.Input.prototype.SumInputs = function(t) {
 }
 
 N.Comp.Input.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }
 
@@ -85,7 +90,7 @@ N.Comp.Input.prototype.ToJSON = function() {
 
 N.Comp.SignalInput = function(component) {
   this.Component   = component;
-  this.ClassName   = "N.Comp.SignalInput";
+  this.ClassName   = 'N.Comp.SignalInput';
   this.SignalInput = null;
   this.Sum         = 0.0;
 }
@@ -101,7 +106,17 @@ N.Comp.SignalInput.prototype.UpdateInput = function(t) {
   return this.Sum;
 }
 
+N.Comp.SignalInput.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    if(i === 'SignalInput') {
+      this.SignalInput = N.NewN(json[i].ClassName).LoadFrom(json[i]);
+    }
+    else { this[i] = json[i]; }
+  }
+  return this;
+}
+
 N.Comp.SignalInput.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }

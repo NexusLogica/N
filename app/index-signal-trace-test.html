@@ -13,13 +13,8 @@
 </head>
 <body>
 
-  <xng-view>
-  <div id="index-outer">
-    <div id="main-app-container" class="container" ></div>
+  <div ng-include="'partials/title-bar.html'"></div>
 
-    <div id="timing-display"></div>
-  </div>
-  </xng-view>
   <div class="container" ng-include="'partials/test/signal-trace-test.html'" ng-controller="SignalTraceTestController"></div>
 
   <script src="lib/jquery-2.0.2.js"></script>

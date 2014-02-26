@@ -54,6 +54,7 @@ N.ToFixed = function(value, precision) {
 }
 
 N.ShortName = function(longName) {
+  if(!longName) { return ''; }
   var reg = /[A-Z0-9]*/g;
   var matches = longName.match(reg);
   return matches.join('');
@@ -64,6 +65,10 @@ N.L = function(logText) {
 }
 
 N.TimeStep = 0.001;
+
+N.Rad = function(angleDegrees) {
+  return Math.PI*angleDegrees/180;
+}
 
   //*************
   //* N.Signals *
@@ -110,8 +115,8 @@ N.Neurons.prototype.RemoveNeuron = function(uid) {
   //***********
 
 N.Manager = function() {
-  this.Neurons = new N.Neurons;
-  this.Signals = new N.Signals;
+  this.Neurons = new N.Neurons();
+  this.Signals = new N.Signals();
 }
 
 N.Manager.prototype.GenerateUUID = function() {

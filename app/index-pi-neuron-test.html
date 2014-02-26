@@ -13,10 +13,14 @@
 </head>
 <body>
 
-  <div class="container" ng-include="'partials/test/pi-neuron-test.html'" ng-controller="PiNeuronTestController"></div>
+  <div ng-include="'partials/title-bar.html'"></div>
+
+  <div class="container" ng-include="'partials/test/pi-neuron-test.html'" ng-controller="PiNeuronTestController">
+  </div>
 
   <script src="lib/jquery-2.0.2.js"></script>
   <script src="lib/jquery-ui/ui/jquery-ui.js"></script>
+  <script src="lib/lodash/dist/lodash.js"></script>
   <script src="lib/bootstrap/js/bootstrap.js"></script>
   <script src="lib/angular/angular.js"></script>
   <script src="lib/angular-route/angular-route.js"></script>
@@ -25,10 +29,16 @@
   <script src="js/filters.js"></script>
   <script src="js/directives.js"></script>
   <script src="lib/raphael/raphael.js"></script>
+  <script src="lib/raphael/group.js"></script>
   <script src="lib/n/n.js"></script>
+  <script src="lib/n/neuron.js"></script>
+  <script src="lib/n/compartments.js"></script>
   <script src="lib/n/signal.js"></script>
   <script src="lib/n/ui/constants.js"></script>
-  <script src="lib/n/ui/signal-trace.js"></script>
+  <script src="lib/n/ui/scene.js"></script>
+  <script src="lib/n/ui/pi-canvas.js"></script>
+  <script src="lib/n/ui/pi-neuron.js"></script>
+  <script src="lib/n/ui/pi-standard-templates.js"></script>
 
   <script src="lib/n/test/pi-neuron-test.js"></script>
   <script src="js/controllers.js"></script>

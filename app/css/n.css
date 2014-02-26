@@ -290,4 +290,11 @@ textarea {
   display: block;
   width: 602px;
   height: 402px;
-  border: solid 1px #DDD; }
+  border: solid 1px #DDD;
+}
+
+.pi-canvas {
+  display: block;
+  position: relative;
+  border: solid 1px #DDD;
+}
