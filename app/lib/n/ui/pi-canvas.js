@@ -40,6 +40,8 @@ N.UI.PiCanvasRenderer.prototype.Configure = function(svgParent, sceneId) {
   this._h = this._svgParent.height();
   this._padding = 0;
   this._boundary = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
+  this._x = 0;
+  this._y = 0;
 }
 
 N.UI.PiCanvasRenderer.prototype.Render = function() {
@@ -47,5 +49,9 @@ N.UI.PiCanvasRenderer.prototype.Render = function() {
 
   this._group = this._svgParent.group();
   this.Scene.NeuronGraphic.Render(this._group);
-  this._group.translate(100, 100);
+  if(this.Scene.Origin === 'center') {
+    this._x = 0.5*this._w;
+    this._y = 0.5*this._h;
+  }
+  this._group.translate(this._x, this._y);
 }

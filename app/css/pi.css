@@ -13,3 +13,18 @@ All Rights Reserved.
 .pi-svg svg .axis {
   stroke: silver;
   stroke-width: 0.5; }
+
+.pi-neuron .compartment {
+  stroke: #A8A8A8; }
+  .pi-neuron .compartment.excitatory-body {
+    fill: #D1E7C9; }
+  .pi-neuron .compartment.proximal-basal-dendrites {
+    fill: #F1EFE2; }
+  .pi-neuron .compartment.distal-basal-dendrites {
+    fill: #F5EBDB; }
+  .pi-neuron .compartment.apical-dendrite-distal-tufts {
+    fill: #AFD3EF; }
+  .pi-neuron .compartment.apical-dendrite-proximal-tufts {
+    fill: #D6E8F5; }
+  .pi-neuron .compartment.apical-dendrite-trunk {
+    fill: #EBF4FA; }

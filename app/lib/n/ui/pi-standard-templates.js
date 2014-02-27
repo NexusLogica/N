@@ -21,15 +21,16 @@ N.UI = N.UI || {};
 
 N.UI.StandardNeuronTemplates = {
   Pyramidal : {
+    className: 'pyramidal',
     modules: [{
       name: 'Body',
-      color: '#D1E7C9',
+      className: 'excitatory-body',
       segments: [
         { radius: 0.44, startAngle: 110, direction: 1, facing: 1, padding: 0.06 },
         { radius: 1.00, startAngle: 70, direction: 1, facing: -1, padding: 0.06 }]
     },{
       name: 'Proximal basal dendrites',
-      color: '#F1EFE2',
+      className: 'proximal-basal-dendrites',
       mirror: true,
       segments: [
         { radius: 0.75, startAngle:  -20, direction: 1, facing: -1, padding: 0.06 },
@@ -37,21 +38,21 @@ N.UI.StandardNeuronTemplates = {
         { radius: 0.50, startAngle: 70, direction: -1, facing: 1, padding: 0.02 }]
     },{
       name: 'Distal basal dendrites',
-      color: '#F5EBDB',
+      className: 'distal-basal-dendrites',
       mirror: true,
       segments: [
         { radius: 0.80, startAngle:  25, direction: -1, facing: 1, padding: 0.01 },
         { radius: 1.0, startAngle:  -20, direction: 1, facing: -1, padding: 0.06 }]
     },{
       name: 'Apical dendrite distal tufts',
-      color: '#AFD3EF',
+      className: 'apical-dendrite-distal-tufts',
       initialAngle: -160.0,
       segments: [
         { radius: 0.82, startAngle:  -160.0, direction: 1, facing: -1 },
         { radius: 1.0, startAngle:  -80.0, direction: -1, facing: 1 }]
     },{
       name: 'Apical dendrite proximal tufts',
-      color: '#D6E8F5',
+      className: 'apical-dendrite-proximal-tufts',
       initialAngle: -160.0,
       segments: [
         { radius: 0.80,  startAngle:  -160.0, direction: 1, facing: -1 },
@@ -59,7 +60,7 @@ N.UI.StandardNeuronTemplates = {
         { radius: 0.675, startAngle:   -45.0, direction: -1, facing: 1 } ]
     },{
       name: 'Apical dendrite trunk',
-      color: '#EBF4FA',
+      className: 'apical-dendrite-trunk',
       initialAngle: -160,
       segments: [
         { radius: 0.6375, startAngle: -160.0, direction: 1, facing: -1 },

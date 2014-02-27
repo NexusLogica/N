@@ -21,23 +21,26 @@ N.UI = N.UI || {};
 
 N.UI.PiNeuron = function() {
   this.radius = 60;
-  this._modules = {};
-  this.X = 10;
+  this.X = 0;
   this.Y = 0;
   this._set = null;
   this.Name = '';
 }
 
-N.UI.PiNeuron.prototype.AddModules = function(modules) {
-  this._modules = modules;
-}
-
 N.UI.PiNeuron.prototype.Render = function(svgParent) {
   this._group = svgParent.group();
+  var classNameFull = 'pi-neuron';
+  if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
+  this._group.attr({ class: classNameFull });
+
   var _this = this;
-  for(var i in this._modules) {
-    var module = this._modules[i];
-    module.path = svgParent.path(module.pathString).attr({ fill: module.color, stroke: '#A8A8A8' });
+  for(var i in this.modules) {
+    var module = this.modules[i];
+    module.path = this._group.path(module.pathString).attr({ fill: module.color });
+
+    var compartmentClassName = 'compartment';
+    if(module.hasOwnProperty('className')) { compartmentClassName += ' '+module.className; }
+    module.path.attr( { class: compartmentClassName } );
   }
   this._group.translate(this.X, this.Y);
 //  this._group.attr({ stroke: '#A8A8A8'});
@@ -54,26 +57,32 @@ N.UI.PiNeuron.prototype.GetGroup = function() {
 N.UI.PiNeuronFactory = (function() {
   var defaultPadding = 0.02;
 
-  var GraphicFactory = function(templateArg, msg) {
-    var template = templateArg;
-    var modules = null;
+  var GraphicFactory = function(skeletonTemplate) {
+    var template = skeletonTemplate;
+    var filledTemplate = null;
 
-    function Initialize(templateArg) {
-      modules = {};
-      for(var i in templateArg.modules) {
-        var module = templateArg.modules[i];
-        var pathString = PiModuleToPath(module, 40.0);
-        modules[module.name] = _.cloneDeep(module);
-        modules[module.name].pathString = pathString;
+    function Initialize() {
+      filledTemplate = {};
+      if(template.hasOwnProperty('className')) {
+        filledTemplate.className = template.className;
+      }
+      filledTemplate.modules = {};
+      for(var i in template.modules) {
+        var templateModule = template.modules[i];
+        var pathString = PiModuleToPath(templateModule, 40.0);
+        var module = _.cloneDeep(templateModule);
+        module.pathString = pathString;
+        filledTemplate.modules[module.name] = module;
       }
     }
 
     function CreateNewGraphic() {
-      if(!modules) {
-        Initialize(template);
+      if(!filledTemplate) {
+        Initialize();
       }
       var pin = new N.UI.PiNeuron();
-      pin.AddModules(_.cloneDeep(modules));
+
+      _.assign(pin, filledTemplate);
       return pin;
     }
     return {
