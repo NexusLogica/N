@@ -24,11 +24,12 @@ nSimAppDirectives.directive('xxxxnSignalId', [function() {
 
 nSimAppDirectives.directive('nCanvas', function() {
   function link($scope, $element, $attrs) {
-    $scope.paper = Raphael($element[0], $element.width(), $element.height());
+    $($element[0]).addClass('pi-svg');
+    $scope.svg = SVG($element[0]).size($element.width(), $element.height());
     if($attrs.nRenderer) {
       var renderer = $attrs.nRenderer;
       $scope.$parent.renderer = N.NewN(renderer);
-      $scope.$parent.renderer.Configure($scope.paper, $attrs.nSignalId);
+      $scope.$parent.renderer.Configure($scope.svg, $attrs.nSignalId);
       $scope.$parent.renderer.Render();
     }
   }
@@ -46,10 +47,10 @@ nSimAppDirectives.directive('piCanvas', function() {
     var width = $attrs.piWidth;
     var height = $attrs.piHeight;
     var sceneId = $attrs.piSceneId;
-    $($element[0]).addClass('pi-canvas').width(width).height(height);
-    $scope.paper = Raphael($element[0], width, height);
+    $($element[0]).addClass('pi-svg').width(width).height(height);
+    $scope.svg = SVG($element[0]).size(width, height);
     $scope.$parent.renderer = new N.UI.PiCanvasRenderer();
-    $scope.$parent.renderer.Configure($scope.paper, sceneId);
+    $scope.$parent.renderer.Configure($scope.svg, sceneId);
     $scope.$parent.renderer.Render();
   }
 

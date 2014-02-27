@@ -1,0 +1,15 @@
+/**********************************************************************
+
+File     : pi.scss
+Project  : N Simulator Library
+Purpose  : CSS file for Pi neurons and other graphic elements.
+Revisions: Original definition by Lawrence Gunn.
+           2014/02/26
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-svg svg .axis {
+  stroke: silver;
+  stroke-width: 0.5; }

@@ -33,21 +33,19 @@ nSimAppControllers.controller('PiCanvasController', ['$scope',
 N.UI.PiCanvasRenderer = function() {
 }
 
-N.UI.PiCanvasRenderer.prototype.Configure = function(paper, sceneId) {
-  this._paper = paper;
+N.UI.PiCanvasRenderer.prototype.Configure = function(svgParent, sceneId) {
+  this._svgParent = svgParent;
   this.Scene = N.UI.Scenes.GetScene(sceneId);
-  this._w = this._paper.canvas.offsetWidth;
-  this._h = this._paper.canvas.offsetHeight;
+  this._w = this._svgParent.width();
+  this._h = this._svgParent.height();
   this._padding = 0;
   this._boundary = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
 }
 
 N.UI.PiCanvasRenderer.prototype.Render = function() {
-  this._group = this._paper.group();
-  this._backgroundRect = this._paper.rect(this._boundary.x, this._boundary.y, this._boundary.width, this._boundary.height).attr({ 'fill': '#FCF8F2', 'stroke-width': 3, 'stroke': 'red'});
-  this.Scene.NeuronGraphic.Render(this._paper);
-  this._group.push(this.Scene.NeuronGraphic.GetGroup());
-  this._group.translate(100, 100);
+  this._backgroundRect = this._svgParent.rect(this._boundary.width, this._boundary.height).move(this._boundary.x, this._boundary.y).fill('#FCF8F2').stroke( {width: 3, color: '#294052'} );
 
-//  this.Scene
+  this._group = this._svgParent.group();
+  this.Scene.NeuronGraphic.Render(this._group);
+  this._group.translate(100, 100);
 }

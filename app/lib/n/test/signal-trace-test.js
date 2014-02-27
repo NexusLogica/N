@@ -132,19 +132,19 @@ N.SignalTraceTest.prototype.CreatePulseDiscrete = function() {
 N.Test.SignalTraceTestRenderer = function() {
 }
 
-N.Test.SignalTraceTestRenderer.prototype.Configure = function(paper, signalId) {
-  this._paper = paper;
-  this._w = this._paper.canvas.offsetWidth;
-  this._h = this._paper.canvas.offsetHeight;
+N.Test.SignalTraceTestRenderer.prototype.Configure = function(svgParent, signalId) {
+  this._svgParent = svgParent;
+  this._w = this._svgParent.width();
+  this._h = this._svgParent.height();
   this._traceRenderer = new N.UI.SignalTraceRenderer();
-  this._traceRenderer.Configure(paper, signalId);
+  this._traceRenderer.Configure(svgParent, signalId);
   this._padding = 15;
   this._box = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
   this._traceRenderer.SetCanvasBoundary(this._box);
 }
 
 N.Test.SignalTraceTestRenderer.prototype.Render = function() {
-  this._backgroundRect = this._paper.rect(this._box.x, this._box.y, this._box.width, this._box.height).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
+  this._backgroundRect = this._svgParent.rect(this._box.width, this._box.height).move(this._box.x, this._box.y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
   this._traceRenderer.Render();
 }
 

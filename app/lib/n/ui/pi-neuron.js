@@ -32,17 +32,15 @@ N.UI.PiNeuron.prototype.AddModules = function(modules) {
   this._modules = modules;
 }
 
-N.UI.PiNeuron.prototype.Render = function(paper) {
-  this._group = paper.group();
+N.UI.PiNeuron.prototype.Render = function(svgParent) {
+  this._group = svgParent.group();
   var _this = this;
   for(var i in this._modules) {
     var module = this._modules[i];
-    module.path = paper.path(module.pathString).attr({ fill: module.color });
-    this._group.push(module.path);
+    module.path = svgParent.path(module.pathString).attr({ fill: module.color, stroke: '#A8A8A8' });
   }
   this._group.translate(this.X, this.Y);
-  this._group.attr({ stroke: '#A8A8A8'});
-  this._group.data({ blah: 'xxxx'});
+//  this._group.attr({ stroke: '#A8A8A8'});
 }
 
 N.UI.PiNeuron.prototype.GetGroup = function() {

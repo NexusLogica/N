@@ -22,11 +22,11 @@ N.UI = N.UI || {};
 N.UI.SignalTraceRenderer = function() {
 }
 
-N.UI.SignalTraceRenderer.prototype.Configure = function(paper, signal) {
-  this._paper = paper;
+N.UI.SignalTraceRenderer.prototype.Configure = function(svgParent, signal) {
+  this._svgParent = svgParent;
   this.Signal = N.M.Signals.GetSignal(signal);
   this._needsRecalc = true;
-  this._boundary = { x:0, y:0, width: paper.canvas.offsetWidth, height: paper.canvas.offsetHeight};
+  this._boundary = { x:0, y:0, width: svgParent.width(), height: svgParent.height() };
   this._timeAtOrigin = 0.0;
   this._yAtOrigin = 0.0;
   this._scale = 1.0; // Default
@@ -101,11 +101,13 @@ N.UI.SignalTraceRenderer.prototype._RenderAnalogTrace = function() {
   }
 
   if(!this._path) {
-    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor })
-        .attr({ 'clip-rect': this._boundary.x+' '+this._boundary.y+' '+this._boundary.width+' '+this._boundary.height });
+    this._path = this._svgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
+    var extra = 200;
+    this._clipRect = this._svgParent.rect(this._boundary.width, this._boundary.height+2*extra).move(this._boundary.x, this._boundary.y-extra);
+    this._path.clipWith(this._clipRect);
   }
   else {
-    this._path.attr({ 'path': p });
+    this._path.plot(p);
   }
 }
 
@@ -134,22 +136,36 @@ N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
   }
 
   if(!this._path) {
-    this._path = this._paper.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor })
-        .attr({ 'clip-rect': this._boundary.x+' '+this._boundary.y+' '+this._boundary.width+' '+this._boundary.height });
+    this._path = this._svgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
+    var extra = 200;
+    this._clipRect = this._svgParent.rect(this._boundary.width, this._boundary.height+2*extra).move(this._boundary.x, this._boundary.y-extra);
+    this._path.clipWith(this._clipRect);
   }
   else {
-    this._path.attr({ 'path': p });
+    this._path.plot(p);
   }
 }
 
 N.UI.SignalTraceRenderer.prototype._RenderXAxis = function() {
   var y = this.YToPixel(0.0);
-  var p = 'M'+this._boundary.x+' '+y+'L'+(this._boundary.x+this._boundary.width)+' '+y;
-  if(!this._xAxis) {
-    this._xAxis = this._paper.path(p).attr({ 'stroke-width':0.75, 'stroke':'silver', 'stroke-dasharray': '--' });
+  var p = '';
+  if(this.Signal.GetNumSamples() > 1) {
+    var xStart = this.TimeToPixel(this.Signal.TimeMin);
+    var xEnd = this.TimeToPixel(this.Signal.TimeMax);
+    p = 'M'+xStart+' '+y+'L'+xEnd+' '+y;
   }
   else {
-    this._xAxis.attr({ path: p });
+    p = 'M'+this._boundary.x+' '+y+'L'+(this._boundary.x+this._boundary.width)+' '+y;
+  }
+
+  if(!this._xAxis) {
+    this._xAxis = this._svgParent.path(p).attr({ class: 'axis', 'stroke-dasharray': '6, 6', fill: 'none' });
+    var extra = 200;
+    this._clipRect = this._svgParent.rect(this._boundary.width, this._boundary.height+2*extra).move(this._boundary.x, this._boundary.y-extra);
+    this._xAxis.clipWith(this._clipRect);
+  }
+  else {
+    this._xAxis.plot(p);
   }
 }
 
