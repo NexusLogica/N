@@ -49,9 +49,9 @@ N.SignalTraceTest = function() {
 N.SignalTraceTest.prototype.CreateSignals = function() {
   this.Signals = [];
   this._timeStart = 0.0;
-  N.M.Signals.AddSignal(this.CreateSinAnalog());
-  N.M.Signals.AddSignal(this.CreateSawAnalog());
-  N.M.Signals.AddSignal(this.CreatePulseDiscrete());
+  N.Objects.Add(this.CreateSinAnalog());
+  N.Objects.Add(this.CreateSawAnalog());
+  N.Objects.Add(this.CreatePulseDiscrete());
 }
 
 N.SignalTraceTest.prototype.CreateSinAnalog = function() {

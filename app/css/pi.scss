@@ -18,32 +18,48 @@ All Rights Reserved.
   }
 }
 
+$darker: 5%;
+
 .pi-neuron {
   .compartment {
-    stroke: #A8A8A8;
+    stroke: lighten(black, 20%);
+    stroke-width: 1.55px;
+    stroke-linejoin: round;
 
     &.excitatory-body {
-      fill: #D1E7C9;
+      fill: darken(#D1E7C9, $darker);
+    }
+
+    &.inhibitory-body {
+      fill: darken(bisque, $darker);
     }
 
     &.proximal-basal-dendrites {
-      fill: #F1EFE2;
+      fill: darken(#F1EFE2, $darker);
     }
 
     &.distal-basal-dendrites {
-      fill: #F5EBDB;
+      fill: darken(#F5EBDB, $darker);
     }
 
     &.apical-dendrite-distal-tufts {
-      fill: #AFD3EF;
+      fill: darken(#AFD3EF, $darker);
     }
 
     &.apical-dendrite-proximal-tufts {
-      fill: #D6E8F5;
+      fill: darken(#D6E8F5, $darker);
     }
 
     &.apical-dendrite-trunk {
-      fill: #EBF4FA;
+      fill: darken(#EBF4FA, $darker);
+    }
+
+    &.dendrites {
+      fill: darken(#F1EFE2, $darker);
+    }
+
+    &.acetylcholine-receptors {
+      fill: darken(linen, $darker);
     }
   }
 }

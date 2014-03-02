@@ -29,7 +29,7 @@ N.NeuronFactory.StateOutput = {
 
 N.Neuron = function() {
   this.ClassName    = "N.Neuron";
-  this.Id           = N.M.GenerateUUID();
+  this.Id           = N.GenerateUUID();
   this.Name         = "";
   this.ShortName    = "";
   this.Category     = 'Default';

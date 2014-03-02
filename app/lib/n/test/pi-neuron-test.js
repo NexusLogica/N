@@ -49,15 +49,15 @@ N.PiNeuronTest.prototype.CreateScenes = function() {
     neuron.LoadFrom(config.Neuron);
 
     var scene = new N.UI.Scene.Neuron();
-    scene.SetNeuron(neuron, 80, { x:0, y:0});
-    var id = 'N.PiNeuronTest.'+(i+1);
-    N.UI.Scenes.AddScene(id, scene);
-    this.Scenes.push(id);
+    scene.SetNeuron(neuron, config.Neuron.Display.Radius, { x:0, y:0});
+    scene.Id = 'N.PiNeuronTest.'+(i+1);
+    N.Objects.Add(scene);
+    this.Scenes.push(scene.Id);
   }
 }
 
 N.PiNeuronTest.TestConfigurations = [{
-    Name: 'SimpleStateOutput',
+    Name: 'Simple State Output',
     Neuron: {
       ClassName: 'N.Neuron',
       Compartments: [{
@@ -73,11 +73,47 @@ N.PiNeuronTest.TestConfigurations = [{
         }
       }],
       Display: {
-        Template: 'N.UI.StandardNeuronTemplates.Pyramidal'
+        Template: 'N.UI.StandardNeuronTemplates.Pyramidal',
+        Radius: 100
       }
     }
-  }
-];
+  },{
+    Name: 'Spiny Stellate',
+    Neuron: {
+      ClassName: 'N.Neuron',
+      Compartments: [{
+        ClassName: 'N.Comp.Output',
+        Name: 'Output',
+        ShortName: 'OP'
+      },{
+        ClassName: 'N.Comp.Input',
+        Name: 'Input',
+        ShortName: 'IP'
+      }],
+      Display: {
+        Template: 'N.UI.StandardNeuronTemplates.Stellate',
+        Radius: 60
+      }
+    }
+  },{
+    Name: 'Inhibitory Interneuron',
+    Neuron: {
+      ClassName: 'N.Neuron',
+      Compartments: [{
+        ClassName: 'N.Comp.InhibitoryOutput',
+        Name: 'InhibitoryOutput',
+        ShortName: 'IOP'
+      },{
+        ClassName: 'N.Comp.Input',
+        Name: 'Input',
+        ShortName: 'IP'
+      }],
+      Display: {
+        Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
+        Radius: 40
+      }
+    }
+  }];
 
   //*******************************
   //* N.Test.PiNeuronTestRenderer *

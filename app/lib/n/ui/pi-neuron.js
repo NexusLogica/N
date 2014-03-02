@@ -20,7 +20,6 @@ N.UI = N.UI || {};
   //*****************
 
 N.UI.PiNeuron = function() {
-  this.radius = 60;
   this.X = 0;
   this.Y = 0;
   this._set = null;
@@ -43,7 +42,6 @@ N.UI.PiNeuron.prototype.Render = function(svgParent) {
     module.path.attr( { class: compartmentClassName } );
   }
   this._group.translate(this.X, this.Y);
-//  this._group.attr({ stroke: '#A8A8A8'});
 }
 
 N.UI.PiNeuron.prototype.GetGroup = function() {
@@ -56,53 +54,26 @@ N.UI.PiNeuron.prototype.GetGroup = function() {
 
 N.UI.PiNeuronFactory = (function() {
   var defaultPadding = 0.02;
+  var factories = {};
 
-  var GraphicFactory = function(skeletonTemplate) {
-    var template = skeletonTemplate;
-    var filledTemplate = null;
+  function CreatePiNeuron(templateName, radius) {
+    var decaRadius = 10*parseInt(radius/10.0, 10);
+    if(decaRadius === 0) { decaRadius = 10; }
 
-    function Initialize() {
-      filledTemplate = {};
-      if(template.hasOwnProperty('className')) {
-        filledTemplate.className = template.className;
+    var factory = (factories[templateName] ? factories[templateName][decaRadius] : null);
+    if(!factory) {
+      var template = GetTemplate(templateName);
+      if(!template) {
+        N.L('N.PiGraphicsFactory::createGraphic Unable to find template '+templateName);
+        throw 'N.PiGraphicsFactory::createGraphic Unable to find template '+templateName;
       }
-      filledTemplate.modules = {};
-      for(var i in template.modules) {
-        var templateModule = template.modules[i];
-        var pathString = PiModuleToPath(templateModule, 40.0);
-        var module = _.cloneDeep(templateModule);
-        module.pathString = pathString;
-        filledTemplate.modules[module.name] = module;
-      }
-    }
 
-    function CreateNewGraphic() {
-      if(!filledTemplate) {
-        Initialize();
-      }
-      var pin = new N.UI.PiNeuron();
+      factory = CreateFactory(template, decaRadius);
 
-      _.assign(pin, filledTemplate);
-      return pin;
+      factories[templateName] = factories[templateName] || {};
+      factories[templateName][decaRadius] = factory;
     }
-    return {
-      CreateNewGraphic: CreateNewGraphic
-    }
-  }
-  
-  function CreatePiNeuron(templateName) {
-    var template = GetTemplate(templateName);
-    if(!template) {
-      N.L('N.PiGraphicsFactory::createGraphic Unable to find template '+templateName);
-      throw 'N.PiGraphicsFactory::createGraphic Unable to find template '+templateName;
-    }
-
-    if(!template.hasOwnProperty('templateFactory')) {
-      var factory = CreateFactory(template);
-      template.templateFactory = factory;
-    }
-    var graphic = template.templateFactory.CreateNewGraphic();
-    return graphic;
+    return factory.CreateNewGraphic();
   }
 
   function GetTemplate(templateName) {
@@ -117,8 +88,8 @@ N.UI.PiNeuronFactory = (function() {
     return null;
   }
 
-  function CreateFactory(template) {
-    var factory = GraphicFactory(template);
+  function CreateFactory(template, radius) {
+    var factory = GraphicFactory(template, radius);
     return factory;
   }
 
@@ -203,6 +174,41 @@ N.UI.PiNeuronFactory = (function() {
       }
     }
     return p;
+  }
+
+  var GraphicFactory = function(skeletonTemplate, graphicRadius) {
+    var template = skeletonTemplate;
+    var filledTemplate = null;
+    var radius = graphicRadius;
+
+    function CreateNewGraphic() {
+      if(!filledTemplate) {
+        BuildFromTemplate();
+      }
+      var pin = new N.UI.PiNeuron();
+
+      _.assign(pin, filledTemplate);
+      return pin;
+    }
+
+    function BuildFromTemplate() {
+      filledTemplate = {};
+      if(template.hasOwnProperty('className')) {
+        filledTemplate.className = template.className;
+      }
+      filledTemplate.modules = {};
+      for(var i in template.modules) {
+        var templateModule = template.modules[i];
+        var pathString = PiModuleToPath(templateModule, radius);
+        var module = _.cloneDeep(templateModule);
+        module.pathString = pathString;
+        filledTemplate.modules[module.name] = module;
+      }
+    }
+
+    return {
+      CreateNewGraphic: CreateNewGraphic
+    }
   }
 
   return {

@@ -35,7 +35,7 @@ N.UI.PiCanvasRenderer = function() {
 
 N.UI.PiCanvasRenderer.prototype.Configure = function(svgParent, sceneId) {
   this._svgParent = svgParent;
-  this.Scene = N.UI.Scenes.GetScene(sceneId);
+  this.Scene = N.Objects.Get(sceneId);
   this._w = this._svgParent.width();
   this._h = this._svgParent.height();
   this._padding = 0;

@@ -38,7 +38,7 @@
     equal(neuron.Compartments[0].ShortName, 'SO', 'Compartment short name');
 
     var signalInput = new N.Comp.SignalInput(outputCompartment);
-    outputCompartment.SetInput(signalInput);
+    outputCompartment.AddInput(signalInput);
     equal(neuron.Compartments[0].Input.ClassName, 'N.Comp.SignalInput', 'Compartment class name');
 
     var signal = new N.DiscreteSignal();

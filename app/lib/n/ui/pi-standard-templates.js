@@ -48,7 +48,7 @@ N.UI.StandardNeuronTemplates = {
       className: 'apical-dendrite-distal-tufts',
       initialAngle: -160.0,
       segments: [
-        { radius: 0.82, startAngle:  -160.0, direction: 1, facing: -1 },
+        { radius: 0.83, startAngle:  -160.0, direction: 1, facing: -1 },
         { radius: 1.0, startAngle:  -80.0, direction: -1, facing: 1 }]
     },{
       name: 'Apical dendrite proximal tufts',
@@ -66,7 +66,50 @@ N.UI.StandardNeuronTemplates = {
         { radius: 0.6375, startAngle: -160.0, direction: 1, facing: -1 },
         { radius: 1.000,  startAngle:  -45.0, direction: 1, facing: -1 },
         { radius: 0.500,  startAngle:  -20.0, direction: -1, facing: 1 }]
-      }
-    ]
+    }]
+  },
+  Stellate : {
+    className: 'stellate',
+    modules: [{
+      name: 'Body',
+      className: 'excitatory-body',
+      segments: [
+        { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
+        { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
+    },{
+      name: 'Dendrites',
+      className: 'dendrites',
+      segments: [
+        { radius: 0.61, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
+        { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
+    },{
+      name: 'Acetylcholine Receptors',
+      className: 'acetylcholine-receptors',
+      segments: [
+        { radius: 0.60, startAngle:  120, direction: 1, facing: -1, padding: 0.02 },
+        { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]
+    }]
+  },
+  InhibitoryInterneuron : {
+    className: 'inhibitory-interneuron',
+    modules: [{
+      name: 'Body',
+      className: 'inhibitory-body',
+      segments: [
+        { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
+        { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
+    },{
+      name: 'Dendrites',
+      className: 'dendrites',
+      segments: [
+        { radius: 0.61, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
+        { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
+    },{
+      name: 'Acetylcholine Receptors',
+      className: 'acetylcholine-receptors',
+      segments: [
+        { radius: 0.61, startAngle:  120, direction: 1, facing: -1, padding: 0.04 },
+        { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]
+    }]
   }
 }

@@ -24,33 +24,13 @@ N.UI.Scene.Neuron = function() {
   this.ClassName = 'N.UI.Scene';
   this.Neurons = {};
   this.Origin = 'center';
+  this.Id = N.GenerateUUID();
 }
 
-N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, size, position) {
-  var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template);
+N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
+  var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
   this.Neuron = neuron;
   this.NeuronGraphic = piGraphic;
-  this.Size = size;
+  this.Radius = radius;
   this.Position = position;
 }
-
-  //***************
-  //* N.UI.Scenes *
-  //***************
-
-N.UI.Scenes = (function() {
-  var ClassName = 'N.UI.Scenes';
-  var Scenes = {};
-
-  function AddScene(sceneId, scene) {
-    Scenes[sceneId] = scene;
-  }
-
-  function GetScene(sceneId) {
-    return Scenes[sceneId];
-  }
-  return {
-    AddScene: AddScene,
-    GetScene: GetScene
-  }
-})();

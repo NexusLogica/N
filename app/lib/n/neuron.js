@@ -20,7 +20,7 @@ var N = N || {};
 
 N.Neuron = function() {
   this.ClassName  = 'N.Neuron';
-  this.Id         = N.M.GenerateUUID();
+  this.Id         = N.GenerateUUID();
   this.Name       = '';
   this.ShortName  = '';
   this.Category   = 'Default';
@@ -66,12 +66,4 @@ N.Neuron.prototype.ToData = function() {
 
 N.Neuron.prototype.FromData = function(json) {
 
-}
-
-  //***********************
-  //* N.OutputCompartment *
-  //***********************
-
-N.OutputCompartment = function() {
-  this.ClassName  = 'N.OutputCompartment';
 }

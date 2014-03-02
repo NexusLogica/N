@@ -28,10 +28,10 @@ N.Comp.StateOutput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Input      = null;
   this.Output     = 0.0;
-  this.IsOutputComponent = false;
+  this.IsOutputComponent = true;
 }
 
-N.Comp.StateOutput.prototype.SetInput = function(input) {
+N.Comp.StateOutput.prototype.AddInput = function(input) {
   if(this.Input) {
     this.Input.Component = null;
   }
@@ -51,6 +51,72 @@ N.Comp.StateOutput.prototype.LoadFrom = function(json) {
       this.Input = N.NewN(json[i].ClassName).LoadFrom(json[i]);
     }
     else { this[i] = json[i]; }
+  }
+  return this;
+}
+
+  //*****************
+  //* N.Comp.Output *
+  //*****************
+
+N.Comp.Output = function(neuron, name, shortName) {
+  this.ClassName  = 'N.Comp.Output';
+  this.Name       = name;
+  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category   = 'StateOutput';
+
+  this.Neuron     = neuron;
+  this.Output     = 0.0;
+  this.IsOutputComponent = true;
+}
+
+N.Comp.Output.prototype.AddInput = function(input) {
+  this.Input = input;
+}
+
+N.Comp.Output.prototype.Update = function(t) {
+  if(this.Input) {
+    this.Output = this.Input.UpdateInput(t);
+  }
+  return this.Output;
+}
+
+N.Comp.Output.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
+}
+
+  //***************************
+  //* N.Comp.InhibitoryOutput *
+  //***************************
+
+N.Comp.InhibitoryOutput = function(neuron, name, shortName) {
+  this.ClassName  = 'N.Comp.InhibitoryOutput';
+  this.Name       = name;
+  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category   = 'InhibitoryOutput';
+
+  this.Neuron     = neuron;
+  this.Output     = 0.0;
+  this.IsOutputComponent = true;
+}
+
+N.Comp.InhibitoryOutput.prototype.AddInput = function(input) {
+  this.Input = input;
+}
+
+N.Comp.InhibitoryOutput.prototype.Update = function(t) {
+  if(this.Input) {
+    this.Output = this.Input.UpdateInput(t);
+  }
+  return this.Output;
+}
+
+N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
   }
   return this;
 }
@@ -77,6 +143,13 @@ N.Comp.Input.prototype.SumInputs = function(t) {
     this.Sum += this.Connections[i].GetOutput();
   }
   return this.Sum;
+}
+
+N.Comp.Input.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
 }
 
 N.Comp.Input.prototype.ToJSON = function() {

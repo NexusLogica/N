@@ -24,7 +24,7 @@ N.UI.SignalTraceRenderer = function() {
 
 N.UI.SignalTraceRenderer.prototype.Configure = function(svgParent, signal) {
   this._svgParent = svgParent;
-  this.Signal = N.M.Signals.GetSignal(signal);
+  this.Signal = N.Objects.Get(signal);
   this._needsRecalc = true;
   this._boundary = { x:0, y:0, width: svgParent.width(), height: svgParent.height() };
   this._timeAtOrigin = 0.0;
@@ -209,7 +209,7 @@ N.UI.SignalTraceRenderer.prototype.CalculateHorizontalRange = function() {
   this._startIndex = this.Signal.GetIndexBeforeTime(this._timeAtOrigin);
   var timeAtEnd = this._timeAtOrigin+this._boundary.width/this._scale;
   this._endIndex = this.Signal.GetIndexBeforeTime(timeAtEnd);
-  if(this._endIndex <= this.Signal.GetNumSamples()-1) {
+  if(this._endIndex < this.Signal.GetNumSamples()-1) {
     this._endIndex++;
   }
 }

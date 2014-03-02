@@ -25,11 +25,17 @@ N.CreateInstance = function(json) {
 N.NewN = function(className) {
   var parts = className.split('.');
   if(parts.length > 0 && parts[0] === 'N') {
+    var obj = null;
     var objConstructor = N;
     for(var i=1; i<parts.length; i++) {
       objConstructor = objConstructor[parts[i]];
     }
-    var obj = new objConstructor();
+    try {
+      obj = new objConstructor();
+    }
+    catch(err) {
+      N.L('ERROR: Unable to create object of class '+className);
+    }
     return obj;
   }
   return null;
@@ -70,56 +76,7 @@ N.Rad = function(angleDegrees) {
   return Math.PI*angleDegrees/180;
 }
 
-  //*************
-  //* N.Signals *
-  //*************
-
-N.Signals = function() {
-  this._Signals = [];
-}
-
-N.Signals.prototype.AddSignal = function(signal) {
-  this._Signals[signal.Id] = signal;
-}
-
-N.Signals.prototype.GetSignal = function(uid) {
-  return this._Signals[uid] || null;
-}
-
-N.Signals.prototype.RemoveSignal = function(uid) {
-  return delete this._Signals[uid];
-}
-
-  //*************
-  //* N.Neurons *
-  //*************
-
-N.Neurons = function() {
-  this._Neurons = [];
-}
-
-N.Neurons.prototype.AddNeuron = function(neuron) {
-  this._Neurons[neuron.Id] = neuron;
-}
-
-N.Neurons.prototype.GetNeuron = function(uid) {
-  return this._Neurons[uid] || null;
-}
-
-N.Neurons.prototype.RemoveNeuron = function(uid) {
-  return delete this._Neurons[uid];
-}
-
-  //***********
-  //* Manager *
-  //***********
-
-N.Manager = function() {
-  this.Neurons = new N.Neurons();
-  this.Signals = new N.Signals();
-}
-
-N.Manager.prototype.GenerateUUID = function() {
+N.GenerateUUID = function() {
   var d = new Date().getTime();
   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = (d + Math.random()*16)%16 | 0;
@@ -127,6 +84,40 @@ N.Manager.prototype.GenerateUUID = function() {
       return (c==='x' ? r : (r&0x7|0x8)).toString(16);
   });
   return uuid;
+}
+
+  //*************
+  //* N.Objects *
+  //*************
+
+N.Objects = (function() {
+  var objects = {};
+
+  function Add(obj) {
+    objects[obj.Id] = obj;
+  }
+
+  function Get(uid) {
+    return objects[uid] || null;
+  }
+
+  function Remove(uid) {
+    return delete objects[uid];
+  }
+
+  return {
+    Add: Add,
+    Get: Get,
+    Remove: Remove
+  }
+})();
+
+
+  //*************
+  //* N.Manager *
+  //*************
+
+N.Manager = function() {
 }
 
 N.M = N.M || new N.Manager();
