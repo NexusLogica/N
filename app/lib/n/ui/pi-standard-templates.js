@@ -90,6 +90,22 @@ N.UI.StandardNeuronTemplates = {
         { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]
     }]
   },
+  ExcitatoryInterneuron : {
+    className: 'excitatory-interneuron',
+    modules: [{
+      name: 'Body',
+      className: 'excitatory-body',
+      segments: [
+        { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
+        { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
+    },{
+      name: 'Dendrites',
+      className: 'dendrites',
+      segments: [
+        { radius: 0.61, startAngle: 120, direction: 1, facing: -1, padding: 0.05 },
+        { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
+    }]
+  },
   InhibitoryInterneuron : {
     className: 'inhibitory-interneuron',
     modules: [{
@@ -110,6 +126,24 @@ N.UI.StandardNeuronTemplates = {
       segments: [
         { radius: 0.61, startAngle:  120, direction: 1, facing: -1, padding: 0.04 },
         { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]
+    }]
+  },
+  InputSource : {
+    className: 'input-source',
+    modules: [{
+      name: 'Body',
+      className: 'excitatory-body',
+      segments: [
+        { outerRadius: 1.00 }]
+    }]
+  },
+  OutputSink : {
+    className: 'output-sink',
+    modules: [{
+      name: 'Body',
+      className: 'dendrites',
+      segments: [
+        { outerRadius: 1.00, innerRadius: 0.4 }]
     }]
   }
 }

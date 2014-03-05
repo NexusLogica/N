@@ -11,11 +11,30 @@ All Rights Reserved.
 
 */
 
-.pi-svg svg {
-  .axis {
-    stroke: silver;
-    stroke-width: 0.5;
+.pi-svg {
+  display: block;
+  $svg-opacity: 0.03;
+  border: 1px solid lightgray;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
+//  -moz-box-shadow:    2px 2px 19px 0px rgba(15, 15, 13, $svg-opacity);
+//  box-shadow:         2px 2px 19px 0px rgba(15, 15, 13, $svg-opacity);
+
+  svg {
+    .axis {
+      stroke: silver;
+      stroke-width: 0.5;
+    }
+
+    text {
+      alignment-baseline: hanging;
+
+    }
   }
+}
+
+.pi-canvas {
+  fill: lighten(floralwhite, 2%);
+  rx: 20;
 }
 
 $darker: 5%;
@@ -61,5 +80,20 @@ $darker: 5%;
     &.acetylcholine-receptors {
       fill: darken(linen, $darker);
     }
+  }
+}
+
+.pi-network {
+  >rect {
+    stroke-width: 0.8px;
+    stroke: lighten(gray, 15%);
+    fill: lighten(#FCF8F2, 1.5%);
+  }
+
+  >text {
+    font-size: 20px;
+    font-family: 'Helvetica';
+    text-anchor: start;
+    alignment-baseline: hanging;
   }
 }

@@ -114,31 +114,3 @@ N.PiNeuronTest.TestConfigurations = [{
       }
     }
   }];
-
-  //*******************************
-  //* N.Test.PiNeuronTestRenderer *
-  //*******************************
-
-N.Test.PiNeuronTestRenderer = function() {
-}
-
-N.Test.PiNeuronTestRenderer.prototype.Configure = function(paper, neuronId) {
-  this._paper = paper;
-  this._w = this._paper.canvas.offsetWidth;
-  this._h = this._paper.canvas.offsetHeight;
-  this._renderer = new N.UI.PiNeuronRenderer();
-  this._renderer.Configure(paper, neuronId);
-  this._padding = 15;
-  this._box = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
-  this._renderer.SetCanvasBoundary(this._box);
-}
-
-N.Test.PiNeuronTestRenderer.prototype.Render = function() {
-  this._backgroundRect = this._paper.rect(this._box.x, this._box.y, this._box.width, this._box.height).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
-  this._traceRenderer.Render();
-}
-
-N.Test.PiNeuronTestRenderer.prototype.SetScale = function(min, max) {
-  this._traceRenderer.SetScale(min, max);
-}
-

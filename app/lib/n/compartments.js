@@ -121,22 +121,22 @@ N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
   return this;
 }
 
-  //****************
-  //* N.Comp.Input *
-  //****************
+  //*****************************
+  //* N.Comp.LinearSummingInput *
+  //*****************************
 
-N.Comp.Input = function(component) {
+N.Comp.LinearSummingInput = function(component) {
   this.Component   = component;
-  this.ClassName   = 'N.Comp.Input';
+  this.ClassName   = 'N.Comp.LinearSummingInput';
   this.Sum         = 0.0;
   this.Connections = [];
 }
 
-N.Comp.Input.prototype.Connect = function(connection) {
+N.Comp.LinearSummingInput.prototype.Connect = function(connection) {
   this.Connections.push(connection);
 }
 
-N.Comp.Input.prototype.SumInputs = function(t) {
+N.Comp.LinearSummingInput.prototype.SumInputs = function(t) {
   var len = this.Connections.length;
   this.Sum = 0.0;
   for(var i=0; i<len; i++) {
@@ -145,14 +145,14 @@ N.Comp.Input.prototype.SumInputs = function(t) {
   return this.Sum;
 }
 
-N.Comp.Input.prototype.LoadFrom = function(json) {
+N.Comp.LinearSummingInput.prototype.LoadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }
   return this;
 }
 
-N.Comp.Input.prototype.ToJSON = function() {
+N.Comp.LinearSummingInput.prototype.ToJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }

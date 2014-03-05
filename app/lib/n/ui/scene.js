@@ -21,7 +21,7 @@ N.UI.Scene = N.UI.Scene || {};
   //*********************
 
 N.UI.Scene.Neuron = function() {
-  this.ClassName = 'N.UI.Scene';
+  this.ClassName = 'N.UI.Scene.Neuron';
   this.Neurons = {};
   this.Origin = 'center';
   this.Id = N.GenerateUUID();
@@ -33,4 +33,33 @@ N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
   this.NeuronGraphic = piGraphic;
   this.Radius = radius;
   this.Position = position;
+}
+
+N.UI.Scene.Neuron.prototype.Render = function(svgParent) {
+  this.NeuronGraphic.Render(svgParent);
+}
+
+  //**********************
+  //* N.UI.Scene.Network *
+  //**********************
+
+N.UI.Scene.Network = function() {
+  this.ClassName = 'N.UI.Scene.Network';
+  this.Network = null;
+  this.Neurons = {};
+  this.Origin = 'center';
+  this.Scale = 100;
+  this.Id = N.GenerateUUID();
+}
+
+N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
+  var piGraphic = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit);
+  this.Network = network;
+  this.NetworkGraphic = piGraphic;
+  this.Scale = scalePixelsPerUnit;
+  this.Position = position;
+}
+
+N.UI.Scene.Network.prototype.Render = function(svgParent) {
+  this.NetworkGraphic.Render(this.Network, svgParent, this.Scale);
 }

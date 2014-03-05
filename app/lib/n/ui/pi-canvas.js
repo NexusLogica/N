@@ -45,10 +45,12 @@ N.UI.PiCanvasRenderer.prototype.Configure = function(svgParent, sceneId) {
 }
 
 N.UI.PiCanvasRenderer.prototype.Render = function() {
-  this._backgroundRect = this._svgParent.rect(this._boundary.width, this._boundary.height).move(this._boundary.x, this._boundary.y).fill('#FCF8F2').stroke( {width: 3, color: '#294052'} );
+  this._backgroundRect = this._svgParent.rect(this._boundary.width, this._boundary.height).move(this._boundary.x, this._boundary.y).attr({ class: 'pi-canvas' });
 
   this._group = this._svgParent.group();
-  this.Scene.NeuronGraphic.Render(this._group);
+
+  this.Scene.Render(this._group);
+
   if(this.Scene.Origin === 'center') {
     this._x = 0.5*this._w;
     this._y = 0.5*this._h;

@@ -10,9 +10,19 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
-.pi-svg svg .axis {
-  stroke: silver;
-  stroke-width: 0.5; }
+.pi-svg {
+  display: block;
+  border: 1px solid lightgray;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
+  .pi-svg svg .axis {
+    stroke: silver;
+    stroke-width: 0.5; }
+  .pi-svg svg text {
+    alignment-baseline: hanging; }
+
+.pi-canvas {
+  fill: #fffdfa;
+  rx: 20; }
 
 .pi-neuron .compartment {
   stroke: #333333;
@@ -36,3 +46,13 @@ All Rights Reserved.
     fill: #e9e6d1; }
   .pi-neuron .compartment.acetylcholine-receptors {
     fill: #f6e3d1; }
+
+.pi-network > rect {
+  stroke-width: 0.8px;
+  stroke: #a6a6a6;
+  fill: #fdfbf8; }
+.pi-network > text {
+  font-size: 20px;
+  font-family: 'Helvetica';
+  text-anchor: start;
+  alignment-baseline: hanging; }

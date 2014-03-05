@@ -93,10 +93,25 @@ N.UI.PiNeuronFactory = (function() {
     return factory;
   }
 
+  function PiCircularModuleToPath(segment, outerRadius) {
+    var rOut = segment.outerRadius*outerRadius;
+    var p = 'M-'+rOut+' 0a'+rOut+' '+rOut+' 0 1 0 '+(2*rOut)+' 0a'+rOut+' '+rOut+' 0 1 0 '+(-2*rOut)+' 0';
+    if(segment.innerRadius) {
+      var rIn = segment.innerRadius*outerRadius;
+      // As per above, but rotate in the other direction.
+      p += 'M-'+rIn+' 0a'+rIn+' '+rIn+' 0 1 1 '+(2*rIn)+' 0a'+rIn+' '+rIn+' 0 1 1 '+(-2*rIn)+' 0';
+    }
+    return p;
+  }
+
   function PiModuleToPath(module, outerRadius) {
     var p = '';
     if(module.segments.length < 1) {
       return p;
+    }
+
+    if(module.segments[0].outerRadius) {
+      return PiCircularModuleToPath(module.segments[0], outerRadius);
     }
   
     for(var side = 1; side <= (module.mirror ? 2 : 1); side++) {
