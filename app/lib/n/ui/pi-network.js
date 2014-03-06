@@ -34,8 +34,14 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
 
   this.Scale = scale;
 
+  this.Grid = _.clone(this._network.Display.Grid);
+  for(var i=0; i<this.Grid.length; i++) {
+    this.Grid[this.Grid[i].RowId] = this.Grid[i];
+  }
+
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
+  if(this._network.ShortName.length) { classNameFull += ' '+this._network.ShortName; }
   this._group.attr({ class: classNameFull });
 
   var w = this.Width*this.Scale, h = this.Height*this.Scale;
@@ -46,15 +52,21 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
 
   for(var i in this._network.Display.Neurons) {
     var position = this._network.Display.Neurons[i];
-    console.log('******* name = '+i+' at '+JSON.stringify(position));
     var neuron = this._network.NeuronsByName[i];
-    console.log('******* neuron = '+i+' at '+JSON.stringify(neuron));
 
     var template = neuron.Display.Template;
     var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, scale*neuron.Display.Radius);
+    piGraphic.NeuronClassName = neuron.ShortName;
     this._piNeurons[i] = { neuron: neuron, piGraphic: piGraphic };
-    piGraphic.X = position.X*this.Scale;
+
+    var row = this.Grid[position.Row];
     piGraphic.Y = position.Y*this.Scale;
+
+    var sep = row.Spacing;
+    var cols = row.NumPoints;
+    var startX = position.Col*sep-0.5*sep*(cols-1);
+
+    piGraphic.X = startX*this.Scale;
     piGraphic.Render(this._group);
   }
 

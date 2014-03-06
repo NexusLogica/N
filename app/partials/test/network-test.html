@@ -4,7 +4,7 @@
 <div class="row">
   <div class="col-lg-12 col-lg-offset-2">
     <div class="row pi-network-test"  ng-repeat="scene in Scenes">
-      <pi-canvas pi-scene-id="{{scene}}" pi-width="600" pi-height="400" ng-controller="PiCanvasController"></pi-canvas>
+      <pi-canvas pi-scene-id="{{scene.Id}}" pi-width="{{scene.Width}}" pi-height="{{scene.Height}}" ng-controller="PiCanvasController"></pi-canvas>
     </div>
   </div>
 </div>

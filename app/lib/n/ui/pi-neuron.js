@@ -24,6 +24,7 @@ N.UI.PiNeuron = function() {
   this.Y = 0;
   this._set = null;
   this.Name = '';
+  this.NeuronClassName = '';
 }
 
 N.UI.PiNeuron.prototype.Render = function(svgParent) {
@@ -39,6 +40,7 @@ N.UI.PiNeuron.prototype.Render = function(svgParent) {
 
     var compartmentClassName = 'compartment';
     if(module.hasOwnProperty('className')) { compartmentClassName += ' '+module.className; }
+    if(this.NeuronClassName.length) { compartmentClassName += ' '+this.NeuronClassName; }
     module.path.attr( { class: compartmentClassName } );
   }
   this._group.translate(this.X, this.Y);
