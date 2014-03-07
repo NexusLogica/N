@@ -37,12 +37,13 @@ All Rights Reserved.
   rx: 20;
 }
 
-$darker: 5%;
+$darker: 0%;
+$inactiveFill: #F6F6F6;
 
 .pi-neuron {
   .compartment {
-    stroke: lighten(black, 20%);
-    stroke-width: 1.55px;
+    stroke: lighten(black, 60%);
+    stroke-width: 1.75px;
     stroke-linejoin: round;
 
     &.excitatory-body {
@@ -88,6 +89,7 @@ $darker: 5%;
     stroke-width: 0.8px;
     stroke: lighten(gray, 15%);
     fill: lighten(#FCF8F2, 1.5%);
+    fill: #FDFDFD;
   }
 
   >text {

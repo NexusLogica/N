@@ -26,8 +26,8 @@ N.UI.StandardNeuronTemplates = {
       name: 'Body',
       className: 'excitatory-body',
       segments: [
-        { radius: 0.44, startAngle: 110, direction: 1, facing: 1, padding: 0.06 },
-        { radius: 1.00, startAngle: 70, direction: 1, facing: -1, padding: 0.06 }]
+        { radius: 0.425, startAngle: 115, direction: 1, facing: 1, padding: 0.06 },
+        { radius: 1.00, startAngle: 65, direction: 1, facing: -1, padding: 0.06 }]
     },{
       name: 'Proximal basal dendrites',
       className: 'proximal-basal-dendrites',
@@ -35,7 +35,7 @@ N.UI.StandardNeuronTemplates = {
       segments: [
         { radius: 0.75, startAngle:  -20, direction: 1, facing: -1, padding: 0.06 },
         { radius: 1.00, startAngle:  25, direction: 1, facing: -1 },
-        { radius: 0.50, startAngle: 70, direction: -1, facing: 1, padding: 0.02 }]
+        { radius: 0.50, startAngle: 65, direction: -1, facing: 1, padding: 0.02 }]
     },{
       name: 'Distal basal dendrites',
       className: 'distal-basal-dendrites',
@@ -80,13 +80,13 @@ N.UI.StandardNeuronTemplates = {
       name: 'Dendrites',
       className: 'dendrites',
       segments: [
-        { radius: 0.61, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
+        { radius: 0.65, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
     },{
       name: 'Acetylcholine Receptors',
       className: 'acetylcholine-receptors',
       segments: [
-        { radius: 0.60, startAngle:  120, direction: 1, facing: -1, padding: 0.02 },
+        { radius: 0.65, startAngle:  120, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]
     }]
   },
@@ -97,13 +97,13 @@ N.UI.StandardNeuronTemplates = {
       className: 'excitatory-body',
       segments: [
         { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
-        { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
+        { radius: 1.00, startAngle: 60, direction: 1, facing: -1, padding: 0.03 }]
     },{
       name: 'Dendrites',
       className: 'dendrites',
       segments: [
-        { radius: 0.61, startAngle: 120, direction: 1, facing: -1, padding: 0.05 },
-        { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
+        { radius: 0.63, startAngle: 120, direction: 1, facing: -1, padding: 0.05 },
+        { radius: 1.00, startAngle: 420, direction: -1, facing: 1, padding: 0.05 }]
     }]
   },
   InhibitoryInterneuron : {
@@ -112,20 +112,14 @@ N.UI.StandardNeuronTemplates = {
       name: 'Body',
       className: 'inhibitory-body',
       segments: [
-        { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
-        { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
+        { radius: 0.53, startAngle: 150, direction: 1, facing: 1, padding: 0.05 },
+        { radius: 1.00, startAngle: 30, direction: 1, facing: -1, padding: 0.05 }]
     },{
       name: 'Dendrites',
       className: 'dendrites',
       segments: [
-        { radius: 0.61, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
-        { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
-    },{
-      name: 'Acetylcholine Receptors',
-      className: 'acetylcholine-receptors',
-      segments: [
-        { radius: 0.61, startAngle:  120, direction: 1, facing: -1, padding: 0.04 },
-        { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]
+        { radius: 0.63, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
+        { radius: 1.00, startAngle: 390, direction: -1, facing: 1, padding: 0.05 }]
     }]
   },
   InputSource : {

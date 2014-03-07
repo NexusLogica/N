@@ -86,7 +86,7 @@ N.PiNeuronTest.TestConfigurations = [{
         Name: 'Output',
         ShortName: 'OP'
       },{
-        ClassName: 'N.Comp.Input',
+        ClassName: 'N.Comp.LinearSummingInput',
         Name: 'Input',
         ShortName: 'IP'
       }],
@@ -104,7 +104,7 @@ N.PiNeuronTest.TestConfigurations = [{
         Name: 'InhibitoryOutput',
         ShortName: 'IOP'
       },{
-        ClassName: 'N.Comp.Input',
+        ClassName: 'N.Comp.LinearSummingInput',
         Name: 'Input',
         ShortName: 'IP'
       }],

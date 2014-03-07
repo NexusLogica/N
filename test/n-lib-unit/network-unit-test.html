@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>N Network Unit Tests</title>
+
+  <link rel="stylesheet" href="../../app/lib/qunit/qunit.css">
+  <script src="../../app/lib/qunit/qunit.js"></script>
+  <script src="../../app/lib/json2.js"></script>
+  <script src="../../app/lib/n/n.js"></script>
+  <script src="../../app/lib/n/network.js"></script>
+  <script src="../../app/lib/n/neuron.js"></script>
+
+
+  <script>
+  QUnit.assert.near = function( actual, expected, eps, message ) {
+    var hasEps = (arguments.length > 2 && typeof eps !== "string");
+    var actualMessage = (hasEps ? message : eps);
+    var tolerance = 1.0e-6;
+    if(hasEps) {
+      tolerance = eps;
+    }
+    var diff = Math.abs(actual-expected);
+    QUnit.push(diff < tolerance, actual, expected, actualMessage);
+  };
+
+  test("Network test", function() {
+    var network = new N.Network();
+
+    equal(network.GetNumNeurons(), 0, 'No initial neurons');
+
+    var newNeuron = new N.Neuron();
+    newNeuron.Name = 'Neuron1';
+    newNeuron.ShortName = 'N1';
+    network.AddNeuron(newNeuron);
+
+    equal(network.GetNumNeurons(), 1, 'One neuron');
+    equal(network.GetNeuronByIndex(0).Name, 'Neuron1', "Neuron name");
+    equal(network.GetNeuronByName('N1').Name, 'Neuron1', 'Neuron long name');
+
+    newNeuron.Update = function(t) { this.UpdateCalled = true; this.Times = this.Times ? (this.Times.push(t) && this.Times) : ([ t ]);  }
+
+    network.Update(0.1);
+
+    equal(newNeuron.Times.length, 1, 'yes');
+    equal(newNeuron.Times[0], 0.1, 'yes');
+  });
+
+  test("Network load test", function() {
+    var network = new N.Network();
+
+    var json = {
+      Name: 'Layer1',
+      ShortName: 'L1',
+      Neurons: [{
+        ClassName: 'N.Neuron', Name: 'Cajal–Retzius 1', ShortName: 'CR1'
+      },{
+        ClassName: 'N.Neuron', Name: 'Inhibitory Interneuron 1', ShortName: 'INB1'
+      }]
+    }
+
+    network.LoadFrom(json);
+    equal(network.GetNumNeurons(), 2, 'Two neurons');
+    equal(network.GetNeuronByIndex(0).Name, 'Cajal–Retzius 1', "Neuron 1 name");
+    equal(network.GetNeuronByName('CR1').Name, 'Cajal–Retzius 1', 'Neuron 1 long name');
+    equal(network.GetNeuronByIndex(1).Name, 'Inhibitory Interneuron 1', "Neuron 2 name");
+    equal(network.GetNeuronByName('INB1').Name, 'Inhibitory Interneuron 1', 'Neuron 2 long name');
+  });
+
+  </script>
+</head>
+<body>
+
+<div id="qunit"></div>
+
+</body>
+</html>

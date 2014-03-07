@@ -59,8 +59,9 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
     piGraphic.NeuronClassName = neuron.ShortName;
     this._piNeurons[i] = { neuron: neuron, piGraphic: piGraphic };
 
+
     var row = this.Grid[position.Row];
-    piGraphic.Y = position.Y*this.Scale;
+    piGraphic.Y = row.Y*this.Scale;
 
     var sep = row.Spacing;
     var cols = row.NumPoints;

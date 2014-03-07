@@ -25,32 +25,33 @@ All Rights Reserved.
   rx: 20; }
 
 .pi-neuron .compartment {
-  stroke: #333333;
-  stroke-width: 1.55px;
+  stroke: #999999;
+  stroke-width: 1.75px;
   stroke-linejoin: round; }
   .pi-neuron .compartment.excitatory-body {
-    fill: #c2dfb7; }
+    fill: #d1e7c9; }
   .pi-neuron .compartment.inhibitory-body {
-    fill: #ffd8ab; }
+    fill: bisque; }
   .pi-neuron .compartment.proximal-basal-dendrites {
-    fill: #e9e6d1; }
+    fill: #f1efe2; }
   .pi-neuron .compartment.distal-basal-dendrites {
-    fill: #efe0c7; }
+    fill: #f5ebdb; }
   .pi-neuron .compartment.apical-dendrite-distal-tufts {
-    fill: #9ac7eb; }
+    fill: #afd3ef; }
   .pi-neuron .compartment.apical-dendrite-proximal-tufts {
-    fill: #c2dcf0; }
+    fill: #d6e8f5; }
   .pi-neuron .compartment.apical-dendrite-trunk {
-    fill: #d7e9f5; }
+    fill: #ebf4fa; }
   .pi-neuron .compartment.dendrites {
-    fill: #e9e6d1; }
+    fill: #f1efe2; }
   .pi-neuron .compartment.acetylcholine-receptors {
-    fill: #f6e3d1; }
+    fill: linen; }
 
 .pi-network > rect {
   stroke-width: 0.8px;
   stroke: #a6a6a6;
-  fill: #fdfbf8; }
+  fill: #fdfbf8;
+  fill: #FDFDFD; }
 .pi-network > text {
   font-size: 20px;
   font-family: 'Helvetica';
