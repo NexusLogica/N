@@ -36,7 +36,7 @@ N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
 }
 
 N.UI.Scene.Neuron.prototype.Render = function(svgParent) {
-  this.NeuronGraphic.Render(svgParent);
+  this.NeuronGraphic.Render(this.Neuron, svgParent);
 }
 
   //**********************

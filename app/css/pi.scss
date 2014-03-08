@@ -11,13 +11,15 @@ All Rights Reserved.
 
 */
 
-.pi-svg {
+.pi-canvas {
   display: block;
   $svg-opacity: 0.03;
   border: 1px solid lightgray;
+  fill: lighten(floralwhite, 2%);
+  rx: 20;
   -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
-//  -moz-box-shadow:    2px 2px 19px 0px rgba(15, 15, 13, $svg-opacity);
-//  box-shadow:         2px 2px 19px 0px rgba(15, 15, 13, $svg-opacity);
+  -moz-box-shadow:    5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
+  box-shadow:         5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
 
   svg {
     .axis {
@@ -30,11 +32,6 @@ All Rights Reserved.
 
     }
   }
-}
-
-.pi-canvas {
-  fill: lighten(floralwhite, 2%);
-  rx: 20;
 }
 
 $darker: 0%;

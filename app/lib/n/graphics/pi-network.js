@@ -68,7 +68,7 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
     var startX = position.Col*sep-0.5*sep*(cols-1);
 
     piGraphic.X = startX*this.Scale;
-    piGraphic.Render(this._group);
+    piGraphic.Render(neuron, this._group);
   }
 
   this._label = this._group.plain(this._network.ShortName).move(-0.5*w+6, -0.5*h+3);

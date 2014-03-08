@@ -88,7 +88,8 @@ N.NetworkTest.TestConfigurations = [{
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.InputSource',
-        Radius: 0.3
+        Radius: 0.3,
+        CompartmentMap : [{ neuron: 'IP', graphic: 'Body' }]
       }
     },{
       ClassName: 'N.Neuron',

@@ -22,7 +22,7 @@ N.UI = N.UI || {};
 N.UI.StandardNeuronTemplates = {
   Pyramidal : {
     className: 'pyramidal',
-    modules: [{
+    compartments: [{
       name: 'Body',
       className: 'excitatory-body',
       segments: [
@@ -70,7 +70,7 @@ N.UI.StandardNeuronTemplates = {
   },
   Stellate : {
     className: 'stellate',
-    modules: [{
+    compartments: [{
       name: 'Body',
       className: 'excitatory-body',
       segments: [
@@ -92,7 +92,7 @@ N.UI.StandardNeuronTemplates = {
   },
   ExcitatoryInterneuron : {
     className: 'excitatory-interneuron',
-    modules: [{
+    compartments: [{
       name: 'Body',
       className: 'excitatory-body',
       segments: [
@@ -108,7 +108,7 @@ N.UI.StandardNeuronTemplates = {
   },
   InhibitoryInterneuron : {
     className: 'inhibitory-interneuron',
-    modules: [{
+    compartments: [{
       name: 'Body',
       className: 'inhibitory-body',
       segments: [
@@ -124,7 +124,7 @@ N.UI.StandardNeuronTemplates = {
   },
   InputSource : {
     className: 'input-source',
-    modules: [{
+    compartments: [{
       name: 'Body',
       className: 'excitatory-body',
       segments: [
@@ -133,7 +133,7 @@ N.UI.StandardNeuronTemplates = {
   },
   OutputSink : {
     className: 'output-sink',
-    modules: [{
+    compartments: [{
       name: 'Body',
       className: 'dendrites',
       segments: [

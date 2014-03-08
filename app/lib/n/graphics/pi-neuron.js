@@ -27,21 +27,26 @@ N.UI.PiNeuron = function() {
   this.NeuronClassName = '';
 }
 
-N.UI.PiNeuron.prototype.Render = function(svgParent) {
+N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this._group = svgParent.group();
   var classNameFull = 'pi-neuron';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
   this._group.attr({ class: classNameFull });
 
   var _this = this;
-  for(var i in this.modules) {
-    var module = this.modules[i];
-    module.path = this._group.path(module.pathString).attr({ fill: module.color });
+  for(var i in this.compartments) {
+    var compartment = this.compartments[i];
+    compartment.path = this._group.path(compartment.pathString).attr({ fill: compartment.color });
 
     var compartmentClassName = 'compartment';
-    if(module.hasOwnProperty('className')) { compartmentClassName += ' '+module.className; }
+    if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
     if(this.NeuronClassName.length) { compartmentClassName += ' '+this.NeuronClassName; }
-    module.path.attr( { class: compartmentClassName } );
+    compartment.path.attr( { class: compartmentClassName } );
+
+    // Add event handlers.
+    $(compartment.path.node).on('mouseenter', function(event) {
+      $(this).closest('.pi-canvas').scope().onComponentEvent(neuron, 'mouseEnter');
+    });
   }
   this._group.translate(this.X, this.Y);
 }
@@ -95,7 +100,7 @@ N.UI.PiNeuronFactory = (function() {
     return factory;
   }
 
-  function PiCircularModuleToPath(segment, outerRadius) {
+  function PiCircularCompartmentToPath(segment, outerRadius) {
     var rOut = segment.outerRadius*outerRadius;
     var p = 'M-'+rOut+' 0a'+rOut+' '+rOut+' 0 1 0 '+(2*rOut)+' 0a'+rOut+' '+rOut+' 0 1 0 '+(-2*rOut)+' 0';
     if(segment.innerRadius) {
@@ -106,27 +111,27 @@ N.UI.PiNeuronFactory = (function() {
     return p;
   }
 
-  function PiModuleToPath(module, outerRadius) {
+  function PiCompartmentToPath(compartment, outerRadius) {
     var p = '';
-    if(module.segments.length < 1) {
+    if(compartment.segments.length < 1) {
       return p;
     }
 
-    if(module.segments[0].outerRadius) {
-      return PiCircularModuleToPath(module.segments[0], outerRadius);
+    if(compartment.segments[0].outerRadius) {
+      return PiCircularCompartmentToPath(compartment.segments[0], outerRadius);
     }
   
-    for(var side = 1; side <= (module.mirror ? 2 : 1); side++) {
+    for(var side = 1; side <= (compartment.mirror ? 2 : 1); side++) {
       var mirror = (side === 2 ? -1.0 : 1.0);
       var mirrorOffset = (side === 2 ? 180 : 0);
   
-      var direction = mirror*module.segments[0].direction;
-      var facing = mirror*module.segments[0].facing;
-      var rSeg = module.segments[0].radius;
+      var direction = mirror*compartment.segments[0].direction;
+      var facing = mirror*compartment.segments[0].facing;
+      var rSeg = compartment.segments[0].radius;
       var r = rSeg*outerRadius;
-      var angle = mirror*module.segments[0].startAngle+mirrorOffset;
+      var angle = mirror*compartment.segments[0].startAngle+mirrorOffset;
   
-      var padding = (module.segments[0].hasOwnProperty('padding') ? module.segments[0].padding : defaultPadding);
+      var padding = (compartment.segments[0].hasOwnProperty('padding') ? compartment.segments[0].padding : defaultPadding);
       var angleDelta = -facing*Math.asin(padding/rSeg);
       var angleRadians = N.Rad(angle)+angleDelta;
   
@@ -134,16 +139,16 @@ N.UI.PiNeuronFactory = (function() {
       var y = r*Math.sin(angleRadians);
       p += 'M'+x+' '+y;
   
-      for(var i=0; i<module.segments.length; i++) {
-        var iNext = (i === module.segments.length-1 ? 0 : i+1);
+      for(var i=0; i<compartment.segments.length; i++) {
+        var iNext = (i === compartment.segments.length-1 ? 0 : i+1);
   
-        facing = mirror*module.segments[i].facing;
-        var facingNext = mirror*module.segments[iNext].facing;
-        direction = mirror*module.segments[i].direction;
-        rSeg = module.segments[i].radius;
+        facing = mirror*compartment.segments[i].facing;
+        var facingNext = mirror*compartment.segments[iNext].facing;
+        direction = mirror*compartment.segments[i].direction;
+        rSeg = compartment.segments[i].radius;
         r = rSeg*outerRadius;
-        var angleNow = mirror*module.segments[i].startAngle+mirrorOffset;
-        var angleNext = mirror*module.segments[iNext].startAngle+mirrorOffset;
+        var angleNow = mirror*compartment.segments[i].startAngle+mirrorOffset;
+        var angleNext = mirror*compartment.segments[iNext].startAngle+mirrorOffset;
   
         if(direction*mirror > 0) {
           if(angleNext < angleNow) {
@@ -158,7 +163,7 @@ N.UI.PiNeuronFactory = (function() {
           N.L('CASE 3/4 = '+ angle);
         }
   
-        padding = (module.segments[iNext].hasOwnProperty('padding') ? module.segments[iNext].padding : defaultPadding);
+        padding = (compartment.segments[iNext].hasOwnProperty('padding') ? compartment.segments[iNext].padding : defaultPadding);
         angleDelta = -facingNext*Math.asin(padding/rSeg);
         angleRadians = N.Rad(angleNext)+angleDelta;
   
@@ -174,11 +179,11 @@ N.UI.PiNeuronFactory = (function() {
         //
         p += ' A'+r+' '+r+' 0 '+(mirror*Math.abs(angle) > 180 ? '1 ' : '0 ')+(direction > 0 ? 1 : 0)+' '+x+' '+y;
   
-        if(i === module.segments.length-1) {
+        if(i === compartment.segments.length-1) {
           p += 'z';
         }
         else {
-          var nextSeg = module.segments[iNext];
+          var nextSeg = compartment.segments[iNext];
           var rNext = nextSeg.radius*outerRadius;
   
           angleDelta = -facingNext*Math.asin(padding/nextSeg.radius);
@@ -213,13 +218,13 @@ N.UI.PiNeuronFactory = (function() {
       if(template.hasOwnProperty('className')) {
         filledTemplate.className = template.className;
       }
-      filledTemplate.modules = {};
-      for(var i in template.modules) {
-        var templateModule = template.modules[i];
-        var pathString = PiModuleToPath(templateModule, radius);
-        var module = _.cloneDeep(templateModule);
-        module.pathString = pathString;
-        filledTemplate.modules[module.name] = module;
+      filledTemplate.compartments = {};
+      for(var i in template.compartments) {
+        var templateCompartment = template.compartments[i];
+        var pathString = PiCompartmentToPath(templateCompartment, radius);
+        var compartment = _.cloneDeep(templateCompartment);
+        compartment.pathString = pathString;
+        filledTemplate.compartments[compartment.name] = compartment;
       }
     }
 

@@ -24,7 +24,6 @@ nSimAppDirectives.directive('xxxxnSignalId', [function() {
 
 nSimAppDirectives.directive('nCanvas', function() {
   function link($scope, $element, $attrs) {
-    $($element[0]).addClass('pi-svg');
     $scope.svg = SVG($element[0]).size($element.width(), $element.height());
     if($attrs.nRenderer) {
       var renderer = $attrs.nRenderer;
@@ -47,7 +46,7 @@ nSimAppDirectives.directive('piCanvas', function() {
     var width = $attrs.piWidth;
     var height = $attrs.piHeight;
     var sceneId = $attrs.piSceneId;
-    $($element[0]).addClass('pi-svg').width(width).height(height);
+    $($element[0]).width(width).height(height);
     $scope.svg = SVG($element[0]).size(width, height);
     $scope.$parent.renderer = new N.UI.PiCanvasRenderer();
     $scope.$parent.renderer.Configure($scope.svg, sceneId);

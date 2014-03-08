@@ -10,19 +10,19 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
-.pi-svg {
+.pi-canvas {
   display: block;
   border: 1px solid lightgray;
-  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
-  .pi-svg svg .axis {
+  fill: #fffdfa;
+  rx: 20;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
+  .pi-canvas svg .axis {
     stroke: silver;
     stroke-width: 0.5; }
-  .pi-svg svg text {
+  .pi-canvas svg text {
     alignment-baseline: hanging; }
-
-.pi-canvas {
-  fill: #fffdfa;
-  rx: 20; }
 
 .pi-neuron .compartment {
   stroke: #999999;
