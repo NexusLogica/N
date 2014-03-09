@@ -22,29 +22,10 @@ nSimAppDirectives.directive('xxxxnSignalId', [function() {
     }
   }]);
 
-nSimAppDirectives.directive('nCanvas', function() {
-  function link($scope, $element, $attrs) {
-    $scope.svg = SVG($element[0]).size($element.width(), $element.height());
-    if($attrs.nRenderer) {
-      var renderer = $attrs.nRenderer;
-      $scope.$parent.renderer = N.NewN(renderer);
-      $scope.$parent.renderer.Configure($scope.svg, $attrs.nSignalId);
-      $scope.$parent.renderer.Render();
-    }
-  }
-
-  return {
-    restrict: 'AE',
-    transclude: true,
-    scope: { title:'@' },
-    link: link
-  };
-});
-
 nSimAppDirectives.directive('piCanvas', function() {
   function link($scope, $element, $attrs) {
-    var width = $attrs.piWidth;
-    var height = $attrs.piHeight;
+    var width = $($element[0]).width();
+    var height = $($element[0]).height();
     var sceneId = $attrs.piSceneId;
     $($element[0]).width(width).height(height);
     $scope.svg = SVG($element[0]).size(width, height);

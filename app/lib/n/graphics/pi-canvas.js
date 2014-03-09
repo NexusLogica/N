@@ -22,10 +22,7 @@ N.UI = N.UI || {};
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('PiCanvasController', ['$scope',
-  function PiNeuronController($scope) {
-    $scope.onComponentEvent = function(neuron, eventName) {
-      console.log('event on ['+neuron.ShortName+'] = '+eventName);
-    }
+  function PiCanvasController($scope) {
   }
 ]);
 

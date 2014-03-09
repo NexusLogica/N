@@ -1,2 +1,4 @@
-<n-canvas class="n-canvas signal-trace-canvas" n-type="signal-trace" n-renderer="N.Test.SignalTraceTestRenderer" data-range-min="{{signal.TimeMin}}" data-range-max="{{signal.TimeMax}}" n-signal-id="{{signal.Id}}" ng-controller="SignalTraceController">
-</n-canvas>
+<div class="pi-scene pi-signal-trace-scene row" ng-controller="PiSignalTraceSceneController">
+  <div pi-canvas class="pi-canvas signal-trace-canvas" n-type="signal-trace" n-renderer="N.Test.SignalTraceTestRenderer" pi-scene-id="{{scene.Id}}" data-range-min="{{signal.TimeMin}}" data-range-max="{{signal.TimeMax}}" n-signal-id="{{signal.Id}}" ng-controller="SignalTraceController">
+  </div>
+</div>

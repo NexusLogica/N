@@ -22,6 +22,8 @@ All Rights Reserved.
   box-shadow:         5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
 
   svg {
+    width: 100%;
+    height: 100%;
     .axis {
       stroke: silver;
       stroke-width: 0.5;
@@ -90,6 +92,8 @@ $inactiveFill: #F6F6F6;
   }
 
   >text {
+    fill: gray;
+    stroke: gray;
     font-size: 20px;
     font-family: 'Helvetica';
     text-anchor: start;

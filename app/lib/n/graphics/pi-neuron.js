@@ -34,6 +34,7 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this._group.attr({ class: classNameFull });
 
   var _this = this;
+  var compartmentMap = (neuron.Display ? neuron.Display.CompartmentMap : null);
   for(var i in this.compartments) {
     var compartment = this.compartments[i];
     compartment.path = this._group.path(compartment.pathString).attr({ fill: compartment.color });
@@ -43,12 +44,23 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
     if(this.NeuronClassName.length) { compartmentClassName += ' '+this.NeuronClassName; }
     compartment.path.attr( { class: compartmentClassName } );
 
-    // Add event handlers.
-    $(compartment.path.node).on('mouseenter', function(event) {
-      $(this).closest('.pi-canvas').scope().onComponentEvent(neuron, 'mouseEnter');
-    });
+    if(compartmentMap) {
+      var neuronCompartmentName = compartmentMap[compartment.name];
+      if(neuronCompartmentName) {
+        var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
+        if(compartmentObj) {
+          this.AddEventHandlers(compartment.path.node, compartmentObj);
+        }
+      }
+    }
   }
   this._group.translate(this.X, this.Y);
+}
+
+N.UI.PiNeuron.prototype.AddEventHandlers = function(node, neuronCompartment) {
+  $(node).on('mouseenter', function(event) {
+    $(this).closest('.pi-canvas').scope().onCompartmentMouseEnter(event, neuronCompartment);
+  });
 }
 
 N.UI.PiNeuron.prototype.GetGroup = function() {
@@ -64,7 +76,7 @@ N.UI.PiNeuronFactory = (function() {
   var factories = {};
 
   function CreatePiNeuron(templateName, radius) {
-    var decaRadius = 10*parseInt(radius/10.0, 10);
+    var decaRadius = parseInt(radius, 10);
     if(decaRadius === 0) { decaRadius = 10; }
 
     var factory = (factories[templateName] ? factories[templateName][decaRadius] : null);

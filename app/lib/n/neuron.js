@@ -18,17 +18,29 @@ var N = N || {};
   //* N.Neuron *
   //************
 
-N.Neuron = function() {
+N.Neuron = function(network) {
   this.ClassName  = 'N.Neuron';
   this.Id         = N.GenerateUUID();
   this.Name       = '';
   this.ShortName  = '';
   this.Category   = 'Default';
   this.Compartments = [];
+  this.CompartmentsByName = {};
+  this.Network    = network;
 }
 
 N.Neuron.prototype.AddCompartment = function(compartment) {
   this.Compartments.push(compartment);
+  this.CompartmentsByName[compartment.Name] = compartment;
+  this.CompartmentsByName[compartment.ShortName] = compartment;
+}
+
+N.Neuron.prototype.GetCompartmentByIndex = function(index) {
+  return this.Compartments[index];
+}
+
+N.Neuron.prototype.GetCompartmentByName = function(name) {
+  return this.CompartmentsByName[name];
 }
 
 N.Neuron.prototype.GetNumCompartments = function() {
@@ -47,8 +59,8 @@ N.Neuron.prototype.LoadFrom = function(json) {
     if(i === 'Compartments') {
       for(var j=0; j<json.Compartments.length; j++) {
         var compartmentJson = json.Compartments[j];
-        var compartment = N.NewN(compartmentJson.ClassName).LoadFrom(compartmentJson);
-        this.Compartments.push(compartment);
+        var compartment = N.NewN(compartmentJson.ClassName, this).LoadFrom(compartmentJson);
+        this.AddCompartment(compartment);
       }
     }
     else {

@@ -16,6 +16,45 @@ var N = N || {};
 N.UI = N.UI || {};
 N.UI.Scene = N.UI.Scene || {};
 
+  //**********************
+  //* N.UI.Scene.Network *
+  //**********************
+
+N.UI.Scene.Network = function() {
+  this.ClassName = 'N.UI.Scene.Network';
+  this.Network = null;
+  this.Neurons = {};
+  this.Origin = 'center';
+  this.Scale = 100;
+  this.Id = N.GenerateUUID();
+}
+
+N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
+  var piGraphic = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit);
+  this.Network = network;
+  this.NetworkGraphic = piGraphic;
+  this.Scale = scalePixelsPerUnit;
+  this.Position = position;
+}
+
+N.UI.Scene.Network.prototype.Render = function(svgParent) {
+  this.Scale = this.Fit(svgParent);
+  this.NetworkGraphic.Render(this.Network, svgParent, this.Scale);
+}
+
+N.UI.Scene.Network.prototype.Fit = function(svgParent) {
+  var svgWidth = $(svgParent.node).parent().width();
+  var svgHeight = $(svgParent.node).parent().height();
+  var aspectRatioSvg = svgWidth/svgHeight;
+  var aspectRatioNetwork = this.NetworkGraphic.Width/this.NetworkGraphic.Height;
+  if(aspectRatioNetwork > aspectRatioSvg) {
+    return 0.9*svgWidth/this.NetworkGraphic.Width;
+  }
+  else {
+    return 0.9*svgHeight/this.NetworkGraphic.Height;
+  }
+}
+
   //*********************
   //* N.UI.Scene.Neuron *
   //*********************
@@ -39,27 +78,34 @@ N.UI.Scene.Neuron.prototype.Render = function(svgParent) {
   this.NeuronGraphic.Render(this.Neuron, svgParent);
 }
 
-  //**********************
-  //* N.UI.Scene.Network *
-  //**********************
+  //**************************
+  //* N.UI.Scene.SignalTrace *
+  //**************************
 
-N.UI.Scene.Network = function() {
-  this.ClassName = 'N.UI.Scene.Network';
-  this.Network = null;
-  this.Neurons = {};
-  this.Origin = 'center';
-  this.Scale = 100;
+N.UI.Scene.SignalTrace = function() {
+  this.ClassName = 'N.UI.Scene.SignalTrace';
+  this.Signal = {};
   this.Id = N.GenerateUUID();
 }
 
-N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
-  var piGraphic = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit);
-  this.Network = network;
-  this.NetworkGraphic = piGraphic;
-  this.Scale = scalePixelsPerUnit;
-  this.Position = position;
+N.UI.Scene.SignalTrace.prototype.SetSignal = function(signalId) {
+  this.SignalId = signalId;
+  this._traceRenderer = new N.UI.SignalTraceRenderer();
 }
 
-N.UI.Scene.Network.prototype.Render = function(svgParent) {
-  this.NetworkGraphic.Render(this.Network, svgParent, this.Scale);
+N.UI.Scene.SignalTrace.prototype.Render = function(svgParent) {
+  this._w = svgParent.parent.width();
+  this._h = svgParent.parent.height();
+  this._traceRenderer.Configure(svgParent, this.SignalId);
+  this._padding = 15;
+  this._box = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
+  this._traceRenderer.SetCanvasBoundary(this._box);
+
+  this._backgroundRect = svgParent.rect(this._box.width, this._box.height).move(this._box.x, this._box.y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
+  this._traceRenderer.Render();
+}
+
+// TODO: Used?
+N.UI.Scene.SignalTrace.prototype.SetScale = function(min, max) {
+  this._traceRenderer.SetScale(min, max);
 }

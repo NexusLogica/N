@@ -52,7 +52,7 @@ N.PiNeuronTest.prototype.CreateScenes = function() {
     scene.SetNeuron(neuron, config.Neuron.Display.Radius, { x:0, y:0});
     scene.Id = 'N.PiNeuronTest.'+(i+1);
     N.Objects.Add(scene);
-    this.Scenes.push(scene.Id);
+    this.Scenes.push(scene);
   }
 }
 

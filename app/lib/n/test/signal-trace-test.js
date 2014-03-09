@@ -25,6 +25,7 @@ nSimAppControllers.controller('SignalTraceTestController', ['$scope',
   function SignalTraceTestController($scope) {
     var testSignals = new N.SignalTraceTest();
     testSignals.CreateSignals();
+    $scope.Scenes = testSignals.Scenes;
     $scope.signalsMinRange = 0.0;
     $scope.signalsMaxRange = 0.090;
     $scope.signals = testSignals.Signals;
@@ -44,14 +45,22 @@ nSimAppControllers.controller('SignalTraceTestItemController', ['$scope',
   //*********************
 
 N.SignalTraceTest = function() {
+  this.Scenes = [];
 }
 
 N.SignalTraceTest.prototype.CreateSignals = function() {
+  var testFuncs = [ 'CreateSinAnalog', 'CreateSawAnalog', 'CreatePulseDiscrete'];
   this.Signals = [];
   this._timeStart = 0.0;
-  N.Objects.Add(this.CreateSinAnalog());
-  N.Objects.Add(this.CreateSawAnalog());
-  N.Objects.Add(this.CreatePulseDiscrete());
+  for(var test in testFuncs) {
+    var signal = this[testFuncs[test]]();
+    N.Objects.Add(signal);
+
+    var scene = new N.UI.Scene.SignalTrace();
+    scene.SetSignal(signal.Id);
+    N.Objects.Add(scene);
+    this.Scenes.push(scene);
+  }
 }
 
 N.SignalTraceTest.prototype.CreateSinAnalog = function() {

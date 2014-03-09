@@ -3,7 +3,7 @@
 </div>
 <div class="row">
   <div class="col-lg-12 col-md-13">
-    <div class="row signal-trace-test"  ng-repeat="signal in signals">
+    <div class="row signal-trace-test"  ng-repeat="scene in Scenes">
       <div class="col-lg-3 col-lg-offset-3 col-md-6  n-small-title">Name: <span style="font-weight: normal">{{signal.Name}}</span> </div>
       <div class="signal-trace-test-container col-lg-6 col-md-6" ng-include="'partials/signal-trace.html'"  ng-controller="SignalTraceTestController" ></div>
     </div>

@@ -125,9 +125,13 @@ N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
   //* N.Comp.LinearSummingInput *
   //*****************************
 
-N.Comp.LinearSummingInput = function(component) {
-  this.Component   = component;
+N.Comp.LinearSummingInput = function(neuron, name, shortName) {
   this.ClassName   = 'N.Comp.LinearSummingInput';
+  this.Name       = name;
+  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category   = 'Input';
+
+  this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
 }
@@ -161,9 +165,13 @@ N.Comp.LinearSummingInput.prototype.ToJSON = function() {
   //* N.Comp.SignalInput *
   //**********************
 
-N.Comp.SignalInput = function(component) {
-  this.Component   = component;
+N.Comp.SignalInput = function(neuron, name, shortName) {
   this.ClassName   = 'N.Comp.SignalInput';
+  this.Name       = name;
+  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category   = 'Input';
+
+  this.Neuron     = neuron;
   this.SignalInput = null;
   this.Sum         = 0.0;
 }

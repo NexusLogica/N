@@ -18,11 +18,14 @@ All Rights Reserved.
   -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
   -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
   box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
-  .pi-canvas svg .axis {
-    stroke: silver;
-    stroke-width: 0.5; }
-  .pi-canvas svg text {
-    alignment-baseline: hanging; }
+  .pi-canvas svg {
+    width: 100%;
+    height: 100%; }
+    .pi-canvas svg .axis {
+      stroke: silver;
+      stroke-width: 0.5; }
+    .pi-canvas svg text {
+      alignment-baseline: hanging; }
 
 .pi-neuron .compartment {
   stroke: #999999;
@@ -53,6 +56,8 @@ All Rights Reserved.
   fill: #fdfbf8;
   fill: #FDFDFD; }
 .pi-network > text {
+  fill: gray;
+  stroke: gray;
   font-size: 20px;
   font-family: 'Helvetica';
   text-anchor: start;

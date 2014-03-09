@@ -22,6 +22,15 @@ N.CreateInstance = function(json) {
   return obj;
 }
 
+/**
+ * Create a new 'N' object. The object must be in the 'N' namespace.
+ *
+ * @public
+ * @method N.NewN
+ * @param {string} className (Mandatory)  - A classname in the form 'N.First.Second.Class', hence N.Neuron, N.UI.PiNeuron...
+ * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
+ * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
+ */
 N.NewN = function(className) {
   var parts = className.split('.');
   if(parts.length > 0 && parts[0] === 'N') {
@@ -31,7 +40,25 @@ N.NewN = function(className) {
       objConstructor = objConstructor[parts[i]];
     }
     try {
-      obj = new objConstructor();
+      // Create but allow for passing of arguments
+      // Found here http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
+      var temp = function(){}; // temporary constructor
+
+      // Give the Temp constructor the Constructor's prototype
+      temp.prototype = objConstructor.prototype;
+
+      // Create a new instance
+      var inst = new temp;
+
+      // Call the original Constructor with the temp
+      // instance as its context (i.e. its 'this' value)
+      var args = Array.prototype.slice.call(arguments, 1);
+      var ret = objConstructor.apply(inst, args);
+
+      // If an object has been returned then return it otherwise
+      // return the original instance.
+      // (consistent with behaviour of the new operator)
+      return Object(ret) === ret ? ret : inst;
     }
     catch(err) {
       N.L('ERROR: Unable to create object of class '+className);

@@ -89,7 +89,7 @@ N.NetworkTest.TestConfigurations = [{
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.InputSource',
         Radius: 0.3,
-        CompartmentMap : [{ neuron: 'IP', graphic: 'Body' }]
+        CompartmentMap : { 'Body': 'SO' }
       }
     },{
       ClassName: 'N.Neuron',
@@ -106,7 +106,8 @@ N.NetworkTest.TestConfigurations = [{
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron',
-        Radius: 0.4
+        Radius: 0.4,
+        CompartmentMap : { 'Dendrites': 'OP', 'Body': 'IP'  }
       }
     },{
       ClassName: 'N.Neuron',
@@ -124,7 +125,7 @@ N.NetworkTest.TestConfigurations = [{
     }],
     Display: {
       Width: 3.2,
-      Height: 1.5,
+      Height: 1.2,
       Grid: [
         { RowId: 'main', NumPoints: 3, Spacing: 1.0, Y: 0.0 }
       ],
@@ -176,7 +177,7 @@ N.NetworkTest.TestConfigurations = [{
     }],
     Display: {
       Width: 4.2,
-      Height: 1.2,
+      Height: 1.5,
       Grid: [
         { RowId: 'top',    NumPoints: 5,  Spacing: 0.8, Y: -0.2 },
         { RowId: 'bottom', NumPoints: 4, Spacing: 0.6, Y: 0.4 }

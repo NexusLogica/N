@@ -42,10 +42,6 @@ N.Network.prototype.GetNumNeurons = function() {
   return this.Neurons.length;
 }
 
-N.Network.prototype.GetNeurons = function(index) {
-  return this.Neurons[index];
-}
-
 N.Network.prototype.GetNeuronByIndex = function(index) {
   return this.Neurons[index];
 }
@@ -66,7 +62,7 @@ N.Network.prototype.LoadFrom = function(json) {
     if(i === 'Neurons') {
       for(var j=0; j<json.Neurons.length; j++) {
         var neuronJson = json.Neurons[j];
-        var neuron = N.NewN(neuronJson.ClassName).LoadFrom(neuronJson);
+        var neuron = N.NewN(neuronJson.ClassName, this).LoadFrom(neuronJson);
         this.Neurons.push(neuron);
         this.NeuronsByName[neuron.Name] = neuron;
         this.NeuronsByName[neuron.ShortName] = neuron;
