@@ -12,8 +12,29 @@ All Rights Reserved.
 */
 'use strict';
 
+/**
+* This is the N simulator.
+*
+* @module N
+*/
+
 var N = N || {};
 
+/**
+ * Globally accessible functions.
+ *
+ * @class N
+ *
+ */
+
+/**
+ * Create an instance of a object from the json, where json.ClassName is the name of the object and all properties
+ * of the json object will be copied into the new object.
+ *
+ * @method CreateInstance
+ * @param {JSON} json
+ * @returns {DeferredObject}
+ */
 N.CreateInstance = function(json) {
   var obj = N.NewN(json.ClassName);
   for(var key in json) {
@@ -99,10 +120,23 @@ N.L = function(logText) {
 
 N.TimeStep = 0.001;
 
+/**
+ * Converts an angle in degrees to radians.
+ *
+ * @method Rad
+ * @param {Real} angle Angle in degrees
+ * @return {Real} Angle in radians
+ *
+ */
 N.Rad = function(angleDegrees) {
   return Math.PI*angleDegrees/180;
 }
 
+/**
+ *
+ * @method GenerateUUID
+ * @return {String} Unique Identifier string
+ */
 N.GenerateUUID = function() {
   var d = new Date().getTime();
   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -113,23 +147,47 @@ N.GenerateUUID = function() {
   return uuid;
 }
 
-  //*************
-  //* N.Objects *
-  //*************
-
+/**
+ * Dictionary for holding globally accessible objects.
+ *
+ * @class Objects
+ */
 N.Objects = (function() {
   var objects = {};
 
+  /**
+   * Add an object to the Objects dictionary
+   *
+   * @method {Object} Add
+   * @param obj
+   */
   function Add(obj) {
     objects[obj.Id] = obj;
   }
 
+  /**
+   * Get an object to the Objects dictionary
+   *
+   * @method {Object} Get
+   * @param {String} uid A unique identifier string for an object
+   * @return {Object} An object or null.
+   */
   function Get(uid) {
     return objects[uid] || null;
   }
 
+  /**
+   * Remove the reference to the object to the Objects dictionary
+   *
+   * @method {Object} Remove
+   * @param {String} uid A unique identifier string for an object
+   * @return {Object} Returns true if the object exists, false otherwise.
+   */
   function Remove(uid) {
-    return delete objects[uid];
+    if(objects[uid]) {
+      return delete objects[uid];
+    }
+    return false;
   }
 
   return {
@@ -138,13 +196,3 @@ N.Objects = (function() {
     Remove: Remove
   }
 })();
-
-
-  //*************
-  //* N.Manager *
-  //*************
-
-N.Manager = function() {
-}
-
-N.M = N.M || new N.Manager();

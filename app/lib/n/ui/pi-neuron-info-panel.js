@@ -1,10 +1,10 @@
 /**********************************************************************
 
-File     : pi-network-scene.js
+File     : pi-neuron-info-scene.js
 Project  : N Simulator Library
-Purpose  : Source file for pi network scene controller and renderer objects.
+Purpose  : Source file for pi neuron information panel controller.
 Revisions: Original definition by Lawrence Gunn.
-           2014/03/08
+           2014/03/09
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -15,20 +15,20 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-  //**********************
-  //* PiCanvasController *
-  //**********************
+  //*******************************
+  //* PiNeuronInfoPanelController *
+  //*******************************
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
 /**
- * The network scene controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNetworkSceneController"&gt;...<br/>
+ * The neuron information panel controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNeuronInfoPanelController"&gt;...<br/>
  *
  *
- * @class PiNetworkSceneController
+ * @class PiNeuronInfoPanelController
  */
-nSimAppControllers.controller('PiNetworkSceneController', ['$scope',
-  function PiNetworkSceneController($scope) {
+nSimAppControllers.controller('PiNeuronInfoPanelController', ['$scope',
+  function PiNeuronInfoPanelController($scope) {
 
     $scope.Current = {};
     $scope.Current.HoverPath = '';
@@ -42,7 +42,6 @@ nSimAppControllers.controller('PiNetworkSceneController', ['$scope',
      */
     $scope.onCompartmentMouseEnter = function(event, compartment) {
       var hoverPath = compartment.Neuron.Network.GetFullPath()+'.'+compartment.Neuron.ShortName+':'+compartment.ShortName;
-      hoverPath += ' ('+compartment.Neuron.Name+' : '+compartment.Name+')';
       $scope.Current.HoverPath = hoverPath;
       $scope.$digest();
     }

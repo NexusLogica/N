@@ -18,7 +18,13 @@ var N = N || {};
   //* N.Network *
   //*************
 
-N.Network = function() {
+/**
+ * A network object which can contain neurons or child networks.
+ * @class Network
+ * @constructor
+ * @param {Object} parentNetwork The parent network, if one exists.
+ */
+N.Network = function(parentNetwork) {
   this.ClassName  = 'N.Network';
   this.Id         = null;
   this.Name       = '';
@@ -26,6 +32,7 @@ N.Network = function() {
   this.Category   = 'Default';
   this.Neurons = [];
   this.NeuronsByName = {};
+  this.ParentNetwork = parentNetwork;
 }
 
 N.Network.prototype.AddNeuron = function(neuron) {
@@ -50,13 +57,35 @@ N.Network.prototype.GetNeuronByName = function(name) {
   return this.NeuronsByName[name];
 }
 
+/**
+ * Returns the full path from the top level network to this network.
+ * @method GetFullPath
+ * @returns {String} The concatinated short names of this network and its parents, separated by '/'.
+ */
+N.Network.prototype.GetFullPath = function() {
+  return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '') + '/' + this.ShortName;
+}
+
+/**
+ * Update the output of all child networks, neurons, and connections.
+ * @method Upate
+ * @param {Real} time The time of the current simulation step.
+ * @return {Network} Returns a reference to self.
+ */
 N.Network.prototype.Update = function(time) {
   var num = this.Neurons.length;
   for(var i=0; i<num; i++) {
     this.Neurons[i].Update(time);
   }
+  return this;
 }
 
+/**
+ * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
+ * @method LoadFrom
+ * @param {JSON} json The JSON object containing the configuration.
+ * @returns {Network} Returns a reference to self
+ */
 N.Network.prototype.LoadFrom = function(json) {
   for(var i in json) {
     if(i === 'Neurons') {

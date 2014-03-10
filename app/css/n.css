@@ -301,6 +301,10 @@ textarea {
 .pi-network-scene .pi-canvas {
   height: 200px;
   padding: 0px 0px; }
+.pi-network-scene .pi-canvas-column .path {
+  margin: 5px 5px 5px 10px;
+  color: gray;
+  height: 20px; }
 .pi-network-scene .pi-network-console {
   height: 200px;
   border: gray 1px solid;

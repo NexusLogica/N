@@ -14,11 +14,23 @@ All Rights Reserved.
 
 var N = N || {};
 N.UI = N.UI || {};
+
+/**
+ * This is the Scene namespace for N user interface.
+ *
+ * @namespace UI.Scene
+ */
 N.UI.Scene = N.UI.Scene || {};
 
   //**********************
   //* N.UI.Scene.Network *
   //**********************
+
+/**
+ * This is the scene handler for network scenes.
+ * @class UI.Scene.Network
+ * @constructor
+ */
 
 N.UI.Scene.Network = function() {
   this.ClassName = 'N.UI.Scene.Network';
@@ -29,6 +41,13 @@ N.UI.Scene.Network = function() {
   this.Id = N.GenerateUUID();
 }
 
+/**
+ *
+ * @method SetNetwork
+ * @param network {Object} The N.Network object to be displayed in the scene.
+ * @param scalePixelsPerUnit {
+ * @param position
+ */
 N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
   var piGraphic = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit);
   this.Network = network;

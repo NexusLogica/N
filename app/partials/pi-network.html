@@ -1,6 +1,13 @@
 <div class="pi-scene pi-network-scene row" ng-controller="PiNetworkSceneController">
-  <div class="pi-canvas col-lg-8 col-md-8" pi-canvas pi-scene-id="{{scene.Id}}" ng-controller="PiCanvasController"></div>
+  <div class="pi-canvas-column col-lg-8 col-md-8">
+    <div class="pi-canvas" pi-canvas pi-scene-id="{{scene.Id}}" ng-controller="PiCanvasController"></div>
+    <div class="path" ng-bind="Current.HoverPath"></div>
+  </div>
   <div class="col-lg-5 col-md-5 pi-network-console">
+
+    <div class="pi-neuron-panel-info" ng-controller="PiNeuronInfoPanelController">
+      <div class="item">{{Current.HoverPath}}</div>
+    </div>
 
   </div>
 </div>
