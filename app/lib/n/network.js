@@ -30,8 +30,10 @@ N.Network = function(parentNetwork) {
   this.Name       = '';
   this.ShortName  = '';
   this.Category   = 'Default';
-  this.Neurons = [];
+  this.Neurons    = [];
   this.NeuronsByName = {};
+  this.Connections = [];
+  this.ConnectionsByPath = {};
   this.ParentNetwork = parentNetwork;
 }
 
@@ -55,6 +57,46 @@ N.Network.prototype.GetNeuronByIndex = function(index) {
 
 N.Network.prototype.GetNeuronByName = function(name) {
   return this.NeuronsByName[name];
+}
+
+/**
+ * Add a connection and connect it immmediately.
+ * @method AddConnection
+ * @param {N.Connection} connection
+ */
+N.Network.prototype.AddConnection = function(connection) {
+  this.Connections.push(connection);
+  this.ConnectionsByPath[connection.GetPath()] = connection;
+  connection.Connect();
+}
+
+/**
+ * Get the number of connections.
+ * @method GetNumConnections
+ * @returns {Number}
+ */
+N.Network.prototype.GetNumConnections = function() {
+  return this.Connections.length;
+}
+
+/**
+ * Get a connection by index
+ * @method GetConnectionsByIndex
+ * @param {Integer} index
+ * @returns {N.Connection}
+ */
+N.Network.prototype.GetConnectionsByIndex = function(index) {
+  return this.Connectionss[index];
+}
+
+/**
+ * Get a connection given the connection path string.
+ * @method GetConnectionsByPath
+ * @param {String} path
+ * @returns {N.Connection}
+ */
+N.Network.prototype.GetConnectionsByPath = function(path) {
+  return this.ConnectionsByPath[path];
 }
 
 /**

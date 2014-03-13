@@ -12,29 +12,30 @@ All Rights Reserved.
 */
 'use strict';
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
 
-  //**********
-  //* Signal *
-  //**********
-
-N.Signal = function() {
-}
-
-N.Signal.ANALOG = 1;
-N.Signal.DISCRETE = 2;
-
-N.Signal.prototype.GetRange = function() {
-  return { "Min": this.Min, "Max": this.Max };
-}
+N.ANALOG = 1;
+N.DISCRETE = 2;
 
   //****************
   //* AnalogSignal *
   //****************
 
+/**
+ * The analog signal class.
+ * @class AnalogSignal
+ * @constructor
+ * @param {String} name
+ * @param {String} shortName
+ */
+
 N.AnalogSignal = function(name, shortName) {
-  this.ClassName  = "N.AnalogSignal";
-  this.Type       = N.Signal.ANALOG;
+  this.ClassName  = 'N.AnalogSignal';
+  this.Type       = N.ANALOG;
   this.Id         = N.GenerateUUID();
   this.Times      = [];
   this.TimeMin    = 0.0;
@@ -42,17 +43,19 @@ N.AnalogSignal = function(name, shortName) {
   this.Values     = [];
   this._finder    = new N.TableSearch();
   this.Start      = 0.0;
-  this.Name       = (typeof name === 'string' ? name : "");
-  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : "");
+  this.Name       = (typeof name === 'string' ? name : '');
+  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : '');
   this.Category   = 'Default';
   this.Min        = 0.0;
   this.Max        = 0.0;
   this.MinLimit   = 0.0;
   this.MaxLimit   = 100.0;
-  this.Unit       = "Hz";
+  this.Unit       = 'Hz';
 }
 
-N.AnalogSignal.prototype = new N.Signal();
+N.AnalogSignal.prototype.GetRange = function() {
+  return { 'Min': this.Min, 'Max': this.Max };
+}
 
 N.AnalogSignal.prototype.GetValue = function(time) {
   var t = time-this.Start;
@@ -95,8 +98,8 @@ N.AnalogSignal.prototype.AppendData = function(time, value) {
   }
   if(this.Times.length > 1) {
     if(this.Times[this.Times.length-2] === time) {
-      N.L("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
-      throw new Error("N.AnalogSignal.AppendData sequence issue");
+      N.L('N.AnalogSignal.AppendData', 'Times '+(this.Times.length-2)+' and '+(this.Times.length-1)+' are equal with value '+time+'.');
+      throw new Error('N.AnalogSignal.AppendData sequence issue');
     }
     this.TimeMax = time;
   }
@@ -185,7 +188,7 @@ N.AnalogSignal.prototype.AvgAbsDeviationWithInterval = function(otherSignal, tMi
 }
 
 N.AnalogSignal.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }
 
@@ -193,9 +196,16 @@ N.AnalogSignal.prototype.ToJSON = function() {
   //* DiscreteSignal *
   //******************
 
+/**
+ * A discrete signal class.
+ * @class DiscreteSignal
+ * @param name
+ * @param shortName
+ * @constructor
+ */
 N.DiscreteSignal = function(name, shortName) {
-  this.ClassName  = "N.DiscreteSignal";
-  this.Type       = N.Signal.DISCRETE;
+  this.ClassName  = 'N.DiscreteSignal';
+  this.Type       = N.DISCRETE;
   this.Id         = N.GenerateUUID();
   this.StateType  = N.DiscreteSignal.BISTATE;
   this.Times      = [];
@@ -204,26 +214,34 @@ N.DiscreteSignal = function(name, shortName) {
   this.Values     = [];
   this._finder    = new N.TableSearch();
   this.Start      = 0.0;
-  this.Name       = (typeof name === 'string' ? name : "");
-  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : "");
+  this.Name       = (typeof name === 'string' ? name : '');
+  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : '');
   this.Category   = 'Default';
   this.Min        = 0;
   this.Max        = 0;
   this.MinLimit   = 0.0;
   this.MaxLimit   = 1.0;
-  this.Unit       = "State";
+  this.Unit       = 'State';
 }
 
 N.DiscreteSignal.BISTATE = 1;
 N.DiscreteSignal.TRISTATE = 2;
-
-N.DiscreteSignal.prototype = new N.Signal();
 
 N.DiscreteSignal.prototype.SetStateType = function(stateType) {
   this.StateType = stateType;
   this.MinLimit = (stateType === N.DiscreteSignal.BISTATE ? 0.0 : -1.0);
 }
 
+N.DiscreteSignal.prototype.GetRange = function() {
+  return { 'Min': this.Min, 'Max': this.Max };
+}
+
+/**
+ * Get the value of the signal at a given time.
+ * @method GetValue
+ * @param {Real} time
+ * @returns {Real}
+ */
 N.DiscreteSignal.prototype.GetValue = function(time) {
   var t = time-this.Start;
   if(this.Times.length < 2) {
@@ -266,8 +284,8 @@ N.DiscreteSignal.prototype.AppendData = function(time, newState) {
   }
   if(this.Times.length > 1) {
     if(this.Times[this.Times.length-2] === time) {
-      N.LogError("N.AnalogSignal.AppendData", "Times "+(this.Times.length-2)+" and "+(this.Times.length-1)+" are equal with value "+time+".");
-      throw new Error("N.AnalogSignal.AppendData sequence issue");
+      N.LogError('N.AnalogSignal.AppendData', 'Times '+(this.Times.length-2)+' and '+(this.Times.length-1)+' are equal with value '+time+'.');
+      throw new Error('N.AnalogSignal.AppendData sequence issue');
     }
     this.TimeMax = time;
   }
@@ -346,8 +364,27 @@ N.DiscreteSignal.prototype.AvgAbsDeviationWithInterval = function(otherSignal, t
 }
 
 N.DiscreteSignal.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
+}
+
+/**
+ * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
+ * @method LoadFrom
+ * @param {JSON} json The JSON object containing the configuration.
+ * @returns {Network} Returns a reference to self
+ */
+N.DiscreteSignal.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    if(i === 'DataArray') {
+      this.AppendDataArray(json[i]);
+    }
+    else {
+      this[i] = json[i];
+    }
+  }
+
+  return this;
 }
 
   //*******************
@@ -367,22 +404,40 @@ N.SignalCompare.prototype.Compare = function(expected, actual) {
   //* N.TableSearch *
   //*****************
 
+/**
+ * A numerical algorithm class for finding the index of numbers bracketting a target number. The array must be either
+ * monotonically increasing or decreasing array of numbers.
+ *
+ * @class TableSearch
+ * @constructor
+ */
 N.TableSearch = function() {
-  this.ClassName  = "N.TableSearch";
+  this.ClassName  = 'N.TableSearch';
   this.indexLow = 0;
   this.indexHigh = 0;
   this.ascending = true;
   this.size = 0;
 }
 
+/**
+ * Returns the last low index found.
+ * @returns {Real}
+ * @constructor
+ */
 N.TableSearch.prototype.GetIndexLow = function() {
   return this.indexLow;
 }
 
-N.TableSearch.prototype.SetIndexLow = function(i) {
-  this.indexLow = i;
-}
-
+/**
+ * Find the index in the array 'x' that is where the index is below xTarget and index+1 is above xTarget. If the target
+ * is before the beginning of the array then it returns -1. If it is beyond the end of the array it returns x.length-1.
+ *
+ * @method Find
+ * @param {Real} xTarget
+ * @param {Array} x
+ * @returns {Integer}
+ * @constructor
+ */
 N.TableSearch.prototype.Find = function(xTarget, x) {
   this.size = x.length;
   this.ascending = (x[this.size-1] > x[0]);

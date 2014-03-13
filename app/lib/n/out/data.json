@@ -113,8 +113,18 @@
             "name": "compartments.js",
             "modules": {},
             "classes": {
+                "Comp.OutputFromSignal": 1,
                 "Comp.SignalInput": 1,
                 "Comp.AcetylcholineInput": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "connection.js": {
+            "name": "connection.js",
+            "modules": {},
+            "classes": {
+                "Connection": 1
             },
             "fors": {},
             "namespaces": {}
@@ -141,14 +151,20 @@
         "neuron.js": {
             "name": "neuron.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Neuron": 1
+            },
             "fors": {},
             "namespaces": {}
         },
         "signal.js": {
             "name": "signal.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "AnalogSignal": 1,
+                "DiscreteSignal": 1,
+                "TableSearch": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -168,17 +184,23 @@
                 "UI.Scene.Network": 1,
                 "PiNetworkPanelController": 1,
                 "PiNeuronInfoPanelController": 1,
+                "Comp.OutputFromSignal": 1,
                 "Comp.SignalInput": 1,
                 "Comp.AcetylcholineInput": 1,
+                "Connection": 1,
                 "N": 1,
                 "Objects": 1,
-                "Network": 1
+                "Network": 1,
+                "Neuron": 1,
+                "AnalogSignal": 1,
+                "DiscreteSignal": 1,
+                "TableSearch": 1
             },
             "fors": {},
             "namespaces": {},
             "tag": "module",
-            "file": "network.js",
-            "line": 21,
+            "file": "signal.js",
+            "line": 407,
             "description": "This is the N simulator."
         }
     },
@@ -226,6 +248,35 @@
             "line": 24,
             "description": "The neuron information panel controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller=\"PiNeuronInfoPanelController\"&gt;...<br/>"
         },
+        "Comp.OutputFromSignal": {
+            "name": "Comp.OutputFromSignal",
+            "shortname": "Comp.OutputFromSignal",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "compartments.js",
+            "line": 26,
+            "description": "An output compartment that has a signal object as the value for the output. This is typically used as an external input\nto a system, but it can also be used as a neuron that bursts based on an internal clock.\n\nThe signal can be analog, discrete, or a custom signal object.",
+            "params": [
+                {
+                    "name": "neuron",
+                    "description": ""
+                },
+                {
+                    "name": "name",
+                    "description": ""
+                },
+                {
+                    "name": "shortName",
+                    "description": ""
+                }
+            ],
+            "is_constructor": 1
+        },
         "Comp.SignalInput": {
             "name": "Comp.SignalInput",
             "shortname": "Comp.SignalInput",
@@ -237,7 +288,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 173,
+            "line": 181,
             "description": "A compartment that has, as its output, a signal object.",
             "params": [
                 {
@@ -266,7 +317,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 229,
+            "line": 237,
             "description": "A modulator input that receives input from acetylcholine source.",
             "params": [
                 {
@@ -287,6 +338,27 @@
             ],
             "is_constructor": 1
         },
+        "Connection": {
+            "name": "Connection",
+            "shortname": "Connection",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "connection.js",
+            "line": 21,
+            "description": "A connection object. This object is essentially a shell around N.Compartment objects.",
+            "params": [
+                {
+                    "name": "network",
+                    "description": ""
+                }
+            ],
+            "is_constructor": 1
+        },
         "N": {
             "name": "N",
             "shortname": "N",
@@ -298,7 +370,7 @@
             "module": "N",
             "namespace": "",
             "file": "n.js",
-            "line": 22,
+            "line": 21,
             "description": "Globally accessible functions."
         },
         "Objects": {
@@ -312,7 +384,7 @@
             "module": "N",
             "namespace": "",
             "file": "n.js",
-            "line": 195,
+            "line": 192,
             "description": "Dictionary for holding globally accessible objects."
         },
         "Network": {
@@ -336,6 +408,94 @@
                     "type": "Object"
                 }
             ]
+        },
+        "Neuron": {
+            "name": "Neuron",
+            "shortname": "Neuron",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "neuron.js",
+            "line": 24,
+            "description": "A neuron object. This object is essentially a shell around N.Compartment objects.",
+            "params": [
+                {
+                    "name": "network",
+                    "description": ""
+                }
+            ],
+            "is_constructor": 1
+        },
+        "AnalogSignal": {
+            "name": "AnalogSignal",
+            "shortname": "AnalogSignal",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "signal.js",
+            "line": 28,
+            "description": "The analog signal class.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "name",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "shortName",
+                    "description": "",
+                    "type": "String"
+                }
+            ]
+        },
+        "DiscreteSignal": {
+            "name": "DiscreteSignal",
+            "shortname": "DiscreteSignal",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "signal.js",
+            "line": 199,
+            "description": "A discrete signal class.",
+            "params": [
+                {
+                    "name": "name",
+                    "description": ""
+                },
+                {
+                    "name": "shortName",
+                    "description": ""
+                }
+            ],
+            "is_constructor": 1
+        },
+        "TableSearch": {
+            "name": "TableSearch",
+            "shortname": "TableSearch",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "signal.js",
+            "line": 407,
+            "description": "A numerical algorithm class for finding the index of numbers bracketting a target number. The array must be either\nmonotonically increasing or decreasing array of numbers.",
+            "is_constructor": 1
         }
     },
     "classitems": [
@@ -470,33 +630,33 @@
             "file": "ui/pi-neuron-panel.js",
             "line": 1,
             "description": "File     : pi-neuron-panel.js\nProject  : N Simulator Library\nPurpose  : Source file for pi neuron panel controller and renderer objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/03/08\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
-            "class": "Comp.SignalInput",
+            "class": "Comp.OutputFromSignal",
             "module": "N"
         },
         {
             "file": "ui/pi-neuron-panel.js",
             "line": 22,
             "type": "{module|module|*|module|module|module}",
-            "class": "Comp.SignalInput",
+            "class": "Comp.OutputFromSignal",
             "module": "N"
         },
         {
             "file": "ui/pi-signal-trace-scene.js",
             "line": 1,
             "description": "File     : pi-signal-trace-scene.js\nProject  : N Simulator Library\nPurpose  : Source file for pi signal-trace scene controller and renderer objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/03/08\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
-            "class": "Comp.SignalInput",
+            "class": "Comp.OutputFromSignal",
             "module": "N"
         },
         {
             "file": "compartments.js",
             "line": 1,
             "description": "File     : compartments.js\nProject  : N Simulator Library\nPurpose  : Source file for standard compartment objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
-            "class": "Comp.SignalInput",
+            "class": "Comp.OutputFromSignal",
             "module": "N"
         },
         {
             "file": "compartments.js",
-            "line": 193,
+            "line": 201,
             "description": "Sets the signal.",
             "itemtype": "method",
             "name": "SetSignal",
@@ -512,6 +672,42 @@
             "module": "N"
         },
         {
+            "file": "connection.js",
+            "line": 1,
+            "description": "File     : connection.js\nProject  : N Simulator Library\nPurpose  : Source file for connection object.\nRevisions: Original definition by Lawrence Gunn.\n           2014/03/13\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 37,
+            "description": "Attach to the source and sink compartments.",
+            "itemtype": "method",
+            "name": "Connect",
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 44,
+            "description": "Load a connection from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.",
+            "itemtype": "method",
+            "name": "LoadFrom",
+            "params": [
+                {
+                    "name": "json",
+                    "description": "",
+                    "type": "JSON"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Connection"
+            },
+            "class": "Connection",
+            "module": "N"
+        },
+        {
             "file": "n.js",
             "line": 1,
             "description": "File     : n.js\nProject  : N Simulator Library\nPurpose  : Source file for signal relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/01/25\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
@@ -520,7 +716,7 @@
         },
         {
             "file": "n.js",
-            "line": 29,
+            "line": 28,
             "description": "Create an instance of a object from the json, where json.ClassName is the name of the object and all properties\nof the json object will be copied into the new object.",
             "itemtype": "method",
             "name": "CreateInstance",
@@ -540,7 +736,7 @@
         },
         {
             "file": "n.js",
-            "line": 45,
+            "line": 44,
             "description": "Create a new 'N' object. The object must be in the 'N' namespace.",
             "access": "public",
             "tagname": "",
@@ -567,7 +763,7 @@
         },
         {
             "file": "n.js",
-            "line": 95,
+            "line": 92,
             "description": "Returns an existing object from a path.",
             "itemtype": "method",
             "name": "N.GetN",
@@ -592,7 +788,7 @@
         },
         {
             "file": "n.js",
-            "line": 143,
+            "line": 140,
             "description": "Write to the system console (or some log, if overridden).",
             "itemtype": "method",
             "name": "L",
@@ -607,7 +803,7 @@
         },
         {
             "file": "n.js",
-            "line": 152,
+            "line": 149,
             "description": "The standard timestep for simulations - 1 millisecond",
             "type": "{number} Timestep",
             "class": "N",
@@ -615,7 +811,7 @@
         },
         {
             "file": "n.js",
-            "line": 158,
+            "line": 155,
             "description": "Converts an angle in degrees to radians.",
             "itemtype": "method",
             "name": "Rad",
@@ -635,7 +831,7 @@
         },
         {
             "file": "n.js",
-            "line": 170,
+            "line": 167,
             "description": "Create a globally unique ID and return it as a string.",
             "itemtype": "method",
             "name": "GenerateUUID",
@@ -648,14 +844,14 @@
         },
         {
             "file": "n.js",
-            "line": 185,
+            "line": 182,
             "description": "Return the network path from a path string as an array.",
             "class": "N",
             "module": "N"
         },
         {
             "file": "n.js",
-            "line": 203,
+            "line": 200,
             "description": "Add an object to the Objects dictionary",
             "itemtype": "method",
             "name": "Add",
@@ -671,7 +867,7 @@
         },
         {
             "file": "n.js",
-            "line": 213,
+            "line": 210,
             "description": "Get an object to the Objects dictionary",
             "itemtype": "method",
             "name": "Get",
@@ -692,7 +888,7 @@
         },
         {
             "file": "n.js",
-            "line": 224,
+            "line": 221,
             "description": "Remove the reference to the object to the Objects dictionary",
             "itemtype": "method",
             "name": "Remove",
@@ -720,7 +916,76 @@
         },
         {
             "file": "network.js",
-            "line": 60,
+            "line": 62,
+            "description": "Add a connection and connect it immmediately.",
+            "itemtype": "method",
+            "name": "AddConnection",
+            "params": [
+                {
+                    "name": "connection",
+                    "description": "",
+                    "type": "N.Connection"
+                }
+            ],
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 73,
+            "description": "Get the number of connections.",
+            "itemtype": "method",
+            "name": "GetNumConnections",
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 82,
+            "description": "Get a connection by index",
+            "itemtype": "method",
+            "name": "GetConnectionsByIndex",
+            "params": [
+                {
+                    "name": "index",
+                    "description": "",
+                    "type": "Integer"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Connection"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 92,
+            "description": "Get a connection given the connection path string.",
+            "itemtype": "method",
+            "name": "GetConnectionsByPath",
+            "params": [
+                {
+                    "name": "path",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Connection"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 102,
             "description": "Returns the full path from the top level network to this network.",
             "itemtype": "method",
             "name": "GetFullPath",
@@ -733,7 +998,7 @@
         },
         {
             "file": "network.js",
-            "line": 69,
+            "line": 111,
             "description": "Update the output of all child networks, neurons, and connections.",
             "itemtype": "method",
             "name": "Upate",
@@ -753,7 +1018,7 @@
         },
         {
             "file": "network.js",
-            "line": 83,
+            "line": 125,
             "description": "Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -775,12 +1040,12 @@
             "file": "neuron.js",
             "line": 1,
             "description": "File     : neuron.js\nProject  : N Simulator Library\nPurpose  : Source file for neuron relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
-            "class": "",
+            "class": "Neuron",
             "module": "N"
         },
         {
             "file": "neuron.js",
-            "line": 57,
+            "line": 66,
             "description": "Load a neuron from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -795,14 +1060,92 @@
                 "description": "",
                 "type": "Neuron"
             },
-            "class": "",
+            "class": "Neuron",
             "module": "N"
         },
         {
             "file": "signal.js",
             "line": 1,
             "description": "File     : signal.js\nProject  : N Simulator Library\nPurpose  : Source file for signal relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/01/09\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
-            "class": "",
+            "class": "AnalogSignal",
+            "module": "N"
+        },
+        {
+            "file": "signal.js",
+            "line": 239,
+            "description": "Get the value of the signal at a given time.",
+            "itemtype": "method",
+            "name": "GetValue",
+            "params": [
+                {
+                    "name": "time",
+                    "description": "",
+                    "type": "Real"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Real"
+            },
+            "class": "DiscreteSignal",
+            "module": "N"
+        },
+        {
+            "file": "signal.js",
+            "line": 371,
+            "description": "Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.",
+            "itemtype": "method",
+            "name": "LoadFrom",
+            "params": [
+                {
+                    "name": "json",
+                    "description": "The JSON object containing the configuration.",
+                    "type": "JSON"
+                }
+            ],
+            "return": {
+                "description": "Returns a reference to self",
+                "type": "Network"
+            },
+            "class": "DiscreteSignal",
+            "module": "N"
+        },
+        {
+            "file": "signal.js",
+            "line": 422,
+            "description": "Returns the last low index found.",
+            "return": {
+                "description": "",
+                "type": "Real"
+            },
+            "is_constructor": 1,
+            "class": "TableSearch",
+            "module": "N"
+        },
+        {
+            "file": "signal.js",
+            "line": 431,
+            "description": "Find the index in the array 'x' that is where the index is below xTarget and index+1 is above xTarget. If the target\nis before the beginning of the array then it returns -1. If it is beyond the end of the array it returns x.length-1.",
+            "itemtype": "method",
+            "name": "Find",
+            "params": [
+                {
+                    "name": "xTarget",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "x",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Integer"
+            },
+            "is_constructor": 1,
+            "class": "TableSearch",
             "module": "N"
         },
         {
@@ -816,19 +1159,51 @@
     "warnings": [
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " n.js:29"
+            "line": " connection.js:44"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:60"
+            "line": " n.js:28"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:83"
+            "line": " network.js:73"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " neuron.js:57"
+            "line": " network.js:82"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:92"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:102"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:125"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " neuron.js:66"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " signal.js:239"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " signal.js:371"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " signal.js:422"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " signal.js:431"
         },
         {
             "message": "Missing item type\nFile     : config.js\nProject  : N Simulator Library\nPurpose  : Source file for signal trace user interface objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/01\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
@@ -899,16 +1274,20 @@
             "line": " compartments.js:1"
         },
         {
+            "message": "Missing item type\nFile     : connection.js\nProject  : N Simulator Library\nPurpose  : Source file for connection object.\nRevisions: Original definition by Lawrence Gunn.\n           2014/03/13\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
+            "line": " connection.js:1"
+        },
+        {
             "message": "Missing item type\nFile     : n.js\nProject  : N Simulator Library\nPurpose  : Source file for signal relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/01/25\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
             "line": " n.js:1"
         },
         {
             "message": "Missing item type\nThe standard timestep for simulations - 1 millisecond",
-            "line": " n.js:152"
+            "line": " n.js:149"
         },
         {
             "message": "Missing item type\nReturn the network path from a path string as an array.",
-            "line": " n.js:185"
+            "line": " n.js:182"
         },
         {
             "message": "Missing item type\nFile     : network.js\nProject  : N Simulator Library\nPurpose  : Source file for neuron relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\n\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
@@ -921,6 +1300,10 @@
         {
             "message": "Missing item type\nFile     : signal.js\nProject  : N Simulator Library\nPurpose  : Source file for signal relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/01/09\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
             "line": " signal.js:1"
+        },
+        {
+            "message": "Missing item type\nReturns the last low index found.",
+            "line": " signal.js:422"
         },
         {
             "message": "Missing item type\nFile     : stock-neurons.js\nProject  : N Simulator Library\nPurpose  : Source file for stock neuron object configurations.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",

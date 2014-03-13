@@ -12,12 +12,21 @@ All Rights Reserved.
 */
 'use strict';
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
 
   //************
   //* N.Neuron *
   //************
-
+/**
+ * A neuron object. This object is essentially a shell around N.Compartment objects.
+ * @class Neuron
+ * @param network
+ * @constructor
+ */
 N.Neuron = function(network) {
   this.ClassName  = 'N.Neuron';
   this.Id         = N.GenerateUUID();
@@ -62,7 +71,7 @@ N.Neuron.prototype.Update = function(time) {
  */
 N.Neuron.prototype.LoadFrom = function(json) {
   if(json.Template) {
-    var template = N.GetN(json.Template);
+    var template = _.isString(json.Template) ? N.GetN(json.Template) : json.Template;
     this.LoadFrom(template);
   }
 

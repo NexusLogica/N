@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../../app/lib/qunit/qunit.css">
   <script src="../../app/lib/qunit/qunit.js"></script>
   <script src="../../app/lib/json2.js"></script>
+  <script src="../../app/lib/lodash/dist/lodash.js"></script>
   <script src="../../app/lib/n/n.js"></script>
   <script src="../../app/lib/n/neuron.js"></script>
   <script src="../../app/lib/n/compartments.js"></script>
@@ -30,20 +31,16 @@
 
     equal(neuron.GetNumCompartments(), 0, "No initial compartments");
 
-    var outputCompartment = new N.Comp.StateOutput(neuron, 'StateOutput');
+    var outputCompartment = new N.Comp.OutputFromSignal(neuron, 'StateOutput');
     neuron.AddCompartment(outputCompartment);
 
     equal(neuron.GetNumCompartments(), 1, "One compartment");
     equal(neuron.Compartments[0].Name, 'StateOutput', "Compartment name");
     equal(neuron.Compartments[0].ShortName, 'SO', 'Compartment short name');
 
-    var signalInput = new N.Comp.SignalInput(outputCompartment);
-    outputCompartment.AddInput(signalInput);
-    equal(neuron.Compartments[0].Input.ClassName, 'N.Comp.SignalInput', 'Compartment class name');
-
-    var signal = new N.DiscreteSignal();
-    signal.AppendDataArray( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
-    equal(neuron.Compartments[0].Input.ClassName, 'N.Comp.SignalInput', 'Component imput class name');
+    var signal = (new N.DiscreteSignal()).LoadFrom( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
+    outputCompartment.SetSignal(signal);
+    equal(neuron.Compartments[0].Signal.ClassName, 'N.DiscreteSignal', 'Signal class name');
 
     var outputSignal = new N.AnalogSignal();
     var t = 0.0;

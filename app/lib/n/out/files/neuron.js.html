@@ -41,19 +41,31 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/AnalogSignal.html">AnalogSignal</a></li>
+            
                 <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
             
+                <li><a href="../classes/Comp.OutputFromSignal.html">Comp.OutputFromSignal</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
+                <li><a href="../classes/Connection.html">Connection</a></li>
+            
+                <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
+            
+                <li><a href="../classes/Neuron.html">Neuron</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
                 <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
                 <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/TableSearch.html">TableSearch</a></li>
             
                 <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
@@ -116,12 +128,21 @@ All Rights Reserved.
 */
 &#x27;use strict&#x27;;
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
 
   //************
   //* N.Neuron *
   //************
-
+/**
+ * A neuron object. This object is essentially a shell around N.Compartment objects.
+ * @class Neuron
+ * @param network
+ * @constructor
+ */
 N.Neuron = function(network) {
   this.ClassName  = &#x27;N.Neuron&#x27;;
   this.Id         = N.GenerateUUID();
@@ -166,7 +187,7 @@ N.Neuron.prototype.Update = function(time) {
  */
 N.Neuron.prototype.LoadFrom = function(json) {
   if(json.Template) {
-    var template = N.GetN(json.Template);
+    var template = _.isString(json.Template) ? N.GetN(json.Template) : json.Template;
     this.LoadFrom(template);
   }
 

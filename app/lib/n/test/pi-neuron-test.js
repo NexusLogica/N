@@ -61,15 +61,12 @@ N.PiNeuronTest.TestConfigurations = [{
     Neuron: {
       ClassName: 'N.Neuron',
       Compartments: [{
-        ClassName: 'N.Comp.StateOutput',
+        ClassName: 'N.Comp.OutputFromSignal',
         Name: 'StateOutput',
         ShortName: 'SO',
-        Input: {
-          ClassName: 'N.Comp.SignalInput',
-          Signal: {
-            ClassName: N.DiscreteSignal,
-            DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
-          }
+        Signal: {
+          ClassName: 'N.DiscreteSignal',
+          DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
         }
       }],
       Display: {

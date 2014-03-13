@@ -16,7 +16,6 @@ All Rights Reserved.
  * This is the N simulator.
  * @module N
  */
-
 var N = N || {};
 
 /**
@@ -54,7 +53,6 @@ N.CreateInstance = function(json) {
 N.NewN = function(className) {
   var parts = className.split('.');
   if(parts.length > 0 && parts[0] === 'N') {
-    var obj = null;
     var objConstructor = N;
     for(var i=1; i<parts.length; i++) {
       objConstructor = objConstructor[parts[i]];
@@ -72,7 +70,7 @@ N.NewN = function(className) {
       temp.prototype = objConstructor.prototype;
 
       // Create a new instance
-      var inst = new temp;
+      var inst = new temp();
 
       // Call the original Constructor with the temp
       // instance as its context (i.e. its 'this' value)
@@ -87,7 +85,6 @@ N.NewN = function(className) {
     catch(err) {
       N.L('ERROR: Unable to create object of class '+className);
     }
-    return obj;
   }
   return null;
 }
@@ -146,7 +143,7 @@ N.ShortName = function(longName) {
  * @param logText
  */
 N.L = function(logText) {
-  console.log(logText);
+  window.console.log(logText);
 }
 
 /**

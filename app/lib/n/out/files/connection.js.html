@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>test/pi-neuron-test.js</title>
+    <title>connection.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -110,17 +110,17 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: test/pi-neuron-test.js</h1>
+                        <h1 class="file-heading">File: connection.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**********************************************************************
 
-File     : pi-neuron-test.js
+File     : connection.js
 Project  : N Simulator Library
-Purpose  : Source file for signal testing.
+Purpose  : Source file for connection object.
 Revisions: Original definition by Lawrence Gunn.
-           2014/02/19
+           2014/03/13
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -128,105 +128,75 @@ All Rights Reserved.
 */
 &#x27;use strict&#x27;;
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
-N.Test = N.Test || {};
 
-  //**************************
-  //* PiNeuronTestController *
-  //**************************
-
-var nSimAppControllers = angular.module(&#x27;nSimApp.controllers&#x27;);
-
-nSimAppControllers.controller(&#x27;PiNeuronTestController&#x27;, [&#x27;$scope&#x27;,
-  function PiNeuronTestController($scope) {
-    $scope.Test = new N.PiNeuronTest();
-    $scope.Test.CreateScenes();
-    $scope.Scenes = $scope.Test.Scenes;
-  }
-]);
-
-nSimAppControllers.controller(&#x27;PiNeuronTestItemController&#x27;, [&#x27;$scope&#x27;,
-  function PiNeuronTestItemController($scope) {
-  }
-]);
-
-  //******************
-  //* N.PiNeuronTest *
-  //******************
-
-N.PiNeuronTest = function() {
-  this.Scenes  = [];
+/**
+ * A connection object. This object is essentially a shell around N.Compartment objects.
+ * @class Connection
+ * @param network
+ * @constructor
+ */
+N.Connection = function(network) {
+  this.ClassName  = &#x27;N.Connection&#x27;;
+  this.Id         = N.GenerateUUID();
+  this.Network    = network;
+  this.SourcePath = null;
+  this.SinkPath   = null;
+  this.Source     = null;
+  this.Sink       = null;
 }
 
-N.PiNeuronTest.prototype.CreateScenes = function() {
-  for(var i=0; i&lt;N.PiNeuronTest.TestConfigurations.length; i++) {
-    var config = N.PiNeuronTest.TestConfigurations[i];
-    var neuron = N.NewN(config.Neuron.ClassName);
-    neuron.LoadFrom(config.Neuron);
-
-    var scene = new N.UI.Scene.Neuron();
-    scene.SetNeuron(neuron, config.Neuron.Display.Radius, { x:0, y:0});
-    scene.Id = &#x27;N.PiNeuronTest.&#x27;+(i+1);
-    N.Objects.Add(scene);
-    this.Scenes.push(scene);
-  }
+/**
+ * Attach to the source and sink compartments.
+ * @method Connect
+ */
+N.Connection.prototype.Connect = function() {
 }
 
-N.PiNeuronTest.TestConfigurations = [{
-    Name: &#x27;Simple State Output&#x27;,
-    Neuron: {
-      ClassName: &#x27;N.Neuron&#x27;,
-      Compartments: [{
-        ClassName: &#x27;N.Comp.OutputFromSignal&#x27;,
-        Name: &#x27;StateOutput&#x27;,
-        ShortName: &#x27;SO&#x27;,
-        Signal: {
-          ClassName: &#x27;N.DiscreteSignal&#x27;,
-          DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
-        }
-      }],
-      Display: {
-        Template: &#x27;N.UI.StandardNeuronTemplates.Pyramidal&#x27;,
-        Radius: 100
+/**
+ * Load a connection from a JSON object. Note that if the JSON object has a &#x27;Template&#x27; member then this is loaded from first.
+ * @method LoadFrom
+ * @param {JSON} json
+ * @returns {Connection}
+ */
+N.Connection.prototype.LoadFrom = function(json) {
+  if(json.Template) {
+    var template = _.isString(json.Template) ? N.GetN(json.Template) : json.Template;
+    this.LoadFrom(template);
+  }
+
+  for(var i in json) {
+    if(i === &#x27;Compartments&#x27;) {
+      for(var j=0; j&lt;json.Compartments.length; j++) {
+        var compartmentJson = json.Compartments[j];
+        var compartment = N.NewN(compartmentJson.ClassName, this).LoadFrom(compartmentJson);
+        this.AddCompartment(compartment);
       }
     }
-  },{
-    Name: &#x27;Spiny Stellate&#x27;,
-    Neuron: {
-      ClassName: &#x27;N.Neuron&#x27;,
-      Compartments: [{
-        ClassName: &#x27;N.Comp.Output&#x27;,
-        Name: &#x27;Output&#x27;,
-        ShortName: &#x27;OP&#x27;
-      },{
-        ClassName: &#x27;N.Comp.LinearSummingInput&#x27;,
-        Name: &#x27;Input&#x27;,
-        ShortName: &#x27;IP&#x27;
-      }],
-      Display: {
-        Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;,
-        Radius: 60
-      }
+    else if(i === &#x27;Display&#x27;) {
+      this.Display = this.Display || {};
+      _.merge(this.Display, json.Display);
     }
-  },{
-    Name: &#x27;Inhibitory Interneuron&#x27;,
-    Neuron: {
-      ClassName: &#x27;N.Neuron&#x27;,
-      Compartments: [{
-        ClassName: &#x27;N.Comp.InhibitoryOutput&#x27;,
-        Name: &#x27;InhibitoryOutput&#x27;,
-        ShortName: &#x27;IOP&#x27;
-      },{
-        ClassName: &#x27;N.Comp.LinearSummingInput&#x27;,
-        Name: &#x27;Input&#x27;,
-        ShortName: &#x27;IP&#x27;
-      }],
-      Display: {
-        Template: &#x27;N.UI.StandardNeuronTemplates.InhibitoryInterneuron&#x27;,
-        Radius: 40
-      }
+    else if(i !== &#x27;Template&#x27;) {
+      this[i] = json[i];
     }
-  }];
+  }
+
+  return this;
+}
+
+N.Connection.prototype.ToData = function() {
+  var str = JSON.stringify(this, function(k, v) { return (k === &#x27;_finder&#x27; ? undefined : v); });
+  return str;
+}
+
+N.Connection.prototype.FromData = function(json) {
+
+}
 
     </pre>
 </div>

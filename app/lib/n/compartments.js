@@ -16,44 +16,52 @@ All Rights Reserved.
  * This is the N simulator.
  * @module N
  */
-
 var N = N || {};
 N.Comp = N.Comp || {};
 
-  //**********************
-  //* N.Comp.StateOutput *
-  //**********************
+  //***************************
+  //* N.Comp.OutputFromSignal *
+  //***************************
 
-N.Comp.StateOutput = function(neuron, name, shortName) {
-  this.ClassName  = 'N.Comp.StateOutput';
+/**
+ * An output compartment that has a signal object as the value for the output. This is typically used as an external input
+ * to a system, but it can also be used as a neuron that bursts based on an internal clock.
+ *
+ * The signal can be analog, discrete, or a custom signal object.
+ *
+ * @class Comp.OutputFromSignal
+ * @param neuron
+ * @param name
+ * @param shortName
+ * @constructor
+ */
+N.Comp.OutputFromSignal = function(neuron, name, shortName) {
+  this.ClassName  = 'N.Comp.OutputFromSignal';
   this.Name       = name;
   this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
-  this.Category   = 'StateOutput';
+  this.Category   = 'Output';
 
   this.Neuron     = neuron;
-  this.Input      = null;
+  this.Signal     = null;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
 }
 
-N.Comp.StateOutput.prototype.AddInput = function(input) {
-  if(this.Input) {
-    this.Input.Component = null;
-  }
-  this.Input = input;
+N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
+  this.Signal = signal;
 }
 
-N.Comp.StateOutput.prototype.Update = function(t) {
-  if(this.Input) {
-    this.Output = this.Input.UpdateInput(t);
+N.Comp.OutputFromSignal.prototype.Update = function(t) {
+  if(this.Signal) {
+    this.Output = this.Signal.GetValue(t);
   }
   return this.Output;
 }
 
-N.Comp.StateOutput.prototype.LoadFrom = function(json) {
+N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
   for(var i in json) {
-    if(i === 'Input') {
-      this.Input = N.NewN(json[i].ClassName).LoadFrom(json[i]);
+    if(i === 'Signal') {
+      this.SetSignal(N.NewN(json[i].ClassName).LoadFrom(json[i]));
     }
     else { this[i] = json[i]; }
   }
@@ -68,7 +76,7 @@ N.Comp.Output = function(neuron, name, shortName) {
   this.ClassName  = 'N.Comp.Output';
   this.Name       = name;
   this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
-  this.Category   = 'StateOutput';
+  this.Category   = 'Output';
 
   this.Neuron     = neuron;
   this.Output     = 0.0;

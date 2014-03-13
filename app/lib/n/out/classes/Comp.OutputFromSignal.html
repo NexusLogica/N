@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>test/pi-neuron-test.js</title>
+    <title>Comp.OutputFromSignal</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -110,125 +110,201 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: test/pi-neuron-test.js</h1>
+                        <h1>Comp.OutputFromSignal Class</h1>
+<div class="box meta">
+    
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-/**********************************************************************
+    
 
-File     : pi-neuron-test.js
-Project  : N Simulator Library
-Purpose  : Source file for signal testing.
-Revisions: Original definition by Lawrence Gunn.
-           2014/02/19
+    
+        <div class="foundat">
+            Defined in: <a href="../files/compartments.js.html#l26"><code>compartments.js:26</code></a>
+        </div>
+    
 
-Copyright (c) 2014 by Lawrence Gunn
-All Rights Reserved.
+    
+        
+            Module: <a href="../modules/N.html">N</a>
+        
+    
 
-*/
-&#x27;use strict&#x27;;
+    
+</div>
 
-var N = N || {};
-N.Test = N.Test || {};
 
-  //**************************
-  //* PiNeuronTestController *
-  //**************************
 
-var nSimAppControllers = angular.module(&#x27;nSimApp.controllers&#x27;);
+<div class="box intro">
+    <p>An output compartment that has a signal object as the value for the output. This is typically used as an external input
+to a system, but it can also be used as a neuron that bursts based on an internal clock.</p>
+<p>The signal can be analog, discrete, or a custom signal object.</p>
 
-nSimAppControllers.controller(&#x27;PiNeuronTestController&#x27;, [&#x27;$scope&#x27;,
-  function PiNeuronTestController($scope) {
-    $scope.Test = new N.PiNeuronTest();
-    $scope.Test.CreateScenes();
-    $scope.Scenes = $scope.Test.Scenes;
-  }
-]);
+</div>
 
-nSimAppControllers.controller(&#x27;PiNeuronTestItemController&#x27;, [&#x27;$scope&#x27;,
-  function PiNeuronTestItemController($scope) {
-  }
-]);
 
-  //******************
-  //* N.PiNeuronTest *
-  //******************
+    <div class="constructor">
+        <h2>Constructor</h2>
+        <div id="method_Comp.OutputFromSignal" class="method item">
+    <h3 class="name"><code>Comp.OutputFromSignal</code></h3>
 
-N.PiNeuronTest = function() {
-  this.Scenes  = [];
-}
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>neuron</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>name</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>shortName</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
 
-N.PiNeuronTest.prototype.CreateScenes = function() {
-  for(var i=0; i&lt;N.PiNeuronTest.TestConfigurations.length; i++) {
-    var config = N.PiNeuronTest.TestConfigurations[i];
-    var neuron = N.NewN(config.Neuron.ClassName);
-    neuron.LoadFrom(config.Neuron);
+    
 
-    var scene = new N.UI.Scene.Neuron();
-    scene.SetNeuron(neuron, config.Neuron.Display.Radius, { x:0, y:0});
-    scene.Id = &#x27;N.PiNeuronTest.&#x27;+(i+1);
-    N.Objects.Add(scene);
-    this.Scenes.push(scene);
-  }
-}
+    
 
-N.PiNeuronTest.TestConfigurations = [{
-    Name: &#x27;Simple State Output&#x27;,
-    Neuron: {
-      ClassName: &#x27;N.Neuron&#x27;,
-      Compartments: [{
-        ClassName: &#x27;N.Comp.OutputFromSignal&#x27;,
-        Name: &#x27;StateOutput&#x27;,
-        ShortName: &#x27;SO&#x27;,
-        Signal: {
-          ClassName: &#x27;N.DiscreteSignal&#x27;,
-          DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
-        }
-      }],
-      Display: {
-        Template: &#x27;N.UI.StandardNeuronTemplates.Pyramidal&#x27;,
-        Radius: 100
-      }
-    }
-  },{
-    Name: &#x27;Spiny Stellate&#x27;,
-    Neuron: {
-      ClassName: &#x27;N.Neuron&#x27;,
-      Compartments: [{
-        ClassName: &#x27;N.Comp.Output&#x27;,
-        Name: &#x27;Output&#x27;,
-        ShortName: &#x27;OP&#x27;
-      },{
-        ClassName: &#x27;N.Comp.LinearSummingInput&#x27;,
-        Name: &#x27;Input&#x27;,
-        ShortName: &#x27;IP&#x27;
-      }],
-      Display: {
-        Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;,
-        Radius: 60
-      }
-    }
-  },{
-    Name: &#x27;Inhibitory Interneuron&#x27;,
-    Neuron: {
-      ClassName: &#x27;N.Neuron&#x27;,
-      Compartments: [{
-        ClassName: &#x27;N.Comp.InhibitoryOutput&#x27;,
-        Name: &#x27;InhibitoryOutput&#x27;,
-        ShortName: &#x27;IOP&#x27;
-      },{
-        ClassName: &#x27;N.Comp.LinearSummingInput&#x27;,
-        Name: &#x27;Input&#x27;,
-        ShortName: &#x27;IP&#x27;
-      }],
-      Display: {
-        Template: &#x27;N.UI.StandardNeuronTemplates.InhibitoryInterneuron&#x27;,
-        Radius: 40
-      }
-    }
-  }];
+    
 
-    </pre>
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/compartments.js.html#l26"><code>compartments.js:26</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">neuron</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">name</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">shortName</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+    </div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+        
+        
+        
+        
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+            
+
+            
+
+            
+
+            
+        </div>
+
+        
+
+        
+
+        
+
+        
+    </div>
 </div>
 
                     </div>

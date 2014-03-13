@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Objects</title>
+    <title>TableSearch</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -110,7 +110,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Objects Class</h1>
+                        <h1>TableSearch Class</h1>
 <div class="box meta">
     
 
@@ -118,7 +118,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/n.js.html#l192"><code>n.js:192</code></a>
+            Defined in: <a href="../files/signal.js.html#l407"><code>signal.js:407</code></a>
         </div>
     
 
@@ -134,10 +134,68 @@
 
 
 <div class="box intro">
-    <p>Dictionary for holding globally accessible objects.</p>
+    <p>A numerical algorithm class for finding the index of numbers bracketting a target number. The array must be either
+monotonically increasing or decreasing array of numbers.</p>
 
 </div>
 
+
+    <div class="constructor">
+        <h2>Constructor</h2>
+        <div id="method_TableSearch" class="method item">
+    <h3 class="name"><code>TableSearch</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/signal.js.html#l407"><code>signal.js:407</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+    </div>
 
 
 <div id="classdocs" class="tabview">
@@ -163,21 +221,7 @@
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_Add">Add</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method">
-                                <a href="#method_Get">Get</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method">
-                                <a href="#method_Remove">Remove</a>
+                                <a href="#method_Find">Find</a>
 
                                 
                                 
@@ -199,8 +243,8 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_Add" class="method item">
-    <h3 class="name"><code>Add</code></h3>
+                    <div id="method_Find" class="method item">
+    <h3 class="name"><code>Find</code></h3>
 
     
         <div class="args">
@@ -208,7 +252,13 @@
             
                 <li class="arg">
                     
-                        <code>obj</code>
+                        <code>xTarget</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>x</code>
                     
                 </li>
             
@@ -216,6 +266,10 @@
         </div>
     
 
+    
+        <span class="returns-inline">
+            <span class="type">Integer</span>
+        </span>
     
 
     
@@ -241,7 +295,7 @@
             
         
         
-        <a href="../files/n.js.html#l200"><code>n.js:200</code></a>
+        <a href="../files/signal.js.html#l431"><code>signal.js:431</code></a>
         
         </p>
 
@@ -252,7 +306,8 @@
     </div>
 
     <div class="description">
-        <p>Add an object to the Objects dictionary</p>
+        <p>Find the index in the array &#39;x&#39; that is where the index is below xTarget and index+1 is above xTarget. If the target
+is before the beginning of the array then it returns -1. If it is beyond the end of the array it returns x.length-1.</p>
 
     </div>
 
@@ -264,8 +319,23 @@
             
                 <li class="param">
                     
-                        <code class="param-name">obj</code>
-                        <span class="type">Object</span>
+                        <code class="param-name">xTarget</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">x</code>
+                        <span class="type">Array</span>
                     
 
                     
@@ -282,216 +352,14 @@
     
 
     
-
-    
-</div>
-
-                
-                    <div id="method_Get" class="method item">
-    <h3 class="name"><code>Get</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>uid</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">Object</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/n.js.html#l210"><code>n.js:210</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Get an object to the Objects dictionary</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">uid</code>
-                        <span class="type">String</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>A unique identifier string for an object</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
         <div class="returns">
             <h4>Returns:</h4>
 
             <div class="returns-description">
                 
                     
-                        <span class="type">Object</span>:
+                        <span class="type">Integer</span>:
                     
-                    <p>An object or null.</p>
-
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_Remove" class="method item">
-    <h3 class="name"><code>Remove</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>uid</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">Object</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/n.js.html#l221"><code>n.js:221</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Remove the reference to the object to the Objects dictionary</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">uid</code>
-                        <span class="type">String</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>A unique identifier string for an object</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">Object</span>:
-                    
-                    <p>Returns true if the object exists, false otherwise.</p>
-
                 
             </div>
         </div>

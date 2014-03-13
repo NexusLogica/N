@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>N Connection Unit Tests</title>
+
+  <link rel="stylesheet" href="../../app/lib/qunit/qunit.css">
+  <script src="../../app/lib/qunit/qunit.js"></script>
+  <script src="../../app/lib/json2.js"></script>
+  <script src="../../app/lib/lodash/dist/lodash.js"></script>
+  <script src="../../app/lib/n/n.js"></script>
+  <script src="../../app/lib/n/signal.js"></script>
+  <script src="../../app/lib/n/network.js"></script>
+  <script src="../../app/lib/n/neuron.js"></script>
+  <script src="../../app/lib/n/compartments.js"></script>
+  <script src="../../app/lib/n/connection.js"></script>
+
+  <script>
+  QUnit.assert.near = function( actual, expected, eps, message ) {
+    var hasEps = (arguments.length > 2 && typeof eps !== "string");
+    var actualMessage = (hasEps ? message : eps);
+    var tolerance = 1.0e-6;
+    if(hasEps) {
+      tolerance = eps;
+    }
+    var diff = Math.abs(actual-expected);
+    QUnit.push(diff < tolerance, actual, expected, actualMessage);
+  };
+
+  var SimpleNeuronTemplate = {
+    ClassName: 'N.Neuron',
+    Name: 'SimpleNeuron',
+    ShortName: 'SN',
+    Compartments: [{
+      ClassName: 'N.Comp.Output',
+      Name: 'Output',
+      ShortName: 'OP'
+    },{
+      ClassName: 'N.Comp.LinearSummingInput',
+      Name: 'Input',
+      ShortName: 'IP'
+    },{
+      ClassName: 'N.Comp.AcetylcholineInput',
+      Name: 'AcetylcholineInput',
+      ShortName: 'AIP'
+    }]
+  }
+
+  var SourceTemplate = {
+    ClassName: 'N.Neuron',
+    Name: 'SourceNeuron',
+    ShortName: 'SRC',
+    Compartments: [{
+      ClassName: 'N.Comp.OutputFromSignal',
+      Name: 'Output',
+      ShortName: 'OP'
+    }]
+  }
+
+  test("Simple connection test", function() {
+    var network = new N.Network();
+
+    equal(network.GetNumNeurons(), 0, 'No initial neurons');
+
+    var newNeuron = new N.Neuron(network);
+    network.AddNeuron(newNeuron.LoadFrom({ Template: SourceTemplate, Name: 'Neuron1', ShortName: 'N1' }));
+    newNeuron.GetCompartmentByName('OP').SetSignal((new N.DiscreteSignal()).LoadFrom({
+      DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]}));
+
+    newNeuron = new N.Neuron(network);
+    network.AddNeuron(newNeuron.LoadFrom({ Template: SimpleNeuronTemplate, Name: 'Neuron2', ShortName: 'N2' }));
+
+    var connection = new N.Connection(network);
+    connection.LoadFrom({ SourcePath: ':N1>OP', SinkPath: ':N2>IP', Gain: 2.0, Delay: 0.005 });
+    network.AddConnection(connection);
+/*
+    equal(network.GetNumConnections(), 1, 'One connection');
+    equal(network.GetConnectionByIndex(0), connection, 'Get the connection');
+    equal(connection.Source, network.GetNeuronByName('N1').GetCompartmentByName('SRC'), 'Source compartment is correct');
+    equal(connection.Sink, network.GetNeuronByName('N2').GetCompartmentByName('IP'), 'Sink compartment is correct');
+*/
+  });
+
+  test("Network load test", function() {
+    var network = new N.Network();
+
+    var json = {
+      Name: 'Layer1',
+      ShortName: 'L1',
+      Neurons: [{
+        ClassName: 'N.Neuron', Name: 'Cajal–Retzius 1', ShortName: 'CR1'
+      },{
+        ClassName: 'N.Neuron', Name: 'Inhibitory Interneuron 1', ShortName: 'INB1'
+      }]
+    }
+
+    network.LoadFrom(json);
+    equal(network.GetNumNeurons(), 2, 'Two neurons');
+    equal(network.GetNeuronByIndex(0).Name, 'Cajal–Retzius 1', "Neuron 1 name");
+    equal(network.GetNeuronByName('CR1').Name, 'Cajal–Retzius 1', 'Neuron 1 long name');
+    equal(network.GetNeuronByIndex(1).Name, 'Inhibitory Interneuron 1', "Neuron 2 name");
+    equal(network.GetNeuronByName('INB1').Name, 'Inhibitory Interneuron 1', 'Neuron 2 long name');
+  });
+
+  </script>
+</head>
+<body>
+
+<div id="qunit"></div>
+
+</body>
+</html>

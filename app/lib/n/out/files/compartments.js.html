@@ -41,19 +41,31 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/AnalogSignal.html">AnalogSignal</a></li>
+            
                 <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
             
+                <li><a href="../classes/Comp.OutputFromSignal.html">Comp.OutputFromSignal</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
+                <li><a href="../classes/Connection.html">Connection</a></li>
+            
+                <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
+            
+                <li><a href="../classes/Neuron.html">Neuron</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
                 <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
                 <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/TableSearch.html">TableSearch</a></li>
             
                 <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
@@ -120,44 +132,52 @@ All Rights Reserved.
  * This is the N simulator.
  * @module N
  */
-
 var N = N || {};
 N.Comp = N.Comp || {};
 
-  //**********************
-  //* N.Comp.StateOutput *
-  //**********************
+  //***************************
+  //* N.Comp.OutputFromSignal *
+  //***************************
 
-N.Comp.StateOutput = function(neuron, name, shortName) {
-  this.ClassName  = &#x27;N.Comp.StateOutput&#x27;;
+/**
+ * An output compartment that has a signal object as the value for the output. This is typically used as an external input
+ * to a system, but it can also be used as a neuron that bursts based on an internal clock.
+ *
+ * The signal can be analog, discrete, or a custom signal object.
+ *
+ * @class Comp.OutputFromSignal
+ * @param neuron
+ * @param name
+ * @param shortName
+ * @constructor
+ */
+N.Comp.OutputFromSignal = function(neuron, name, shortName) {
+  this.ClassName  = &#x27;N.Comp.OutputFromSignal&#x27;;
   this.Name       = name;
   this.ShortName  = (shortName &amp;&amp; shortName.length &gt; 0 ? shortName : N.ShortName(name));
-  this.Category   = &#x27;StateOutput&#x27;;
+  this.Category   = &#x27;Output&#x27;;
 
   this.Neuron     = neuron;
-  this.Input      = null;
+  this.Signal     = null;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
 }
 
-N.Comp.StateOutput.prototype.AddInput = function(input) {
-  if(this.Input) {
-    this.Input.Component = null;
-  }
-  this.Input = input;
+N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
+  this.Signal = signal;
 }
 
-N.Comp.StateOutput.prototype.Update = function(t) {
-  if(this.Input) {
-    this.Output = this.Input.UpdateInput(t);
+N.Comp.OutputFromSignal.prototype.Update = function(t) {
+  if(this.Signal) {
+    this.Output = this.Signal.GetValue(t);
   }
   return this.Output;
 }
 
-N.Comp.StateOutput.prototype.LoadFrom = function(json) {
+N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
   for(var i in json) {
-    if(i === &#x27;Input&#x27;) {
-      this.Input = N.NewN(json[i].ClassName).LoadFrom(json[i]);
+    if(i === &#x27;Signal&#x27;) {
+      this.SetSignal(N.NewN(json[i].ClassName).LoadFrom(json[i]));
     }
     else { this[i] = json[i]; }
   }
@@ -172,7 +192,7 @@ N.Comp.Output = function(neuron, name, shortName) {
   this.ClassName  = &#x27;N.Comp.Output&#x27;;
   this.Name       = name;
   this.ShortName  = (shortName &amp;&amp; shortName.length &gt; 0 ? shortName : N.ShortName(name));
-  this.Category   = &#x27;StateOutput&#x27;;
+  this.Category   = &#x27;Output&#x27;;
 
   this.Neuron     = neuron;
   this.Output     = 0.0;

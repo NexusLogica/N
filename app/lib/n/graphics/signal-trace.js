@@ -76,7 +76,7 @@ N.UI.SignalTraceRenderer.prototype.Render = function() {
   this._RenderXAxis();
 
   if(this.Signal.GetNumSamples() > 1) {
-    if(this.Signal.Type === N.Signal.ANALOG) {
+    if(this.Signal.Type === N.ANALOG) {
       this._RenderAnalogTrace();
     }
     else {
