@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ui/pi-network-scene.js</title>
+    <title>ui/pi-network-panel.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -92,15 +98,15 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: ui/pi-network-scene.js</h1>
+                        <h1 class="file-heading">File: ui/pi-network-panel.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**********************************************************************
 
-File     : pi-network-scene.js
+File     : pi-network-panel.js
 Project  : N Simulator Library
-Purpose  : Source file for pi network scene controller and renderer objects.
+Purpose  : Source file for pi network panel controller and renderer objects.
 Revisions: Original definition by Lawrence Gunn.
            2014/03/08
 
@@ -110,26 +116,27 @@ All Rights Reserved.
 */
 &#x27;use strict&#x27;;
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
 N.UI = N.UI || {};
-
-  //**********************
-  //* PiCanvasController *
-  //**********************
 
 var nSimAppControllers = angular.module(&#x27;nSimApp.controllers&#x27;);
 
 /**
- * The network scene controller. Create via&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;div ng-controller=&quot;PiNetworkSceneController&quot;&amp;gt;...&lt;br/&gt;
- *
- *
- * @class PiNetworkSceneController
+ * The network scene controller. Create via&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;lt;div ng-controller=&quot;PiNetworkPanelController&quot;&amp;gt;...&lt;br/&gt;
+ * @class PiNetworkPanelController
  */
-nSimAppControllers.controller(&#x27;PiNetworkSceneController&#x27;, [&#x27;$scope&#x27;,
-  function PiNetworkSceneController($scope) {
+nSimAppControllers.controller(&#x27;PiNetworkPanelController&#x27;, [&#x27;$scope&#x27;,
+  function PiNetworkPanelController($scope) {
 
     $scope.Current = {};
-    $scope.Current.HoverPath = &#x27;asdfasdf&#x27;;
+    $scope.Current.HoverPath = &#x27;&#x27;;
+    $scope.Current.Selected = &#x27;&#x27;;
+    $scope.Current.Compartment = null;
+    $scope.Current.SelectedCompartment = null;
 
     /**
      * Sets HoverPath scope variable on mouse entering a compartment.
@@ -137,15 +144,34 @@ nSimAppControllers.controller(&#x27;PiNetworkSceneController&#x27;, [&#x27;$scop
      * @param event
      * @param compartment
      */
-    $scope.onCompartmentMouseEnter = function(event, compartment) {
-      var hoverPath = compartment.Neuron.Network.ShortName+&#x27;.&#x27;+compartment.Neuron.ShortName+&#x27;:&#x27;+compartment.ShortName;
-      $scope.Current.HoverPath = hoverPath;
+    $scope.onCompartmentMouseEnter = function(event, piCompartment) {
+      var compObj = piCompartment.CompartmentObj;
+      $scope.Current.HoverPath = $scope.GetCompartmentPath(compObj)+&#x27; (&#x27;+compObj.Neuron.Name+&#x27; : &#x27;+compObj.Name+&#x27;)&#x27;;
       $scope.$digest();
     }
 
-    $scope.onCompartmentMouseLeave = function(event, compartment) {
+    $scope.onCompartmentMouseLeave = function(event, piCompartment) {
       $scope.Current.HoverPath = &#x27;&#x27;;
       $scope.$digest();
+    }
+
+    $scope.onCompartmentClick = function(event, piCompartment) {
+      if($scope.Current.SelectedCompartment) {
+        var path = $scope.Current.SelectedCompartment.path;
+        var classes = path.attr(&#x27;class&#x27;).split(&#x27; &#x27;);
+        var str = _.without(classes, &#x27;selected&#x27;).join(&#x27; &#x27;);
+        path.attr( { &#x27;class&#x27;: str });
+      }
+      $scope.Current.Selected = $scope.GetCompartmentPath(piCompartment.CompartmentObj);
+      $scope.Current.SelectedCompartment = piCompartment;
+      var classes = piCompartment.path.attr(&#x27;class&#x27;).split(&#x27; &#x27;);
+      var str = _.union(classes, [&#x27;selected&#x27;]).join(&#x27; &#x27;);
+      piCompartment.path.attr( { &#x27;class&#x27;: str });
+      $scope.$digest();
+    }
+
+    $scope.GetCompartmentPath = function(compartment) {
+      return compartment.Neuron.Network.GetFullPath()+&#x27;:&#x27;+compartment.Neuron.ShortName+&#x27;.&#x27;+compartment.ShortName;
     }
   }
 ]);

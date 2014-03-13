@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -157,6 +163,30 @@ N.NetworkTest.prototype.CreateScenes = function() {
   }
 }
 
+N.NetworkTest.SpinyStellate = {
+  ClassName: &#x27;N.Neuron&#x27;,
+  Name: &#x27;SpinyStellate&#x27;,
+  ShortName: &#x27;SS&#x27;,
+  Compartments: [{
+    ClassName: &#x27;N.Comp.Output&#x27;,
+    Name: &#x27;Output&#x27;,
+    ShortName: &#x27;OP&#x27;
+  },{
+    ClassName: &#x27;N.Comp.LinearSummingInput&#x27;,
+    Name: &#x27;Input&#x27;,
+    ShortName: &#x27;IP&#x27;
+  },{
+    ClassName: &#x27;N.Comp.AcetylcholineInput&#x27;,
+    Name: &#x27;AcetylcholineInput&#x27;,
+    ShortName: &#x27;AIP&#x27;
+  }],
+  Display: {
+    Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;,
+    Radius: 0.3,
+    CompartmentMap : { &#x27;Dendrites&#x27;: &#x27;IP&#x27;, &#x27;Acetylcholine Receptors&#x27;: &#x27;AIP&#x27;, &#x27;Body&#x27;: &#x27;OP&#x27;  }
+  }
+}
+
 N.NetworkTest.TestConfigurations = [{
 
   //******************
@@ -205,7 +235,7 @@ N.NetworkTest.TestConfigurations = [{
       Display: {
         Template: &#x27;N.UI.StandardNeuronTemplates.ExcitatoryInterneuron&#x27;,
         Radius: 0.4,
-        CompartmentMap : { &#x27;Dendrites&#x27;: &#x27;OP&#x27;, &#x27;Body&#x27;: &#x27;IP&#x27;  }
+        CompartmentMap : { &#x27;Dendrites&#x27;: &#x27;IP&#x27;, &#x27;Body&#x27;: &#x27;OP&#x27;  }
       }
     },{
       ClassName: &#x27;N.Neuron&#x27;,
@@ -218,7 +248,8 @@ N.NetworkTest.TestConfigurations = [{
       }],
       Display: {
         Template: &#x27;N.UI.StandardNeuronTemplates.OutputSink&#x27;,
-        Radius: 0.3
+        Radius: 0.3,
+        CompartmentMap : { &#x27;Input&#x27;: &#x27;IN&#x27;  }
       }
     }],
     Display: {
@@ -246,21 +277,11 @@ N.NetworkTest.TestConfigurations = [{
     Name: &#x27;Layer4&#x27;,
     ShortName: &#x27;L4&#x27;,
     Neurons: [{
-      ClassName: &#x27;N.Neuron&#x27;, Name: &#x27;SpinyStellate1&#x27;, ShortName: &#x27;SS1&#x27;,
-      Display: { Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;, Radius: 0.3 }
-    },{
-      ClassName: &#x27;N.Neuron&#x27;, Name: &#x27;SpinyStellate2&#x27;, ShortName: &#x27;SS2&#x27;,
-      Display: { Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;, Radius: 0.3 }
-    },{
-      ClassName: &#x27;N.Neuron&#x27;, Name: &#x27;SpinyStellate3&#x27;, ShortName: &#x27;SS3&#x27;,
-      Display: { Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;, Radius: 0.3 }
-    },{
-      ClassName: &#x27;N.Neuron&#x27;, Name: &#x27;SpinyStellate4&#x27;, ShortName: &#x27;SS4&#x27;,
-      Display: { Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;, Radius: 0.3 }
-    },{
-      ClassName: &#x27;N.Neuron&#x27;, Name: &#x27;SpinyStellate5&#x27;, ShortName: &#x27;SS5&#x27;,
-      Display: { Template: &#x27;N.UI.StandardNeuronTemplates.Stellate&#x27;, Radius: 0.3 }
-    },{
+      ClassName: &#x27;N.Neuron&#x27;, Template: &#x27;N.NetworkTest.SpinyStellate&#x27;, Name: &#x27;SpinyStellate1&#x27;, ShortName: &#x27;SS1&#x27;},{
+      ClassName: &#x27;N.Neuron&#x27;, Template: &#x27;N.NetworkTest.SpinyStellate&#x27;, Name: &#x27;SpinyStellate2&#x27;, ShortName: &#x27;SS2&#x27;},{
+      ClassName: &#x27;N.Neuron&#x27;, Template: &#x27;N.NetworkTest.SpinyStellate&#x27;, Name: &#x27;SpinyStellate3&#x27;, ShortName: &#x27;SS3&#x27;},{
+      ClassName: &#x27;N.Neuron&#x27;, Template: &#x27;N.NetworkTest.SpinyStellate&#x27;, Name: &#x27;SpinyStellate4&#x27;, ShortName: &#x27;SS4&#x27;},{
+      ClassName: &#x27;N.Neuron&#x27;, Template: &#x27;N.NetworkTest.SpinyStellate&#x27;, Name: &#x27;SpinyStellate5&#x27;, ShortName: &#x27;SS5&#x27;},{
       ClassName: &#x27;N.Neuron&#x27;, Name: &#x27;Inhibitory1&#x27;, ShortName: &#x27;IN1&#x27;,
       Display: { Template: &#x27;N.UI.StandardNeuronTemplates.InhibitoryInterneuron&#x27;, Radius: 0.2 }
     },{

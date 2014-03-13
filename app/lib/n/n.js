@@ -13,10 +13,9 @@ All Rights Reserved.
 'use strict';
 
 /**
-* This is the N simulator.
-*
-* @module N
-*/
+ * This is the N simulator.
+ * @module N
+ */
 
 var N = N || {};
 
@@ -59,6 +58,10 @@ N.NewN = function(className) {
     var objConstructor = N;
     for(var i=1; i<parts.length; i++) {
       objConstructor = objConstructor[parts[i]];
+      if(!objConstructor) {
+        N.L('ERROR: Unable to find constructor for '+className);
+        return null;
+      }
     }
     try {
       // Create but allow for passing of arguments
@@ -89,6 +92,29 @@ N.NewN = function(className) {
   return null;
 }
 
+/**
+ * Returns an existing object from a path.
+ * @method N.GetN
+ * @param {string} className (Mandatory)  - A path string in the form 'N.First.Second.SomeJson'.
+ * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
+ * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
+ */
+N.GetN = function(className) {
+  var parts = className.split('.');
+  if(parts.length > 0 && parts[0] === 'N') {
+    var obj = null;
+    var objObject = N;
+    for(var i=1; i<parts.length; i++) {
+      objObject = objObject[parts[i]];
+      if(!objObject) {
+        return null;
+      }
+    }
+    return objObject;
+  }
+  return null;
+}
+
 N.ToFixed = function(value, precision) {
   var stringValue = '0.';
   var i=0;
@@ -114,10 +140,19 @@ N.ShortName = function(longName) {
   return matches.join('');
 }
 
+/**
+ * Write to the system console (or some log, if overridden).
+ * @method L
+ * @param logText
+ */
 N.L = function(logText) {
   console.log(logText);
 }
 
+/**
+ * The standard timestep for simulations - 1 millisecond
+ * @type {number} Timestep
+ */
 N.TimeStep = 0.001;
 
 /**
@@ -133,7 +168,7 @@ N.Rad = function(angleDegrees) {
 }
 
 /**
- *
+ * Create a globally unique ID and return it as a string.
  * @method GenerateUUID
  * @return {String} Unique Identifier string
  */
@@ -145,6 +180,16 @@ N.GenerateUUID = function() {
       return (c==='x' ? r : (r&0x7|0x8)).toString(16);
   });
   return uuid;
+}
+
+/**
+ * Return the network path from a path string as an array.
+ */
+N.PathToObject = function(path) {
+  if(!path || path.length < 1) {
+    return { Valid: false };
+  }
+  var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\>[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
 }
 
 /**

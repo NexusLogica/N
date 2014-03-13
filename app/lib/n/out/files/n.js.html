@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -111,10 +117,9 @@ All Rights Reserved.
 &#x27;use strict&#x27;;
 
 /**
-* This is the N simulator.
-*
-* @module N
-*/
+ * This is the N simulator.
+ * @module N
+ */
 
 var N = N || {};
 
@@ -157,6 +162,10 @@ N.NewN = function(className) {
     var objConstructor = N;
     for(var i=1; i&lt;parts.length; i++) {
       objConstructor = objConstructor[parts[i]];
+      if(!objConstructor) {
+        N.L(&#x27;ERROR: Unable to find constructor for &#x27;+className);
+        return null;
+      }
     }
     try {
       // Create but allow for passing of arguments
@@ -187,6 +196,29 @@ N.NewN = function(className) {
   return null;
 }
 
+/**
+ * Returns an existing object from a path.
+ * @method N.GetN
+ * @param {string} className (Mandatory)  - A path string in the form &#x27;N.First.Second.SomeJson&#x27;.
+ * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
+ * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
+ */
+N.GetN = function(className) {
+  var parts = className.split(&#x27;.&#x27;);
+  if(parts.length &gt; 0 &amp;&amp; parts[0] === &#x27;N&#x27;) {
+    var obj = null;
+    var objObject = N;
+    for(var i=1; i&lt;parts.length; i++) {
+      objObject = objObject[parts[i]];
+      if(!objObject) {
+        return null;
+      }
+    }
+    return objObject;
+  }
+  return null;
+}
+
 N.ToFixed = function(value, precision) {
   var stringValue = &#x27;0.&#x27;;
   var i=0;
@@ -212,10 +244,19 @@ N.ShortName = function(longName) {
   return matches.join(&#x27;&#x27;);
 }
 
+/**
+ * Write to the system console (or some log, if overridden).
+ * @method L
+ * @param logText
+ */
 N.L = function(logText) {
   console.log(logText);
 }
 
+/**
+ * The standard timestep for simulations - 1 millisecond
+ * @type {number} Timestep
+ */
 N.TimeStep = 0.001;
 
 /**
@@ -231,7 +272,7 @@ N.Rad = function(angleDegrees) {
 }
 
 /**
- *
+ * Create a globally unique ID and return it as a string.
  * @method GenerateUUID
  * @return {String} Unique Identifier string
  */
@@ -243,6 +284,16 @@ N.GenerateUUID = function() {
       return (c===&#x27;x&#x27; ? r : (r&amp;0x7|0x8)).toString(16);
   });
   return uuid;
+}
+
+/**
+ * Return the network path from a path string as an array.
+ */
+N.PathToObject = function(path) {
+  if(!path || path.length &lt; 1) {
+    return { Valid: false };
+  }
+  var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\&gt;[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
 }
 
 /**

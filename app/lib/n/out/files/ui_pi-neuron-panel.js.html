@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>graphics/scene.js</title>
+    <title>ui/pi-neuron-panel.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,17 +98,17 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: graphics/scene.js</h1>
+                        <h1 class="file-heading">File: ui/pi-neuron-panel.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 /**********************************************************************
 
-File     : scenes.js
+File     : pi-neuron-panel.js
 Project  : N Simulator Library
-Purpose  : Source file for scenes.
+Purpose  : Source file for pi neuron panel controller and renderer objects.
 Revisions: Original definition by Lawrence Gunn.
-           2014/02/24
+           2014/03/08
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -116,122 +116,26 @@ All Rights Reserved.
 */
 &#x27;use strict&#x27;;
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
 N.UI = N.UI || {};
 
 /**
- * This is the Scene namespace for N user interface.
  *
- * @namespace UI.Scene
+ * @type {module|module|*|module|module|module}
  */
-N.UI.Scene = N.UI.Scene || {};
+var nSimAppControllers = angular.module(&#x27;nSimApp.controllers&#x27;);
 
-  //**********************
-  //* N.UI.Scene.Network *
-  //**********************
-
-/**
- * This is the scene handler for network scenes.
- * @class UI.Scene.Network
- * @constructor
- */
-
-N.UI.Scene.Network = function() {
-  this.ClassName = &#x27;N.UI.Scene.Network&#x27;;
-  this.Network = null;
-  this.Neurons = {};
-  this.Origin = &#x27;center&#x27;;
-  this.Scale = 100;
-  this.Id = N.GenerateUUID();
-}
-
-/**
- *
- * @method SetNetwork
- * @param network {Object} The N.Network object to be displayed in the scene.
- * @param scalePixelsPerUnit {
- * @param position
- */
-N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
-  var piGraphic = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit);
-  this.Network = network;
-  this.NetworkGraphic = piGraphic;
-  this.Scale = scalePixelsPerUnit;
-  this.Position = position;
-}
-
-N.UI.Scene.Network.prototype.Render = function(svgParent) {
-  this.Scale = this.Fit(svgParent);
-  this.NetworkGraphic.Render(this.Network, svgParent, this.Scale);
-}
-
-N.UI.Scene.Network.prototype.Fit = function(svgParent) {
-  var svgWidth = $(svgParent.node).parent().width();
-  var svgHeight = $(svgParent.node).parent().height();
-  var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.NetworkGraphic.Width/this.NetworkGraphic.Height;
-  if(aspectRatioNetwork &gt; aspectRatioSvg) {
-    return 0.9*svgWidth/this.NetworkGraphic.Width;
+nSimAppControllers.controller(&#x27;PiNeuronPanelController&#x27;, [&#x27;$scope&#x27;,
+  function PiNeuronPanelController($scope) {
+    $scope.onCompartmentMouseEnter = function(event, compartment) {
+      console.log(&#x27;mouseEnter on [&#x27;+compartment.Neuron.Neuron.ShortName+&#x27;.&#x27;+compartment.Neuron.ShortName+&#x27;:&#x27;+compartment.ShortName+&#x27;]&#x27;);
+    }
   }
-  else {
-    return 0.9*svgHeight/this.NetworkGraphic.Height;
-  }
-}
-
-  //*********************
-  //* N.UI.Scene.Neuron *
-  //*********************
-
-N.UI.Scene.Neuron = function() {
-  this.ClassName = &#x27;N.UI.Scene.Neuron&#x27;;
-  this.Neurons = {};
-  this.Origin = &#x27;center&#x27;;
-  this.Id = N.GenerateUUID();
-}
-
-N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
-  var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
-  this.Neuron = neuron;
-  this.NeuronGraphic = piGraphic;
-  this.Radius = radius;
-  this.Position = position;
-}
-
-N.UI.Scene.Neuron.prototype.Render = function(svgParent) {
-  this.NeuronGraphic.Render(this.Neuron, svgParent);
-}
-
-  //**************************
-  //* N.UI.Scene.SignalTrace *
-  //**************************
-
-N.UI.Scene.SignalTrace = function() {
-  this.ClassName = &#x27;N.UI.Scene.SignalTrace&#x27;;
-  this.Signal = {};
-  this.Id = N.GenerateUUID();
-}
-
-N.UI.Scene.SignalTrace.prototype.SetSignal = function(signalId) {
-  this.SignalId = signalId;
-  this._traceRenderer = new N.UI.SignalTraceRenderer();
-}
-
-N.UI.Scene.SignalTrace.prototype.Render = function(svgParent) {
-  this._w = svgParent.parent.width();
-  this._h = svgParent.parent.height();
-  this._traceRenderer.Configure(svgParent, this.SignalId);
-  this._padding = 15;
-  this._box = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
-  this._traceRenderer.SetCanvasBoundary(this._box);
-
-  this._backgroundRect = svgParent.rect(this._box.width, this._box.height).move(this._box.x, this._box.y).attr({ &#x27;fill&#x27;: &#x27;#FCF8F2&#x27;, &#x27;stroke-width&#x27;: 0});
-  this._traceRenderer.Render();
-}
-
-// TODO: Used?
-N.UI.Scene.SignalTrace.prototype.SetScale = function(min, max) {
-  this._traceRenderer.SetScale(min, max);
-}
+]);
 
     </pre>
 </div>

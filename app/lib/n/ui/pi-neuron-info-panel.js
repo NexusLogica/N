@@ -30,30 +30,5 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 nSimAppControllers.controller('PiNeuronInfoPanelController', ['$scope',
   function PiNeuronInfoPanelController($scope) {
 
-    $scope.Current = {};
-    $scope.Current.HoverPath = '';
-    $scope.Current.Compartment = null;
-
-    /**
-     * Sets HoverPath scope variable on mouse entering a compartment.
-     * @method onCompartmentMouseEnter
-     * @param event
-     * @param compartment
-     */
-    $scope.onCompartmentMouseEnter = function(event, compartment) {
-      var hoverPath = compartment.Neuron.Network.GetFullPath()+'.'+compartment.Neuron.ShortName+':'+compartment.ShortName;
-      $scope.Current.HoverPath = hoverPath;
-      $scope.$digest();
-    }
-
-    $scope.onCompartmentMouseLeave = function(event, compartment) {
-      $scope.Current.HoverPath = '';
-      $scope.$digest();
-    }
-
-    $scope.onCompartmentClick = function(event, compartment) {
-      $scope.Current.Compartment = compartment;
-      $scope.$digest();
-    }
   }
 ]);

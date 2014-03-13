@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -147,7 +153,8 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
       if(neuronCompartmentName) {
         var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
         if(compartmentObj) {
-          this.AddEventHandlers(compartment.path.node, compartmentObj);
+          compartment.CompartmentObj = compartmentObj;
+          this.AddEventHandlers(compartment);
         }
       }
     }
@@ -155,9 +162,23 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this._group.translate(this.X, this.Y);
 }
 
-N.UI.PiNeuron.prototype.AddEventHandlers = function(node, neuronCompartment) {
+N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
+  var node = piCompartment.path.node;
+  jQuery.data(node, &#x27;piCompartment&#x27;, piCompartment);
+
   $(node).on(&#x27;mouseenter&#x27;, function(event) {
-    $(this).closest(&#x27;.pi-canvas&#x27;).scope().onCompartmentMouseEnter(event, neuronCompartment);
+    var piCompartment = $(event.target).data(&#x27;piCompartment&#x27;);
+    $(this).closest(&#x27;.pi-canvas&#x27;).scope().onCompartmentMouseEnter(event, piCompartment);
+  });
+
+  $(node).on(&#x27;mouseleave&#x27;, function(event) {
+    var piCompartment = $(event.target).data(&#x27;piCompartment&#x27;);
+    $(this).closest(&#x27;.pi-canvas&#x27;).scope().onCompartmentMouseLeave(event, piCompartment);
+  });
+
+  $(node).on(&#x27;click&#x27;, function(event) {
+    var piCompartment = $(event.target).data(&#x27;piCompartment&#x27;);
+    $(this).closest(&#x27;.pi-canvas&#x27;).scope().onCompartmentClick(event, piCompartment);
   });
 }
 
@@ -319,7 +340,7 @@ N.UI.PiNeuronFactory = (function() {
       }
       var pin = new N.UI.PiNeuron();
 
-      _.assign(pin, filledTemplate);
+      _.assign(pin, _.cloneDeep(filledTemplate));
       return pin;
     }
 

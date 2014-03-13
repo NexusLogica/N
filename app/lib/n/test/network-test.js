@@ -59,6 +59,30 @@ N.NetworkTest.prototype.CreateScenes = function() {
   }
 }
 
+N.NetworkTest.SpinyStellate = {
+  ClassName: 'N.Neuron',
+  Name: 'SpinyStellate',
+  ShortName: 'SS',
+  Compartments: [{
+    ClassName: 'N.Comp.Output',
+    Name: 'Output',
+    ShortName: 'OP'
+  },{
+    ClassName: 'N.Comp.LinearSummingInput',
+    Name: 'Input',
+    ShortName: 'IP'
+  },{
+    ClassName: 'N.Comp.AcetylcholineInput',
+    Name: 'AcetylcholineInput',
+    ShortName: 'AIP'
+  }],
+  Display: {
+    Template: 'N.UI.StandardNeuronTemplates.Stellate',
+    Radius: 0.3,
+    CompartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
+  }
+}
+
 N.NetworkTest.TestConfigurations = [{
 
   //******************
@@ -107,7 +131,7 @@ N.NetworkTest.TestConfigurations = [{
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron',
         Radius: 0.4,
-        CompartmentMap : { 'Dendrites': 'OP', 'Body': 'IP'  }
+        CompartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
       }
     },{
       ClassName: 'N.Neuron',
@@ -120,7 +144,8 @@ N.NetworkTest.TestConfigurations = [{
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.OutputSink',
-        Radius: 0.3
+        Radius: 0.3,
+        CompartmentMap : { 'Input': 'IN'  }
       }
     }],
     Display: {
@@ -148,21 +173,11 @@ N.NetworkTest.TestConfigurations = [{
     Name: 'Layer4',
     ShortName: 'L4',
     Neurons: [{
-      ClassName: 'N.Neuron', Name: 'SpinyStellate1', ShortName: 'SS1',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.Stellate', Radius: 0.3 }
-    },{
-      ClassName: 'N.Neuron', Name: 'SpinyStellate2', ShortName: 'SS2',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.Stellate', Radius: 0.3 }
-    },{
-      ClassName: 'N.Neuron', Name: 'SpinyStellate3', ShortName: 'SS3',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.Stellate', Radius: 0.3 }
-    },{
-      ClassName: 'N.Neuron', Name: 'SpinyStellate4', ShortName: 'SS4',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.Stellate', Radius: 0.3 }
-    },{
-      ClassName: 'N.Neuron', Name: 'SpinyStellate5', ShortName: 'SS5',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.Stellate', Radius: 0.3 }
-    },{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate1', ShortName: 'SS1'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate2', ShortName: 'SS2'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate3', ShortName: 'SS3'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate4', ShortName: 'SS4'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate5', ShortName: 'SS5'},{
       ClassName: 'N.Neuron', Name: 'Inhibitory1', ShortName: 'IN1',
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     },{

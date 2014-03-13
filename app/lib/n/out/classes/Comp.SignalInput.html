@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Network</title>
+    <title>Comp.SignalInput</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,7 +98,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Network Class</h1>
+                        <h1>Comp.SignalInput Class</h1>
 <div class="box meta">
     
 
@@ -106,7 +106,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/network.js.html#l21"><code>network.js:21</code></a>
+            Defined in: <a href="../files/compartments.js.html#l173"><code>compartments.js:173</code></a>
         </div>
     
 
@@ -122,15 +122,15 @@
 
 
 <div class="box intro">
-    <p>A network object which can contain neurons or child networks.</p>
+    <p>A compartment that has, as its output, a signal object.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Network" class="method item">
-    <h3 class="name"><code>Network</code></h3>
+        <div id="method_Comp.SignalInput" class="method item">
+    <h3 class="name"><code>Comp.SignalInput</code></h3>
 
     
         <div class="args">
@@ -138,7 +138,19 @@
             
                 <li class="arg">
                     
-                        <code>parentNetwork</code>
+                        <code>neuron</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>name</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>shortName</code>
                     
                 </li>
             
@@ -171,7 +183,7 @@
             
         
         
-        <a href="../files/network.js.html#l21"><code>network.js:21</code></a>
+        <a href="../files/compartments.js.html#l173"><code>compartments.js:173</code></a>
         
         </p>
 
@@ -193,15 +205,44 @@
             
                 <li class="param">
                     
-                        <code class="param-name">parentNetwork</code>
+                        <code class="param-name">neuron</code>
                         <span class="type">Object</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>The parent network, if one exists.</p>
+                         
+                    </div>
 
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">name</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">shortName</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
                     </div>
 
                     
@@ -242,21 +283,7 @@
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_GetFullPath">GetFullPath</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method">
-                                <a href="#method_LoadFrom">LoadFrom</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method">
-                                <a href="#method_Upate">Upate</a>
+                                <a href="#method_SetSignal">SetSignal</a>
 
                                 
                                 
@@ -278,81 +305,8 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_GetFullPath" class="method item">
-    <h3 class="name"><code>GetFullPath</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">String</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/network.js.html#l60"><code>network.js:60</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Returns the full path from the top level network to this network.</p>
-
-    </div>
-
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">String</span>:
-                    
-                    <p>The concatinated short names of this network and its parents, separated by &#39;/&#39;.</p>
-
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_LoadFrom" class="method item">
-    <h3 class="name"><code>LoadFrom</code></h3>
+                    <div id="method_SetSignal" class="method item">
+    <h3 class="name"><code>SetSignal</code></h3>
 
     
         <div class="args">
@@ -360,7 +314,7 @@
             
                 <li class="arg">
                     
-                        <code>json</code>
+                        <code>signal</code>
                     
                 </li>
             
@@ -369,10 +323,6 @@
     
 
     
-        <span class="returns-inline">
-            <span class="type"><a href="../classes/Network.html" class="crosslink">Network</a></span>
-        </span>
-    
 
     
 
@@ -397,7 +347,7 @@
             
         
         
-        <a href="../files/network.js.html#l83"><code>network.js:83</code></a>
+        <a href="../files/compartments.js.html#l193"><code>compartments.js:193</code></a>
         
         </p>
 
@@ -408,7 +358,7 @@
     </div>
 
     <div class="description">
-        <p>Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.</p>
+        <p>Sets the signal.</p>
 
     </div>
 
@@ -420,15 +370,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">json</code>
-                        <span class="type">JSON</span>
+                        <code class="param-name">signal</code>
+                        <span class="type">N.Signal</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>The JSON object containing the configuration.</p>
-
+                         
                     </div>
 
                     
@@ -438,127 +387,6 @@
         </div>
     
 
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type"><a href="../classes/Network.html" class="crosslink">Network</a></span>:
-                    
-                    <p>Returns a reference to self</p>
-
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_Upate" class="method item">
-    <h3 class="name"><code>Upate</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>time</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type"><a href="../classes/Network.html" class="crosslink">Network</a></span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/network.js.html#l69"><code>network.js:69</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Update the output of all child networks, neurons, and connections.</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">time</code>
-                        <span class="type">Real</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>The time of the current simulation step.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type"><a href="../classes/Network.html" class="crosslink">Network</a></span>:
-                    
-                    <p>Returns a reference to self.</p>
-
-                
-            </div>
-        </div>
     
 
     

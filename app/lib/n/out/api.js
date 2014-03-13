@@ -1,11 +1,14 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "Comp.AcetylcholineInput",
+        "Comp.SignalInput",
         "N",
         "Network",
         "Objects",
-        "UI.Scene.Network",
-        "UI.Scene.PiNetworkSceneController"
+        "PiNetworkPanelController",
+        "PiNeuronInfoPanelController",
+        "UI.Scene.Network"
     ],
     "modules": [
         "N"

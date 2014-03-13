@@ -298,22 +298,22 @@ textarea {
 .row.pi-neuron-test {
   margin-bottom: 50px; }
 
-.pi-network-scene .pi-canvas {
+.pi-network-panel .pi-canvas {
   height: 200px;
   padding: 0px 0px; }
-.pi-network-scene .pi-canvas-column .path {
+.pi-network-panel .pi-canvas-column .path {
   margin: 5px 5px 5px 10px;
   color: gray;
   height: 20px; }
-.pi-network-scene .pi-network-console {
+.pi-network-panel .pi-network-console {
   height: 200px;
   border: gray 1px solid;
   margin-left: 30px; }
 
-.pi-neuron-scene .pi-canvas {
+.pi-neuron-panel .pi-canvas {
   height: 250px;
   padding: 0px 0px; }
-.pi-neuron-scene .pi-neuron-console {
+.pi-neuron-panel .pi-neuron-console {
   height: 250px;
   border: gray 1px solid;
   margin-left: 30px; }

@@ -12,6 +12,11 @@ All Rights Reserved.
 */
 'use strict';
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
+
 var N = N || {};
 N.Comp = N.Comp || {};
 
@@ -165,6 +170,15 @@ N.Comp.LinearSummingInput.prototype.ToJSON = function() {
   //* N.Comp.SignalInput *
   //**********************
 
+/**
+ * A compartment that has, as its output, a signal object.
+ *
+ * @class Comp.SignalInput
+ * @param neuron
+ * @param name
+ * @param shortName
+ * @constructor
+ */
 N.Comp.SignalInput = function(neuron, name, shortName) {
   this.ClassName   = 'N.Comp.SignalInput';
   this.Name       = name;
@@ -176,6 +190,12 @@ N.Comp.SignalInput = function(neuron, name, shortName) {
   this.Sum         = 0.0;
 }
 
+/**
+ * Sets the signal.
+ * @method SetSignal
+ * @param {N.Signal} signal
+ * @constructor
+ */
 N.Comp.SignalInput.prototype.SetSignal = function(signal) {
   this.SignalInput = signal;
 }
@@ -198,6 +218,54 @@ N.Comp.SignalInput.prototype.LoadFrom = function(json) {
 }
 
 N.Comp.SignalInput.prototype.ToJSON = function() {
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
+  return str;
+}
+
+  //*****************************
+  //* N.Comp.AcetylcholineInput *
+  //*****************************
+
+/**
+ * A modulator input that receives input from acetylcholine source.
+ * @class Comp.AcetylcholineInput
+ * @param {N.Neuron} neuron
+ * @param {String} name
+ * @param {Stirng} shortName
+ * @constructor
+ */
+N.Comp.AcetylcholineInput = function(neuron, name, shortName) {
+  this.ClassName   = 'N.Comp.LinearSummingInput';
+  this.Name       = name;
+  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category   = 'Input';
+
+  this.Neuron     = neuron;
+  this.Sum         = 0.0;
+  this.Connections = [];
+}
+
+N.Comp.AcetylcholineInput.prototype.Connect = function(connection) {
+  this.Connections.push(connection);
+}
+
+N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
+  var len = this.Connections.length;
+  this.Sum = 0.0;
+  for(var i=0; i<len; i++) {
+    this.Sum += this.Connections[i].GetOutput();
+  }
+  return this.Sum;
+}
+
+N.Comp.AcetylcholineInput.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
+}
+
+N.Comp.AcetylcholineInput.prototype.ToJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }

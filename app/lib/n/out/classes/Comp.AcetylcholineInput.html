@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ui/pi-signal-trace-scene.js</title>
+    <title>Comp.AcetylcholineInput</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -98,42 +98,199 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: ui/pi-signal-trace-scene.js</h1>
+                        <h1>Comp.AcetylcholineInput Class</h1>
+<div class="box meta">
+    
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-/**********************************************************************
+    
 
-File     : pi-signal-trace-scene.js
-Project  : N Simulator Library
-Purpose  : Source file for pi signal-trace scene controller and renderer objects.
-Revisions: Original definition by Lawrence Gunn.
-           2014/03/08
+    
+        <div class="foundat">
+            Defined in: <a href="../files/compartments.js.html#l229"><code>compartments.js:229</code></a>
+        </div>
+    
 
-Copyright (c) 2014 by Lawrence Gunn
-All Rights Reserved.
+    
+        
+            Module: <a href="../modules/N.html">N</a>
+        
+    
 
-*/
-&#x27;use strict&#x27;;
+    
+</div>
 
-var N = N || {};
-N.UI = N.UI || {};
 
-  //**********************
-  //* PiCanvasController *
-  //**********************
 
-var nSimAppControllers = angular.module(&#x27;nSimApp.controllers&#x27;);
+<div class="box intro">
+    <p>A modulator input that receives input from acetylcholine source.</p>
 
-nSimAppControllers.controller(&#x27;PiSignalTraceSceneController&#x27;, [&#x27;$scope&#x27;,
-  function PiSignalTraceSceneController($scope) {
-    $scope.onCompartmentMouseEnter = function(event, compartment) {
-      console.log(&#x27;mouseEnter on [&#x27;+compartment.SignalTrace.SignalTrace.ShortName+&#x27;.&#x27;+compartment.SignalTrace.ShortName+&#x27;:&#x27;+compartment.ShortName+&#x27;]&#x27;);
-    }
-  }
-]);
+</div>
 
-    </pre>
+
+    <div class="constructor">
+        <h2>Constructor</h2>
+        <div id="method_Comp.AcetylcholineInput" class="method item">
+    <h3 class="name"><code>Comp.AcetylcholineInput</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>neuron</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>name</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>shortName</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/compartments.js.html#l229"><code>compartments.js:229</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">neuron</code>
+                        <span class="type">N.Neuron</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">name</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">shortName</code>
+                        <span class="type">Stirng</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+    </div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+        
+        
+        
+        
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+            
+
+            
+
+            
+
+            
+        </div>
+
+        
+
+        
+
+        
+
+        
+    </div>
 </div>
 
                     </div>

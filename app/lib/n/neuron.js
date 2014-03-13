@@ -54,7 +54,18 @@ N.Neuron.prototype.Update = function(time) {
   }
 }
 
+/**
+ * Load a neuron from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.
+ * @method LoadFrom
+ * @param {JSON} json
+ * @returns {Neuron}
+ */
 N.Neuron.prototype.LoadFrom = function(json) {
+  if(json.Template) {
+    var template = N.GetN(json.Template);
+    this.LoadFrom(template);
+  }
+
   for(var i in json) {
     if(i === 'Compartments') {
       for(var j=0; j<json.Compartments.length; j++) {
@@ -63,7 +74,11 @@ N.Neuron.prototype.LoadFrom = function(json) {
         this.AddCompartment(compartment);
       }
     }
-    else {
+    else if(i === 'Display') {
+      this.Display = this.Display || {};
+      _.merge(this.Display, json.Display);
+    }
+    else if(i !== 'Template') {
       this[i] = json[i];
     }
   }

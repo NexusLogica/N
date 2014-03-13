@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -152,7 +158,18 @@ N.Neuron.prototype.Update = function(time) {
   }
 }
 
+/**
+ * Load a neuron from a JSON object. Note that if the JSON object has a &#x27;Template&#x27; member then this is loaded from first.
+ * @method LoadFrom
+ * @param {JSON} json
+ * @returns {Neuron}
+ */
 N.Neuron.prototype.LoadFrom = function(json) {
+  if(json.Template) {
+    var template = N.GetN(json.Template);
+    this.LoadFrom(template);
+  }
+
   for(var i in json) {
     if(i === &#x27;Compartments&#x27;) {
       for(var j=0; j&lt;json.Compartments.length; j++) {
@@ -161,7 +178,11 @@ N.Neuron.prototype.LoadFrom = function(json) {
         this.AddCompartment(compartment);
       }
     }
-    else {
+    else if(i === &#x27;Display&#x27;) {
+      this.Display = this.Display || {};
+      _.merge(this.Display, json.Display);
+    }
+    else if(i !== &#x27;Template&#x27;) {
       this[i] = json[i];
     }
   }

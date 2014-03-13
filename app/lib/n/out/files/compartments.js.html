@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -109,6 +115,11 @@ All Rights Reserved.
 
 */
 &#x27;use strict&#x27;;
+
+/**
+ * This is the N simulator.
+ * @module N
+ */
 
 var N = N || {};
 N.Comp = N.Comp || {};
@@ -263,6 +274,15 @@ N.Comp.LinearSummingInput.prototype.ToJSON = function() {
   //* N.Comp.SignalInput *
   //**********************
 
+/**
+ * A compartment that has, as its output, a signal object.
+ *
+ * @class Comp.SignalInput
+ * @param neuron
+ * @param name
+ * @param shortName
+ * @constructor
+ */
 N.Comp.SignalInput = function(neuron, name, shortName) {
   this.ClassName   = &#x27;N.Comp.SignalInput&#x27;;
   this.Name       = name;
@@ -274,6 +294,12 @@ N.Comp.SignalInput = function(neuron, name, shortName) {
   this.Sum         = 0.0;
 }
 
+/**
+ * Sets the signal.
+ * @method SetSignal
+ * @param {N.Signal} signal
+ * @constructor
+ */
 N.Comp.SignalInput.prototype.SetSignal = function(signal) {
   this.SignalInput = signal;
 }
@@ -296,6 +322,54 @@ N.Comp.SignalInput.prototype.LoadFrom = function(json) {
 }
 
 N.Comp.SignalInput.prototype.ToJSON = function() {
+  var str = JSON.stringify(this, function(k, v) { return (k === &#x27;_finder&#x27; ? undefined : v); });
+  return str;
+}
+
+  //*****************************
+  //* N.Comp.AcetylcholineInput *
+  //*****************************
+
+/**
+ * A modulator input that receives input from acetylcholine source.
+ * @class Comp.AcetylcholineInput
+ * @param {N.Neuron} neuron
+ * @param {String} name
+ * @param {Stirng} shortName
+ * @constructor
+ */
+N.Comp.AcetylcholineInput = function(neuron, name, shortName) {
+  this.ClassName   = &#x27;N.Comp.LinearSummingInput&#x27;;
+  this.Name       = name;
+  this.ShortName  = (shortName &amp;&amp; shortName.length &gt; 0 ? shortName : N.ShortName(name));
+  this.Category   = &#x27;Input&#x27;;
+
+  this.Neuron     = neuron;
+  this.Sum         = 0.0;
+  this.Connections = [];
+}
+
+N.Comp.AcetylcholineInput.prototype.Connect = function(connection) {
+  this.Connections.push(connection);
+}
+
+N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
+  var len = this.Connections.length;
+  this.Sum = 0.0;
+  for(var i=0; i&lt;len; i++) {
+    this.Sum += this.Connections[i].GetOutput();
+  }
+  return this.Sum;
+}
+
+N.Comp.AcetylcholineInput.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
+}
+
+N.Comp.AcetylcholineInput.prototype.ToJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === &#x27;_finder&#x27; ? undefined : v); });
   return str;
 }

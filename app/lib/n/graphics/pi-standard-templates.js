@@ -134,7 +134,7 @@ N.UI.StandardNeuronTemplates = {
   OutputSink : {
     className: 'output-sink',
     compartments: [{
-      name: 'Body',
+      name: 'Input',
       className: 'dendrites',
       segments: [
         { outerRadius: 1.00, innerRadius: 0.4 }]

@@ -1,8 +1,8 @@
 /**********************************************************************
 
-File     : pi-neuron-scene.js
+File     : pi-neuron-panel.js
 Project  : N Simulator Library
-Purpose  : Source file for pi neuron scene controller and renderer objects.
+Purpose  : Source file for pi neuron panel controller and renderer objects.
 Revisions: Original definition by Lawrence Gunn.
            2014/03/08
 
@@ -12,17 +12,21 @@ All Rights Reserved.
 */
 'use strict';
 
+/**
+ * This is the N simulator.
+ * @module N
+ */
 var N = N || {};
 N.UI = N.UI || {};
 
-  //**********************
-  //* PiCanvasController *
-  //**********************
-
+/**
+ *
+ * @type {module|module|*|module|module|module}
+ */
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
-nSimAppControllers.controller('PiNeuronSceneController', ['$scope',
-  function PiNeuronSceneController($scope) {
+nSimAppControllers.controller('PiNeuronPanelController', ['$scope',
+  function PiNeuronPanelController($scope) {
     $scope.onCompartmentMouseEnter = function(event, compartment) {
       console.log('mouseEnter on ['+compartment.Neuron.Neuron.ShortName+'.'+compartment.Neuron.ShortName+':'+compartment.ShortName+']');
     }

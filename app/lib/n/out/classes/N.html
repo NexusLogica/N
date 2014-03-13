@@ -41,15 +41,21 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Comp.AcetylcholineInput.html">Comp.AcetylcholineInput</a></li>
+            
+                <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
                 <li><a href="../classes/N.html">N</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
                 <li><a href="../classes/Objects.html">Objects</a></li>
             
-                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
+                <li><a href="../classes/PiNetworkPanelController.html">PiNetworkPanelController</a></li>
             
-                <li><a href="../classes/UI.Scene.PiNetworkSceneController.html">UI.Scene.PiNetworkSceneController</a></li>
+                <li><a href="../classes/PiNeuronInfoPanelController.html">PiNeuronInfoPanelController</a></li>
+            
+                <li><a href="../classes/UI.Scene.Network.html">UI.Scene.Network</a></li>
             
             </ul>
 
@@ -100,7 +106,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/n.js.html#l23"><code>n.js:23</code></a>
+            Defined in: <a href="../files/n.js.html#l22"><code>n.js:22</code></a>
         </div>
     
 
@@ -153,6 +159,20 @@
                         
                             <li class="index-item method">
                                 <a href="#method_GenerateUUID">GenerateUUID</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_L">L</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_N.GetN">N.GetN</a>
 
                                 
                                 
@@ -234,7 +254,7 @@
             
         
         
-        <a href="../files/n.js.html#l30"><code>n.js:30</code></a>
+        <a href="../files/n.js.html#l29"><code>n.js:29</code></a>
         
         </p>
 
@@ -329,7 +349,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l135"><code>n.js:135</code></a>
+        <a href="../files/n.js.html#l170"><code>n.js:170</code></a>
         
         </p>
 
@@ -340,7 +360,8 @@ of the json object will be copied into the new object.</p>
     </div>
 
     <div class="description">
-        
+        <p>Create a globally unique ID and return it as a string.</p>
+
     </div>
 
     
@@ -355,6 +376,223 @@ of the json object will be copied into the new object.</p>
                         <span class="type">String</span>:
                     
                     <p>Unique Identifier string</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_L" class="method item">
+    <h3 class="name"><code>L</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>logText</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/n.js.html#l143"><code>n.js:143</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Write to the system console (or some log, if overridden).</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">logText</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_N.GetN" class="method item">
+    <h3 class="name"><code>N.GetN</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>className</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>args</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">DeferredObject</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/n.js.html#l95"><code>n.js:95</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Returns an existing object from a path.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">className</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>(Mandatory)  - A path string in the form &#39;N.First.Second.SomeJson&#39;.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">args</code>
+                        <span class="type">...</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>(Optional) - Arguments to be passed to contructor. Can be zero, one, or more.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">DeferredObject</span>:
+                    
+                    <p>A deferred object used for attaching done and fail callbacks</p>
 
                 
             </div>
@@ -419,7 +657,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l46"><code>n.js:46</code></a>
+        <a href="../files/n.js.html#l45"><code>n.js:45</code></a>
         
         </p>
 
@@ -542,7 +780,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l123"><code>n.js:123</code></a>
+        <a href="../files/n.js.html#l158"><code>n.js:158</code></a>
         
         </p>
 

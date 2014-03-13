@@ -49,7 +49,8 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
       if(neuronCompartmentName) {
         var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
         if(compartmentObj) {
-          this.AddEventHandlers(compartment.path.node, compartmentObj);
+          compartment.CompartmentObj = compartmentObj;
+          this.AddEventHandlers(compartment);
         }
       }
     }
@@ -57,15 +58,23 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this._group.translate(this.X, this.Y);
 }
 
-N.UI.PiNeuron.prototype.AddEventHandlers = function(node, neuronCompartment) {
+N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
+  var node = piCompartment.path.node;
+  jQuery.data(node, 'piCompartment', piCompartment);
+
   $(node).on('mouseenter', function(event) {
-    $(this).closest('.pi-canvas').scope().onCompartmentMouseEnter(event, neuronCompartment);
+    var piCompartment = $(event.target).data('piCompartment');
+    $(this).closest('.pi-canvas').scope().onCompartmentMouseEnter(event, piCompartment);
   });
+
   $(node).on('mouseleave', function(event) {
-    $(this).closest('.pi-canvas').scope().onCompartmentMouseLeave(event, neuronCompartment);
+    var piCompartment = $(event.target).data('piCompartment');
+    $(this).closest('.pi-canvas').scope().onCompartmentMouseLeave(event, piCompartment);
   });
+
   $(node).on('click', function(event) {
-    $(this).closest('.pi-canvas').scope().onCompartmentClick(event, neuronCompartment);
+    var piCompartment = $(event.target).data('piCompartment');
+    $(this).closest('.pi-canvas').scope().onCompartmentClick(event, piCompartment);
   });
 }
 
@@ -227,7 +236,7 @@ N.UI.PiNeuronFactory = (function() {
       }
       var pin = new N.UI.PiNeuron();
 
-      _.assign(pin, filledTemplate);
+      _.assign(pin, _.cloneDeep(filledTemplate));
       return pin;
     }
 
