@@ -11,9 +11,41 @@
   <script src="../../app/lib/n/n.js"></script>
   <script src="../../app/lib/n/network.js"></script>
   <script src="../../app/lib/n/neuron.js"></script>
+  <script src="../../app/lib/n/compartments.js"></script>
 
 
   <script>
+
+  var SimpleNeuronTemplate = {
+    ClassName: 'N.Neuron',
+    Name: 'SimpleNeuron',
+    ShortName: 'SN',
+    Compartments: [{
+      ClassName: 'N.Comp.Output',
+      Name: 'Output',
+      ShortName: 'OP'
+    },{
+      ClassName: 'N.Comp.LinearSummingInput',
+      Name: 'Input',
+      ShortName: 'IP'
+    },{
+      ClassName: 'N.Comp.AcetylcholineInput',
+      Name: 'AcetylcholineInput',
+      ShortName: 'AIP'
+    }]
+  }
+
+  var SourceTemplate = {
+    ClassName: 'N.Neuron',
+    Name: 'SourceNeuron',
+    ShortName: 'SRC',
+    Compartments: [{
+      ClassName: 'N.Comp.OutputFromSignal',
+      Name: 'Output',
+      ShortName: 'OP'
+    }]
+  }
+
   QUnit.assert.near = function( actual, expected, eps, message ) {
     var hasEps = (arguments.length > 2 && typeof eps !== "string");
     var actualMessage = (hasEps ? message : eps);
@@ -66,6 +98,22 @@
     equal(network.GetNeuronByName('CR1').Name, 'Cajal–Retzius 1', 'Neuron 1 long name');
     equal(network.GetNeuronByIndex(1).Name, 'Inhibitory Interneuron 1', "Neuron 2 name");
     equal(network.GetNeuronByName('INB1').Name, 'Inhibitory Interneuron 1', 'Neuron 2 long name');
+  });
+
+  test("Path object test", function() {
+    var createNeuron = function(network, shortName, template, appendToCompartments) {
+      var templateCopy = _.cloneDeep(template);
+      for(var i in templateCopy.Compartments) { templateCopy.Compartments[i].ShortName += appendToCompartments; }
+      var n = network.AddNeuron((new N.Neuron(network)).LoadFrom({ ShortName: shortName, Name: 'Long'+shortName, Template: templateCopy }));
+    }
+
+    var parentNetwork = new N.Network();
+    createNeuron(parentNetwork, "L1N1", SimpleNeuronTemplate, 1);
+    equal(parentNetwork.GetNeuronByName('L1N1').GetCompartmentByName('AIP1').ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+
+    var target = N.FromPath(parentNetwork, ':L1N1>AIP1');
+    equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    equal(target.Neuron.ShortName, 'L1N1', 'Compartment\'s neuron name');
   });
 
   </script>

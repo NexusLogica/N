@@ -25,18 +25,90 @@ var N = N || {};
  * @param {Object} parentNetwork The parent network, if one exists.
  */
 N.Network = function(parentNetwork) {
-  this.ClassName  = 'N.Network';
-  this.Id         = null;
-  this.Name       = '';
-  this.ShortName  = '';
-  this.Category   = 'Default';
-  this.Neurons    = [];
-  this.NeuronsByName = {};
-  this.Connections = [];
-  this.ConnectionsByPath = {};
-  this.ParentNetwork = parentNetwork;
+  this.ClassName           = 'N.Network';
+  this.Id                  = null;
+  this.Name                = '';
+  this.ShortName           = '';
+  this.Category            = 'Default';
+  this.Neurons             = [];
+  this.NeuronsByName       = {};
+  this.Connections         = [];
+  this.ConnectionsByPath   = {};
+  this.ParentNetwork       = (parentNetwork ? parentNetwork : null);
+  this.ChildNetworks       = [];
+  this.ChildNetworksByName = {};
 }
 
+/**
+ * Returns the object type.
+ * @method GetType
+ * @returns {N.Type.Network}
+ */
+N.Network.prototype.GetType = function() {
+  return N.Type.Network;
+}
+
+/**
+ * Get the parent network. This call is implemented by all network, neuron, and compartment objects.
+ * @method GetParent
+ * @returns {Object} The parent network object or null if there is none.
+ */
+N.Network.prototype.GetParent = function() {
+  return this.ParentNetwork;
+}
+
+/**
+ * Adds a child network to the network.
+ * @method AddNetwork
+ * @param network
+ * @returns {N.Network}
+ */
+N.Network.prototype.AddNetwork = function(network) {
+  if(network.Name.length === 0 || network.ShortName.length === 0) {
+    N.L('ERROR: N.Network.AddNetwork: No name for network.');
+    throw 'ERROR: N.Network.AddNetwork: No name for network.';
+  }
+  this.ChildNetworks.push(network);
+  this.ChildNetworksByName[network.Name] = network;
+  this.ChildNetworksByName[network.ShortName] = network;
+  return network;
+}
+
+/**
+ * Get number of networks directly owned by this network.
+ * @method GetNumNetworks
+ * @returns {Integer}
+ */
+N.Network.prototype.GetNumNetworks = function() {
+  return this.ChildNetworks.length;
+}
+
+/**
+ * Get a network owned by this network by index.
+ * @method GetNetworkByIndex
+ * @param {Integer} index
+ * @returns {N.Network}
+ */
+N.Network.prototype.GetNetworkByIndex = function(index) {
+  return this.ChildNetworks[index];
+}
+
+/**
+ * Get a network owned by this network given the network short string.
+ * @method GetNetworkByName
+ * @param {String} shortName
+ * @returns {N.Network}
+ */
+N.Network.prototype.GetNetworkByName = function(name) {
+  return this.ChildNetworksByName[name];
+}
+
+/**
+ * Adds a neuron to the network.
+ * @method AddNeuron
+ * @param neuron
+ * @returns {N.Neuron}
+ */
 N.Network.prototype.AddNeuron = function(neuron) {
   if(neuron.Name.length === 0 || neuron.ShortName.length === 0) {
     N.L('ERROR: N.Network.AddNeuron: No name for neuron.');
@@ -45,16 +117,34 @@ N.Network.prototype.AddNeuron = function(neuron) {
   this.Neurons.push(neuron);
   this.NeuronsByName[neuron.Name] = neuron;
   this.NeuronsByName[neuron.ShortName] = neuron;
+  return neuron;
 }
 
+/**
+ * Get number of neurons directly owned by this network.
+ * @method GetNumNeurons
+ * @returns {Integer}
+ */
 N.Network.prototype.GetNumNeurons = function() {
   return this.Neurons.length;
 }
 
+/**
+ * Get a neuron owned by this network by index.
+ * @method GetNeuronByIndex
+ * @param {Integer} index
+ * @returns {N.Neuron}
+ */
 N.Network.prototype.GetNeuronByIndex = function(index) {
   return this.Neurons[index];
 }
 
+/**
+ * Get a neuron owned by this network given the neuron short string.
+ * @method GetNeuronByName
+ * @param {String} shortName
+ * @returns {N.Neuron}
+ */
 N.Network.prototype.GetNeuronByName = function(name) {
   return this.NeuronsByName[name];
 }
@@ -66,12 +156,13 @@ N.Network.prototype.GetNeuronByName = function(name) {
  */
 N.Network.prototype.AddConnection = function(connection) {
   this.Connections.push(connection);
-  this.ConnectionsByPath[connection.GetPath()] = connection;
+  this.ConnectionsByPath[connection.GetFullPath()] = connection;
   connection.Connect();
+  return connection;
 }
 
 /**
- * Get the number of connections.
+ * Get the number of connections owned by this network.
  * @method GetNumConnections
  * @returns {Number}
  */

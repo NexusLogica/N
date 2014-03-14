@@ -25,11 +25,21 @@ var N = N || {};
  *
  */
 
+N.Type = {
+  Network:        1,
+  Neuron:         2,
+  Compartment:    3,
+  Connection:     4,
+  AnalogSignal:   5,
+  DiscreteSignal: 6,
+  CustomSignal:   7
+};
+
 /**
  * Create an instance of a object from the json, where json.ClassName is the name of the object and all properties
  * of the json object will be copied into the new object.
  *
- * @method CreateInstance
+ * @method N.CreateInstance
  * @param {JSON} json
  * @returns {DeferredObject}
  */
@@ -112,6 +122,94 @@ N.GetN = function(className) {
   return null;
 }
 
+/**
+ * Returns the object pointed to by the path relative to
+ * @method N.FromPath
+ * @param {N.Network} network
+ * @param {String} path
+ * @return {N.Network|N.Neuron|N.Compartment} Returns a network, neuron, or compartment. On error returns an object with an error element which contains a message, the path, and the path part that caused the problem.
+ */
+N.FromPath = function(network, path) {
+  // Break the path into
+  var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\>[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
+  var parts = path.match(regex);
+  if (parts.length === 0) {
+    return N.FromPathError(network, path, path, 'Error in path');
+  }
+
+  var currentObj = network;
+  if (parts[0].charAt(0) === '/') {
+    var next;
+    do {
+      next = currentObj.GetParent();
+    } while(next !== null);
+  }
+
+  for(var i in parts) {
+    var part = parts[i];
+    var first = part[0];
+
+    switch(first) {
+      // Relative network path so '..' or '.'
+      case '.': {
+        switch(part) {
+
+          case '..': {
+            currentObj = currentObj.Parent();
+            if (!currentObj) {
+              return N.FromPathError(network, path, part, 'Network has no parent');
+            }
+          } break;
+
+          case '.':
+          // Do nothing
+          break;
+
+          default : {
+            return N.FromPathError(network, path, part, 'Invalid path component');
+          }
+        }
+      } break;
+
+      // A neuron
+      case ':': {
+        var shortName = part.substring(1);
+        currentObj = currentObj.GetNeuronByName(shortName);
+        if (!currentObj) {
+          return N.FromPathError(network, path, part, 'The network has no neuron \''+shortName+'\'');
+        }
+      } break;
+
+      // A compartment
+      case '>': {
+        var compShortName = part.substring(1);
+        currentObj = currentObj.GetCompartmentByName(compShortName);
+        if (!currentObj) {
+          return N.FromPathError(network, path, part, 'The neuron has no compartment \''+compShortName+'\'');
+        }
+      } break;
+
+      // A network
+      case '/': {
+        var netShortName = part.substring(1);
+        currentObj = currentObj.GetNetworkByName(netShortName);
+        if (!currentObj) {
+          return N.FromPathError(network, path, part, 'The network has no compartment \''+netShortName+'\'');
+        }
+      } break;
+
+      default: {
+        return N.FromPathError(network, path, part, 'Invalid path part \''+part+'\'');
+      }
+    }
+  }
+  return currentObj;
+}
+
+N.FromPathError = function(network, path, part, message) {
+  return { error: { message: message, network: network, path: path, part: part } };
+}
+
 N.ToFixed = function(value, precision) {
   var stringValue = '0.';
   var i=0;
@@ -139,7 +237,7 @@ N.ShortName = function(longName) {
 
 /**
  * Write to the system console (or some log, if overridden).
- * @method L
+ * @method N.L
  * @param logText
  */
 N.L = function(logText) {
@@ -155,7 +253,7 @@ N.TimeStep = 0.001;
 /**
  * Converts an angle in degrees to radians.
  *
- * @method Rad
+ * @method N.Rad
  * @param {Real} angle Angle in degrees
  * @return {Real} Angle in radians
  *
@@ -166,7 +264,7 @@ N.Rad = function(angleDegrees) {
 
 /**
  * Create a globally unique ID and return it as a string.
- * @method GenerateUUID
+ * @method N.GenerateUUID
  * @return {String} Unique Identifier string
  */
 N.GenerateUUID = function() {
@@ -177,16 +275,6 @@ N.GenerateUUID = function() {
       return (c==='x' ? r : (r&0x7|0x8)).toString(16);
   });
   return uuid;
-}
-
-/**
- * Return the network path from a path string as an array.
- */
-N.PathToObject = function(path) {
-  if(!path || path.length < 1) {
-    return { Valid: false };
-  }
-  var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\>[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
 }
 
 /**

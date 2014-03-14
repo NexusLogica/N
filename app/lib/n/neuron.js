@@ -38,10 +38,26 @@ N.Neuron = function(network) {
   this.Network    = network;
 }
 
+/**
+ * Returns the object type.
+ * @method GetType
+ * @returns {N.Type.Neuron}
+ */
+N.Neuron.prototype.GetType = function() {
+  return N.Type.Neuron;
+}
+
+/**
+ * Add a compartment to the neuron.
+ * @method AddCompartment
+ * @param {N.Comp.*} compartment
+ * @return {N.Comp.*} The compartment passed into the method is returned.
+ */
 N.Neuron.prototype.AddCompartment = function(compartment) {
   this.Compartments.push(compartment);
   this.CompartmentsByName[compartment.Name] = compartment;
   this.CompartmentsByName[compartment.ShortName] = compartment;
+  return compartment;
 }
 
 N.Neuron.prototype.GetCompartmentByIndex = function(index) {

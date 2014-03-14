@@ -163,21 +163,21 @@
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_CreateInstance">CreateInstance</a>
+                                <a href="#method_N.CreateInstance">N.CreateInstance</a>
 
                                 
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_GenerateUUID">GenerateUUID</a>
+                                <a href="#method_N.FromPath">N.FromPath</a>
 
                                 
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_L">L</a>
+                                <a href="#method_N.GenerateUUID">N.GenerateUUID</a>
 
                                 
                                 
@@ -185,6 +185,13 @@
                         
                             <li class="index-item method">
                                 <a href="#method_N.GetN">N.GetN</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_N.L">N.L</a>
 
                                 
                                 
@@ -198,7 +205,7 @@
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_Rad">Rad</a>
+                                <a href="#method_N.Rad">N.Rad</a>
 
                                 
                                 
@@ -220,8 +227,8 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_CreateInstance" class="method item">
-    <h3 class="name"><code>CreateInstance</code></h3>
+                    <div id="method_N.CreateInstance" class="method item">
+    <h3 class="name"><code>N.CreateInstance</code></h3>
 
     
         <div class="args">
@@ -266,7 +273,7 @@
             
         
         
-        <a href="../files/n.js.html#l28"><code>n.js:28</code></a>
+        <a href="../files/n.js.html#l38"><code>n.js:38</code></a>
         
         </p>
 
@@ -325,8 +332,135 @@ of the json object will be copied into the new object.</p>
 </div>
 
                 
-                    <div id="method_GenerateUUID" class="method item">
-    <h3 class="name"><code>GenerateUUID</code></h3>
+                    <div id="method_N.FromPath" class="method item">
+    <h3 class="name"><code>N.FromPath</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>network</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>path</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">N.Network | N.Neuron | N.Compartment</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/n.js.html#l125"><code>n.js:125</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Returns the object pointed to by the path relative to</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">network</code>
+                        <span class="type">N.Network</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">path</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">N.Network | N.Neuron | N.Compartment</span>:
+                    
+                    <p>Returns a network, neuron, or compartment. On error returns an object with an error element which contains a message, the path, and the path part that caused the problem.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_N.GenerateUUID" class="method item">
+    <h3 class="name"><code>N.GenerateUUID</code></h3>
 
     
         <span class="paren">()</span>
@@ -361,7 +495,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l167"><code>n.js:167</code></a>
+        <a href="../files/n.js.html#l265"><code>n.js:265</code></a>
         
         </p>
 
@@ -392,94 +526,6 @@ of the json object will be copied into the new object.</p>
                 
             </div>
         </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_L" class="method item">
-    <h3 class="name"><code>L</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>logText</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/n.js.html#l140"><code>n.js:140</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Write to the system console (or some log, if overridden).</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">logText</code>
-                        <span class="type">Object</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
     
 
     
@@ -538,7 +584,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l92"><code>n.js:92</code></a>
+        <a href="../files/n.js.html#l102"><code>n.js:102</code></a>
         
         </p>
 
@@ -615,6 +661,94 @@ of the json object will be copied into the new object.</p>
 </div>
 
                 
+                    <div id="method_N.L" class="method item">
+    <h3 class="name"><code>N.L</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>logText</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/n.js.html#l238"><code>n.js:238</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Write to the system console (or some log, if overridden).</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">logText</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="method_N.NewN" class="method item public">
     <h3 class="name"><code>N.NewN</code></h3>
 
@@ -669,7 +803,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l44"><code>n.js:44</code></a>
+        <a href="../files/n.js.html#l54"><code>n.js:54</code></a>
         
         </p>
 
@@ -746,8 +880,8 @@ of the json object will be copied into the new object.</p>
 </div>
 
                 
-                    <div id="method_Rad" class="method item">
-    <h3 class="name"><code>Rad</code></h3>
+                    <div id="method_N.Rad" class="method item">
+    <h3 class="name"><code>N.Rad</code></h3>
 
     
         <div class="args">
@@ -792,7 +926,7 @@ of the json object will be copied into the new object.</p>
             
         
         
-        <a href="../files/n.js.html#l155"><code>n.js:155</code></a>
+        <a href="../files/n.js.html#l253"><code>n.js:253</code></a>
         
         </p>
 

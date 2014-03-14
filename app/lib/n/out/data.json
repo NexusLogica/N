@@ -259,7 +259,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 26,
+            "line": 32,
             "description": "An output compartment that has a signal object as the value for the output. This is typically used as an external input\nto a system, but it can also be used as a neuron that bursts based on an internal clock.\n\nThe signal can be analog, discrete, or a custom signal object.",
             "params": [
                 {
@@ -288,7 +288,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 181,
+            "line": 189,
             "description": "A compartment that has, as its output, a signal object.",
             "params": [
                 {
@@ -317,7 +317,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 237,
+            "line": 245,
             "description": "A modulator input that receives input from acetylcholine source.",
             "params": [
                 {
@@ -384,7 +384,7 @@
             "module": "N",
             "namespace": "",
             "file": "n.js",
-            "line": 192,
+            "line": 280,
             "description": "Dictionary for holding globally accessible objects."
         },
         "Network": {
@@ -656,7 +656,7 @@
         },
         {
             "file": "compartments.js",
-            "line": 201,
+            "line": 209,
             "description": "Sets the signal.",
             "itemtype": "method",
             "name": "SetSignal",
@@ -681,6 +681,19 @@
         {
             "file": "connection.js",
             "line": 37,
+            "description": "Returns the object type.",
+            "itemtype": "method",
+            "name": "GetType",
+            "return": {
+                "description": "",
+                "type": "N.Type.Connection"
+            },
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 46,
             "description": "Attach to the source and sink compartments.",
             "itemtype": "method",
             "name": "Connect",
@@ -689,7 +702,7 @@
         },
         {
             "file": "connection.js",
-            "line": 44,
+            "line": 57,
             "description": "Load a connection from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -716,10 +729,10 @@
         },
         {
             "file": "n.js",
-            "line": 28,
+            "line": 38,
             "description": "Create an instance of a object from the json, where json.ClassName is the name of the object and all properties\nof the json object will be copied into the new object.",
             "itemtype": "method",
-            "name": "CreateInstance",
+            "name": "N.CreateInstance",
             "params": [
                 {
                     "name": "json",
@@ -736,7 +749,7 @@
         },
         {
             "file": "n.js",
-            "line": 44,
+            "line": 54,
             "description": "Create a new 'N' object. The object must be in the 'N' namespace.",
             "access": "public",
             "tagname": "",
@@ -763,7 +776,7 @@
         },
         {
             "file": "n.js",
-            "line": 92,
+            "line": 102,
             "description": "Returns an existing object from a path.",
             "itemtype": "method",
             "name": "N.GetN",
@@ -788,10 +801,35 @@
         },
         {
             "file": "n.js",
-            "line": 140,
+            "line": 125,
+            "description": "Returns the object pointed to by the path relative to",
+            "itemtype": "method",
+            "name": "N.FromPath",
+            "params": [
+                {
+                    "name": "network",
+                    "description": "",
+                    "type": "N.Network"
+                },
+                {
+                    "name": "path",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "Returns a network, neuron, or compartment. On error returns an object with an error element which contains a message, the path, and the path part that caused the problem.",
+                "type": "N.Network|N.Neuron|N.Compartment"
+            },
+            "class": "N",
+            "module": "N"
+        },
+        {
+            "file": "n.js",
+            "line": 238,
             "description": "Write to the system console (or some log, if overridden).",
             "itemtype": "method",
-            "name": "L",
+            "name": "N.L",
             "params": [
                 {
                     "name": "logText",
@@ -803,7 +841,7 @@
         },
         {
             "file": "n.js",
-            "line": 149,
+            "line": 247,
             "description": "The standard timestep for simulations - 1 millisecond",
             "type": "{number} Timestep",
             "class": "N",
@@ -811,10 +849,10 @@
         },
         {
             "file": "n.js",
-            "line": 155,
+            "line": 253,
             "description": "Converts an angle in degrees to radians.",
             "itemtype": "method",
-            "name": "Rad",
+            "name": "N.Rad",
             "params": [
                 {
                     "name": "angle",
@@ -831,10 +869,10 @@
         },
         {
             "file": "n.js",
-            "line": 167,
+            "line": 265,
             "description": "Create a globally unique ID and return it as a string.",
             "itemtype": "method",
-            "name": "GenerateUUID",
+            "name": "N.GenerateUUID",
             "return": {
                 "description": "Unique Identifier string",
                 "type": "String"
@@ -844,14 +882,7 @@
         },
         {
             "file": "n.js",
-            "line": 182,
-            "description": "Return the network path from a path string as an array.",
-            "class": "N",
-            "module": "N"
-        },
-        {
-            "file": "n.js",
-            "line": 200,
+            "line": 288,
             "description": "Add an object to the Objects dictionary",
             "itemtype": "method",
             "name": "Add",
@@ -867,7 +898,7 @@
         },
         {
             "file": "n.js",
-            "line": 210,
+            "line": 298,
             "description": "Get an object to the Objects dictionary",
             "itemtype": "method",
             "name": "Get",
@@ -888,7 +919,7 @@
         },
         {
             "file": "n.js",
-            "line": 221,
+            "line": 309,
             "description": "Remove the reference to the object to the Objects dictionary",
             "itemtype": "method",
             "name": "Remove",
@@ -916,7 +947,177 @@
         },
         {
             "file": "network.js",
-            "line": 62,
+            "line": 42,
+            "description": "Returns the object type.",
+            "itemtype": "method",
+            "name": "GetType",
+            "return": {
+                "description": "",
+                "type": "N.Type.Network"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 51,
+            "description": "Get the parent network. This call is implemented by all network, neuron, and compartment objects.",
+            "itemtype": "method",
+            "name": "GetParent",
+            "return": {
+                "description": "The parent network object or null if there is none.",
+                "type": "Object"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 60,
+            "description": "Adds a child network to the network.",
+            "itemtype": "method",
+            "name": "AddNetwork",
+            "params": [
+                {
+                    "name": "network",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Network"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 77,
+            "description": "Get number of networks directly owned by this network.",
+            "itemtype": "method",
+            "name": "GetNumNetworks",
+            "return": {
+                "description": "",
+                "type": "Integer"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 86,
+            "description": "Get a network owned by this network by index.",
+            "itemtype": "method",
+            "name": "GetNetworkByIndex",
+            "params": [
+                {
+                    "name": "index",
+                    "description": "",
+                    "type": "Integer"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Network"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 96,
+            "description": "Get a network owned by this network given the network short string.",
+            "itemtype": "method",
+            "name": "GetNetworkByName",
+            "params": [
+                {
+                    "name": "shortName",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Network"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 106,
+            "description": "Adds a neuron to the network.",
+            "itemtype": "method",
+            "name": "AddNeuron",
+            "params": [
+                {
+                    "name": "neuron",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Neuron"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 123,
+            "description": "Get number of neurons directly owned by this network.",
+            "itemtype": "method",
+            "name": "GetNumNeurons",
+            "return": {
+                "description": "",
+                "type": "Integer"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 132,
+            "description": "Get a neuron owned by this network by index.",
+            "itemtype": "method",
+            "name": "GetNeuronByIndex",
+            "params": [
+                {
+                    "name": "index",
+                    "description": "",
+                    "type": "Integer"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Neuron"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 142,
+            "description": "Get a neuron owned by this network given the neuron short string.",
+            "itemtype": "method",
+            "name": "GetNeuronByName",
+            "params": [
+                {
+                    "name": "shortName",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "N.Neuron"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 152,
             "description": "Add a connection and connect it immmediately.",
             "itemtype": "method",
             "name": "AddConnection",
@@ -932,8 +1133,8 @@
         },
         {
             "file": "network.js",
-            "line": 73,
-            "description": "Get the number of connections.",
+            "line": 164,
+            "description": "Get the number of connections owned by this network.",
             "itemtype": "method",
             "name": "GetNumConnections",
             "return": {
@@ -945,7 +1146,7 @@
         },
         {
             "file": "network.js",
-            "line": 82,
+            "line": 173,
             "description": "Get a connection by index",
             "itemtype": "method",
             "name": "GetConnectionsByIndex",
@@ -965,7 +1166,7 @@
         },
         {
             "file": "network.js",
-            "line": 92,
+            "line": 183,
             "description": "Get a connection given the connection path string.",
             "itemtype": "method",
             "name": "GetConnectionsByPath",
@@ -985,7 +1186,7 @@
         },
         {
             "file": "network.js",
-            "line": 102,
+            "line": 193,
             "description": "Returns the full path from the top level network to this network.",
             "itemtype": "method",
             "name": "GetFullPath",
@@ -998,7 +1199,7 @@
         },
         {
             "file": "network.js",
-            "line": 111,
+            "line": 202,
             "description": "Update the output of all child networks, neurons, and connections.",
             "itemtype": "method",
             "name": "Upate",
@@ -1018,7 +1219,7 @@
         },
         {
             "file": "network.js",
-            "line": 125,
+            "line": 216,
             "description": "Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -1045,7 +1246,40 @@
         },
         {
             "file": "neuron.js",
-            "line": 66,
+            "line": 41,
+            "description": "Returns the object type.",
+            "itemtype": "method",
+            "name": "GetType",
+            "return": {
+                "description": "",
+                "type": "N.Type.Neuron"
+            },
+            "class": "Neuron",
+            "module": "N"
+        },
+        {
+            "file": "neuron.js",
+            "line": 50,
+            "description": "Add a compartment to the neuron.",
+            "itemtype": "method",
+            "name": "AddCompartment",
+            "params": [
+                {
+                    "name": "compartment",
+                    "description": "",
+                    "type": "N.Comp.*"
+                }
+            ],
+            "return": {
+                "description": "The compartment passed into the method is returned.",
+                "type": "N.Comp.*"
+            },
+            "class": "Neuron",
+            "module": "N"
+        },
+        {
+            "file": "neuron.js",
+            "line": 82,
             "description": "Load a neuron from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -1159,35 +1393,83 @@
     "warnings": [
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " connection.js:44"
+            "line": " connection.js:37"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " n.js:28"
+            "line": " connection.js:57"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:73"
+            "line": " n.js:38"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:82"
+            "line": " network.js:42"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:92"
+            "line": " network.js:51"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:102"
+            "line": " network.js:60"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:125"
+            "line": " network.js:77"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " neuron.js:66"
+            "line": " network.js:86"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:96"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:106"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:123"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:132"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:142"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:164"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:173"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:183"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:193"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:216"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " neuron.js:41"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " neuron.js:82"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -1283,11 +1565,7 @@
         },
         {
             "message": "Missing item type\nThe standard timestep for simulations - 1 millisecond",
-            "line": " n.js:149"
-        },
-        {
-            "message": "Missing item type\nReturn the network path from a path string as an array.",
-            "line": " n.js:182"
+            "line": " n.js:247"
         },
         {
             "message": "Missing item type\nFile     : network.js\nProject  : N Simulator Library\nPurpose  : Source file for neuron relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\n\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",

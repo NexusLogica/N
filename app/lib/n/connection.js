@@ -35,10 +35,23 @@ N.Connection = function(network) {
 }
 
 /**
+ * Returns the object type.
+ * @method GetType
+ * @returns {N.Type.Connection}
+ */
+N.Connection.prototype.GetType = function() {
+  return N.Type.Connection;
+}
+
+/**
  * Attach to the source and sink compartments.
  * @method Connect
  */
 N.Connection.prototype.Connect = function() {
+}
+
+N.Connection.prototype.GetFullPath = function() {
+  return this.Network.GetFullPath()+'['+this.SourcePath+']['+this.SinkPath+']';
 }
 
 /**
@@ -71,13 +84,4 @@ N.Connection.prototype.LoadFrom = function(json) {
   }
 
   return this;
-}
-
-N.Connection.prototype.ToData = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
-  return str;
-}
-
-N.Connection.prototype.FromData = function(json) {
-
 }

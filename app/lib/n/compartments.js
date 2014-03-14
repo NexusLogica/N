@@ -19,6 +19,12 @@ All Rights Reserved.
 var N = N || {};
 N.Comp = N.Comp || {};
 
+N.Comp.GetTypeFunc = function() { return N.Type.Compartment; }
+
+N.Comp.Extend = function(constructorFunction) {
+  constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
+}
+
   //***************************
   //* N.Comp.OutputFromSignal *
   //***************************
@@ -46,6 +52,8 @@ N.Comp.OutputFromSignal = function(neuron, name, shortName) {
   this.Output     = 0.0;
   this.IsOutputComponent = true;
 }
+
+N.Comp.Extend(N.Comp.OutputFromSignal);
 
 N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
   this.Signal = signal;
