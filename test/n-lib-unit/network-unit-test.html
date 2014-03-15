@@ -101,19 +101,48 @@
   });
 
   test("Path object test", function() {
-    var createNeuron = function(network, shortName, template, appendToCompartments) {
+    N.Network.prototype.CreateTestNeuron = function(shortName, template, appendToCompartments) {
       var templateCopy = _.cloneDeep(template);
       for(var i in templateCopy.Compartments) { templateCopy.Compartments[i].ShortName += appendToCompartments; }
-      var n = network.AddNeuron((new N.Neuron(network)).LoadFrom({ ShortName: shortName, Name: 'Long'+shortName, Template: templateCopy }));
+      var n = this.AddNeuron((new N.Neuron(this)).LoadFrom({ ShortName: shortName, Name: 'Long'+shortName, Template: templateCopy }));
+      return this;
     }
 
-    var parentNetwork = new N.Network();
-    createNeuron(parentNetwork, "L1N1", SimpleNeuronTemplate, 1);
+    var parentNetwork = (new N.Network()).LoadFrom({ShortName: "L1"}).CreateTestNeuron("L1N1", SimpleNeuronTemplate, 1);
     equal(parentNetwork.GetNeuronByName('L1N1').GetCompartmentByName('AIP1').ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+
+    parentNetwork.AddNetwork((new N.Network())
+        .LoadFrom({ ShortName: 'L2-1'})
+        .CreateTestNeuron("L2N1", SimpleNeuronTemplate, 2)
+        .CreateTestNeuron("L2N2", SimpleNeuronTemplate, 3));
+
+    parentNetwork.AddNetwork((new N.Network())
+        .LoadFrom({ ShortName: 'L2-2'})
+        .CreateTestNeuron("L3N1", SimpleNeuronTemplate, 4)
+        .CreateTestNeuron("L3N2", SimpleNeuronTemplate, 5));
+
+    parentNetwork.GetNetworkByName('L2-2').AddNetwork((new N.Network())
+        .LoadFrom({ ShortName: 'L3-1'})
+        .CreateTestNeuron("L4N1", SimpleNeuronTemplate, 6)
+        .CreateTestNeuron("L4N2", SimpleNeuronTemplate, 7));
 
     var target = N.FromPath(parentNetwork, ':L1N1>AIP1');
     equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
     equal(target.Neuron.ShortName, 'L1N1', 'Compartment\'s neuron name');
+
+    var net = N.FromPath(parentNetwork, './L2-1');
+    var target = N.FromPath(net, ':L2N1>AIP2');
+    equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    equal(target.Neuron.ShortName, 'L2N1', 'Compartment\'s neuron name');
+
+    var target = N.FromPath(parentNetwork, 'L2-2:L3N2>AIP5');
+    equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    equal(target.ShortName, 'AIP5', 'Compartment\'s name');
+
+    var target = N.FromPath(parentNetwork.GetNetworkByName('L2-1'), '../L2-2/L3-1:L4N1>OP6');
+    equal(target.ClassName, 'N.Comp.Output', 'Compartment name');
+    equal(target.ShortName, 'OP6', 'Compartment\'s name');
+
   });
 
   </script>

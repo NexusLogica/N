@@ -21,8 +21,33 @@ N.Comp = N.Comp || {};
 
 N.Comp.GetTypeFunc = function() { return N.Type.Compartment; }
 
+N.Comp.ConnectOutput = function(connection) {
+  this.OutputConnections.push(connection);
+}
+
+N.Comp.ConnectInput = function(connection) {
+  this.InputConnections.push(connection);
+}
+
+N.Comp.GetNumInputConnections = function() {
+  return this.InputConnections.length;
+}
+
+N.Comp.GetNumOutputConnections = function() {
+  return this.OutputConnections.length;
+}
+
 N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
+  constructorFunction.prototype.ConnectOutput = N.Comp.ConnectOutput;
+  constructorFunction.prototype.ConnectInput = N.Comp.ConnectInput;
+  constructorFunction.prototype.GetNumInputConnections = N.Comp.GetNumInputConnections;
+  constructorFunction.prototype.GetNumOutputConnections = N.Comp.GetNumOutputConnections;
+}
+
+N.Comp.Initialize = function(connection) {
+  connection.InputConnections = [];
+  connection.OutputConnections = [];
 }
 
   //***************************
@@ -51,6 +76,7 @@ N.Comp.OutputFromSignal = function(neuron, name, shortName) {
   this.Signal     = null;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
+  N.Comp.Initialize(this);
 }
 
 N.Comp.Extend(N.Comp.OutputFromSignal);
@@ -89,7 +115,10 @@ N.Comp.Output = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
+  N.Comp.Initialize(this);
 }
+
+N.Comp.Extend(N.Comp.Output);
 
 N.Comp.Output.prototype.AddInput = function(input) {
   this.Input = input;
@@ -122,7 +151,10 @@ N.Comp.InhibitoryOutput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
+  N.Comp.Initialize(this);
 }
+
+N.Comp.Extend(N.Comp.InhibitoryOutput);
 
 N.Comp.InhibitoryOutput.prototype.AddInput = function(input) {
   this.Input = input;
@@ -155,7 +187,10 @@ N.Comp.LinearSummingInput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
+  N.Comp.Initialize(this);
 }
+
+N.Comp.Extend(N.Comp.LinearSummingInput);
 
 N.Comp.LinearSummingInput.prototype.Connect = function(connection) {
   this.Connections.push(connection);
@@ -204,7 +239,10 @@ N.Comp.SignalInput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.SignalInput = null;
   this.Sum         = 0.0;
+  N.Comp.Initialize(this);
 }
+
+N.Comp.Extend(N.Comp.SignalInput);
 
 /**
  * Sets the signal.
@@ -259,7 +297,10 @@ N.Comp.AcetylcholineInput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
+  N.Comp.Initialize(this);
 }
+
+N.Comp.Extend(N.Comp.AcetylcholineInput);
 
 N.Comp.AcetylcholineInput.prototype.Connect = function(connection) {
   this.Connections.push(connection);

@@ -33,8 +33,7 @@ N.Network = function(parentNetwork) {
   this.Neurons             = [];
   this.NeuronsByName       = {};
   this.Connections         = [];
-  this.ConnectionsByPath   = {};
-  this.ParentNetwork       = (parentNetwork ? parentNetwork : null);
+  this.ParentNetwork       = null;
   this.ChildNetworks       = [];
   this.ChildNetworksByName = {};
 }
@@ -46,6 +45,17 @@ N.Network = function(parentNetwork) {
  */
 N.Network.prototype.GetType = function() {
   return N.Type.Network;
+}
+
+/**
+ * Sets the parent network.
+ * @method SetParentNetwork
+ * @param {N.Network} the parent network
+ * @returns {N.Network} Returns a reference to this network.
+ */
+N.Network.prototype.SetParentNetwork = function(parentNetwork) {
+  this.ParentNetwork = parentNetwork;
+  return this;
 }
 
 /**
@@ -64,13 +74,15 @@ N.Network.prototype.GetParent = function() {
  * @returns {N.Network}
  */
 N.Network.prototype.AddNetwork = function(network) {
-  if(network.Name.length === 0 || network.ShortName.length === 0) {
-    N.L('ERROR: N.Network.AddNetwork: No name for network.');
-    throw 'ERROR: N.Network.AddNetwork: No name for network.';
+  if(network.ShortName.length === 0) {
+    throw N.L('ERROR: N.Network.AddNetwork: No name for network.');
+  }
+  if(this.ChildNetworksByName[network.ShortName]) {
+    throw N.L('ERROR: N.Network.AddNetwork: The network '+network.ShortName+' already exists in '+this.ShortName+'.');
   }
   this.ChildNetworks.push(network);
-  this.ChildNetworksByName[network.Name] = network;
   this.ChildNetworksByName[network.ShortName] = network;
+  network.SetParentNetwork(this);
   return network;
 }
 
@@ -156,8 +168,7 @@ N.Network.prototype.GetNeuronByName = function(name) {
  */
 N.Network.prototype.AddConnection = function(connection) {
   this.Connections.push(connection);
-  this.ConnectionsByPath[connection.GetFullPath()] = connection;
-  connection.Connect();
+  connection.SetNetwork(this);
   return connection;
 }
 
@@ -224,7 +235,7 @@ N.Network.prototype.LoadFrom = function(json) {
     if(i === 'Neurons') {
       for(var j=0; j<json.Neurons.length; j++) {
         var neuronJson = json.Neurons[j];
-        var neuron = N.NewN(neuronJson.ClassName, this).LoadFrom(neuronJson);
+        var neuron = N.NewN(neuronJson.ClassName || 'N.Neuron', this).LoadFrom(neuronJson);
         this.Neurons.push(neuron);
         this.NeuronsByName[neuron.Name] = neuron;
         this.NeuronsByName[neuron.ShortName] = neuron;

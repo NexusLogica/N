@@ -133,6 +133,7 @@ N.FromPath = function(network, path) {
   // Break the path into
   var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\>[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
   var parts = path.match(regex);
+  N.L('Path='+parts.join('^'));
   if (parts.length === 0) {
     return N.FromPathError(network, path, path, 'Error in path');
   }
@@ -155,7 +156,7 @@ N.FromPath = function(network, path) {
         switch(part) {
 
           case '..': {
-            currentObj = currentObj.Parent();
+            currentObj = currentObj.GetParent();
             if (!currentObj) {
               return N.FromPathError(network, path, part, 'Network has no parent');
             }
@@ -194,19 +195,46 @@ N.FromPath = function(network, path) {
         var netShortName = part.substring(1);
         currentObj = currentObj.GetNetworkByName(netShortName);
         if (!currentObj) {
-          return N.FromPathError(network, path, part, 'The network has no compartment \''+netShortName+'\'');
+          return N.FromPathError(network, path, part, 'The network has no child network \''+netShortName+'\'');
         }
       } break;
 
       default: {
-        return N.FromPathError(network, path, part, 'Invalid path part \''+part+'\'');
+        currentObj = currentObj.GetNetworkByName(part);
+        if (!currentObj) {
+          return N.FromPathError(network, path, part, 'The network has no child network \''+part+'\'');
+        }
       }
     }
   }
   return currentObj;
 }
 
+/**
+ * Returns the object pointed to by the path relative to
+ * @method N.FromConnectionPaths
+ * @param {N.Network} network
+ * @param {String} path
+ * @return {Object} Returns a two components in the form { Source: .
+ */
+N.FromConnectionPaths = function(network, paths) {
+  var parts = paths.split(/->/);
+  N.L('Connection parts: '+parts.join('  ->  '));
+  if(parts.length !== 2) {
+    return N.FromPathError(network, paths, '', 'Invalid connection path format \''+paths+'\'');
+  }
+
+  var obj = {};
+  obj.Source = N.FromPath(network, parts[0]);
+  obj.Sink = N.FromPath(network, parts[1]);
+  if(obj.Source.error || obj.Sink.error) {
+    return { error: obj };
+  }
+  return obj;
+}
+
 N.FromPathError = function(network, path, part, message) {
+  N.L('Path Error: '+message);
   return { error: { message: message, network: network, path: path, part: part } };
 }
 
@@ -242,6 +270,7 @@ N.ShortName = function(longName) {
  */
 N.L = function(logText) {
   window.console.log(logText);
+  return logText;
 }
 
 /**

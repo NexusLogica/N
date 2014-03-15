@@ -24,14 +24,13 @@ var N = N || {};
  * @param network
  * @constructor
  */
-N.Connection = function(network) {
-  this.ClassName  = 'N.Connection';
-  this.Id         = N.GenerateUUID();
-  this.Network    = network;
-  this.SourcePath = null;
-  this.SinkPath   = null;
-  this.Source     = null;
-  this.Sink       = null;
+N.Connection = function() {
+  this.ClassName      = 'N.Connection';
+  this.Id             = N.GenerateUUID();
+  this.Network        = null;
+  this.ConnectionPath = null;
+  this.Source         = null;
+  this.Sink           = null;
 }
 
 /**
@@ -43,15 +42,25 @@ N.Connection.prototype.GetType = function() {
   return N.Type.Connection;
 }
 
+N.Connection.prototype.SetNetwork = function(network) {
+  this.Network = network;
+}
+
 /**
  * Attach to the source and sink compartments.
  * @method Connect
  */
 N.Connection.prototype.Connect = function() {
+  var endPoints = N.FromConnectionPaths(this.Network, this.ConnectionPath);
+  if(!endPoints.error) {
+    endPoints.Source.ConnectOutput(this);
+    endPoints.Sink.ConnectInput(this);
+  }
+  return this;
 }
 
-N.Connection.prototype.GetFullPath = function() {
-  return this.Network.GetFullPath()+'['+this.SourcePath+']['+this.SinkPath+']';
+N.Connection.prototype.GetConnectionPath = function() {
+  return this.ConnectionPath;
 }
 
 /**
@@ -67,14 +76,7 @@ N.Connection.prototype.LoadFrom = function(json) {
   }
 
   for(var i in json) {
-    if(i === 'Compartments') {
-      for(var j=0; j<json.Compartments.length; j++) {
-        var compartmentJson = json.Compartments[j];
-        var compartment = N.NewN(compartmentJson.ClassName, this).LoadFrom(compartmentJson);
-        this.AddCompartment(compartment);
-      }
-    }
-    else if(i === 'Display') {
+    if(i === 'Display') {
       this.Display = this.Display || {};
       _.merge(this.Display, json.Display);
     }

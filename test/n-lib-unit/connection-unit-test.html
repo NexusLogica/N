@@ -88,18 +88,25 @@
       Name: 'Layer1',
       ShortName: 'L1',
       Neurons: [{
-        ClassName: 'N.Neuron', Name: 'Cajal–Retzius 1', ShortName: 'CR1'
+        Template: SimpleNeuronTemplate, Name: 'Cajal–Retzius 1', ShortName: 'CR1'
       },{
-        ClassName: 'N.Neuron', Name: 'Inhibitory Interneuron 1', ShortName: 'INB1'
+        Template: SimpleNeuronTemplate, Name: 'Inhibitory Interneuron 1', ShortName: 'INB1'
       }]
     }
 
     network.LoadFrom(json);
     equal(network.GetNumNeurons(), 2, 'Two neurons');
-    equal(network.GetNeuronByIndex(0).Name, 'Cajal–Retzius 1', "Neuron 1 name");
+    equal(network.GetNeuronByIndex(0).Name, 'Cajal–Retzius 1', 'Neuron 1 name');
     equal(network.GetNeuronByName('CR1').Name, 'Cajal–Retzius 1', 'Neuron 1 long name');
     equal(network.GetNeuronByIndex(1).Name, 'Inhibitory Interneuron 1', "Neuron 2 name");
     equal(network.GetNeuronByName('INB1').Name, 'Inhibitory Interneuron 1', 'Neuron 2 long name');
+
+    var connection = (new N.Connection()).LoadFrom({ ConnectionPath: ':CR1>OP->:INB1>IP' });
+    network.AddConnection(connection).Connect();
+
+    equal(network.GetNumConnections(), 1, 'Num connections in network');
+    equal(N.FromPath(network, ':CR1>OP').GetNumOutputConnections(), 1, 'Num connections from source');
+    equal(N.FromPath(network, ':INB1>IP').GetNumInputConnections(), 1, 'Num connections to sink');
   });
 
   </script>
