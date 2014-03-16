@@ -306,6 +306,57 @@ N.GenerateUUID = function() {
   return uuid;
 }
 
+
+/**
+ * The ConfigurationReport holds lists of errors and warnings related to the system configuration. Errors are issues
+ * that will cause the system to fail. Warnings will still allow the system to run but are clearly misconfigurations. An example
+ * would be having input connections to objects that are output only.
+ * @class ConfigurationReport
+ */
+N.ConfigurationReport = function() {
+  this.Errors = [];
+  this.Warnings = [];
+}
+
+/**
+ * Add an error message and the path for the source of the object.
+ * @method Error
+ * @param path
+ * @param message
+ * @return {N.ConfigurationReport} Returns a pointer to the report object.
+ */
+N.ConfigurationReport.prototype.Error = function(path, message) {
+  this.Errors.push({ Path: path, Message: message });
+  return this;
+}
+
+/**
+ * Add a warning message and the path for the source of the object.
+ * @method Warning
+ * @param path
+ * @param message
+ * @return {N.ConfigurationReport} Returns a pointer to the report object.
+ */
+N.ConfigurationReport.prototype.Warning = function(path, message) {
+  this.Warnings.push({ Path: path, Message: message });
+}
+
+/**
+ * Write the report to the system log via N.L(), which is usually the console.log().
+ * @method WriteToLog
+ */
+N.ConfigurationReport.prototype.WriteToLog = function(path, message) {
+  if(this.Warnings.length === 0 && this.Errors.length === 0) {
+    N.L('Configuration report: No errors or warnings');
+  } else {
+    var numErr = this.Errors.length;
+    var numWarn = this.Warnings.length;
+    N.L('Configuration report: '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.Warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
+    for(var i=0; i<numErr; i++) { N.L('    Error['+this.Errors[i].Path+']: '+this.Errors[i].Message); }
+    for(i=0; i<numWarn; i++)   { N.L('    Warning['+this.Warnings[i].Path+']: '+this.Warnings[i].Message); }
+  }
+}
+
 /**
  * Dictionary for holding globally accessible objects.
  *

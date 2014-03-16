@@ -48,6 +48,24 @@ N.Neuron.prototype.GetType = function() {
 }
 
 /**
+ * Get the full path of the neuron.
+ * @method GetPath
+ * @returns {string}
+ */
+N.Neuron.prototype.GetPath = function() {
+  return this.Network.GetPath()+':'+this.ShortName;
+}
+
+/**
+ * Get the full path of the neuron.
+ * @method GetPath
+ * @returns {string}
+ */
+N.Neuron.prototype.SetNetwork = function(network) {
+  return this.Network = network;
+}
+
+/**
  * Add a compartment to the neuron.
  * @method AddCompartment
  * @param {N.Comp.*} compartment
@@ -76,6 +94,24 @@ N.Neuron.prototype.Update = function(time) {
   var num = this.Compartments.length;
   for(var i=0; i<num; i++) {
     this.Compartments[i].Update(time);
+  }
+}
+
+/**
+ * Validates the neuron. Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Neuron.prototype.Validate = function(report) {
+  if(this.Compartments.length === 0) { report.Warning(this.GetPath(), 'The neuron has no components.'); }
+
+  for(var i=0; i<this.Compartments.length; i++) {
+    try {
+      this.Compartments[i].Validate(report);
+    }
+    catch (err) {
+      report.Error(this.Compartments[i].GetPath(), 'The compartment of type '+this.Compartments[i].ClassName+' threw an exception when validating.');
+    }
   }
 }
 

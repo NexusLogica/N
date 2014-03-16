@@ -13,6 +13,7 @@
   <script src="../../app/lib/n/network.js"></script>
   <script src="../../app/lib/n/neuron.js"></script>
   <script src="../../app/lib/n/compartments.js"></script>
+  <script src="../../app/lib/n/output-functions.js"></script>
   <script src="../../app/lib/n/connection.js"></script>
 
   <script>
@@ -27,14 +28,20 @@
     QUnit.push(diff < tolerance, actual, expected, actualMessage);
   };
 
-  var SimpleNeuronTemplate = {
+  var SpinyNeuronTemplate = {
     ClassName: 'N.Neuron',
     Name: 'SimpleNeuron',
     ShortName: 'SN',
     Compartments: [{
       ClassName: 'N.Comp.Output',
       Name: 'Output',
-      ShortName: 'OP'
+      ShortName: 'OP',
+      InitialOutput: 0.0,
+      Inputs: {
+        UpdateFunc: N.Comp.OutputFunc.ErrFuncSumWithMod,
+        Main:      { ComponentPath: '>IP',  Gain: 0.5, Threshhold: 0.0 },
+        Modulator: { ComponentPath: '>AIP', Gain: 0.2, Threshhold: 0.0 }
+      }
     },{
       ClassName: 'N.Comp.LinearSummingInput',
       Name: 'Input',
@@ -68,11 +75,16 @@
       DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]}));
 
     newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: SimpleNeuronTemplate, Name: 'Neuron2', ShortName: 'N2' }));
+    network.AddNeuron(newNeuron.LoadFrom({ Template: SpinyNeuronTemplate, Name: 'Neuron2', ShortName: 'N2' }));
 
     var connection = new N.Connection(network);
     connection.LoadFrom({ SourcePath: ':N1>OP', SinkPath: ':N2>IP', Gain: 2.0, Delay: 0.005 });
     network.AddConnection(connection);
+
+    var report = network.Validate(new N.ConfigurationReport());
+    equal(report.Warnings.length, 1, "Expect one warning");
+    equal(report.Errors.length, 0, "Expect no errors");
+    report.WriteToLog();
 /*
     equal(network.GetNumConnections(), 1, 'One connection');
     equal(network.GetConnectionByIndex(0), connection, 'Get the connection');
@@ -88,25 +100,25 @@
       Name: 'Layer1',
       ShortName: 'L1',
       Neurons: [{
-        Template: SimpleNeuronTemplate, Name: 'Cajal–Retzius 1', ShortName: 'CR1'
+        Template: SourceTemplate, Name: 'Source 1', ShortName: 'SRC1'
       },{
-        Template: SimpleNeuronTemplate, Name: 'Inhibitory Interneuron 1', ShortName: 'INB1'
+        Template: SpinyNeuronTemplate, Name: 'Spiny Stellate Neuron 1', ShortName: 'SS1'
       }]
     }
 
     network.LoadFrom(json);
     equal(network.GetNumNeurons(), 2, 'Two neurons');
-    equal(network.GetNeuronByIndex(0).Name, 'Cajal–Retzius 1', 'Neuron 1 name');
-    equal(network.GetNeuronByName('CR1').Name, 'Cajal–Retzius 1', 'Neuron 1 long name');
-    equal(network.GetNeuronByIndex(1).Name, 'Inhibitory Interneuron 1', "Neuron 2 name");
-    equal(network.GetNeuronByName('INB1').Name, 'Inhibitory Interneuron 1', 'Neuron 2 long name');
+    equal(network.GetNeuronByIndex(0).Name, 'Source 1', 'Neuron 1 name');
+    equal(network.GetNeuronByName('SRC1').Name, 'Source 1', 'Neuron 1 long name');
+    equal(network.GetNeuronByIndex(1).Name, 'Spiny Stellate Neuron 1', "Neuron 2 name");
+    equal(network.GetNeuronByName('SS1').Name, 'Spiny Stellate Neuron 1', 'Neuron 2 long name');
 
-    var connection = (new N.Connection()).LoadFrom({ ConnectionPath: ':CR1>OP->:INB1>IP' });
+    var connection = (new N.Connection()).LoadFrom({ ConnectionPath: ':SRC1>OP->:SS1>IP', Delay: 0.005 });
     network.AddConnection(connection).Connect();
 
     equal(network.GetNumConnections(), 1, 'Num connections in network');
-    equal(N.FromPath(network, ':CR1>OP').GetNumOutputConnections(), 1, 'Num connections from source');
-    equal(N.FromPath(network, ':INB1>IP').GetNumInputConnections(), 1, 'Num connections to sink');
+    equal(N.FromPath(network, ':SRC1>OP').GetNumOutputConnections(), 1, 'Num connections from source');
+    equal(N.FromPath(network, ':SS1>IP').GetNumInputConnections(), 1, 'Num connections to sink');
   });
 
   </script>

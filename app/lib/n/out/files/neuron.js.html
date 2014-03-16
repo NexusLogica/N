@@ -47,7 +47,11 @@
             
                 <li><a href="../classes/Comp.OutputFromSignal.html">Comp.OutputFromSignal</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
+                <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
             
                 <li><a href="../classes/Connection.html">Connection</a></li>
             
@@ -164,6 +168,24 @@ N.Neuron.prototype.GetType = function() {
 }
 
 /**
+ * Get the full path of the neuron.
+ * @method GetPath
+ * @returns {string}
+ */
+N.Neuron.prototype.GetPath = function() {
+  return this.Network.GetPath()+&#x27;:&#x27;+this.ShortName;
+}
+
+/**
+ * Get the full path of the neuron.
+ * @method GetPath
+ * @returns {string}
+ */
+N.Neuron.prototype.SetNetwork = function(network) {
+  return this.Network = network;
+}
+
+/**
  * Add a compartment to the neuron.
  * @method AddCompartment
  * @param {N.Comp.*} compartment
@@ -193,6 +215,16 @@ N.Neuron.prototype.Update = function(time) {
   for(var i=0; i&lt;num; i++) {
     this.Compartments[i].Update(time);
   }
+}
+
+/**
+ * Validates the neuron. Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Neuron.prototype.Validate = function(report) {
+  if(this.Compartments.length === 0) { report.Warning(this.GetPath(), &#x27;The neuron has no components.&#x27;); }
+  for(var i=0; i&lt;this.Compartments.length; i++) { this.Compartments[i].Validate(report); }
 }
 
 /**

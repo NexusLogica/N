@@ -47,7 +47,11 @@
             
                 <li><a href="../classes/Comp.OutputFromSignal.html">Comp.OutputFromSignal</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
+                <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
             
                 <li><a href="../classes/Connection.html">Connection</a></li>
             
@@ -149,8 +153,7 @@ N.Network = function(parentNetwork) {
   this.Neurons             = [];
   this.NeuronsByName       = {};
   this.Connections         = [];
-  this.ConnectionsByPath   = {};
-  this.ParentNetwork       = (parentNetwork ? parentNetwork : null);
+  this.ParentNetwork       = null;
   this.ChildNetworks       = [];
   this.ChildNetworksByName = {};
 }
@@ -162,6 +165,26 @@ N.Network = function(parentNetwork) {
  */
 N.Network.prototype.GetType = function() {
   return N.Type.Network;
+}
+
+/**
+ * Get the full path of the neuron.
+ * @method GetPath
+ * @returns {string}
+ */
+N.Network.prototype.GetPath = function() {
+  return (this.ParentNetwork ? this.ParentNetwork.GetPath() : &#x27;/&#x27;)+this.ShortName;
+}
+
+/**
+ * Sets the parent network.
+ * @method SetParentNetwork
+ * @param {N.Network} the parent network
+ * @returns {N.Network} Returns a reference to this network.
+ */
+N.Network.prototype.SetParentNetwork = function(parentNetwork) {
+  this.ParentNetwork = parentNetwork;
+  return this;
 }
 
 /**
@@ -180,13 +203,15 @@ N.Network.prototype.GetParent = function() {
  * @returns {N.Network}
  */
 N.Network.prototype.AddNetwork = function(network) {
-  if(network.Name.length === 0 || network.ShortName.length === 0) {
-    N.L(&#x27;ERROR: N.Network.AddNetwork: No name for network.&#x27;);
-    throw &#x27;ERROR: N.Network.AddNetwork: No name for network.&#x27;;
+  if(network.ShortName.length === 0) {
+    throw N.L(&#x27;ERROR: N.Network.AddNetwork: No name for network.&#x27;);
+  }
+  if(this.ChildNetworksByName[network.ShortName]) {
+    throw N.L(&#x27;ERROR: N.Network.AddNetwork: The network &#x27;+network.ShortName+&#x27; already exists in &#x27;+this.ShortName+&#x27;.&#x27;);
   }
   this.ChildNetworks.push(network);
-  this.ChildNetworksByName[network.Name] = network;
   this.ChildNetworksByName[network.ShortName] = network;
+  network.SetParentNetwork(this);
   return network;
 }
 
@@ -226,13 +251,13 @@ N.Network.prototype.GetNetworkByName = function(name) {
  * @returns {N.Neuron}
  */
 N.Network.prototype.AddNeuron = function(neuron) {
-  if(neuron.Name.length === 0 || neuron.ShortName.length === 0) {
-    N.L(&#x27;ERROR: N.Network.AddNeuron: No name for neuron.&#x27;);
-    throw &#x27;ERROR: N.Network.AddNeuron: No name for neuron.&#x27;;
+  if(neuron.ShortName.length === 0) {
+    N.L(&#x27;ERROR: N.Network.AddNeuron: No short name for neuron.&#x27;);
+    throw &#x27;ERROR: N.Network.AddNeuron: No short name for neuron.&#x27;;
   }
   this.Neurons.push(neuron);
-  this.NeuronsByName[neuron.Name] = neuron;
   this.NeuronsByName[neuron.ShortName] = neuron;
+  neuron.SetNetwork(this);
   return neuron;
 }
 
@@ -272,8 +297,7 @@ N.Network.prototype.GetNeuronByName = function(name) {
  */
 N.Network.prototype.AddConnection = function(connection) {
   this.Connections.push(connection);
-  this.ConnectionsByPath[connection.GetFullPath()] = connection;
-  connection.Connect();
+  connection.SetNetwork(this);
   return connection;
 }
 
@@ -330,6 +354,25 @@ N.Network.prototype.Update = function(time) {
 }
 
 /**
+ * Validates the network. Warns if there are no child networks or neurons. It will report an error if there are no networks
+ * or neurons but there are connections.
+ * @method Validate
+ * @param report
+ * @return {N.ConfigurationReport} Returns the configuration report object.
+ */
+N.Network.prototype.Validate = function(report) {
+  if(this.ChildNetworks.length === 0 &amp;&amp; this.Neurons.length === 0) {
+    report.Warning(this.GetPath(), &#x27;The network has no neurons or child networks.&#x27;);
+    if(this.Connections.length) { report.Error(this.GetPath(), &#x27;The network has connections but no child networks or neurons, so the connections will fail.&#x27;); }
+  }
+
+  for(var i=0; i&lt;this.ChildNetworks.length; i++) { this.ChildNetworks[i].Validate(report); }
+  for(i=0; i&lt;this.Neurons.length; i++)           { this.Neurons[i].Validate(report); }
+  for(i=0; i&lt;this.Connections.length; i++)       { this.Connections[i].Validate(report); }
+  return report;
+}
+
+/**
  * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
  * @method LoadFrom
  * @param {JSON} json The JSON object containing the configuration.
@@ -340,7 +383,7 @@ N.Network.prototype.LoadFrom = function(json) {
     if(i === &#x27;Neurons&#x27;) {
       for(var j=0; j&lt;json.Neurons.length; j++) {
         var neuronJson = json.Neurons[j];
-        var neuron = N.NewN(neuronJson.ClassName, this).LoadFrom(neuronJson);
+        var neuron = N.NewN(neuronJson.ClassName || &#x27;N.Neuron&#x27;, this).LoadFrom(neuronJson);
         this.Neurons.push(neuron);
         this.NeuronsByName[neuron.Name] = neuron;
         this.NeuronsByName[neuron.ShortName] = neuron;

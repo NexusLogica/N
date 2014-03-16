@@ -9,6 +9,7 @@
   <script src="../../app/lib/json2.js"></script>
   <script src="../../app/lib/lodash/dist/lodash.js"></script>
   <script src="../../app/lib/n/n.js"></script>
+  <script src="../../app/lib/n/signal.js"></script>
   <script src="../../app/lib/n/network.js"></script>
   <script src="../../app/lib/n/neuron.js"></script>
   <script src="../../app/lib/n/compartments.js"></script>
@@ -77,6 +78,11 @@
 
     equal(newNeuron.Times.length, 1, 'yes');
     equal(newNeuron.Times[0], 0.1, 'yes');
+
+    var report = network.Validate(new N.ConfigurationReport());
+    equal(report.Warnings.length, 1, "Expect one warning");
+    equal(report.Errors.length, 0, "Expect no errors");
+    report.WriteToLog();
   });
 
   test("Network load test", function() {

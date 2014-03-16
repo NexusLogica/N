@@ -48,6 +48,15 @@ N.Network.prototype.GetType = function() {
 }
 
 /**
+ * Get the full path of the neuron.
+ * @method GetPath
+ * @returns {string}
+ */
+N.Network.prototype.GetPath = function() {
+  return (this.ParentNetwork ? this.ParentNetwork.GetPath() : '/')+this.ShortName;
+}
+
+/**
  * Sets the parent network.
  * @method SetParentNetwork
  * @param {N.Network} the parent network
@@ -122,13 +131,13 @@ N.Network.prototype.GetNetworkByName = function(name) {
  * @returns {N.Neuron}
  */
 N.Network.prototype.AddNeuron = function(neuron) {
-  if(neuron.Name.length === 0 || neuron.ShortName.length === 0) {
-    N.L('ERROR: N.Network.AddNeuron: No name for neuron.');
-    throw 'ERROR: N.Network.AddNeuron: No name for neuron.';
+  if(neuron.ShortName.length === 0) {
+    N.L('ERROR: N.Network.AddNeuron: No short name for neuron.');
+    throw 'ERROR: N.Network.AddNeuron: No short name for neuron.';
   }
   this.Neurons.push(neuron);
-  this.NeuronsByName[neuron.Name] = neuron;
   this.NeuronsByName[neuron.ShortName] = neuron;
+  neuron.SetNetwork(this);
   return neuron;
 }
 
@@ -222,6 +231,32 @@ N.Network.prototype.Update = function(time) {
     this.Neurons[i].Update(time);
   }
   return this;
+}
+
+/**
+ * Validates the network. Warns if there are no child networks or neurons. It will report an error if there are no networks
+ * or neurons but there are connections.
+ * @method Validate
+ * @param report
+ * @return {N.ConfigurationReport} Returns the configuration report object.
+ */
+N.Network.prototype.Validate = function(report) {
+  if(this.ChildNetworks.length === 0 && this.Neurons.length === 0) {
+    report.Warning(this.GetPath(), 'The network has no neurons or child networks.');
+    if(this.Connections.length) { report.Error(this.GetPath(), 'The network has connections but no child networks or neurons, so the connections will fail.'); }
+  }
+
+  for(var i=0; i<this.ChildNetworks.length; i++) { this.ChildNetworks[i].Validate(report); }
+  for(i=0; i<this.Neurons.length; i++)           { this.Neurons[i].Validate(report); }
+  for(i=0; i<this.Connections.length; i++) {
+    try {
+      this.Connections[i].Validate(report);
+    }
+    catch (err) {
+      report.Error(this.Connections[i].GetConnectionPath(), 'The connection of type '+this.Connections[i].ClassName+' threw an exception when validating.');
+    }
+  }
+  return report;
 }
 
 /**

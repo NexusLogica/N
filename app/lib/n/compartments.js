@@ -18,6 +18,7 @@ All Rights Reserved.
  */
 var N = N || {};
 N.Comp = N.Comp || {};
+N.Comp.UpdateFunc = N.Comp.UpdateFunc || {};
 
 N.Comp.GetTypeFunc = function() { return N.Type.Compartment; }
 
@@ -37,17 +38,23 @@ N.Comp.GetNumOutputConnections = function() {
   return this.OutputConnections.length;
 }
 
+N.Comp.GetPath = function() {
+  return this.Neuron.GetPath()+'>'+this.ShortName;
+}
+
 N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
   constructorFunction.prototype.ConnectOutput = N.Comp.ConnectOutput;
   constructorFunction.prototype.ConnectInput = N.Comp.ConnectInput;
   constructorFunction.prototype.GetNumInputConnections = N.Comp.GetNumInputConnections;
   constructorFunction.prototype.GetNumOutputConnections = N.Comp.GetNumOutputConnections;
+  constructorFunction.prototype.GetPath = N.Comp.GetPath;
 }
 
-N.Comp.Initialize = function(connection) {
-  connection.InputConnections = [];
-  connection.OutputConnections = [];
+N.Comp.Initialize = function(compartment) {
+  compartment.Signal = new N.AnalogSignal('Output', 'OP');
+  compartment.InputConnections = [];
+  compartment.OutputConnections = [];
 }
 
   //***************************
@@ -85,6 +92,12 @@ N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
   this.Signal = signal;
 }
 
+/**
+ * Upates the output value of the compartment. The output value is from the signal object.
+ * @method Update
+ * @param t
+ * @returns {Real}
+ */
 N.Comp.OutputFromSignal.prototype.Update = function(t) {
   if(this.Signal) {
     this.Output = this.Signal.GetValue(t);
@@ -102,6 +115,11 @@ N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
   return this;
 }
 
+N.Comp.OutputFromSignal.prototype.Validate = function(report) {
+  if(!this.Signal) { report.Warning(this.GetPath(), 'Signal object is not set.'); }
+  if(this.GetNumInputConnections() !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
+}
+
   //*****************
   //* N.Comp.Output *
   //*****************
@@ -115,10 +133,18 @@ N.Comp.Output = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
+  this.Inputs     = null;
   N.Comp.Initialize(this);
 }
 
 N.Comp.Extend(N.Comp.Output);
+
+N.Comp.Output.prototype.ConnectToCompartments = function() {
+  for(var i in this.Inputs) {
+    var input = this.Inputs[i];
+    input.Compartment = this.Neuron.GetCompartmentByName(input.CompartmentName);
+  }
+}
 
 N.Comp.Output.prototype.AddInput = function(input) {
   this.Input = input;
@@ -129,6 +155,21 @@ N.Comp.Output.prototype.Update = function(t) {
     this.Output = this.Input.UpdateInput(t);
   }
   return this.Output;
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.Output.prototype.Validate = function(report) {
+  if(!this.Inputs) {
+    report.Error(this.GetPath(), 'The Input object is not set.');
+  } else if(!this.Inputs.UpdateFunc) {
+    report.Error(this.GetPath(), 'The Input\s UpdateFunc is not set.');
+  }
+  if(this.GetNumInputConnections()  !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
 }
 
 N.Comp.Output.prototype.LoadFrom = function(json) {

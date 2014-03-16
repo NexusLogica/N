@@ -47,7 +47,11 @@
             
                 <li><a href="../classes/Comp.OutputFromSignal.html">Comp.OutputFromSignal</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
+            
+                <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
             
                 <li><a href="../classes/Connection.html">Connection</a></li>
             
@@ -249,6 +253,7 @@ N.FromPath = function(network, path) {
   // Break the path into
   var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\&gt;[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
   var parts = path.match(regex);
+  N.L(&#x27;Path=&#x27;+parts.join(&#x27;^&#x27;));
   if (parts.length === 0) {
     return N.FromPathError(network, path, path, &#x27;Error in path&#x27;);
   }
@@ -271,7 +276,7 @@ N.FromPath = function(network, path) {
         switch(part) {
 
           case &#x27;..&#x27;: {
-            currentObj = currentObj.Parent();
+            currentObj = currentObj.GetParent();
             if (!currentObj) {
               return N.FromPathError(network, path, part, &#x27;Network has no parent&#x27;);
             }
@@ -310,19 +315,46 @@ N.FromPath = function(network, path) {
         var netShortName = part.substring(1);
         currentObj = currentObj.GetNetworkByName(netShortName);
         if (!currentObj) {
-          return N.FromPathError(network, path, part, &#x27;The network has no compartment \&#x27;&#x27;+netShortName+&#x27;\&#x27;&#x27;);
+          return N.FromPathError(network, path, part, &#x27;The network has no child network \&#x27;&#x27;+netShortName+&#x27;\&#x27;&#x27;);
         }
       } break;
 
       default: {
-        return N.FromPathError(network, path, part, &#x27;Invalid path part \&#x27;&#x27;+part+&#x27;\&#x27;&#x27;);
+        currentObj = currentObj.GetNetworkByName(part);
+        if (!currentObj) {
+          return N.FromPathError(network, path, part, &#x27;The network has no child network \&#x27;&#x27;+part+&#x27;\&#x27;&#x27;);
+        }
       }
     }
   }
   return currentObj;
 }
 
+/**
+ * Returns the object pointed to by the path relative to
+ * @method N.FromConnectionPaths
+ * @param {N.Network} network
+ * @param {String} path
+ * @return {Object} Returns a two components in the form { Source: .
+ */
+N.FromConnectionPaths = function(network, paths) {
+  var parts = paths.split(/-&gt;/);
+  N.L(&#x27;Connection parts: &#x27;+parts.join(&#x27;  -&gt;  &#x27;));
+  if(parts.length !== 2) {
+    return N.FromPathError(network, paths, &#x27;&#x27;, &#x27;Invalid connection path format \&#x27;&#x27;+paths+&#x27;\&#x27;&#x27;);
+  }
+
+  var obj = {};
+  obj.Source = N.FromPath(network, parts[0]);
+  obj.Sink = N.FromPath(network, parts[1]);
+  if(obj.Source.error || obj.Sink.error) {
+    return { error: obj };
+  }
+  return obj;
+}
+
 N.FromPathError = function(network, path, part, message) {
+  N.L(&#x27;Path Error: &#x27;+message);
   return { error: { message: message, network: network, path: path, part: part } };
 }
 
@@ -358,6 +390,7 @@ N.ShortName = function(longName) {
  */
 N.L = function(logText) {
   window.console.log(logText);
+  return logText;
 }
 
 /**
@@ -391,6 +424,57 @@ N.GenerateUUID = function() {
       return (c===&#x27;x&#x27; ? r : (r&amp;0x7|0x8)).toString(16);
   });
   return uuid;
+}
+
+
+/**
+ * The ConfigurationReport holds lists of errors and warnings related to the system configuration. Errors are issues
+ * that will cause the system to fail. Warnings will still allow the system to run but are clearly misconfigurations. An example
+ * would be having input connections to objects that are output only.
+ * @class ConfigurationReport
+ */
+N.ConfigurationReport = function() {
+  this.Errors = [];
+  this.Warnings = [];
+}
+
+/**
+ * Add an error message and the path for the source of the object.
+ * @method Error
+ * @param path
+ * @param message
+ * @return {N.ConfigurationReport} Returns a pointer to the report object.
+ */
+N.ConfigurationReport.prototype.Error = function(path, message) {
+  this.Errors.push({ Path: path, Message: message });
+  return this;
+}
+
+/**
+ * Add a warning message and the path for the source of the object.
+ * @method Warning
+ * @param path
+ * @param message
+ * @return {N.ConfigurationReport} Returns a pointer to the report object.
+ */
+N.ConfigurationReport.prototype.Warning = function(path, message) {
+  this.Warnings.push({ Path: path, Message: message });
+}
+
+/**
+ * Write the report to the system log via N.L(), which is usually the console.log().
+ * @method WriteToLog
+ */
+N.ConfigurationReport.prototype.WriteToLog = function(path, message) {
+  if(this.Warnings.length === 0 &amp;&amp; this.Errors.length === 0) {
+    N.L(&#x27;Configuration report: No errors or warnings&#x27;);
+  } else {
+    var numErr = this.Errors.length;
+    var numWarn = this.Warnings.length;
+    N.L(&#x27;Configuration report: &#x27;+numErr+&#x27; error&#x27;+(numErr === 1 ? &#x27;&#x27; : &#x27;s&#x27;) +&#x27; and &#x27;+this.Warnings.length+&#x27; warning&#x27;+(numWarn === 1 ? &#x27;&#x27; : &#x27;s&#x27;));
+    for(var i=0; i&lt;numErr; i++) { N.L(&#x27;    Error[&#x27;+this.Errors[i].Path+&#x27;]: &#x27;+this.Errors[i].Message); }
+    for(i=0; i&lt;numWarn; i++)   { N.L(&#x27;    Warning[&#x27;+this.Warnings[i].Path+&#x27;]: &#x27;+this.Warnings[i].Message); }
+  }
 }
 
 /**
