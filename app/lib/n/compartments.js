@@ -42,6 +42,26 @@ N.Comp.GetPath = function() {
   return this.Neuron.GetPath()+'>'+this.ShortName;
 }
 
+N.Comp.AddComparmentSink = function(compartment) {
+  this.CompartmentSinks.push(compartment);
+}
+
+N.Comp.GetNumComparmentSinks = function() {
+  return this.CompartmentSinks.length;
+}
+
+N.Comp.ConnectToCompartments = function() {
+  if(this.OutputLogic) {
+    for(var i in this.OutputLogic.Sources) {
+      var source = this.OutputLogic.Sources[i];
+      source.Compartment = this.Neuron.GetCompartmentByName(source.ComponentName);
+      if(!source.Compartment) {
+        this.Neuron.Network.GetRoot().LinkReport.Error(this.GetPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
+      }
+    }
+  }
+}
+
 N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
   constructorFunction.prototype.ConnectOutput = N.Comp.ConnectOutput;
@@ -49,12 +69,16 @@ N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetNumInputConnections = N.Comp.GetNumInputConnections;
   constructorFunction.prototype.GetNumOutputConnections = N.Comp.GetNumOutputConnections;
   constructorFunction.prototype.GetPath = N.Comp.GetPath;
+  constructorFunction.prototype.AddComparmentSink = N.Comp.AddComparmentSink;
+  constructorFunction.prototype.GetNumComparmentSinks = N.Comp.GetNumComparmentSinks;
+  constructorFunction.prototype.ConnectToCompartments = N.Comp.ConnectToCompartments;
 }
 
 N.Comp.Initialize = function(compartment) {
   compartment.Signal = new N.AnalogSignal('Output', 'OP');
   compartment.InputConnections = [];
   compartment.OutputConnections = [];
+  compartment.CompartmentSinks = [];
 }
 
   //***************************
@@ -118,6 +142,7 @@ N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
 N.Comp.OutputFromSignal.prototype.Validate = function(report) {
   if(!this.Signal) { report.Warning(this.GetPath(), 'Signal object is not set.'); }
   if(this.GetNumInputConnections() !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
 }
 
   //*****************
@@ -125,26 +150,19 @@ N.Comp.OutputFromSignal.prototype.Validate = function(report) {
   //*****************
 
 N.Comp.Output = function(neuron, name, shortName) {
-  this.ClassName  = 'N.Comp.Output';
-  this.Name       = name;
-  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
-  this.Category   = 'Output';
+  this.ClassName   = 'N.Comp.Output';
+  this.Name        = name;
+  this.ShortName   = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category    = 'Output';
 
-  this.Neuron     = neuron;
-  this.Output     = 0.0;
+  this.Neuron      = neuron;
+  this.Output      = 0.0;
   this.IsOutputComponent = true;
-  this.Inputs     = null;
+  this.OutputLogic = null;
   N.Comp.Initialize(this);
 }
 
 N.Comp.Extend(N.Comp.Output);
-
-N.Comp.Output.prototype.ConnectToCompartments = function() {
-  for(var i in this.Inputs) {
-    var input = this.Inputs[i];
-    input.Compartment = this.Neuron.GetCompartmentByName(input.CompartmentName);
-  }
-}
 
 N.Comp.Output.prototype.AddInput = function(input) {
   this.Input = input;
@@ -163,13 +181,17 @@ N.Comp.Output.prototype.Update = function(t) {
  * @param report
  */
 N.Comp.Output.prototype.Validate = function(report) {
-  if(!this.Inputs) {
-    report.Error(this.GetPath(), 'The Input object is not set.');
-  } else if(!this.Inputs.UpdateFunc) {
-    report.Error(this.GetPath(), 'The Input\s UpdateFunc is not set.');
+  if(!this.OutputLogic) {
+    report.Error(this.GetPath(), 'The OutputLogic object is not set.');
+  } else if(!this.OutputLogic.OutputFunc) {
+    report.Error(this.GetPath(), 'The OutputLogic\'s OutputFunc is not set.');
   }
+  else {
+    this.OutputLogic.OutputFunc.Validate(this, report);
+  }
+
   if(this.GetNumInputConnections()  !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
 }
 
 N.Comp.Output.prototype.LoadFrom = function(json) {
@@ -244,6 +266,15 @@ N.Comp.LinearSummingInput.prototype.SumInputs = function(t) {
     this.Sum += this.Connections[i].GetOutput();
   }
   return this.Sum;
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.LinearSummingInput.prototype.Validate = function(report) {
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
 }
 
 N.Comp.LinearSummingInput.prototype.LoadFrom = function(json) {
@@ -354,6 +385,15 @@ N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
     this.Sum += this.Connections[i].GetOutput();
   }
   return this.Sum;
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.AcetylcholineInput.prototype.Validate = function(report) {
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
 }
 
 N.Comp.AcetylcholineInput.prototype.LoadFrom = function(json) {

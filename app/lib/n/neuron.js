@@ -90,6 +90,17 @@ N.Neuron.prototype.GetNumCompartments = function() {
   return this.Compartments.length;
 }
 
+/**
+ * Calls each child compartment telling it to connect to any other compartment it requires communication with.
+ * @method ConnectCompartments
+ */
+N.Neuron.prototype.ConnectCompartments = function() {
+  var num = this.Compartments.length;
+  for(var i=0; i<num; i++) {
+    this.Compartments[i].ConnectToCompartments();
+  }
+}
+
 N.Neuron.prototype.Update = function(time) {
   var num = this.Compartments.length;
   for(var i=0; i<num; i++) {

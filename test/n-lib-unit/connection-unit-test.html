@@ -37,10 +37,11 @@
       Name: 'Output',
       ShortName: 'OP',
       InitialOutput: 0.0,
-      Inputs: {
-        UpdateFunc: N.Comp.OutputFunc.ErrFuncSumWithMod,
-        Main:      { ComponentPath: '>IP',  Gain: 0.5, Threshhold: 0.0 },
-        Modulator: { ComponentPath: '>AIP', Gain: 0.2, Threshhold: 0.0 }
+      OutputLogic: {
+        OutputFunc: N.Comp.OutputFunc.LinearSum,
+        Sources: {
+          Main: { ComponentName: 'IP',  Gain: 0.5 }
+        }
       }
     },{
       ClassName: 'N.Comp.LinearSummingInput',
@@ -78,13 +79,18 @@
     network.AddNeuron(newNeuron.LoadFrom({ Template: SpinyNeuronTemplate, Name: 'Neuron2', ShortName: 'N2' }));
 
     var connection = new N.Connection(network);
-    connection.LoadFrom({ SourcePath: ':N1>OP', SinkPath: ':N2>IP', Gain: 2.0, Delay: 0.005 });
+    connection.LoadFrom({ ConnectionPath: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 0.005 });
     network.AddConnection(connection);
 
+    var linkReport = network.Link();
+    equal(linkReport.Warnings.length, 0, 'Expect one link warnings');
+    equal(linkReport.Errors.length, 0, 'Expect no link errors');
+    linkReport.WriteToLog('Link report');
+
     var report = network.Validate(new N.ConfigurationReport());
-    equal(report.Warnings.length, 1, "Expect one warning");
-    equal(report.Errors.length, 0, "Expect no errors");
-    report.WriteToLog();
+    equal(report.Warnings.length, 0, 'Expect one warning');
+    equal(report.Errors.length, 0, 'Expect no errors');
+    report.WriteToLog('Configuration report');
 /*
     equal(network.GetNumConnections(), 1, 'One connection');
     equal(network.GetConnectionByIndex(0), connection, 'Get the connection');

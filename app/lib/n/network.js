@@ -77,6 +77,15 @@ N.Network.prototype.GetParent = function() {
 }
 
 /**
+ * Get the the root/top level network.
+ * @method GetRoot
+ * @returns {N.Network} The root network object or self if this is the root.
+ */
+N.Network.prototype.GetRoot = function() {
+  return this.ParentNetwork ? this.ParentNetwork.GetRoot() : this;
+}
+
+/**
  * Adds a child network to the network.
  * @method AddNetwork
  * @param network
@@ -219,6 +228,25 @@ N.Network.prototype.GetFullPath = function() {
   return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '') + '/' + this.ShortName;
 }
 
+N.Network.prototype.Link = function() {
+  this.LinkReport = new N.ConfigurationReport();
+  this.Connect();
+  return this.LinkReport;
+}
+
+N.Network.prototype.Connect = function() {
+  var numConnections = this.Connections.length;
+  for(var i=0; i<numConnections; i++) {
+    this.Connections[i].Connect();
+  }
+
+  var num = this.Neurons.length;
+  for(var i=0; i<num; i++) {
+    this.Neurons[i].ConnectCompartments();
+  }
+  return this;
+}
+
 /**
  * Update the output of all child networks, neurons, and connections.
  * @method Upate
@@ -226,6 +254,11 @@ N.Network.prototype.GetFullPath = function() {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.Update = function(time) {
+  var numConnections = this.Connections.length;
+  for(var i=0; i<numConnections; i++) {
+    this.Connections[i].Update(time);
+  }
+
   var num = this.Neurons.length;
   for(var i=0; i<num; i++) {
     this.Neurons[i].Update(time);

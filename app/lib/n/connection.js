@@ -42,6 +42,15 @@ N.Connection.prototype.GetType = function() {
   return N.Type.Connection;
 }
 
+/**
+ * Returns the object type.
+ * @method GetPath
+ * @returns {N.Type.Connection}
+ */
+N.Connection.prototype.GetPath = function() {
+  return this.ConnectionPath;
+}
+
 N.Connection.prototype.SetNetwork = function(network) {
   this.Network = network;
 }
@@ -61,6 +70,16 @@ N.Connection.prototype.Connect = function() {
 
 N.Connection.prototype.GetConnectionPath = function() {
   return this.ConnectionPath;
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Connection.prototype.Validate = function(report) {
+  if(!this.Source) { report.Warning(this.GetPath(), 'The connection has no source.'); }
+  if(!this.Sink)   { report.Warning(this.GetPath(), 'The connection has no sink.'); }
 }
 
 /**

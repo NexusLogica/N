@@ -20,17 +20,47 @@ var N = N || {};
 N.Comp = N.Comp || {};
 N.Comp.OutputFunc = N.Comp.OutputFunc || {};
 
+// See http://math.stackexchange.com/questions/321569/approximating-the-error-function-erf-by-analytical-functions.
+N.Comp.OutputFunc.TanhCoeff = Math.sqrt(Math.PI)*Math.log(2.0);
+
+N.Comp.OutputFunc.Tanh = function(x) {
+  return (Math.exp(x)-Math.exp(-x))/(Math.exp(x)+Math.exp(-x));
+}
+
+/**
+ * This is the simplest output function, taking only one input, multiplying it by a gain and using that value for the output.
+ * @example
+ *     var template = {
+ *         Main: {
+ *             ComponentName: 'IP',
+ *             Gain: 0.5
+ *         },
+ *     }
+ *
+ * @class Comp.OutputFunc.LinearSum
+ * @param {N.Comp.*} A component object that has a 'Main' input source.
+ * @constructor
+ */
+
+N.Comp.OutputFunc.LinearSum = function(comp) {
+  comp.Output = comp.Inputs.Main.Comp.Output*comp.Inputs.Main.Gain;
+}
+
+N.Comp.OutputFunc.LinearSum.Validate = function(comp, report) {
+  if(!_.isObject(comp.OutputLogic.Sources.Main.Compartment)) { report.Error(comp.GetPath()+'[func:=OutputLogic.OutputFunc]', 'The source compartment is null'); }
+}
+
 /**
  * Summing function with approximate error function type output curve with modulating input.
  * @example
  *     var template = {
  *         Main: {
- *             ComponentPath: '>IP',
+ *             ComponentName: 'IP',
  *             Gain: 0.5,
  *             Threshhold: 0.0
  *         },
  *         Modulator: {
- *             ComponentPath: '>AIP',
+ *             ComponentName: 'AIP',
  *             Gain: 0.2,
  *             Threshhold: 0.0
  *         }

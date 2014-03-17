@@ -140,10 +140,7 @@ N.FromPath = function(network, path) {
 
   var currentObj = network;
   if (parts[0].charAt(0) === '/') {
-    var next;
-    do {
-      next = currentObj.GetParent();
-    } while(next !== null);
+    currentObj = network.GetRoot();
   }
 
   for(var i in parts) {
@@ -345,13 +342,13 @@ N.ConfigurationReport.prototype.Warning = function(path, message) {
  * Write the report to the system log via N.L(), which is usually the console.log().
  * @method WriteToLog
  */
-N.ConfigurationReport.prototype.WriteToLog = function(path, message) {
+N.ConfigurationReport.prototype.WriteToLog = function(title) {
   if(this.Warnings.length === 0 && this.Errors.length === 0) {
-    N.L('Configuration report: No errors or warnings');
+    N.L(title+': No errors or warnings');
   } else {
     var numErr = this.Errors.length;
     var numWarn = this.Warnings.length;
-    N.L('Configuration report: '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.Warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
+    N.L(title+': '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.Warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
     for(var i=0; i<numErr; i++) { N.L('    Error['+this.Errors[i].Path+']: '+this.Errors[i].Message); }
     for(i=0; i<numWarn; i++)   { N.L('    Warning['+this.Warnings[i].Path+']: '+this.Warnings[i].Message); }
   }
