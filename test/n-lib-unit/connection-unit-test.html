@@ -28,6 +28,17 @@
     QUnit.push(diff < tolerance, actual, expected, actualMessage);
   };
 
+  var SourceTemplate = {
+    ClassName: 'N.Neuron',
+    Name: 'SourceNeuron',
+    ShortName: 'SRC',
+    Compartments: [{
+      ClassName: 'N.Comp.OutputFromSignal',
+      Name: 'Output',
+      ShortName: 'OP'
+    }]
+  }
+
   var SpinyNeuronTemplate = {
     ClassName: 'N.Neuron',
     Name: 'SimpleNeuron',
@@ -47,21 +58,17 @@
       ClassName: 'N.Comp.LinearSummingInput',
       Name: 'Input',
       ShortName: 'IP'
-    },{
-      ClassName: 'N.Comp.AcetylcholineInput',
-      Name: 'AcetylcholineInput',
-      ShortName: 'AIP'
     }]
   }
 
-  var SourceTemplate = {
+  var SinkTemplate = {
     ClassName: 'N.Neuron',
-    Name: 'SourceNeuron',
-    ShortName: 'SRC',
+    Name: 'SinkNeuron',
+    ShortName: 'SNK',
     Compartments: [{
-      ClassName: 'N.Comp.OutputFromSignal',
-      Name: 'Output',
-      ShortName: 'OP'
+      ClassName: 'N.Comp.InputSink',
+      Name: 'InputSink',
+      ShortName: 'IS'
     }]
   }
 
@@ -77,10 +84,16 @@
 
     newNeuron = new N.Neuron(network);
     network.AddNeuron(newNeuron.LoadFrom({ Template: SpinyNeuronTemplate, Name: 'Neuron2', ShortName: 'N2' }));
+    newNeuron = new N.Neuron(network);
+    network.AddNeuron(newNeuron.LoadFrom({ Template: SinkTemplate, Name: 'Neuron3', ShortName: 'N3' }));
 
-    var connection = new N.Connection(network);
-    connection.LoadFrom({ ConnectionPath: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 0.005 });
-    network.AddConnection(connection);
+    var connectionSource = new N.Connection(network);
+    connectionSource.LoadFrom({ ConnectionPath: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 5 });
+    network.AddConnection(connectionSource);
+
+    var connectionSink = new N.Connection(network);
+    connectionSink.LoadFrom({ ConnectionPath: ':N2>OP->:N3>IS', Gain: 1.0, Delay: 2 });
+    network.AddConnection(connectionSink);
 
     var linkReport = network.Link();
     equal(linkReport.Warnings.length, 0, 'Expect one link warnings');
@@ -91,6 +104,8 @@
     equal(report.Warnings.length, 0, 'Expect one warning');
     equal(report.Errors.length, 0, 'Expect no errors');
     report.WriteToLog('Configuration report');
+
+    network.Update(0);
 /*
     equal(network.GetNumConnections(), 1, 'One connection');
     equal(network.GetConnectionByIndex(0), connection, 'Get the connection');

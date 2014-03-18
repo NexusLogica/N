@@ -24,10 +24,12 @@ N.Comp.GetTypeFunc = function() { return N.Type.Compartment; }
 
 N.Comp.ConnectOutput = function(connection) {
   this.OutputConnections.push(connection);
+  return this;
 }
 
 N.Comp.ConnectInput = function(connection) {
   this.InputConnections.push(connection);
+  return this;
 }
 
 N.Comp.GetNumInputConnections = function() {
@@ -55,11 +57,19 @@ N.Comp.ConnectToCompartments = function() {
     for(var i in this.OutputLogic.Sources) {
       var source = this.OutputLogic.Sources[i];
       source.Compartment = this.Neuron.GetCompartmentByName(source.ComponentName);
+      source.Compartment.AddComparmentSink(this);
       if(!source.Compartment) {
         this.Neuron.Network.GetRoot().LinkReport.Error(this.GetPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
       }
     }
   }
+}
+
+N.Comp.GetOutputAt = function(t) {
+  if(t < 0) {
+    return this.PreZeroOutput;
+  }
+  return this.OutputStore.GetValue(t);
 }
 
 N.Comp.Extend = function(constructorFunction) {
@@ -72,13 +82,15 @@ N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.AddComparmentSink = N.Comp.AddComparmentSink;
   constructorFunction.prototype.GetNumComparmentSinks = N.Comp.GetNumComparmentSinks;
   constructorFunction.prototype.ConnectToCompartments = N.Comp.ConnectToCompartments;
+  constructorFunction.prototype.GetOutputAt = N.Comp.GetOutputAt;
 }
 
 N.Comp.Initialize = function(compartment) {
-  compartment.Signal = new N.AnalogSignal('Output', 'OP');
+  compartment.OutputStore = new N.AnalogSignal('OutputStore', 'OS');
   compartment.InputConnections = [];
   compartment.OutputConnections = [];
   compartment.CompartmentSinks = [];
+  compartment.PreZeroOutput = 0.0;
 }
 
   //***************************
@@ -201,6 +213,60 @@ N.Comp.Output.prototype.LoadFrom = function(json) {
   return this;
 }
 
+  //********************
+  //* N.Comp.InputSink *
+  //********************
+/**
+ * A component that acts as an end sink. It should have inputs but no outputs.
+ * @class N.Comp.InputSink
+ * @param neuron
+ * @param name
+ * @param shortName
+ * @constructor
+ */
+N.Comp.InputSink = function(neuron, name, shortName) {
+  this.ClassName   = 'N.Comp.InputSink';
+  this.Name        = name;
+  this.ShortName   = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Category    = 'Output';
+
+  this.Neuron      = neuron;
+  this.Output      = 0.0;
+  this.IsOutputComponent = true;
+  this.OutputLogic = null;
+  N.Comp.Initialize(this);
+}
+
+N.Comp.Extend(N.Comp.InputSink);
+
+N.Comp.InputSink.prototype.AddInput = function(input) {
+  this.Input = input;
+}
+
+N.Comp.InputSink.prototype.Update = function(t) {
+  if(this.Input) {
+    this.Output = this.Input.UpdateInput(t);
+  }
+  return this.Output;
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.InputSink.prototype.Validate = function(report) {
+  if(this.GetNumInputConnections()  === 0) { report.Warning(this.GetPath(), 'The input sink has no input connections.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The input only component has output connections.'); }
+}
+
+N.Comp.InputSink.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
+}
+
   //***************************
   //* N.Comp.InhibitoryOutput *
   //***************************
@@ -259,7 +325,12 @@ N.Comp.LinearSummingInput.prototype.Connect = function(connection) {
   this.Connections.push(connection);
 }
 
-N.Comp.LinearSummingInput.prototype.SumInputs = function(t) {
+/**
+ * Sum the inputs.
+ * @method SumInputs
+ * @returns {Real}
+ */
+N.Comp.LinearSummingInput.prototype.SumInputs = function() {
   var len = this.Connections.length;
   this.Sum = 0.0;
   for(var i=0; i<len; i++) {
@@ -269,12 +340,24 @@ N.Comp.LinearSummingInput.prototype.SumInputs = function(t) {
 }
 
 /**
+ * Update the output of the compartment.
+ * @method Update
+ * @param {Real} t Time
+ * @returns {Real}
+ */
+N.Comp.LinearSummingInput.prototype.Update = function(t) {
+  this.OutputStore.AppendData(t, this.SumInputs());
+}
+
+/**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
  * @method Validate
  * @param report
  */
 N.Comp.LinearSummingInput.prototype.Validate = function(report) {
-  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The input component has output connections.'); }
+  if(this.GetNumInputConnections() === 0) { report.Warning(this.GetPath(), 'The input component has no input connections.'); }
+  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.GetPath(), 'The input component has no compartmental listeners.'); }
 }
 
 N.Comp.LinearSummingInput.prototype.LoadFrom = function(json) {
@@ -331,6 +414,17 @@ N.Comp.SignalInput.prototype.UpdateInput = function(t) {
     this.Sum = this.SignalInput.GetValue(t);
   }
   return this.Sum;
+}
+
+/**
+ * Validates the compartment.
+ * @method Validate
+ * @param report
+ */
+N.Comp.SignalInput.prototype.Validate = function(report) {
+  if(this.GetNumInputConnections() !== 0)  { report.Warning(this.GetPath(), 'The component does not use input connections.'); }
+  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.GetPath(), 'The component has no compartmental listeners.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
 }
 
 N.Comp.SignalInput.prototype.LoadFrom = function(json) {
@@ -393,7 +487,9 @@ N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
  * @param report
  */
 N.Comp.AcetylcholineInput.prototype.Validate = function(report) {
-  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
+  if(this.GetNumInputConnections() === 0) { report.Warning(this.GetPath(), 'The input component has no input connections.'); }
+  if(this.GetNumComparmentSinks() === 0) { report.Warning(this.GetPath(), 'The input component has no compartmental listeners.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The input component has output connections.'); }
 }
 
 N.Comp.AcetylcholineInput.prototype.LoadFrom = function(json) {

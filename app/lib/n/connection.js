@@ -31,6 +31,9 @@ N.Connection = function() {
   this.ConnectionPath = null;
   this.Source         = null;
   this.Sink           = null;
+  this.Output         = 0.0;
+  this.OutputStore    = new N.AnalogSignal('OutputStore', 'OS');
+  this.Delay          = 1;
 }
 
 /**
@@ -51,6 +54,12 @@ N.Connection.prototype.GetPath = function() {
   return this.ConnectionPath;
 }
 
+/**
+ * Sets the parent network. This is called by the network, so there is usually no need to call this directly.
+ * @method SetNetwork
+ * @param {N.Network} network
+ * @constructor
+ */
 N.Connection.prototype.SetNetwork = function(network) {
   this.Network = network;
 }
@@ -62,14 +71,29 @@ N.Connection.prototype.SetNetwork = function(network) {
 N.Connection.prototype.Connect = function() {
   var endPoints = N.FromConnectionPaths(this.Network, this.ConnectionPath);
   if(!endPoints.error) {
-    endPoints.Source.ConnectOutput(this);
-    endPoints.Sink.ConnectInput(this);
+    this.Source = endPoints.Source.ConnectOutput(this);
+    this.Sink = endPoints.Sink.ConnectInput(this);
   }
   return this;
 }
 
+/**
+ * Returns the full path of the connection.
+ * @method GetConnectionPath
+ * @returns {String} The full path.
+ */
 N.Connection.prototype.GetConnectionPath = function() {
   return this.ConnectionPath;
+}
+
+/**
+ * Updates the connection output.
+ * @method Update
+ * @param {Real} t The time of the update.
+ */
+N.Connection.prototype.Update = function(t) {
+  var sourceOutput = this.Source.GetOutputAt(t-this.Delay);
+  this.OutputStore.AppendData(t, sourceOutput);
 }
 
 /**
