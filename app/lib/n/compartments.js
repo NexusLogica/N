@@ -66,8 +66,8 @@ N.Comp.ConnectToCompartments = function() {
 }
 
 N.Comp.GetOutputAt = function(t) {
-  if(t < 0) {
-    return this.PreZeroOutput;
+  if(t < this.OutputStore.TimeMin) {
+    return this.PreSignalOutput;
   }
   return this.OutputStore.GetValue(t);
 }
@@ -90,7 +90,7 @@ N.Comp.Initialize = function(compartment) {
   compartment.InputConnections = [];
   compartment.OutputConnections = [];
   compartment.CompartmentSinks = [];
-  compartment.PreZeroOutput = 0.0;
+  compartment.PreSignalOutput = 0.0;
 }
 
   //***************************

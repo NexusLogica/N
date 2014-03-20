@@ -284,7 +284,7 @@ N.DiscreteSignal.prototype.AppendData = function(time, newState) {
   }
   if(this.Times.length > 1) {
     if(this.Times[this.Times.length-2] === time) {
-      N.LogError('N.AnalogSignal.AppendData', 'Times '+(this.Times.length-2)+' and '+(this.Times.length-1)+' are equal with value '+time+'.');
+      N.L('ERROR: N.AnalogSignal.AppendData: Times '+(this.Times.length-2)+' and '+(this.Times.length-1)+' are equal with value '+time+'.');
       throw new Error('N.AnalogSignal.AppendData sequence issue');
     }
     this.TimeMax = time;
@@ -386,6 +386,68 @@ N.DiscreteSignal.prototype.LoadFrom = function(json) {
 
   return this;
 }
+
+/**
+ * This is the N signal global functions.
+ * @class N.Signal
+ */
+N.Signal = N.Signal || {};
+
+/**
+ * Creates a discrete square wave signal consisting of down and up parts. The length of down, up, the amplitude and offsets are all configurable.
+ * @method CreatePulseSignal
+ * @param {Real} durationOff
+ * @param {Real} durationOn
+ * @param {Real} signalLength
+ * @param {Real} offset
+ * @param {Real} amplitude
+ * @param {Real} lowValue
+ * @param {Real} startOn
+ * * @returns {N.DiscreteSignal}
+ */
+N.Signal.CreatePulseSignal = function(conf) {
+  var durationOff       = conf.durationOff,
+      durationOn        = conf.durationOn,
+      signalLength      = conf.signalLength,
+      offset            = conf.hasOwnProperty('offset')    ? conf.offset : 0.0,
+      amplitude         = conf.hasOwnProperty('amplitude') ? conf.amplitude : 1.0,
+      lowValue          = conf.hasOwnProperty('lowValue')  ? conf.lowValue : 0.0,
+      startOn           = conf.hasOwnProperty('startOn')   ? conf.startOn : false
+  var signal = new N.DiscreteSignal();
+  var timeOffset = offset;
+  var time = -timeOffset;
+  var on = startOn;
+
+  // Find the start time.
+  if(offset !== 0.0) {
+    while(true) {
+      if(time+(on ? durationOn : durationOff) > 0.0) {
+        signal.AppendData(0.0, (on ? amplitude : 0.0));
+        time += (on ? durationOn : durationOff);
+        on = !on;
+        break;
+      }
+      time += (on ? durationOn : durationOff);
+      on = !on;
+    }
+  }
+
+  while(true) {
+    signal.AppendData(time, (on ? amplitude : 0.0));
+    time += (on ? durationOn : durationOff);
+    if(time === signalLength) {
+      break;
+    }
+    else if(time > signalLength) {
+      signal.AppendData(signalLength, (on ? amplitude : 0.0));
+      break;
+    }
+    on = !on;
+  }
+  return signal;
+}
+
+
 
   //*******************
   //* N.SignalCompare *

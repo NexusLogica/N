@@ -42,8 +42,9 @@ N.Comp.OutputFunc.Tanh = function(x) {
  * @constructor
  */
 
-N.Comp.OutputFunc.LinearSum = function(comp) {
-  comp.Output = comp.Inputs.Main.Comp.Output*comp.Inputs.Main.Gain;
+N.Comp.OutputFunc.LinearSum = function(comp, t) {
+  var main = comp.Inputs.Main;
+  comp.Output = main.Gain*main.Comp.GetOutputAt(t-main.Delay);
 }
 
 N.Comp.OutputFunc.LinearSum.Validate = function(comp, report) {

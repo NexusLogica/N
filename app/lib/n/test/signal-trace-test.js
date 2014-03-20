@@ -27,7 +27,7 @@ nSimAppControllers.controller('SignalTraceTestController', ['$scope',
     testSignals.CreateSignals();
     $scope.Scenes = testSignals.Scenes;
     $scope.signalsMinRange = 0.0;
-    $scope.signalsMaxRange = 0.090;
+    $scope.signalsMaxRange = 0.10;
     $scope.signals = testSignals.Signals;
     $scope.$on('graph-controls:range-modification', function(event, min, max) {
       $scope.$broadcast('graph:range-modification', min, max);
@@ -49,18 +49,49 @@ N.SignalTraceTest = function() {
 }
 
 N.SignalTraceTest.prototype.CreateSignals = function() {
-  var testFuncs = [ 'CreateSinAnalog', 'CreateSawAnalog', 'CreatePulseDiscrete'];
   this.Signals = [];
+  var signal, scene;
+
+  var testFuncs = ['CreateSinAnalog', 'CreateSawAnalog', 'CreatePulseDiscrete'];
   this._timeStart = 0.0;
   for(var test in testFuncs) {
-    var signal = this[testFuncs[test]]();
+    signal = this[testFuncs[test]]();
     N.Objects.Add(signal);
 
-    var scene = new N.UI.Scene.SignalTrace();
+    scene = new N.UI.Scene.SignalTrace();
     scene.SetSignal(signal.Id);
     N.Objects.Add(scene);
     this.Scenes.push(scene);
   }
+
+  var offsets = [ 0.0, 0.004, 0.008, 0.012, 0.016, 0.020, 0.024 ];
+  for(var i in offsets) {
+    signal = this.CreateGeneratedPulse(offsets[i]);
+    N.Objects.Add(signal);
+
+    scene = new N.UI.Scene.SignalTrace();
+    scene.SetSignal(signal.Id);
+    N.Objects.Add(scene);
+    this.Scenes.push(scene);
+  }
+}
+
+N.SignalTraceTest.prototype.CreateGeneratedPulse = function(offset) {
+  var pulseWidth = 0.006; // seconds
+  var time = 0.0;
+  var nextState = 0;
+  var signal = N.Signal.CreatePulseSignal({
+    durationOff:  0.010,
+    durationOn:   0.005,
+    signalLength: 0.100,
+    offset:       offset,
+    amplitude:    0.50});
+ // var signal = CreatePulseSignal(0.010, 0.005, 0.1, offset, 0.5);
+  this.Signals.push(signal);
+  signal.Name = 'Generated - '+ _.str.sprintf('%.3f', offset);
+  signal.MinLimit = 0.0;
+  signal.MaxLimit = 0.5;
+  return signal;
 }
 
 N.SignalTraceTest.prototype.CreateSinAnalog = function() {
