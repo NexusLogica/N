@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Comp.OutputFunc.ErrFuncSumWithMod</title>
+    <title>Comp.OutputFunc.LinearSum</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -120,7 +120,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Comp.OutputFunc.ErrFuncSumWithMod Class</h1>
+                        <h1>Comp.OutputFunc.LinearSum Class</h1>
 <div class="box meta">
     
 
@@ -128,7 +128,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/output-functions.js.html#l54"><code>output-functions.js:54</code></a>
+            Defined in: <a href="../files/output-functions.js.html#l30"><code>output-functions.js:30</code></a>
         </div>
     
 
@@ -144,15 +144,15 @@
 
 
 <div class="box intro">
-    <p>Summing function with approximate error function type output curve with modulating input.</p>
+    <p>This is the simplest output function, taking only one input, multiplying it by a gain and using that value for the output.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Comp.OutputFunc.ErrFuncSumWithMod" class="method item">
-    <h3 class="name"><code>Comp.OutputFunc.ErrFuncSumWithMod</code></h3>
+        <div id="method_Comp.OutputFunc.LinearSum" class="method item">
+    <h3 class="name"><code>Comp.OutputFunc.LinearSum</code></h3>
 
     
         <div class="args">
@@ -193,7 +193,7 @@
             
         
         
-        <a href="../files/output-functions.js.html#l54"><code>output-functions.js:54</code></a>
+        <a href="../files/output-functions.js.html#l30"><code>output-functions.js:30</code></a>
         
         </p>
 
@@ -222,7 +222,7 @@
                     
 
                     <div class="param-description">
-                        <p>component object that has a &#39;Main&#39; input source and a &#39;Modulator&#39; source.</p>
+                        <p>component object that has a &#39;Main&#39; input source.</p>
 
                     </div>
 
@@ -243,14 +243,8 @@
                 <pre class="code prettyprint"><code>var template = {
     Main: {
         ComponentName: &#39;IP&#39;,
-        Gain: 0.5,
-        Threshhold: 0.0
+        Gain: 0.5
     },
-    Modulator: {
-        ComponentName: &#39;AIP&#39;,
-        Gain: 0.2,
-        Threshhold: 0.0
-    }
 }</code></pre>
 
             </div>

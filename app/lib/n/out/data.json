@@ -114,6 +114,7 @@
             "modules": {},
             "classes": {
                 "Comp.OutputFromSignal": 1,
+                "N.Comp.InputSink": 1,
                 "Comp.SignalInput": 1,
                 "Comp.AcetylcholineInput": 1
             },
@@ -162,6 +163,7 @@
             "name": "output-functions.js",
             "modules": {},
             "classes": {
+                "Comp.OutputFunc.LinearSum": 1,
                 "Comp.OutputFunc.ErrFuncSumWithMod": 1
             },
             "fors": {},
@@ -173,6 +175,7 @@
             "classes": {
                 "AnalogSignal": 1,
                 "DiscreteSignal": 1,
+                "N.Signal": 1,
                 "TableSearch": 1
             },
             "fors": {},
@@ -195,6 +198,7 @@
                 "PiNetworkPanelController": 1,
                 "PiNeuronInfoPanelController": 1,
                 "Comp.OutputFromSignal": 1,
+                "N.Comp.InputSink": 1,
                 "Comp.SignalInput": 1,
                 "Comp.AcetylcholineInput": 1,
                 "Connection": 1,
@@ -203,16 +207,18 @@
                 "Objects": 1,
                 "Network": 1,
                 "Neuron": 1,
+                "Comp.OutputFunc.LinearSum": 1,
                 "Comp.OutputFunc.ErrFuncSumWithMod": 1,
                 "AnalogSignal": 1,
                 "DiscreteSignal": 1,
+                "N.Signal": 1,
                 "TableSearch": 1
             },
             "fors": {},
             "namespaces": {},
             "tag": "module",
             "file": "signal.js",
-            "line": 407,
+            "line": 480,
             "description": "This is the N simulator."
         }
     },
@@ -271,8 +277,37 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 64,
+            "line": 103,
             "description": "An output compartment that has a signal object as the value for the output. This is typically used as an external input\nto a system, but it can also be used as a neuron that bursts based on an internal clock.\n\nThe signal can be analog, discrete, or a custom signal object.",
+            "params": [
+                {
+                    "name": "neuron",
+                    "description": ""
+                },
+                {
+                    "name": "name",
+                    "description": ""
+                },
+                {
+                    "name": "shortName",
+                    "description": ""
+                }
+            ],
+            "is_constructor": 1
+        },
+        "N.Comp.InputSink": {
+            "name": "N.Comp.InputSink",
+            "shortname": "N.Comp.InputSink",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "compartments.js",
+            "line": 223,
+            "description": "A component that acts as an end sink. It should have inputs but no outputs.",
             "params": [
                 {
                     "name": "neuron",
@@ -300,7 +335,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 251,
+            "line": 387,
             "description": "A compartment that has, as its output, a signal object.",
             "params": [
                 {
@@ -329,7 +364,7 @@
             "module": "N",
             "namespace": "",
             "file": "compartments.js",
-            "line": 310,
+            "line": 457,
             "description": "A modulator input that receives input from acetylcholine source.",
             "params": [
                 {
@@ -396,7 +431,7 @@
             "module": "N",
             "namespace": "",
             "file": "n.js",
-            "line": 310,
+            "line": 307,
             "description": "The ConfigurationReport holds lists of errors and warnings related to the system configuration. Errors are issues\nthat will cause the system to fail. Warnings will still allow the system to run but are clearly misconfigurations. An example\nwould be having input connections to objects that are output only."
         },
         "Objects": {
@@ -410,7 +445,7 @@
             "module": "N",
             "namespace": "",
             "file": "n.js",
-            "line": 360,
+            "line": 357,
             "description": "Dictionary for holding globally accessible objects."
         },
         "Network": {
@@ -456,6 +491,31 @@
             ],
             "is_constructor": 1
         },
+        "Comp.OutputFunc.LinearSum": {
+            "name": "Comp.OutputFunc.LinearSum",
+            "shortname": "Comp.OutputFunc.LinearSum",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "output-functions.js",
+            "line": 30,
+            "description": "This is the simplest output function, taking only one input, multiplying it by a gain and using that value for the output.",
+            "example": [
+                "\n    var template = {\n        Main: {\n            ComponentName: 'IP',\n            Gain: 0.5\n        },\n    }"
+            ],
+            "params": [
+                {
+                    "name": "A",
+                    "description": "component object that has a 'Main' input source.",
+                    "type": "N.Comp.*"
+                }
+            ],
+            "is_constructor": 1
+        },
         "Comp.OutputFunc.ErrFuncSumWithMod": {
             "name": "Comp.OutputFunc.ErrFuncSumWithMod",
             "shortname": "Comp.OutputFunc.ErrFuncSumWithMod",
@@ -467,10 +527,10 @@
             "module": "N",
             "namespace": "",
             "file": "output-functions.js",
-            "line": 23,
+            "line": 54,
             "description": "Summing function with approximate error function type output curve with modulating input.",
             "example": [
-                "\n    var template = {\n        Main: {\n            ComponentPath: '>IP',\n            Gain: 0.5,\n            Threshhold: 0.0\n        },\n        Modulator: {\n            ComponentPath: '>AIP',\n            Gain: 0.2,\n            Threshhold: 0.0\n        }\n    }"
+                "\n    var template = {\n        Main: {\n            ComponentName: 'IP',\n            Gain: 0.5,\n            Threshhold: 0.0\n        },\n        Modulator: {\n            ComponentName: 'AIP',\n            Gain: 0.2,\n            Threshhold: 0.0\n        }\n    }"
             ],
             "params": [
                 {
@@ -519,7 +579,7 @@
             "module": "N",
             "namespace": "",
             "file": "signal.js",
-            "line": 199,
+            "line": 210,
             "description": "A discrete signal class.",
             "params": [
                 {
@@ -533,6 +593,20 @@
             ],
             "is_constructor": 1
         },
+        "N.Signal": {
+            "name": "N.Signal",
+            "shortname": "N.Signal",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "N",
+            "namespace": "",
+            "file": "signal.js",
+            "line": 401,
+            "description": "This is the N signal global functions."
+        },
         "TableSearch": {
             "name": "TableSearch",
             "shortname": "TableSearch",
@@ -544,7 +618,7 @@
             "module": "N",
             "namespace": "",
             "file": "signal.js",
-            "line": 407,
+            "line": 480,
             "description": "A numerical algorithm class for finding the index of numbers bracketting a target number. The array must be either\nmonotonically increasing or decreasing array of numbers.",
             "is_constructor": 1
         }
@@ -707,7 +781,7 @@
         },
         {
             "file": "compartments.js",
-            "line": 95,
+            "line": 134,
             "description": "Upates the output value of the compartment. The output value is from the signal object.",
             "itemtype": "method",
             "name": "Update",
@@ -726,7 +800,85 @@
         },
         {
             "file": "compartments.js",
-            "line": 274,
+            "line": 194,
+            "description": "Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.",
+            "itemtype": "method",
+            "name": "Validate",
+            "params": [
+                {
+                    "name": "report",
+                    "description": ""
+                }
+            ],
+            "class": "Comp.OutputFromSignal",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 260,
+            "description": "Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.",
+            "itemtype": "method",
+            "name": "Validate",
+            "params": [
+                {
+                    "name": "report",
+                    "description": ""
+                }
+            ],
+            "class": "N.Comp.InputSink",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 336,
+            "description": "Sum the inputs.",
+            "itemtype": "method",
+            "name": "SumInputs",
+            "return": {
+                "description": "",
+                "type": "Real"
+            },
+            "class": "N.Comp.InputSink",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 350,
+            "description": "Update the output of the compartment.",
+            "itemtype": "method",
+            "name": "Update",
+            "params": [
+                {
+                    "name": "t",
+                    "description": "Time",
+                    "type": "Real"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Real"
+            },
+            "class": "N.Comp.InputSink",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 360,
+            "description": "Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.",
+            "itemtype": "method",
+            "name": "Validate",
+            "params": [
+                {
+                    "name": "report",
+                    "description": ""
+                }
+            ],
+            "class": "N.Comp.InputSink",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 410,
             "description": "Sets the signal.",
             "itemtype": "method",
             "name": "SetSignal",
@@ -742,6 +894,56 @@
             "module": "N"
         },
         {
+            "file": "compartments.js",
+            "line": 427,
+            "description": "Validates the compartment.",
+            "itemtype": "method",
+            "name": "Validate",
+            "params": [
+                {
+                    "name": "report",
+                    "description": ""
+                }
+            ],
+            "class": "Comp.SignalInput",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 492,
+            "description": "Update the output of the compartment.",
+            "itemtype": "method",
+            "name": "Update",
+            "params": [
+                {
+                    "name": "t",
+                    "description": "Time",
+                    "type": "Real"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Real"
+            },
+            "class": "Comp.AcetylcholineInput",
+            "module": "N"
+        },
+        {
+            "file": "compartments.js",
+            "line": 502,
+            "description": "Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.",
+            "itemtype": "method",
+            "name": "Validate",
+            "params": [
+                {
+                    "name": "report",
+                    "description": ""
+                }
+            ],
+            "class": "Comp.AcetylcholineInput",
+            "module": "N"
+        },
+        {
             "file": "connection.js",
             "line": 1,
             "description": "File     : connection.js\nProject  : N Simulator Library\nPurpose  : Source file for connection object.\nRevisions: Original definition by Lawrence Gunn.\n           2014/03/13\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
@@ -750,7 +952,7 @@
         },
         {
             "file": "connection.js",
-            "line": 36,
+            "line": 39,
             "description": "Returns the object type.",
             "itemtype": "method",
             "name": "GetType",
@@ -763,7 +965,37 @@
         },
         {
             "file": "connection.js",
-            "line": 49,
+            "line": 48,
+            "description": "Returns the object type.",
+            "itemtype": "method",
+            "name": "GetPath",
+            "return": {
+                "description": "",
+                "type": "N.Type.Connection"
+            },
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 57,
+            "description": "Sets the parent network. This is called by the network, so there is usually no need to call this directly.",
+            "itemtype": "method",
+            "name": "SetNetwork",
+            "params": [
+                {
+                    "name": "network",
+                    "description": "",
+                    "type": "N.Network"
+                }
+            ],
+            "is_constructor": 1,
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 67,
             "description": "Attach to the source and sink compartments.",
             "itemtype": "method",
             "name": "Connect",
@@ -772,7 +1004,51 @@
         },
         {
             "file": "connection.js",
-            "line": 66,
+            "line": 80,
+            "description": "Returns the full path of the connection.",
+            "itemtype": "method",
+            "name": "GetConnectionPath",
+            "return": {
+                "description": "The full path.",
+                "type": "String"
+            },
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 89,
+            "description": "Updates the connection output.",
+            "itemtype": "method",
+            "name": "Update",
+            "params": [
+                {
+                    "name": "t",
+                    "description": "The time of the update.",
+                    "type": "Real"
+                }
+            ],
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 99,
+            "description": "Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.",
+            "itemtype": "method",
+            "name": "Validate",
+            "params": [
+                {
+                    "name": "report",
+                    "description": ""
+                }
+            ],
+            "class": "Connection",
+            "module": "N"
+        },
+        {
+            "file": "connection.js",
+            "line": 109,
             "description": "Load a connection from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -896,7 +1172,7 @@
         },
         {
             "file": "n.js",
-            "line": 213,
+            "line": 210,
             "description": "Returns the object pointed to by the path relative to",
             "itemtype": "method",
             "name": "N.FromConnectionPaths",
@@ -921,7 +1197,7 @@
         },
         {
             "file": "n.js",
-            "line": 266,
+            "line": 263,
             "description": "Write to the system console (or some log, if overridden).",
             "itemtype": "method",
             "name": "N.L",
@@ -936,7 +1212,7 @@
         },
         {
             "file": "n.js",
-            "line": 276,
+            "line": 273,
             "description": "The standard timestep for simulations - 1 millisecond",
             "type": "{number} Timestep",
             "class": "N",
@@ -944,7 +1220,7 @@
         },
         {
             "file": "n.js",
-            "line": 282,
+            "line": 279,
             "description": "Converts an angle in degrees to radians.",
             "itemtype": "method",
             "name": "N.Rad",
@@ -964,7 +1240,7 @@
         },
         {
             "file": "n.js",
-            "line": 294,
+            "line": 291,
             "description": "Create a globally unique ID and return it as a string.",
             "itemtype": "method",
             "name": "N.GenerateUUID",
@@ -977,7 +1253,7 @@
         },
         {
             "file": "n.js",
-            "line": 321,
+            "line": 318,
             "description": "Add an error message and the path for the source of the object.",
             "itemtype": "method",
             "name": "Error",
@@ -1000,7 +1276,7 @@
         },
         {
             "file": "n.js",
-            "line": 333,
+            "line": 330,
             "description": "Add a warning message and the path for the source of the object.",
             "itemtype": "method",
             "name": "Warning",
@@ -1023,7 +1299,7 @@
         },
         {
             "file": "n.js",
-            "line": 344,
+            "line": 341,
             "description": "Write the report to the system log via N.L(), which is usually the console.log().",
             "itemtype": "method",
             "name": "WriteToLog",
@@ -1032,7 +1308,7 @@
         },
         {
             "file": "n.js",
-            "line": 368,
+            "line": 365,
             "description": "Add an object to the Objects dictionary",
             "itemtype": "method",
             "name": "Add",
@@ -1048,7 +1324,7 @@
         },
         {
             "file": "n.js",
-            "line": 378,
+            "line": 375,
             "description": "Get an object to the Objects dictionary",
             "itemtype": "method",
             "name": "Get",
@@ -1069,7 +1345,7 @@
         },
         {
             "file": "n.js",
-            "line": 389,
+            "line": 386,
             "description": "Remove the reference to the object to the Objects dictionary",
             "itemtype": "method",
             "name": "Remove",
@@ -1097,7 +1373,7 @@
         },
         {
             "file": "network.js",
-            "line": 41,
+            "line": 42,
             "description": "Returns the object type.",
             "itemtype": "method",
             "name": "GetType",
@@ -1110,7 +1386,7 @@
         },
         {
             "file": "network.js",
-            "line": 50,
+            "line": 51,
             "description": "Get the full path of the neuron.",
             "itemtype": "method",
             "name": "GetPath",
@@ -1123,7 +1399,7 @@
         },
         {
             "file": "network.js",
-            "line": 59,
+            "line": 60,
             "description": "Sets the parent network.",
             "itemtype": "method",
             "name": "SetParentNetwork",
@@ -1143,7 +1419,7 @@
         },
         {
             "file": "network.js",
-            "line": 70,
+            "line": 71,
             "description": "Get the parent network. This call is implemented by all network, neuron, and compartment objects.",
             "itemtype": "method",
             "name": "GetParent",
@@ -1156,7 +1432,20 @@
         },
         {
             "file": "network.js",
-            "line": 79,
+            "line": 80,
+            "description": "Get the the root/top level network.",
+            "itemtype": "method",
+            "name": "GetRoot",
+            "return": {
+                "description": "The root network object or self if this is the root.",
+                "type": "N.Network"
+            },
+            "class": "Network",
+            "module": "N"
+        },
+        {
+            "file": "network.js",
+            "line": 89,
             "description": "Adds a child network to the network.",
             "itemtype": "method",
             "name": "AddNetwork",
@@ -1175,7 +1464,7 @@
         },
         {
             "file": "network.js",
-            "line": 98,
+            "line": 108,
             "description": "Get number of networks directly owned by this network.",
             "itemtype": "method",
             "name": "GetNumNetworks",
@@ -1188,7 +1477,7 @@
         },
         {
             "file": "network.js",
-            "line": 107,
+            "line": 117,
             "description": "Get a network owned by this network by index.",
             "itemtype": "method",
             "name": "GetNetworkByIndex",
@@ -1208,7 +1497,7 @@
         },
         {
             "file": "network.js",
-            "line": 117,
+            "line": 127,
             "description": "Get a network owned by this network given the network short string.",
             "itemtype": "method",
             "name": "GetNetworkByName",
@@ -1228,7 +1517,7 @@
         },
         {
             "file": "network.js",
-            "line": 127,
+            "line": 137,
             "description": "Adds a neuron to the network.",
             "itemtype": "method",
             "name": "AddNeuron",
@@ -1247,7 +1536,7 @@
         },
         {
             "file": "network.js",
-            "line": 144,
+            "line": 154,
             "description": "Get number of neurons directly owned by this network.",
             "itemtype": "method",
             "name": "GetNumNeurons",
@@ -1260,7 +1549,7 @@
         },
         {
             "file": "network.js",
-            "line": 153,
+            "line": 163,
             "description": "Get a neuron owned by this network by index.",
             "itemtype": "method",
             "name": "GetNeuronByIndex",
@@ -1280,7 +1569,7 @@
         },
         {
             "file": "network.js",
-            "line": 163,
+            "line": 173,
             "description": "Get a neuron owned by this network given the neuron short string.",
             "itemtype": "method",
             "name": "GetNeuronByName",
@@ -1300,7 +1589,7 @@
         },
         {
             "file": "network.js",
-            "line": 173,
+            "line": 183,
             "description": "Add a connection and connect it immmediately.",
             "itemtype": "method",
             "name": "AddConnection",
@@ -1316,7 +1605,7 @@
         },
         {
             "file": "network.js",
-            "line": 184,
+            "line": 195,
             "description": "Get the number of connections owned by this network.",
             "itemtype": "method",
             "name": "GetNumConnections",
@@ -1329,7 +1618,7 @@
         },
         {
             "file": "network.js",
-            "line": 193,
+            "line": 204,
             "description": "Get a connection by index",
             "itemtype": "method",
             "name": "GetConnectionsByIndex",
@@ -1349,7 +1638,7 @@
         },
         {
             "file": "network.js",
-            "line": 203,
+            "line": 214,
             "description": "Get a connection given the connection path string.",
             "itemtype": "method",
             "name": "GetConnectionsByPath",
@@ -1369,7 +1658,7 @@
         },
         {
             "file": "network.js",
-            "line": 213,
+            "line": 224,
             "description": "Returns the full path from the top level network to this network.",
             "itemtype": "method",
             "name": "GetFullPath",
@@ -1382,7 +1671,7 @@
         },
         {
             "file": "network.js",
-            "line": 222,
+            "line": 252,
             "description": "Update the output of all child networks, neurons, and connections.",
             "itemtype": "method",
             "name": "Upate",
@@ -1402,7 +1691,7 @@
         },
         {
             "file": "network.js",
-            "line": 236,
+            "line": 271,
             "description": "Validates the network. Warns if there are no child networks or neurons. It will report an error if there are no networks\nor neurons but there are connections.",
             "itemtype": "method",
             "name": "Validate",
@@ -1421,7 +1710,7 @@
         },
         {
             "file": "network.js",
-            "line": 255,
+            "line": 297,
             "description": "Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -1507,7 +1796,16 @@
         },
         {
             "file": "neuron.js",
-            "line": 100,
+            "line": 93,
+            "description": "Calls each child compartment telling it to connect to any other compartment it requires communication with.",
+            "itemtype": "method",
+            "name": "ConnectCompartments",
+            "class": "Neuron",
+            "module": "N"
+        },
+        {
+            "file": "neuron.js",
+            "line": 111,
             "description": "Validates the neuron. Warns if there are no compartments.",
             "itemtype": "method",
             "name": "Validate",
@@ -1522,7 +1820,7 @@
         },
         {
             "file": "neuron.js",
-            "line": 110,
+            "line": 129,
             "description": "Load a neuron from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -1544,7 +1842,7 @@
             "file": "output-functions.js",
             "line": 1,
             "description": "File     : compartments.js\nProject  : N Simulator Library\nPurpose  : Source file for standard compartment objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
-            "class": "Comp.OutputFunc.ErrFuncSumWithMod",
+            "class": "Comp.OutputFunc.LinearSum",
             "module": "N"
         },
         {
@@ -1556,7 +1854,16 @@
         },
         {
             "file": "signal.js",
-            "line": 239,
+            "line": 163,
+            "description": "Writes the signal data to the log.",
+            "itemtype": "method",
+            "name": "WriteToLog",
+            "class": "AnalogSignal",
+            "module": "N"
+        },
+        {
+            "file": "signal.js",
+            "line": 250,
             "description": "Get the value of the signal at a given time.",
             "itemtype": "method",
             "name": "GetValue",
@@ -1576,7 +1883,7 @@
         },
         {
             "file": "signal.js",
-            "line": 371,
+            "line": 382,
             "description": "Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.",
             "itemtype": "method",
             "name": "LoadFrom",
@@ -1596,7 +1903,54 @@
         },
         {
             "file": "signal.js",
-            "line": 422,
+            "line": 407,
+            "description": "Creates a discrete square wave signal consisting of down and up parts. The length of down, up, the amplitude and offsets are all configurable.",
+            "itemtype": "method",
+            "name": "CreatePulseSignal",
+            "params": [
+                {
+                    "name": "durationOff",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "durationOn",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "signalLength",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "offset",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "amplitude",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "lowValue",
+                    "description": "",
+                    "type": "Real"
+                },
+                {
+                    "name": "startOn!~YUIDOC_LINE~!",
+                    "description": "@returns {N.DiscreteSignal}",
+                    "type": "Real",
+                    "multiple": true
+                }
+            ],
+            "class": "N.Signal",
+            "module": "N"
+        },
+        {
+            "file": "signal.js",
+            "line": 495,
             "description": "Returns the last low index found.",
             "return": {
                 "description": "",
@@ -1608,7 +1962,7 @@
         },
         {
             "file": "signal.js",
-            "line": 431,
+            "line": 504,
             "description": "Find the index in the array 'x' that is where the index is below xTarget and index+1 is above xTarget. If the target\nis before the beginning of the array then it returns -1. If it is beyond the end of the array it returns x.length-1.",
             "itemtype": "method",
             "name": "Find",
@@ -1643,15 +1997,35 @@
     "warnings": [
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " compartments.js:95"
+            "line": " compartments.js:134"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " connection.js:36"
+            "line": " compartments.js:336"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " connection.js:66"
+            "line": " compartments.js:350"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " compartments.js:492"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " connection.js:39"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " connection.js:48"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " connection.js:80"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " connection.js:109"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -1659,31 +2033,31 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:41"
+            "line": " network.js:42"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:50"
+            "line": " network.js:51"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:59"
+            "line": " network.js:60"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:70"
+            "line": " network.js:71"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:79"
+            "line": " network.js:80"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:98"
+            "line": " network.js:89"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:107"
+            "line": " network.js:108"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -1695,11 +2069,11 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:144"
+            "line": " network.js:137"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:153"
+            "line": " network.js:154"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -1707,23 +2081,27 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:184"
+            "line": " network.js:173"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:193"
+            "line": " network.js:195"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:203"
+            "line": " network.js:204"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:213"
+            "line": " network.js:214"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " network.js:255"
+            "line": " network.js:224"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " network.js:297"
         },
         {
             "message": "replacing incorrect tag: returns with return",
@@ -1739,23 +2117,23 @@
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " neuron.js:110"
+            "line": " neuron.js:129"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " signal.js:239"
+            "line": " signal.js:250"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " signal.js:371"
+            "line": " signal.js:382"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " signal.js:422"
+            "line": " signal.js:495"
         },
         {
             "message": "replacing incorrect tag: returns with return",
-            "line": " signal.js:431"
+            "line": " signal.js:504"
         },
         {
             "message": "Missing item type\nFile     : config.js\nProject  : N Simulator Library\nPurpose  : Source file for signal trace user interface objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/01\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
@@ -1835,7 +2213,7 @@
         },
         {
             "message": "Missing item type\nThe standard timestep for simulations - 1 millisecond",
-            "line": " n.js:276"
+            "line": " n.js:273"
         },
         {
             "message": "Missing item type\nFile     : network.js\nProject  : N Simulator Library\nPurpose  : Source file for neuron relate objects.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\n\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",
@@ -1855,7 +2233,7 @@
         },
         {
             "message": "Missing item type\nReturns the last low index found.",
-            "line": " signal.js:422"
+            "line": " signal.js:495"
         },
         {
             "message": "Missing item type\nFile     : stock-neurons.js\nProject  : N Simulator Library\nPurpose  : Source file for stock neuron object configurations.\nRevisions: Original definition by Lawrence Gunn.\n           2014/02/19\nCopyright (c) 2014 by Lawrence Gunn\nAll Rights Reserved.",

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Comp.OutputFunc.ErrFuncSumWithMod</title>
+    <title>N.Signal</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -120,7 +120,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Comp.OutputFunc.ErrFuncSumWithMod Class</h1>
+                        <h1>N.Signal Class</h1>
 <div class="box meta">
     
 
@@ -128,7 +128,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/output-functions.js.html#l54"><code>output-functions.js:54</code></a>
+            Defined in: <a href="../files/signal.js.html#l401"><code>signal.js:401</code></a>
         </div>
     
 
@@ -144,15 +144,59 @@
 
 
 <div class="box intro">
-    <p>Summing function with approximate error function type output curve with modulating input.</p>
+    <p>This is the N signal global functions.</p>
 
 </div>
 
 
-    <div class="constructor">
-        <h2>Constructor</h2>
-        <div id="method_Comp.OutputFunc.ErrFuncSumWithMod" class="method item">
-    <h3 class="name"><code>Comp.OutputFunc.ErrFuncSumWithMod</code></h3>
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+        
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+        
+        
+        
+        
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+            
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                        
+                            <li class="index-item method">
+                                <a href="#method_CreatePulseSignal">CreatePulseSignal</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
+
+            
+
+            
+
+            
+        </div>
+
+        
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+                
+                    <div id="method_CreatePulseSignal" class="method item">
+    <h3 class="name"><code>CreatePulseSignal</code></h3>
 
     
         <div class="args">
@@ -160,7 +204,43 @@
             
                 <li class="arg">
                     
-                        <code>A</code>
+                        <code>durationOff</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>durationOn</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>signalLength</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>offset</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>amplitude</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>lowValue</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>startOn!~YUIDOC_LINE~!</code>
                     
                 </li>
             
@@ -193,7 +273,7 @@
             
         
         
-        <a href="../files/output-functions.js.html#l54"><code>output-functions.js:54</code></a>
+        <a href="../files/signal.js.html#l407"><code>signal.js:407</code></a>
         
         </p>
 
@@ -204,7 +284,8 @@
     </div>
 
     <div class="description">
-        
+        <p>Creates a discrete square wave signal consisting of down and up parts. The length of down, up, the amplitude and offsets are all configurable.</p>
+
     </div>
 
     
@@ -215,14 +296,106 @@
             
                 <li class="param">
                     
-                        <code class="param-name">A</code>
-                        <span class="type">N.Comp.</span>
+                        <code class="param-name">durationOff</code>
+                        <span class="type">Real</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>component object that has a &#39;Main&#39; input source and a &#39;Modulator&#39; source.</p>
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">durationOn</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">signalLength</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">offset</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">amplitude</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">lowValue</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">startOn!~YUIDOC_LINE~!</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+                        <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
+                    
+
+                    <div class="param-description">
+                        <p>@returns {N.DiscreteSignal}</p>
 
                     </div>
 
@@ -236,54 +409,10 @@
     
 
     
-        <div class="example">
-            <h4>Example:</h4>
-
-            <div class="example-content">
-                <pre class="code prettyprint"><code>var template = {
-    Main: {
-        ComponentName: &#39;IP&#39;,
-        Gain: 0.5,
-        Threshhold: 0.0
-    },
-    Modulator: {
-        ComponentName: &#39;AIP&#39;,
-        Gain: 0.2,
-        Threshhold: 0.0
-    }
-}</code></pre>
-
-            </div>
-        </div>
-    
 </div>
 
-    </div>
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
+                
+            </div>
         
 
         

@@ -53,10 +53,22 @@ N.AnalogSignal = function(name, shortName) {
   this.Unit       = 'Hz';
 }
 
+/**
+ * Returns the minimum and maximum values in the signal.
+ * @method GetRange
+ * @returns {{Min: Real, Max: Real}}
+ */
 N.AnalogSignal.prototype.GetRange = function() {
   return { 'Min': this.Min, 'Max': this.Max };
 }
 
+/**
+ * Returns the value at a certain time. If the time is before the begining of the signal data then the value of the
+ * first element is returned. If it is after the end then the last value is returned. Values between times are linearly interpolated between them.
+ * @method GetValue
+ * @param time
+ * @returns {Real} The value.
+ */
 N.AnalogSignal.prototype.GetValue = function(time) {
   var t = time-this.Start;
   if(this.Times.length < 2) {
@@ -82,6 +94,12 @@ N.AnalogSignal.prototype.GetValue = function(time) {
   return value;
 }
 
+/**
+ * Returns the time at a given index.
+ * @method GetTimeByIndex
+ * @param index
+ * @returns {Real} Returns the time or 'undefined' if the index is out of range.
+ */
 N.AnalogSignal.prototype.GetTimeByIndex = function(index) {
   return this.Times[index];
 }
@@ -158,6 +176,17 @@ N.AnalogSignal.prototype.Average = function() {
   }
   var avg = sum/(tPrev-t0);
   return avg;
+}
+
+/**
+ * Writes the signal data to the log.
+ * @method WriteToLog
+ */
+N.AnalogSignal.prototype.WriteToLog = function() {
+  N.L('Signal: '+this.Times.length+' samples');
+  for(var i=0; i<this.Times.length; i++) {
+    N.L(_.str.sprintf('    t:%d  v:%5.3f', this.Times[i], this.Values[i]));
+  }
 }
 
 N.AnalogSignal.prototype.AvgAbsDeviation = function(otherSignal) {

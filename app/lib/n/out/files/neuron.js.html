@@ -49,6 +49,8 @@
             
                 <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.LinearSum.html">Comp.OutputFunc.LinearSum</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
             
                 <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
@@ -58,6 +60,10 @@
                 <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
+            
+                <li><a href="../classes/N.Comp.InputSink.html">N.Comp.InputSink</a></li>
+            
+                <li><a href="../classes/N.Signal.html">N.Signal</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
@@ -210,6 +216,17 @@ N.Neuron.prototype.GetNumCompartments = function() {
   return this.Compartments.length;
 }
 
+/**
+ * Calls each child compartment telling it to connect to any other compartment it requires communication with.
+ * @method ConnectCompartments
+ */
+N.Neuron.prototype.ConnectCompartments = function() {
+  var num = this.Compartments.length;
+  for(var i=0; i&lt;num; i++) {
+    this.Compartments[i].ConnectToCompartments();
+  }
+}
+
 N.Neuron.prototype.Update = function(time) {
   var num = this.Compartments.length;
   for(var i=0; i&lt;num; i++) {
@@ -224,7 +241,15 @@ N.Neuron.prototype.Update = function(time) {
  */
 N.Neuron.prototype.Validate = function(report) {
   if(this.Compartments.length === 0) { report.Warning(this.GetPath(), &#x27;The neuron has no components.&#x27;); }
-  for(var i=0; i&lt;this.Compartments.length; i++) { this.Compartments[i].Validate(report); }
+
+  for(var i=0; i&lt;this.Compartments.length; i++) {
+    try {
+      this.Compartments[i].Validate(report);
+    }
+    catch (err) {
+      report.Error(this.Compartments[i].GetPath(), &#x27;The compartment of type &#x27;+this.Compartments[i].ClassName+&#x27; threw an exception when validating.&#x27;);
+    }
+  }
 }
 
 /**

@@ -49,6 +49,8 @@
             
                 <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.LinearSum.html">Comp.OutputFunc.LinearSum</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
             
                 <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
@@ -58,6 +60,10 @@
                 <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
+            
+                <li><a href="../classes/N.Comp.InputSink.html">N.Comp.InputSink</a></li>
+            
+                <li><a href="../classes/N.Signal.html">N.Signal</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
@@ -151,6 +157,9 @@ N.Connection = function() {
   this.ConnectionPath = null;
   this.Source         = null;
   this.Sink           = null;
+  this.Output         = 0.0;
+  this.OutputStore    = new N.AnalogSignal(&#x27;OutputStore&#x27;, &#x27;OS&#x27;);
+  this.Delay          = 1;
 }
 
 /**
@@ -162,6 +171,21 @@ N.Connection.prototype.GetType = function() {
   return N.Type.Connection;
 }
 
+/**
+ * Returns the object type.
+ * @method GetPath
+ * @returns {N.Type.Connection}
+ */
+N.Connection.prototype.GetPath = function() {
+  return this.ConnectionPath;
+}
+
+/**
+ * Sets the parent network. This is called by the network, so there is usually no need to call this directly.
+ * @method SetNetwork
+ * @param {N.Network} network
+ * @constructor
+ */
 N.Connection.prototype.SetNetwork = function(network) {
   this.Network = network;
 }
@@ -173,14 +197,39 @@ N.Connection.prototype.SetNetwork = function(network) {
 N.Connection.prototype.Connect = function() {
   var endPoints = N.FromConnectionPaths(this.Network, this.ConnectionPath);
   if(!endPoints.error) {
-    endPoints.Source.ConnectOutput(this);
-    endPoints.Sink.ConnectInput(this);
+    this.Source = endPoints.Source.ConnectOutput(this);
+    this.Sink = endPoints.Sink.ConnectInput(this);
   }
   return this;
 }
 
+/**
+ * Returns the full path of the connection.
+ * @method GetConnectionPath
+ * @returns {String} The full path.
+ */
 N.Connection.prototype.GetConnectionPath = function() {
   return this.ConnectionPath;
+}
+
+/**
+ * Updates the connection output.
+ * @method Update
+ * @param {Real} t The time of the update.
+ */
+N.Connection.prototype.Update = function(t) {
+  this.Output = this.Gain*this.Source.GetOutputAt(t-this.Delay);
+  this.OutputStore.AppendData(t, this.Output);
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Connection.prototype.Validate = function(report) {
+  if(!this.Source) { report.Warning(this.GetPath(), &#x27;The connection has no source.&#x27;); }
+  if(!this.Sink)   { report.Warning(this.GetPath(), &#x27;The connection has no sink.&#x27;); }
 }
 
 /**

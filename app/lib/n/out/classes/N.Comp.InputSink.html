@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>AnalogSignal</title>
+    <title>N.Comp.InputSink</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -120,7 +120,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>AnalogSignal Class</h1>
+                        <h1>N.Comp.InputSink Class</h1>
 <div class="box meta">
     
 
@@ -128,7 +128,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/signal.js.html#l28"><code>signal.js:28</code></a>
+            Defined in: <a href="../files/compartments.js.html#l223"><code>compartments.js:223</code></a>
         </div>
     
 
@@ -144,19 +144,25 @@
 
 
 <div class="box intro">
-    <p>The analog signal class.</p>
+    <p>A component that acts as an end sink. It should have inputs but no outputs.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_AnalogSignal" class="method item">
-    <h3 class="name"><code>AnalogSignal</code></h3>
+        <div id="method_N.Comp.InputSink" class="method item">
+    <h3 class="name"><code>N.Comp.InputSink</code></h3>
 
     
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>neuron</code>
+                    
+                </li>
             
                 <li class="arg">
                     
@@ -199,7 +205,7 @@
             
         
         
-        <a href="../files/signal.js.html#l28"><code>signal.js:28</code></a>
+        <a href="../files/compartments.js.html#l223"><code>compartments.js:223</code></a>
         
         </p>
 
@@ -221,8 +227,23 @@
             
                 <li class="param">
                     
+                        <code class="param-name">neuron</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
                         <code class="param-name">name</code>
-                        <span class="type">String</span>
+                        <span class="type">Object</span>
                     
 
                     
@@ -237,7 +258,7 @@
                 <li class="param">
                     
                         <code class="param-name">shortName</code>
-                        <span class="type">String</span>
+                        <span class="type">Object</span>
                     
 
                     
@@ -284,7 +305,28 @@
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_WriteToLog">WriteToLog</a>
+                                <a href="#method_SumInputs">SumInputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_Update">Update</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_Validate">Validate</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_Validate">Validate</a>
 
                                 
                                 
@@ -306,11 +348,197 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_WriteToLog" class="method item">
-    <h3 class="name"><code>WriteToLog</code></h3>
+                    <div id="method_SumInputs" class="method item">
+    <h3 class="name"><code>SumInputs</code></h3>
 
     
         <span class="paren">()</span>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Real</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/compartments.js.html#l336"><code>compartments.js:336</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Sum the inputs.</p>
+
+    </div>
+
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Real</span>:
+                    
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_Update" class="method item">
+    <h3 class="name"><code>Update</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>t</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Real</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/compartments.js.html#l350"><code>compartments.js:350</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Update the output of the compartment.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">t</code>
+                        <span class="type">Real</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Time</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Real</span>:
+                    
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_Validate" class="method item">
+    <h3 class="name"><code>Validate</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>report</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
     
 
     
@@ -338,7 +566,7 @@
             
         
         
-        <a href="../files/signal.js.html#l163"><code>signal.js:163</code></a>
+        <a href="../files/compartments.js.html#l260"><code>compartments.js:260</code></a>
         
         </p>
 
@@ -349,10 +577,121 @@
     </div>
 
     <div class="description">
-        <p>Writes the signal data to the log.</p>
+        <p>Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.</p>
 
     </div>
 
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">report</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_Validate" class="method item">
+    <h3 class="name"><code>Validate</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>report</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/compartments.js.html#l360"><code>compartments.js:360</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">report</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
     
 
     

@@ -49,6 +49,8 @@
             
                 <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.LinearSum.html">Comp.OutputFunc.LinearSum</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
             
                 <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
@@ -58,6 +60,10 @@
                 <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
+            
+                <li><a href="../classes/N.Comp.InputSink.html">N.Comp.InputSink</a></li>
+            
+                <li><a href="../classes/N.Signal.html">N.Signal</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
@@ -144,10 +150,12 @@ N.Comp.GetTypeFunc = function() { return N.Type.Compartment; }
 
 N.Comp.ConnectOutput = function(connection) {
   this.OutputConnections.push(connection);
+  return this;
 }
 
 N.Comp.ConnectInput = function(connection) {
   this.InputConnections.push(connection);
+  return this;
 }
 
 N.Comp.GetNumInputConnections = function() {
@@ -162,6 +170,37 @@ N.Comp.GetPath = function() {
   return this.Neuron.GetPath()+&#x27;&gt;&#x27;+this.ShortName;
 }
 
+N.Comp.AddComparmentSink = function(compartment) {
+  this.CompartmentSinks.push(compartment);
+}
+
+N.Comp.GetNumComparmentSinks = function() {
+  return this.CompartmentSinks.length;
+}
+
+N.Comp.ConnectToCompartments = function() {
+  if(this.OutputLogic) {
+    for(var i in this.OutputLogic.Sources) {
+      var source = this.OutputLogic.Sources[i];
+      source.Compartment = this.Neuron.GetCompartmentByName(source.ComponentName);
+      source.Compartment.AddComparmentSink(this);
+      if(!source.Compartment) {
+        this.Neuron.Network.GetRoot().LinkReport.Error(this.GetPath(), &#x27;N.Comp.ConnectToCompartments: Unable to find component &#x27;+source.ComponentName);
+      }
+      if(!source.hasOwnProperty(&#x27;Delay&#x27;)) {
+        source.Delay = 1;
+      }
+    }
+  }
+}
+
+N.Comp.GetOutputAt = function(t) {
+  if(t &lt; this.OutputStore.TimeMin) {
+    return this.PreSignalOutput;
+  }
+  return this.OutputStore.GetValue(t);
+}
+
 N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
   constructorFunction.prototype.ConnectOutput = N.Comp.ConnectOutput;
@@ -169,12 +208,18 @@ N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetNumInputConnections = N.Comp.GetNumInputConnections;
   constructorFunction.prototype.GetNumOutputConnections = N.Comp.GetNumOutputConnections;
   constructorFunction.prototype.GetPath = N.Comp.GetPath;
+  constructorFunction.prototype.AddComparmentSink = N.Comp.AddComparmentSink;
+  constructorFunction.prototype.GetNumComparmentSinks = N.Comp.GetNumComparmentSinks;
+  constructorFunction.prototype.ConnectToCompartments = N.Comp.ConnectToCompartments;
+  constructorFunction.prototype.GetOutputAt = N.Comp.GetOutputAt;
 }
 
 N.Comp.Initialize = function(compartment) {
-  compartment.Signal = new N.AnalogSignal(&#x27;Output&#x27;, &#x27;OP&#x27;);
+  compartment.OutputStore = new N.AnalogSignal(&#x27;OutputStore&#x27;, &#x27;OS&#x27;);
   compartment.InputConnections = [];
   compartment.OutputConnections = [];
+  compartment.CompartmentSinks = [];
+  compartment.PreSignalOutput = 0.0;
 }
 
   //***************************
@@ -222,6 +267,7 @@ N.Comp.OutputFromSignal.prototype.Update = function(t) {
   if(this.Signal) {
     this.Output = this.Signal.GetValue(t);
   }
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
@@ -238,6 +284,7 @@ N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
 N.Comp.OutputFromSignal.prototype.Validate = function(report) {
   if(!this.Signal) { report.Warning(this.GetPath(), &#x27;Signal object is not set.&#x27;); }
   if(this.GetNumInputConnections() !== 0) { report.Warning(this.GetPath(), &#x27;Input connections to the output signal are ignored.&#x27;); }
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), &#x27;The output component has no output connections.&#x27;); }
 }
 
   //*****************
@@ -245,40 +292,108 @@ N.Comp.OutputFromSignal.prototype.Validate = function(report) {
   //*****************
 
 N.Comp.Output = function(neuron, name, shortName) {
-  this.ClassName  = &#x27;N.Comp.Output&#x27;;
-  this.Name       = name;
-  this.ShortName  = (shortName &amp;&amp; shortName.length &gt; 0 ? shortName : N.ShortName(name));
-  this.Category   = &#x27;Output&#x27;;
+  this.ClassName   = &#x27;N.Comp.Output&#x27;;
+  this.Name        = name;
+  this.ShortName   = (shortName &amp;&amp; shortName.length &gt; 0 ? shortName : N.ShortName(name));
+  this.Category    = &#x27;Output&#x27;;
 
-  this.Neuron     = neuron;
-  this.Output     = 0.0;
+  this.Neuron      = neuron;
+  this.Output      = 0.0;
   this.IsOutputComponent = true;
-  this.Inputs     = {};
-  this.UpdateFunction = N.Comp.UpdateFunc.Sum;
+  this.OutputLogic = null;
   N.Comp.Initialize(this);
 }
 
 N.Comp.Extend(N.Comp.Output);
-
-N.Comp.Output.prototype.ConnectToCompartments = function() {
-  for(var i in this.Inputs) {
-    var input = this.Inputs[i];
-    input.Compartment = this.Neuron.GetCompartmentByName(input.CompartmentName);
-  }
-}
 
 N.Comp.Output.prototype.AddInput = function(input) {
   this.Input = input;
 }
 
 N.Comp.Output.prototype.Update = function(t) {
-  if(this.Input) {
-    this.Output = this.Input.UpdateInput(t);
-  }
+  var main = this.OutputLogic.Sources.Main;
+  this.Output = main.Compartment.GetOutputAt(t-main.Delay);
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.Output.prototype.Validate = function(report) {
+  if(!this.OutputLogic) {
+    report.Error(this.GetPath(), &#x27;The OutputLogic object is not set.&#x27;);
+  } else if(!this.OutputLogic.OutputFunc) {
+    report.Error(this.GetPath(), &#x27;The OutputLogic\&#x27;s OutputFunc is not set.&#x27;);
+  }
+  else {
+    this.OutputLogic.OutputFunc.Validate(this, report);
+  }
+
+  if(this.GetNumInputConnections()  !== 0) { report.Warning(this.GetPath(), &#x27;Input connections to the output signal are ignored.&#x27;); }
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), &#x27;The output component has no output connections.&#x27;); }
+}
+
 N.Comp.Output.prototype.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
+}
+
+  //********************
+  //* N.Comp.InputSink *
+  //********************
+/**
+ * A component that acts as an end sink. It should have inputs but no outputs.
+ * @class N.Comp.InputSink
+ * @param neuron
+ * @param name
+ * @param shortName
+ * @constructor
+ */
+N.Comp.InputSink = function(neuron, name, shortName) {
+  this.ClassName   = &#x27;N.Comp.InputSink&#x27;;
+  this.Name        = name;
+  this.ShortName   = (shortName &amp;&amp; shortName.length &gt; 0 ? shortName : N.ShortName(name));
+  this.Category    = &#x27;Output&#x27;;
+
+  this.Neuron      = neuron;
+  this.Output      = 0.0;
+  this.IsOutputComponent = true;
+  this.OutputLogic = null;
+  N.Comp.Initialize(this);
+}
+
+N.Comp.Extend(N.Comp.InputSink);
+
+N.Comp.InputSink.prototype.AddInput = function(input) {
+  this.Input = input;
+}
+
+N.Comp.InputSink.prototype.Update = function(t) {
+  var len = this.InputConnections.length;
+  this.Output = 0.0;
+  for(var i=0; i&lt;len; i++) {
+    this.Output += this.InputConnections[i].Output;
+  }
+  this.OutputStore.AppendData(t, this.Output);
+  return this.Output;
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.InputSink.prototype.Validate = function(report) {
+  if(this.GetNumInputConnections()  === 0) { report.Warning(this.GetPath(), &#x27;The input sink has no input connections.&#x27;); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), &#x27;The input only component has output connections.&#x27;); }
+}
+
+N.Comp.InputSink.prototype.LoadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }
@@ -311,6 +426,7 @@ N.Comp.InhibitoryOutput.prototype.Update = function(t) {
   if(this.Input) {
     this.Output = this.Input.UpdateInput(t);
   }
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
@@ -343,13 +459,39 @@ N.Comp.LinearSummingInput.prototype.Connect = function(connection) {
   this.Connections.push(connection);
 }
 
-N.Comp.LinearSummingInput.prototype.SumInputs = function(t) {
-  var len = this.Connections.length;
+/**
+ * Sum the inputs.
+ * @method SumInputs
+ * @returns {Real}
+ */
+N.Comp.LinearSummingInput.prototype.SumInputs = function() {
+  var len = this.InputConnections.length;
   this.Sum = 0.0;
   for(var i=0; i&lt;len; i++) {
-    this.Sum += this.Connections[i].GetOutput();
+    this.Sum += this.InputConnections[i].Output;
   }
   return this.Sum;
+}
+
+/**
+ * Update the output of the compartment.
+ * @method Update
+ * @param {Real} t Time
+ * @returns {Real}
+ */
+N.Comp.LinearSummingInput.prototype.Update = function(t) {
+  this.OutputStore.AppendData(t, this.SumInputs());
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.LinearSummingInput.prototype.Validate = function(report) {
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), &#x27;The input component has output connections.&#x27;); }
+  if(this.GetNumInputConnections() === 0) { report.Warning(this.GetPath(), &#x27;The input component has no input connections.&#x27;); }
+  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.GetPath(), &#x27;The input component has no compartmental listeners.&#x27;); }
 }
 
 N.Comp.LinearSummingInput.prototype.LoadFrom = function(json) {
@@ -408,6 +550,17 @@ N.Comp.SignalInput.prototype.UpdateInput = function(t) {
   return this.Sum;
 }
 
+/**
+ * Validates the compartment.
+ * @method Validate
+ * @param report
+ */
+N.Comp.SignalInput.prototype.Validate = function(report) {
+  if(this.GetNumInputConnections() !== 0)  { report.Warning(this.GetPath(), &#x27;The component does not use input connections.&#x27;); }
+  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.GetPath(), &#x27;The component has no compartmental listeners.&#x27;); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), &#x27;The component has output connections. It is an not intended as an output component (but can be used that way)&#x27;); }
+}
+
 N.Comp.SignalInput.prototype.LoadFrom = function(json) {
   for(var i in json) {
     if(i === &#x27;SignalInput&#x27;) {
@@ -460,6 +613,27 @@ N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
     this.Sum += this.Connections[i].GetOutput();
   }
   return this.Sum;
+}
+
+/**
+ * Update the output of the compartment.
+ * @method Update
+ * @param {Real} t Time
+ * @returns {Real}
+ */
+N.Comp.AcetylcholineInput.prototype.Update = function(t) {
+  this.OutputStore.AppendData(t, this.SumInputs());
+}
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.AcetylcholineInput.prototype.Validate = function(report) {
+  if(this.GetNumInputConnections() === 0) { report.Warning(this.GetPath(), &#x27;The input component has no input connections.&#x27;); }
+  if(this.GetNumComparmentSinks() === 0) { report.Warning(this.GetPath(), &#x27;The input component has no compartmental listeners.&#x27;); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), &#x27;The input component has output connections.&#x27;); }
 }
 
 N.Comp.AcetylcholineInput.prototype.LoadFrom = function(json) {

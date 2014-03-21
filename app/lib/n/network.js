@@ -33,6 +33,7 @@ N.Network = function(parentNetwork) {
   this.Neurons             = [];
   this.NeuronsByName       = {};
   this.Connections         = [];
+  this.ConnectionsByPath   = {};
   this.ParentNetwork       = null;
   this.ChildNetworks       = [];
   this.ChildNetworksByName = {};
@@ -186,6 +187,7 @@ N.Network.prototype.GetNeuronByName = function(name) {
  */
 N.Network.prototype.AddConnection = function(connection) {
   this.Connections.push(connection);
+  this.ConnectionsByPath[connection.GetConnectionPath()] = connection;
   connection.SetNetwork(this);
   return connection;
 }

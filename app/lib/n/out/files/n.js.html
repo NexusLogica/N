@@ -49,6 +49,8 @@
             
                 <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.LinearSum.html">Comp.OutputFunc.LinearSum</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
             
                 <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
@@ -58,6 +60,10 @@
                 <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
+            
+                <li><a href="../classes/N.Comp.InputSink.html">N.Comp.InputSink</a></li>
+            
+                <li><a href="../classes/N.Signal.html">N.Signal</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
@@ -260,10 +266,7 @@ N.FromPath = function(network, path) {
 
   var currentObj = network;
   if (parts[0].charAt(0) === &#x27;/&#x27;) {
-    var next;
-    do {
-      next = currentObj.GetParent();
-    } while(next !== null);
+    currentObj = network.GetRoot();
   }
 
   for(var i in parts) {
@@ -465,13 +468,13 @@ N.ConfigurationReport.prototype.Warning = function(path, message) {
  * Write the report to the system log via N.L(), which is usually the console.log().
  * @method WriteToLog
  */
-N.ConfigurationReport.prototype.WriteToLog = function(path, message) {
+N.ConfigurationReport.prototype.WriteToLog = function(title) {
   if(this.Warnings.length === 0 &amp;&amp; this.Errors.length === 0) {
-    N.L(&#x27;Configuration report: No errors or warnings&#x27;);
+    N.L(title+&#x27;: No errors or warnings&#x27;);
   } else {
     var numErr = this.Errors.length;
     var numWarn = this.Warnings.length;
-    N.L(&#x27;Configuration report: &#x27;+numErr+&#x27; error&#x27;+(numErr === 1 ? &#x27;&#x27; : &#x27;s&#x27;) +&#x27; and &#x27;+this.Warnings.length+&#x27; warning&#x27;+(numWarn === 1 ? &#x27;&#x27; : &#x27;s&#x27;));
+    N.L(title+&#x27;: &#x27;+numErr+&#x27; error&#x27;+(numErr === 1 ? &#x27;&#x27; : &#x27;s&#x27;) +&#x27; and &#x27;+this.Warnings.length+&#x27; warning&#x27;+(numWarn === 1 ? &#x27;&#x27; : &#x27;s&#x27;));
     for(var i=0; i&lt;numErr; i++) { N.L(&#x27;    Error[&#x27;+this.Errors[i].Path+&#x27;]: &#x27;+this.Errors[i].Message); }
     for(i=0; i&lt;numWarn; i++)   { N.L(&#x27;    Warning[&#x27;+this.Warnings[i].Path+&#x27;]: &#x27;+this.Warnings[i].Message); }
   }

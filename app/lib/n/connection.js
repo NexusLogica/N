@@ -92,8 +92,8 @@ N.Connection.prototype.GetConnectionPath = function() {
  * @param {Real} t The time of the update.
  */
 N.Connection.prototype.Update = function(t) {
-  var sourceOutput = this.Source.GetOutputAt(t-this.Delay);
-  this.OutputStore.AppendData(t, sourceOutput);
+  this.Output = this.Gain*this.Source.GetOutputAt(t-this.Delay);
+  this.OutputStore.AppendData(t, this.Output);
 }
 
 /**

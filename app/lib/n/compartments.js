@@ -61,6 +61,9 @@ N.Comp.ConnectToCompartments = function() {
       if(!source.Compartment) {
         this.Neuron.Network.GetRoot().LinkReport.Error(this.GetPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
       }
+      if(!source.hasOwnProperty('Delay')) {
+        source.Delay = 1;
+      }
     }
   }
 }
@@ -138,6 +141,7 @@ N.Comp.OutputFromSignal.prototype.Update = function(t) {
   if(this.Signal) {
     this.Output = this.Signal.GetValue(t);
   }
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
@@ -181,9 +185,9 @@ N.Comp.Output.prototype.AddInput = function(input) {
 }
 
 N.Comp.Output.prototype.Update = function(t) {
-  if(this.Input) {
-    this.Output = this.Input.UpdateInput(t);
-  }
+  var main = this.OutputLogic.Sources.Main;
+  this.Output = main.Compartment.GetOutputAt(t-main.Delay);
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
@@ -244,9 +248,12 @@ N.Comp.InputSink.prototype.AddInput = function(input) {
 }
 
 N.Comp.InputSink.prototype.Update = function(t) {
-  if(this.Input) {
-    this.Output = this.Input.UpdateInput(t);
+  var len = this.InputConnections.length;
+  this.Output = 0.0;
+  for(var i=0; i<len; i++) {
+    this.Output += this.InputConnections[i].Output;
   }
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
@@ -293,6 +300,7 @@ N.Comp.InhibitoryOutput.prototype.Update = function(t) {
   if(this.Input) {
     this.Output = this.Input.UpdateInput(t);
   }
+  this.OutputStore.AppendData(t, this.Output);
   return this.Output;
 }
 
@@ -331,10 +339,10 @@ N.Comp.LinearSummingInput.prototype.Connect = function(connection) {
  * @returns {Real}
  */
 N.Comp.LinearSummingInput.prototype.SumInputs = function() {
-  var len = this.Connections.length;
+  var len = this.InputConnections.length;
   this.Sum = 0.0;
   for(var i=0; i<len; i++) {
-    this.Sum += this.Connections[i].GetOutput();
+    this.Sum += this.InputConnections[i].Output;
   }
   return this.Sum;
 }
@@ -479,6 +487,16 @@ N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
     this.Sum += this.Connections[i].GetOutput();
   }
   return this.Sum;
+}
+
+/**
+ * Update the output of the compartment.
+ * @method Update
+ * @param {Real} t Time
+ * @returns {Real}
+ */
+N.Comp.AcetylcholineInput.prototype.Update = function(t) {
+  this.OutputStore.AppendData(t, this.SumInputs());
 }
 
 /**

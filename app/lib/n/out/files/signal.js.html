@@ -49,6 +49,8 @@
             
                 <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.LinearSum.html">Comp.OutputFunc.LinearSum</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
             
                 <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
@@ -58,6 +60,10 @@
                 <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
+            
+                <li><a href="../classes/N.Comp.InputSink.html">N.Comp.InputSink</a></li>
+            
+                <li><a href="../classes/N.Signal.html">N.Signal</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
@@ -280,6 +286,17 @@ N.AnalogSignal.prototype.Average = function() {
   return avg;
 }
 
+/**
+ * Writes the signal data to the log.
+ * @method WriteToLog
+ */
+N.AnalogSignal.prototype.WriteToLog = function() {
+  N.L(&#x27;Signal: &#x27;+this.Times.length+&#x27; samples&#x27;);
+  for(var i=0; i&lt;this.Times.length; i++) {
+    N.L(_.str.sprintf(&#x27;    t:%d  v:%5.3f&#x27;, this.Times[i], this.Values[i]));
+  }
+}
+
 N.AnalogSignal.prototype.AvgAbsDeviation = function(otherSignal) {
   var tMinSelf = this.Times[0];
   var tMinOth  = otherSignal.Times[0];
@@ -404,7 +421,7 @@ N.DiscreteSignal.prototype.AppendData = function(time, newState) {
   }
   if(this.Times.length &gt; 1) {
     if(this.Times[this.Times.length-2] === time) {
-      N.LogError(&#x27;N.AnalogSignal.AppendData&#x27;, &#x27;Times &#x27;+(this.Times.length-2)+&#x27; and &#x27;+(this.Times.length-1)+&#x27; are equal with value &#x27;+time+&#x27;.&#x27;);
+      N.L(&#x27;ERROR: N.AnalogSignal.AppendData: Times &#x27;+(this.Times.length-2)+&#x27; and &#x27;+(this.Times.length-1)+&#x27; are equal with value &#x27;+time+&#x27;.&#x27;);
       throw new Error(&#x27;N.AnalogSignal.AppendData sequence issue&#x27;);
     }
     this.TimeMax = time;
@@ -506,6 +523,68 @@ N.DiscreteSignal.prototype.LoadFrom = function(json) {
 
   return this;
 }
+
+/**
+ * This is the N signal global functions.
+ * @class N.Signal
+ */
+N.Signal = N.Signal || {};
+
+/**
+ * Creates a discrete square wave signal consisting of down and up parts. The length of down, up, the amplitude and offsets are all configurable.
+ * @method CreatePulseSignal
+ * @param {Real} durationOff
+ * @param {Real} durationOn
+ * @param {Real} signalLength
+ * @param {Real} offset
+ * @param {Real} amplitude
+ * @param {Real} lowValue
+ * @param {Real} startOn
+ * * @returns {N.DiscreteSignal}
+ */
+N.Signal.CreatePulseSignal = function(conf) {
+  var durationOff       = conf.durationOff,
+      durationOn        = conf.durationOn,
+      signalLength      = conf.signalLength,
+      offset            = conf.hasOwnProperty(&#x27;offset&#x27;)    ? conf.offset : 0.0,
+      amplitude         = conf.hasOwnProperty(&#x27;amplitude&#x27;) ? conf.amplitude : 1.0,
+      lowValue          = conf.hasOwnProperty(&#x27;lowValue&#x27;)  ? conf.lowValue : 0.0,
+      startOn           = conf.hasOwnProperty(&#x27;startOn&#x27;)   ? conf.startOn : false
+  var signal = new N.DiscreteSignal();
+  var timeOffset = offset;
+  var time = -timeOffset;
+  var on = startOn;
+
+  // Find the start time.
+  if(offset !== 0.0) {
+    while(true) {
+      if(time+(on ? durationOn : durationOff) &gt; 0.0) {
+        signal.AppendData(0.0, (on ? amplitude : 0.0));
+        time += (on ? durationOn : durationOff);
+        on = !on;
+        break;
+      }
+      time += (on ? durationOn : durationOff);
+      on = !on;
+    }
+  }
+
+  while(true) {
+    signal.AppendData(time, (on ? amplitude : 0.0));
+    time += (on ? durationOn : durationOff);
+    if(time === signalLength) {
+      break;
+    }
+    else if(time &gt; signalLength) {
+      signal.AppendData(signalLength, (on ? amplitude : 0.0));
+      break;
+    }
+    on = !on;
+  }
+  return signal;
+}
+
+
 
   //*******************
   //* N.SignalCompare *

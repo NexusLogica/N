@@ -49,6 +49,8 @@
             
                 <li><a href="../classes/Comp.OutputFunc.ErrFuncSumWithMod.html">Comp.OutputFunc.ErrFuncSumWithMod</a></li>
             
+                <li><a href="../classes/Comp.OutputFunc.LinearSum.html">Comp.OutputFunc.LinearSum</a></li>
+            
                 <li><a href="../classes/Comp.SignalInput.html">Comp.SignalInput</a></li>
             
                 <li><a href="../classes/ConfigurationReport.html">ConfigurationReport</a></li>
@@ -58,6 +60,10 @@
                 <li><a href="../classes/DiscreteSignal.html">DiscreteSignal</a></li>
             
                 <li><a href="../classes/N.html">N</a></li>
+            
+                <li><a href="../classes/N.Comp.InputSink.html">N.Comp.InputSink</a></li>
+            
+                <li><a href="../classes/N.Signal.html">N.Signal</a></li>
             
                 <li><a href="../classes/Network.html">Network</a></li>
             
@@ -153,6 +159,7 @@ N.Network = function(parentNetwork) {
   this.Neurons             = [];
   this.NeuronsByName       = {};
   this.Connections         = [];
+  this.ConnectionsByPath   = {};
   this.ParentNetwork       = null;
   this.ChildNetworks       = [];
   this.ChildNetworksByName = {};
@@ -194,6 +201,15 @@ N.Network.prototype.SetParentNetwork = function(parentNetwork) {
  */
 N.Network.prototype.GetParent = function() {
   return this.ParentNetwork;
+}
+
+/**
+ * Get the the root/top level network.
+ * @method GetRoot
+ * @returns {N.Network} The root network object or self if this is the root.
+ */
+N.Network.prototype.GetRoot = function() {
+  return this.ParentNetwork ? this.ParentNetwork.GetRoot() : this;
 }
 
 /**
@@ -297,6 +313,7 @@ N.Network.prototype.GetNeuronByName = function(name) {
  */
 N.Network.prototype.AddConnection = function(connection) {
   this.Connections.push(connection);
+  this.ConnectionsByPath[connection.GetConnectionPath()] = connection;
   connection.SetNetwork(this);
   return connection;
 }
@@ -339,6 +356,25 @@ N.Network.prototype.GetFullPath = function() {
   return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : &#x27;&#x27;) + &#x27;/&#x27; + this.ShortName;
 }
 
+N.Network.prototype.Link = function() {
+  this.LinkReport = new N.ConfigurationReport();
+  this.Connect();
+  return this.LinkReport;
+}
+
+N.Network.prototype.Connect = function() {
+  var numConnections = this.Connections.length;
+  for(var i=0; i&lt;numConnections; i++) {
+    this.Connections[i].Connect();
+  }
+
+  var num = this.Neurons.length;
+  for(var i=0; i&lt;num; i++) {
+    this.Neurons[i].ConnectCompartments();
+  }
+  return this;
+}
+
 /**
  * Update the output of all child networks, neurons, and connections.
  * @method Upate
@@ -346,6 +382,11 @@ N.Network.prototype.GetFullPath = function() {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.Update = function(time) {
+  var numConnections = this.Connections.length;
+  for(var i=0; i&lt;numConnections; i++) {
+    this.Connections[i].Update(time);
+  }
+
   var num = this.Neurons.length;
   for(var i=0; i&lt;num; i++) {
     this.Neurons[i].Update(time);
@@ -368,7 +409,14 @@ N.Network.prototype.Validate = function(report) {
 
   for(var i=0; i&lt;this.ChildNetworks.length; i++) { this.ChildNetworks[i].Validate(report); }
   for(i=0; i&lt;this.Neurons.length; i++)           { this.Neurons[i].Validate(report); }
-  for(i=0; i&lt;this.Connections.length; i++)       { this.Connections[i].Validate(report); }
+  for(i=0; i&lt;this.Connections.length; i++) {
+    try {
+      this.Connections[i].Validate(report);
+    }
+    catch (err) {
+      report.Error(this.Connections[i].GetConnectionPath(), &#x27;The connection of type &#x27;+this.Connections[i].ClassName+&#x27; threw an exception when validating.&#x27;);
+    }
+  }
   return report;
 }
 

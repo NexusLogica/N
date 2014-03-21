@@ -8,6 +8,7 @@
   <script src="../../app/lib/qunit/qunit.js"></script>
   <script src="../../app/lib/json2.js"></script>
   <script src="../../app/lib/lodash/dist/lodash.js"></script>
+  <script src="../../app/lib/underscore.string/lib/underscore.string.js"></script>
   <script src="../../app/lib/n/n.js"></script>
   <script src="../../app/lib/n/signal.js"></script>
   <script src="../../app/lib/n/network.js"></script>
@@ -77,10 +78,11 @@
 
     equal(network.GetNumNeurons(), 0, 'No initial neurons');
 
+    var cycles = 100;
+
     var newNeuron = new N.Neuron(network);
     network.AddNeuron(newNeuron.LoadFrom({ Template: SourceTemplate, Name: 'Neuron1', ShortName: 'N1' }));
-    newNeuron.GetCompartmentByName('OP').SetSignal((new N.DiscreteSignal()).LoadFrom({
-      DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]}));
+    newNeuron.GetCompartmentByName('OP').SetSignal(N.Signal.CreatePulseSignal({ durationOff: 10, durationOn: 10, signalLength: cycles, offset: 0.0, amplitude: 0.50, lowValue: 0.1}));
 
     newNeuron = new N.Neuron(network);
     network.AddNeuron(newNeuron.LoadFrom({ Template: SpinyNeuronTemplate, Name: 'Neuron2', ShortName: 'N2' }));
@@ -92,7 +94,7 @@
     network.AddConnection(connectionSource);
 
     var connectionSink = new N.Connection(network);
-    connectionSink.LoadFrom({ ConnectionPath: ':N2>OP->:N3>IS', Gain: 1.0, Delay: 2 });
+    connectionSink.LoadFrom({ ConnectionPath: ':N2>OP->:N3>IS', Gain: 1.5, Delay: 2 });
     network.AddConnection(connectionSink);
 
     var linkReport = network.Link();
@@ -105,13 +107,24 @@
     equal(report.Errors.length, 0, 'Expect no errors');
     report.WriteToLog('Configuration report');
 
-    network.Update(0);
-/*
-    equal(network.GetNumConnections(), 1, 'One connection');
-    equal(network.GetConnectionByIndex(0), connection, 'Get the connection');
-    equal(connection.Source, network.GetNeuronByName('N1').GetCompartmentByName('SRC'), 'Source compartment is correct');
-    equal(connection.Sink, network.GetNeuronByName('N2').GetCompartmentByName('IP'), 'Sink compartment is correct');
-*/
+    for(var i=0; i<cycles; i++) {
+      network.Update(i);
+    }
+
+    var cn1n2 = network.GetConnectionsByPath(':N1>OP->:N2>IP');
+    var cn1n2Signal = cn1n2.OutputStore;
+    equal(cn1n2Signal.GetNumSamples(), 100, 'Number of N1->N2 input samples stored');
+    QUnit.assert.near(cn1n2Signal.Average(), 0.45, 0.02, 'Average output of connection N1 to N2');
+
+    var n2Ip = network.GetNeuronByName('N2').GetCompartmentByName('IP');
+    var n2IpSignal = n2Ip.OutputStore;
+    equal(n2IpSignal.GetNumSamples(), 100, 'Number of N2 input samples stored');
+    QUnit.assert.near(n2IpSignal.Average(), 0.45, 0.02, 'Average output of N2 input to N2 output');
+
+    var is = network.GetNeuronByName('N3').GetCompartmentByName('IS');
+    var isSignal = is.OutputStore;
+    equal(isSignal.GetNumSamples(), 100, 'Number of output samples stored');
+    QUnit.assert.near(isSignal.Average(), 0.63, 0.02, 'Average output');
   });
 
   test("Network load test", function() {
