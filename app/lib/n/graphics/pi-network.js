@@ -24,7 +24,8 @@ N.UI.PiNetwork = function() {
   this.Y = 0;
   this._set = null;
   this.Scale = 100.0;
-  this._piNeurons = {};
+  this.Graphics = [];
+  this.GraphicsByName = {};
 }
 
 N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
@@ -33,11 +34,7 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
   this._group.translate(this.X, this.Y);
 
   this.Scale = scale;
-
-  this.Grid = _.clone(this._network.Display.Grid);
-  for(var i=0; i<this.Grid.length; i++) {
-    this.Grid[this.Grid[i].RowId] = this.Grid[i];
-  }
+  this.Rows = _.clone(this._network.Display.Rows);
 
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
@@ -45,35 +42,55 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
   this._group.attr({ class: classNameFull });
 
   var w = this.Width*this.Scale, h = this.Height*this.Scale;
+  this.Rect = { Left: -0.5*w, Top: -0.5*h, Right: 0.5*w, Bottom: 0.5*h };
+
   this._outerRect = this._group.rect(w, h)
-      .radius(2)
-      .move(-0.5*w, -0.5*h)
-      .attr({ class: 'single'});
+    .radius(2)
+    .move(this.Rect.Left, this.Rect.Top)
+    .attr({ class: 'single'});
 
-  for(var i in this._network.Display.Neurons) {
-    var position = this._network.Display.Neurons[i];
-    var neuron = this._network.NeuronsByName[i];
+  for(var i in this._network.Display.Rows) {
+    var row = this._network.Display.Rows[i];
+    var spacing = row.Spacing;
+    var numColumns = row.Cols.length;
+    var rowY = row.y*this.Scale;
 
-    var template = neuron.Display.Template;
-    var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, scale*neuron.Display.Radius);
-    piGraphic.NeuronClassName = neuron.ShortName;
-    this._piNeurons[i] = { neuron: neuron, piGraphic: piGraphic };
+    for(var j=0; j<numColumns; j++) {
+      var col = row.Cols[j];
+      if(col.Name) {
+        var neuron = this._network.GetNeuronByName(col.Name);
+        if(neuron && neuron.Display) {
+          var template = neuron.Display.Template;
+          var radius = scale*neuron.Display.Radius;
+          var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
+          graphic.NeuronClassName = neuron.ShortName;
+          this.Graphics.push(graphic);
+          this.GraphicsByName[neuron.ShortName] = graphic;
 
+          graphic.X = this.Scale*(j*spacing-0.5*spacing*(numColumns-1));
+          graphic.Y = row.Y*this.Scale;
+          graphic.Radius = radius;
+          graphic.Row = i;
+          graphic.Col = j;
 
-    var row = this.Grid[position.Row];
-    piGraphic.Y = row.Y*this.Scale;
-
-    var sep = row.Spacing;
-    var cols = row.NumPoints;
-    var startX = position.Col*sep-0.5*sep*(cols-1);
-
-    piGraphic.X = startX*this.Scale;
-    piGraphic.Render(neuron, this._group);
+          graphic.Render(neuron, this._group);
+        }
+      }
+    }
   }
 
   this._label = this._group.plain(this._network.ShortName).move(-0.5*w+6, -0.5*h+3);
+
+  this.Router = new N.UI.Router(this);
+  this.Router.BuildRoutingGrid();
 }
 
+/**
+ * Returns the svg.js group object that contains the network and all of its contents.
+ * @method GetGroup
+ * @returns {SVG.Group}
+ * @constructor
+ */
 N.UI.PiNetwork.prototype.GetGroup = function() {
   return this._group;
 }
@@ -85,16 +102,7 @@ N.UI.PiNetwork.prototype.SetScale = function(scale) {
 
 N.UI.PiNetwork.prototype.LoadFrom = function(json) {
   for(var i in json) {
-    if(i === 'Neurons') {
-      for(var j=0; j<json.Neurons.length; j++) {
-        var neuronJson = json.Neurons[j];
-        var neuron = N.NewN(neuronJson.ClassName).LoadFrom(neuronJson);
-        this.Neurons.push(neuron);
-      }
-    }
-    else {
-      this[i] = json[i];
-    }
+    this[i] = json[i];
   }
 
   return this;

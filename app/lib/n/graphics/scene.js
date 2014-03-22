@@ -57,7 +57,7 @@ N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, 
 }
 
 N.UI.Scene.Network.prototype.Render = function(svgParent) {
-  this.Scale = this.Fit(svgParent);
+ // this.Scale = this.Fit(svgParent);
   this.NetworkGraphic.Render(this.Network, svgParent, this.Scale);
 }
 

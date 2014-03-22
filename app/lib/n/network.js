@@ -311,6 +311,10 @@ N.Network.prototype.LoadFrom = function(json) {
         this.NeuronsByName[neuron.ShortName] = neuron;
       }
     }
+    else if(i === 'Display') {
+      this.Display = {};
+      _.merge(this.Display, json[i]);
+    }
     else {
       this[i] = json[i];
     }

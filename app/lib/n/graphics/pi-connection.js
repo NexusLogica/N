@@ -1,10 +1,10 @@
 /**********************************************************************
 
-File     : pi-neuron.js
+File     : pi-connection.js
 Project  : N Simulator Library
-Purpose  : Source file for manufacturing, rendering, and controlling Pi representations of neurons.
+Purpose  : Source file for manufacturing, rendering, and controlling Pi representations of connections.
 Revisions: Original definition by Lawrence Gunn.
-           2014/02/23
+           2014/03/22
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -15,11 +15,11 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-  //*****************
-  //* N.UI.PiNeuron *
-  //*****************
+  //*********************
+  //* N.UI.PiConnection *
+  //*********************
 
-N.UI.PiNeuron = function() {
+N.UI.PiConnection = function() {
   this.X = 0;
   this.Y = 0;
   this._set = null;
@@ -28,7 +28,7 @@ N.UI.PiNeuron = function() {
   this.Neuron = null;
 }
 
-N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
+N.UI.PiConnection.prototype.Render = function(neuron, svgParent) {
   this.Neuron = neuron;
   this._group = svgParent.group();
   var classNameFull = 'pi-neuron';
@@ -60,7 +60,7 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this._group.translate(this.X, this.Y);
 }
 
-N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
+N.UI.PiConnection.prototype.AddEventHandlers = function(piCompartment) {
   var node = piCompartment.path.node;
   jQuery.data(node, 'piCompartment', piCompartment);
 
@@ -80,19 +80,19 @@ N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
   });
 }
 
-N.UI.PiNeuron.prototype.GetGroup = function() {
+N.UI.PiConnection.prototype.GetGroup = function() {
   return this._group;
 }
 
   //************************
-  //* N.UI.PiNeuronFactory *
+  //* N.UI.PiConnectionFactory *
   //************************
 
-N.UI.PiNeuronFactory = (function() {
+N.UI.PiConnectionFactory = (function() {
   var defaultPadding = 0.02;
   var factories = {};
 
-  function CreatePiNeuron(templateName, radius) {
+  function CreatePiConnection(templateName, radius) {
     var decaRadius = parseInt(radius, 10);
     if(decaRadius === 0) { decaRadius = 10; }
 
@@ -236,7 +236,7 @@ N.UI.PiNeuronFactory = (function() {
       if(!filledTemplate) {
         BuildFromTemplate();
       }
-      var pin = new N.UI.PiNeuron();
+      var pin = new N.UI.PiConnection();
 
       _.assign(pin, _.cloneDeep(filledTemplate));
       return pin;
@@ -263,6 +263,6 @@ N.UI.PiNeuronFactory = (function() {
   }
 
   return {
-    CreatePiNeuron:CreatePiNeuron
+    CreatePiConnection:CreatePiConnection
   }
 })();

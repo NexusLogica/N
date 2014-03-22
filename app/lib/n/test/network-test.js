@@ -148,14 +148,15 @@ N.NetworkTest.TestConfigurations = [{
     Display: {
       Width: 3.2,
       Height: 1.2,
-      Grid: [
-        { RowId: 'main', NumPoints: 3, Spacing: 1.0, Y: 0.0 }
-      ],
-      Neurons: {
-        'Input'       : { Row: 'main', Col: 0 },
-        'RelayNeuron' : { Row: 'main', Col: 1 },
-        'Output'      : { Row: 'main', Col: 2 }
-      }
+      Rows: [
+        { RowId: 'main', NumPoints: 3, Spacing: 1.0, Y: 0.0,
+          Cols: [
+            { Name: 'IP' },
+            { Name: 'RN' },
+            { Name: 'OP' }
+          ]
+        }
+      ]
     }
   }
 },{
@@ -190,21 +191,27 @@ N.NetworkTest.TestConfigurations = [{
     Display: {
       Width: 4.2,
       Height: 1.5,
-      Grid: [
-        { RowId: 'top',    NumPoints: 5,  Spacing: 0.8, Y: -0.2 },
-        { RowId: 'bottom', NumPoints: 4, Spacing: 0.6, Y: 0.4 }
-      ],
-      Neurons: {
-        'SpinyStellate1'  : { Row: 'top', Col: 0 },
-        'SpinyStellate2'  : { Row: 'top', Col: 1 },
-        'SpinyStellate3'  : { Row: 'top', Col: 2 },
-        'SpinyStellate4'  : { Row: 'top', Col: 3 },
-        'SpinyStellate5'  : { Row: 'top', Col: 4 },
-        'Inhibitory1'     : { Row: 'bottom', Col: 0 },
-        'Inhibitory2'     : { Row: 'bottom', Col: 1 },
-        'Inhibitory3'     : { Row: 'bottom', Col: 2 },
-        'Inhibitory4'     : { Row: 'bottom', Col: 3 }
-      }
+      Rows: [
+        {
+          RowId: 'top', NumCol: 5,  Spacing: 0.8, Y: -0.2,
+          Cols: [
+            { Name: 'SS1' },
+            { Name: 'SS2' },
+            { Name: 'SS3' },
+            { Name: 'SS4' },
+            { Name: 'SS5' }
+          ]
+        },
+        {
+          RowId: 'bottom', NumPoints: 4, Spacing: 0.6,  Y:  0.4,
+          Cols: [
+            { Name: 'IN1' },
+            { Name: 'IN2' },
+            { Name: 'IN3' },
+            { Name: 'IN4' }
+          ]
+        }
+      ]
     }
   }
 

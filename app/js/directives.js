@@ -22,27 +22,6 @@ nSimAppDirectives.directive('xxxxnSignalId', [function() {
     }
   }]);
 
-nSimAppDirectives.directive('piCanvas', function() {
-  function link($scope, $element, $attrs) {
-    var width = $($element[0]).width();
-    var height = $($element[0]).height();
-    var sceneId = $attrs.piSceneId;
-    $($element[0]).width(width).height(height);
-    $scope.svg = SVG($element[0]).size(width, height);
-    $scope.$parent.renderer = new N.UI.PiCanvasRenderer();
-    $scope.$parent.renderer.Configure($scope.svg, sceneId);
-    $scope.$parent.renderer.Render();
-  }
-
-  return {
-    restrict: 'AE',
-    transclude: true,
-    scope: { title:'@' },
-    link: link
-  };
-});
-
-
 // The slide stop event.
 nSimAppDirectives.directive(
   'nSlidestop',

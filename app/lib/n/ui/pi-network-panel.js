@@ -52,22 +52,23 @@ nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
     }
 
     $scope.onCompartmentClick = function(event, piCompartment) {
+      var classes, str;
       if($scope.Current.SelectedCompartment) {
         var path = $scope.Current.SelectedCompartment.path;
-        var classes = path.attr('class').split(' ');
-        var str = _.without(classes, 'selected').join(' ');
+        classes = path.attr('class').split(' ');
+        str = _.without(classes, 'selected').join(' ');
         path.attr( { 'class': str });
       }
       $scope.Current.Selected = $scope.GetCompartmentPath(piCompartment.CompartmentObj);
       $scope.Current.SelectedCompartment = piCompartment;
-      var classes = piCompartment.path.attr('class').split(' ');
-      var str = _.union(classes, ['selected']).join(' ');
+      classes = piCompartment.path.attr('class').split(' ');
+      str = _.union(classes, ['selected']).join(' ');
       piCompartment.path.attr( { 'class': str });
       $scope.$digest();
     }
 
     $scope.GetCompartmentPath = function(compartment) {
-      return compartment.Neuron.Network.GetFullPath()+':'+compartment.Neuron.ShortName+'.'+compartment.ShortName;
+      return compartment.Neuron.Network.GetFullPath()+':'+compartment.Neuron.ShortName+'>'+compartment.ShortName;
     }
   }
 ]);

@@ -484,3 +484,29 @@ textarea {
     margin-left:30px;
   }
 }
+
+//*****************************
+// Network scene
+
+.pi-connection-test {
+  .pi-network-panel {
+    .pi-canvas {
+      height: 500px;
+      padding: 0px 0px;
+    }
+
+    .pi-canvas-column {
+      .path {
+        margin: 5px 5px 5px 10px;
+        color: gray;
+        height: 20px;
+      }
+    }
+
+    .pi-network-console {
+      height: 200px;
+      border: gray 1px solid;
+      margin-left:30px;
+    }
+  }
+}
