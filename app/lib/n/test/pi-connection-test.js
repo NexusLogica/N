@@ -139,23 +139,38 @@ N.Test.PiConnectionCreator = function(networkUI) {
 N.Test.PiConnectionCreator.prototype.Render = function() {
   var group = this.NetworkUI.GetGroup();
   var rect = this.NetworkUI.Rect;
-  var gridPath = [
-    { Src:'SS41>OP' },
-    { SrcOffset:'SS41>OP' },
-    { Coord:'4 3 1' },
-    { Coord:'1 0 1' },
-    { SrcOffset:'SS13>OP' },
-    { Src:'SS13>OP' }
+  var gridPath1 = [
+    { Src:'SS41>OP'  },
+    { SrcOffset:'SS41>OP', Offset: 'Bottom 1' },
+    { Coord:'4 3 1', Offset: 'Left 1 Bottom 1'},
+    { Coord:'0 0 1', Offset: 'Left 1' },
+    { Terminal: 0.0, Sink:'SS13>IP', Angle: 210 }
   ];
-  var router = this.NetworkUI.Router;
+  var gridPath2 = [
+    { Src:'SS41>OP' },
+    { SrcOffset:'SS41>OP', Offset: 'Bottom -1' },
+    { Coord:'4 3 1', Offset: 'Right 1 Bottom -1'},
+    { Coord:'0 0 1', Offset: 'Right 1' },
+    { Terminal: 0.0, Sink:'SS13>IP', Angle: 210 }
+  ];
 
+  this.RenderConnection(gridPath1);
+  this.RenderConnection(gridPath2);
+}
+
+N.Test.PiConnectionCreator.prototype.RenderConnection = function(gridPath) {
+
+  var router = this.NetworkUI.Router;
   var points = [];
   for(var i=0; i<gridPath.length; i++) {
-    var point = router.GetPoint(gridPath[i]);
-    points.push(point);
+    var gridPoints = router.GetPoint(gridPath[i]);
+    for(var j=0; j<gridPoints.length; j++) { points.push(gridPoints[j]); }
   }
 
+  // The first point is unchanged.
   var newPoints = [points[0]];
+
+  // Add chamfers to all of the lines.
   for(i=1; i<points.length-1; i++) {
     var v1 = this.Vector(points[i-1], points[i]);
     var v2 = this.Vector(points[i+1], points[i]);
@@ -181,6 +196,7 @@ N.Test.PiConnectionCreator.prototype.Render = function() {
     }
   }
 
+  var group = this.NetworkUI.GetGroup();
   this.Path = group.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
 }
 

@@ -69,27 +69,66 @@ N.UI.Router.prototype.BuildRoutingGrid = function() {
 }
 
 N.UI.Router.prototype.GetPoint = function(rc) {
+  var pos = [];
+  var name, x, y, rx, ry, drop, graphic;
   if(rc.hasOwnProperty('Src')) {
-    var name = rc.Src.split('>')[0];
-    var graphic = this.NetworkUI.GraphicsByName[name];
-    var x = graphic.X;
-    var y = graphic.Y+graphic.Radius;
-    var drop = this.Rows[graphic.Row+1].Mid;
-    return { X: x, Y: y };
+    name = rc.Src.split('>')[0];
+    graphic = this.NetworkUI.GraphicsByName[name];
+    x = graphic.X;
+    y = graphic.Y+graphic.Radius;
+    drop = this.Rows[graphic.Row+1].Mid;
+    pos.push({ X: x, Y: y });
+    this.ProcessOffset(pos, rc);
   }
   else if(rc.hasOwnProperty('SrcOffset')) {
-    var name = rc.SrcOffset.split('>')[0];
-    var graphic = this.NetworkUI.GraphicsByName[name];
-    var x = graphic.X;
-    var y = graphic.Y+graphic.Radius;
-    var drop = this.Rows[graphic.Row+1].Mid;
-    return { X: x, Y: drop };
+    name = rc.SrcOffset.split('>')[0];
+    graphic = this.NetworkUI.GraphicsByName[name];
+    x = graphic.X;
+    y = graphic.Y+graphic.Radius;
+    drop = this.Rows[graphic.Row+1].Mid;
+    pos.push({ X: x, Y: drop });
+    this.ProcessOffset(pos, rc);
   }
   else if(rc.hasOwnProperty('Coord')) {
     var indices = rc.Coord.split(' ');
-    var ry = this.Rows[indices[0]].Mid;
-    var rx = this.Cols[indices[1]][indices[2]].Mid;
-    return { X: rx, Y: ry };
+    ry = this.Rows[indices[0]].Mid;
+    rx = this.Cols[indices[1]][indices[2]].Mid;
+    pos.push({ X: rx, Y: ry });
+    this.ProcessOffset(pos, rc);
+  }
+  else if(rc.hasOwnProperty('Terminal')) {
+    name = rc.Sink.split('>')[0];
+    graphic = this.NetworkUI.GraphicsByName[name];
+    x = graphic.X;
+    y = graphic.Y;
+    var r = graphic.Radius;
+    r *= 1.5;
+    var angle = N.Rad(rc.Angle);
+    rx = x+r*Math.cos(angle);
+    ry = y+r*Math.sin(angle);
+    pos.push({ X: rx, Y: ry });
+  }
+  return pos;
+}
+
+N.UI.Router.prototype.ProcessOffset = function(pos, rc) {
+  if(pos.length && rc.hasOwnProperty('Offset')) {
+    var offsetSize = 5.0;
+    var offsets = rc.Offset.split(' ');
+    var dX = 0, dY = 0;
+    for(var i=0; i<offsets.length; i += 2) {
+      switch(offsets[i]) {
+        case 'Left':   dX += offsets[i+1]*offsetSize; break;
+        case 'Right':  dX -= offsets[i+1]*offsetSize; break;
+        case 'Top':    dY -= offsets[i+1]*offsetSize; break;
+        case 'Bottom': dY += offsets[i+1]*offsetSize; break;
+        default: break;
+      }
+    }
+    for(var j=0; j<pos.length; j++) {
+      pos[j].X += dX;
+      pos[j].Y += dY;
+    }
   }
 }
 
