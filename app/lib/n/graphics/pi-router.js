@@ -55,12 +55,12 @@ N.UI.Router.prototype.BuildRoutingGrid = function() {
       var name = row.Cols[j].Name;
       if(name && name.length) {
         var graphic = this.NetworkUI.GraphicsByName[name];
-        var x = graphic.X;
-        column.push({ Left: startX, Right: (graphic.X-graphic.Radius) });
+        var right = graphic.X-graphic.Radius;
+        column.push({ Left: startX, Right: right, Mid: 0.5*(startX+right) });
         startX = graphic.X+graphic.Radius;
       }
     }
-    column.push({ Left: startX, Right: this.NetworkUI.Rect.Right });
+    column.push({ Left: startX, Right: this.NetworkUI.Rect.Right, Mid: 0.5*(startX+this.NetworkUI.Rect.Right) });
 
     this.Cols.push(column);
   }
@@ -74,11 +74,23 @@ N.UI.Router.prototype.GetPoint = function(rc) {
     var graphic = this.NetworkUI.GraphicsByName[name];
     var x = graphic.X;
     var y = graphic.Y+graphic.Radius;
-    var drop = 10;
-    return { Start: { X: x, Y: y }, Mid: { X: x, Y: y+drop } };
+    var drop = this.Rows[graphic.Row+1].Mid;
+    return { X: x, Y: y };
   }
-  //var x = this.Rows[rc.R].Mid;
-  //var y = this.Rows[rc.C].Mid;
+  else if(rc.hasOwnProperty('SrcOffset')) {
+    var name = rc.SrcOffset.split('>')[0];
+    var graphic = this.NetworkUI.GraphicsByName[name];
+    var x = graphic.X;
+    var y = graphic.Y+graphic.Radius;
+    var drop = this.Rows[graphic.Row+1].Mid;
+    return { X: x, Y: drop };
+  }
+  else if(rc.hasOwnProperty('Coord')) {
+    var indices = rc.Coord.split(' ');
+    var ry = this.Rows[indices[0]].Mid;
+    var rx = this.Cols[indices[1]][indices[2]].Mid;
+    return { X: rx, Y: ry };
+  }
 }
 
 /**

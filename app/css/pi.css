@@ -24,6 +24,53 @@ All Rights Reserved.
   .pi-canvas svg text {
     alignment-baseline: hanging; }
 
+/*
+stroke: lightskyeblue;
+stroke: darkgray;
+stroke: darkseagreen;
+stroke: gainsboro;
+stroke: lavendar;
+stroke: lightblue;
+stroke: lightcoral;
+stroke: lightgray;
+stroke: lightpink;
+stroke: lightsteelblue;
+stroke: mistyrose;
+stroke: moccasin;
+stroke: papayawhip;
+stroke: peachpuff;
+stroke: pink;
+stroke: powderblue;
+stroke: skyblue;
+stroke: thistle;
+stroke: wheat;
+
+*/
+.pi-connection.simple-excitatory-connection {
+  stroke-width: 2.5;
+  stroke: darkseagreen;
+  /*
+  stroke: lightskyeblue;
+  stroke: darkgray;
+  stroke: darkseagreen;
+  stroke: gainsboro;
+  stroke: lavendar;
+  stroke: lightblue;
+  stroke: lightcoral;
+  stroke: lightgray;
+  stroke: lightpink;
+  stroke: lightsteelblue;
+  stroke: mistyrose;
+  stroke: moccasin;
+  stroke: papayawhip;
+  stroke: peachpuff;
+  stroke: pink;
+  stroke: powderblue;
+  stroke: skyblue;
+  stroke: thistle;
+  stroke: wheat;
+  */ }
+
 .pi-neuron .compartment {
   stroke: #999999;
   stroke-width: 1.75px;

@@ -34,8 +34,59 @@ All Rights Reserved.
   }
 }
 
+/*
+stroke: lightskyeblue;
+stroke: darkgray;
+stroke: darkseagreen;
+stroke: gainsboro;
+stroke: lavendar;
+stroke: lightblue;
+stroke: lightcoral;
+stroke: lightgray;
+stroke: lightpink;
+stroke: lightsteelblue;
+stroke: mistyrose;
+stroke: moccasin;
+stroke: papayawhip;
+stroke: peachpuff;
+stroke: pink;
+stroke: powderblue;
+stroke: skyblue;
+stroke: thistle;
+stroke: wheat;
+
+*/
+
 $darker: 0%;
 $inactiveFill: #F6F6F6;
+
+.pi-connection {
+  &.simple-excitatory-connection {
+    stroke-width: 2.5;
+    stroke: darkseagreen;
+/*
+stroke: lightskyeblue;
+stroke: darkgray;
+stroke: darkseagreen;
+stroke: gainsboro;
+stroke: lavendar;
+stroke: lightblue;
+stroke: lightcoral;
+stroke: lightgray;
+stroke: lightpink;
+stroke: lightsteelblue;
+stroke: mistyrose;
+stroke: moccasin;
+stroke: papayawhip;
+stroke: peachpuff;
+stroke: pink;
+stroke: powderblue;
+stroke: skyblue;
+stroke: thistle;
+stroke: wheat;
+*/
+  }
+}
 
 .pi-neuron {
   .compartment {

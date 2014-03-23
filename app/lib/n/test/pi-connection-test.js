@@ -139,19 +139,69 @@ N.Test.PiConnectionCreator = function(networkUI) {
 N.Test.PiConnectionCreator.prototype.Render = function() {
   var group = this.NetworkUI.GetGroup();
   var rect = this.NetworkUI.Rect;
-  var gridPath = [ { Src:'SS41>OP' }, { Src:'SS13>OP' } ];
+  var gridPath = [
+    { Src:'SS41>OP' },
+    { SrcOffset:'SS41>OP' },
+    { Coord:'4 3 1' },
+    { Coord:'1 0 1' },
+    { SrcOffset:'SS13>OP' },
+    { Src:'SS13>OP' }
+  ];
   var router = this.NetworkUI.Router;
-  var start = router.GetPoint(gridPath[0]);
-  var end = router.GetPoint(gridPath[1]);
 
-  var pathString = this.MoveTo(start.Start)+this.LineTo(start.Mid)+this.LineTo(end.Mid)+this.LineTo(end.Start);
-  this.Path = group.path(pathString).attr({ 'fill': 'none', 'stroke': 'red', 'stroke-width': 3 });
+  var points = [];
+  for(var i=0; i<gridPath.length; i++) {
+    var point = router.GetPoint(gridPath[i]);
+    points.push(point);
+  }
+
+  var newPoints = [points[0]];
+  for(i=1; i<points.length-1; i++) {
+    var v1 = this.Vector(points[i-1], points[i]);
+    var v2 = this.Vector(points[i+1], points[i]);
+
+    var corner = 7;
+//    var minLen = (v1.Len < v2.Len ? v1.Len : v2.Len);
+//    if(minLen < corner) { corner = minLen; }
+    var corner1 = this.ShortenVector(v1, corner);
+    var corner2 = this.ShortenVector(v2, corner);
+    newPoints.push(corner1);
+    newPoints.push(corner2);
+  }
+  newPoints.push(points[points.length-1]);
+
+  var pathString = '';
+  for(i=0; i<newPoints.length; i++) {
+    var point = newPoints[i];
+    if(i === 0) {
+      pathString += this.MoveTo(point);
+    }
+    else {
+      pathString += this.LineTo(point);
+    }
+  }
+
+  this.Path = group.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
 }
 
-N.Test.PiConnectionCreator.prototype.MoveTo = function(xy) {
+N.Test.PiConnectionCreator.prototype.Vector = function(base, end) {
+  var v = { DX: (end.X-base.X), DY: (end.Y-base.Y), X: base.X, Y: base.Y };
+  v.Len = Math.sqrt(v.DX*v.DX+v.DY*v.DY);
+  return v;
+}
+
+N.Test.PiConnectionCreator.prototype.ShortenVector = function(vec, dl) {
+  var ratio = (vec.Len-dl)/vec.Len;
+  vec.DX *= ratio;
+  vec.DY *= ratio;
+  return { X: (vec.DX+vec.X), Y: (vec.DY+vec.Y) };
+}
+
+  N.Test.PiConnectionCreator.prototype.MoveTo = function(xy) {
   return 'M'+xy.X+' '+xy.Y;
 }
-N.Test.PiConnectionCreator.prototype.LineTo = function(xy) {
+
+  N.Test.PiConnectionCreator.prototype.LineTo = function(xy) {
   return 'L'+xy.X+' '+xy.Y;
 }
 

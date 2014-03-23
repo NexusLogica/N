@@ -49,7 +49,7 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
     .move(this.Rect.Left, this.Rect.Top)
     .attr({ class: 'single'});
 
-  for(var i in this._network.Display.Rows) {
+  for(var i=0; i<this._network.Display.Rows.length; i++) {
     var row = this._network.Display.Rows[i];
     var spacing = row.Spacing;
     var numColumns = row.Cols.length;
