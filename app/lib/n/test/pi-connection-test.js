@@ -141,21 +141,36 @@ N.Test.PiConnectionCreator.prototype.Render = function() {
   var rect = this.NetworkUI.Rect;
   var gridPath1 = [
     { Src:'SS41>OP'  },
-    { SrcOffset:'SS41>OP', Offset: 'Bottom 1' },
-    { Coord:'4 3 1', Offset: 'Left 1 Bottom 1'},
-    { Coord:'0 0 1', Offset: 'Left 1' },
-    { Terminal: 0.0, Sink:'SS13>IP', Angle: 210 }
+    { SrcOffset:'SS41>OP', Offset: 'DY 0' },
+    { Coord:'4 3 1', Offset: 'DX -1 DY 0'},
+    { Coord:'0 0 1', Offset: 'DX -1 DY -1' },
+    { Coord:'0 0 3', Offset: 'DY -1', Sink:'SS13>IP', Angle: 240 }
   ];
   var gridPath2 = [
     { Src:'SS41>OP' },
-    { SrcOffset:'SS41>OP', Offset: 'Bottom -1' },
-    { Coord:'4 3 1', Offset: 'Right 1 Bottom -1'},
-    { Coord:'0 0 1', Offset: 'Right 1' },
-    { Terminal: 0.0, Sink:'SS13>IP', Angle: 210 }
+    { SrcOffset:'SS41>OP', Offset: 'DY 0' },
+    { Coord:'4 3 1', Offset: 'DY 0 DX 1'},
+    { Coord:'0 0 1', Offset: 'DX 1 DY 1' },
+    { Coord:'0 0 3', Offset: 'DY 1', Sink:'SS13>IP', Angle: 220 }
+  ];
+  var gridPath3 = [
+    { Src:'SS41>OP' },
+    { SrcOffset:'SS41>OP', Offset: 'DY 0' },
+    { Coord:'4 3 0', Offset: 'DY 0' },
+    { Coord:'2 1 0', Sink:'SS21>IP', Angle: 170 }
+  ];
+  var gridPath4 = [
+    { Src:'SS41>OP' },
+    { SrcOffset:'SS41>OP', Offset: 'DY 0' },
+    { Coord:'4 3 1', Offset: 'DY 0'},
+    { Coord:'4 3 3', Offset: 'DY 0' },
+    { Coord:'3 2 3', Sink:'SS33>IP', Angle: 30 }
   ];
 
   this.RenderConnection(gridPath1);
   this.RenderConnection(gridPath2);
+  this.RenderConnection(gridPath3);
+  this.RenderConnection(gridPath4);
 }
 
 N.Test.PiConnectionCreator.prototype.RenderConnection = function(gridPath) {
@@ -171,19 +186,29 @@ N.Test.PiConnectionCreator.prototype.RenderConnection = function(gridPath) {
   var newPoints = [points[0]];
 
   // Add chamfers to all of the lines.
+  var v1, v2;
   for(i=1; i<points.length-1; i++) {
-    var v1 = this.Vector(points[i-1], points[i]);
-    var v2 = this.Vector(points[i+1], points[i]);
+    if(points[i].Join) {
+      // From the points, construct
+      v1 = this.Vector(points[i-1], points[i]);
+      v2 = this.VectorFromSink(points[i+1]);
+      var v3 = this.FindIntersection(v1.X, v1.Y, v1.DX+v1.X, v1.DY+v1.Y, v2.X, v2.Y, v2.DX+v2.X, v2.DY+v2.Y);
+      newPoints.push(v3);
+      newPoints.push(v2);
+    }
+    else {
+      v1 = this.Vector(points[i-1], points[i]);
+      v2 = this.Vector(points[i+1], points[i]);
 
-    var corner = 7;
-//    var minLen = (v1.Len < v2.Len ? v1.Len : v2.Len);
-//    if(minLen < corner) { corner = minLen; }
-    var corner1 = this.ShortenVector(v1, corner);
-    var corner2 = this.ShortenVector(v2, corner);
-    newPoints.push(corner1);
-    newPoints.push(corner2);
+      var chamferSize = 7;
+  //    var minLen = (v1.Len < v2.Len ? v1.Len : v2.Len);
+  //    if(minLen < corner) { corner = minLen; }
+      var corner1 = this.ShortenVector(v1, chamferSize);
+      var corner2 = this.ShortenVector(v2, chamferSize);
+      newPoints.push(corner1);
+      newPoints.push(corner2);
+    }
   }
-  newPoints.push(points[points.length-1]);
 
   var pathString = '';
   for(i=0; i<newPoints.length; i++) {
@@ -204,6 +229,24 @@ N.Test.PiConnectionCreator.prototype.Vector = function(base, end) {
   var v = { DX: (end.X-base.X), DY: (end.Y-base.Y), X: base.X, Y: base.Y };
   v.Len = Math.sqrt(v.DX*v.DX+v.DY*v.DY);
   return v;
+}
+
+N.Test.PiConnectionCreator.prototype.VectorFromSink = function(sink) {
+  var v = { DX: sink.DX, DY: sink.DY, X: sink.BaseX, Y: sink.BaseY };
+  v.Len = Math.sqrt(v.DX*v.DX+v.DY*v.DY);
+  return v;
+}
+
+N.Test.PiConnectionCreator.prototype.FindIntersection = function(p0X, p0Y, p1X, p1Y, p2X, p2Y, p3X, p3Y) {
+  var s1X = p1X - p0X;
+  var s1Y = p1Y - p0Y;
+  var s2X = p3X - p2X;
+  var s2Y = p3Y - p2Y;
+
+  var s = (-s1Y * (p0X - p2X) + s1X * (p0Y - p2Y)) / (-s2X * s1Y + s1X * s2Y);
+  var t = ( s2X * (p0Y - p2Y) - s2Y * (p0X - p2X)) / (-s2X * s1Y + s1X * s2Y);
+
+  return {  X: (p0X + (t * s1X)), Y: (p0Y + (t * s1Y)) };
 }
 
 N.Test.PiConnectionCreator.prototype.ShortenVector = function(vec, dl) {

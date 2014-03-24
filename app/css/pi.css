@@ -49,7 +49,6 @@ stroke: wheat;
 .pi-connection.simple-excitatory-connection {
   stroke-width: 2.5;
   stroke: darkseagreen;
-  /*
   stroke: lightskyeblue;
   stroke: darkgray;
   stroke: darkseagreen;
@@ -68,8 +67,7 @@ stroke: wheat;
   stroke: powderblue;
   stroke: skyblue;
   stroke: thistle;
-  stroke: wheat;
-  */ }
+  stroke: wheat; }
 
 .pi-neuron .compartment {
   stroke: #999999;

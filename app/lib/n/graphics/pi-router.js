@@ -96,17 +96,18 @@ N.UI.Router.prototype.GetPoint = function(rc) {
     pos.push({ X: rx, Y: ry });
     this.ProcessOffset(pos, rc);
   }
-  else if(rc.hasOwnProperty('Terminal')) {
+
+  if(rc.hasOwnProperty('Sink')) {
+    pos[0].Join = true;
     name = rc.Sink.split('>')[0];
     graphic = this.NetworkUI.GraphicsByName[name];
     x = graphic.X;
     y = graphic.Y;
     var r = graphic.Radius;
-    r *= 1.5;
     var angle = N.Rad(rc.Angle);
-    rx = x+r*Math.cos(angle);
-    ry = y+r*Math.sin(angle);
-    pos.push({ X: rx, Y: ry });
+    rx = r*Math.cos(angle);
+    ry = r*Math.sin(angle);
+    pos.push({ BaseX: x+rx, BaseY: y+ry, DX: rx, DY: ry  });
   }
   return pos;
 }
@@ -118,10 +119,8 @@ N.UI.Router.prototype.ProcessOffset = function(pos, rc) {
     var dX = 0, dY = 0;
     for(var i=0; i<offsets.length; i += 2) {
       switch(offsets[i]) {
-        case 'Left':   dX += offsets[i+1]*offsetSize; break;
-        case 'Right':  dX -= offsets[i+1]*offsetSize; break;
-        case 'Top':    dY -= offsets[i+1]*offsetSize; break;
-        case 'Bottom': dY += offsets[i+1]*offsetSize; break;
+        case 'DX': dX += offsets[i+1]*offsetSize; break;
+        case 'DY': dY += offsets[i+1]*offsetSize; break;
         default: break;
       }
     }
