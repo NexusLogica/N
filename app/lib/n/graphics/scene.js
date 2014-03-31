@@ -49,28 +49,26 @@ N.UI.Scene.Network = function() {
  * @param position
  */
 N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
-  var piGraphic = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit);
-  this.Network = network;
-  this.NetworkGraphic = piGraphic;
+  this.Network = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit).SetNetwork(network);
   this.Scale = scalePixelsPerUnit;
   this.Position = position;
 }
 
 N.UI.Scene.Network.prototype.Render = function(svgParent) {
  // this.Scale = this.Fit(svgParent);
-  this.NetworkGraphic.Render(this.Network, svgParent, this.Scale);
+  this.Network.Render(svgParent, this.Scale);
 }
 
 N.UI.Scene.Network.prototype.Fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.NetworkGraphic.Width/this.NetworkGraphic.Height;
+  var aspectRatioNetwork = this.Network.Width/this.Network.Height;
   if(aspectRatioNetwork > aspectRatioSvg) {
-    return 0.9*svgWidth/this.NetworkGraphic.Width;
+    return 0.9*svgWidth/this.Network.Width;
   }
   else {
-    return 0.9*svgHeight/this.NetworkGraphic.Height;
+    return 0.9*svgHeight/this.Network.Height;
   }
 }
 

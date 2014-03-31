@@ -26,6 +26,10 @@ nSimAppControllers.controller('PiConnectionTestController', ['$scope',
     $scope.Test = new N.Test.PiConnectionTest();
     $scope.Test.CreateScenes();
     $scope.Scenes = $scope.Test.Scenes;
+
+    $scope.next = function() {
+      $scope.Test.StateMachine.next();
+    }
   }
 ]);
 
@@ -34,8 +38,9 @@ var nSimAppDirectives = angular.module('nSimApp.directives');
 nSimAppDirectives.directive('piConnectionTest', [function() {
   function link($scope, $element, $attrs) {
     $($element).find('.pi-canvas').on('onInitialRender', function(event, renderer, scene) {
-      $scope.connection = new N.Test.PiConnectionCreator(scene.NetworkGraphic);
-      $scope.connection.Render();
+      var connectionCreator = new N.Test.PiConnectionCreator(scene.Network);
+      var group = connectionCreator.Render();
+      scene.Network.AddConnectionDisplay('route', group);
     });
   }
 
@@ -53,6 +58,39 @@ nSimAppDirectives.directive('piConnectionTest', [function() {
 
 N.Test.PiConnectionTest = function() {
   this.Scenes  = [];
+  this.nextRouteIndex = 0;
+  var _this = this;
+  this.StateMachine = StateMachine.create({
+    initial: 'FullConnection',
+    events: [
+      { name: 'next',  from: '*', to: 'NextRouteTest' },
+      { name: 'wait',  from: 'NextRouteTest', to: 'Waiting' }
+    ],
+    callbacks: {
+      onenterNextRouteTest: function() {
+        _this.ShowNextRoute();
+      },
+      onafternext: function() {
+        _this.StateMachine.wait();
+      }
+    }
+  });
+
+  this.NextRoute = 0;
+  this.Routes = [
+      [ { R: 3, C: 0 }, { R: 0, C: 3 } ]
+  ];
+}
+
+N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
+  var network = this.Scenes[0].Network;
+  var newGroup = network.Group.group();
+  var route = this.Routes[this.NextRoute];
+  var routeFinder = new N.Test.PiRouteFinder(network);
+  routeFinder.FindRoute(route[0], route[1], 270.0, network.Router);
+  var pathString = routeFinder.GetPath();
+  newGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
+  network.AddConnectionDisplay('route', newGroup);
 }
 
 N.Test.PiConnectionTest.prototype.CreateScenes = function() {
@@ -64,11 +102,10 @@ N.Test.PiConnectionTest.prototype.CreateScenes = function() {
   }
 }
 
-
 N.Test.PiConnectionTest.prototype.Matrix = function() {
-  var scale = 40.0,
-      numRows = 4,
-      numCols = 3,
+  var scale = 30.0,
+      numRows = 5,
+      numCols = 5,
       spacing = 2.2,
       vertSpacing = 2.2,
       horizPadding = 0.8,
@@ -82,10 +119,12 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
   var networkWidth = spacing*numCols+2*horizPadding;
   var networkHeight = vertSpacing*numRows+2*vertPadding;
 
+  var numColumns = [ 5, 4, 5, 3, 5 ];
+  var spacings   = [ 2.2, 3.0, 2.2, 3.5, 2.2 ];
   var config = { Name: 'Matrix', ShortName: 'M', Neurons: [], Display: { Width: networkWidth, Height: networkHeight, Rows: [] } };
-  for(var i=0; i<numRows; i++) {
-    var rowDisplay = { RowId: 'Row'+i, NumCol: numCols,  Spacing: spacing, Y: rowY, Cols: [] };
-    for(var j=0; j<numCols; j++) {
+  for(var i=0; i<numColumns.length; i++) {
+    var rowDisplay = { RowId: 'Row'+i, NumCol: numCols,  Spacing: spacings[i], Y: rowY, Cols: [] };
+    for(var j=0; j<numColumns[i]; j++) {
       var name = 'SS'+(i+1)+(j+1);
       config.Neurons.push({ ClassName: 'N.Neuron', Template: 'N.Test.PiConnectionTest.SpinyStellate', Name: 'SpinyStellate1', ShortName: name });
       rowDisplay.Cols.push({ Name: name });
@@ -132,13 +171,13 @@ N.Test.PiConnectionTest.SpinyStellate = {
   //* N.Test.PiConnectionCreator *
   //******************************
 
-N.Test.PiConnectionCreator = function(networkUI) {
-  this.NetworkUI = networkUI;
+N.Test.PiConnectionCreator = function(network) {
+  this.Network = network;
 }
 
 N.Test.PiConnectionCreator.prototype.Render = function() {
-  var group = this.NetworkUI.GetGroup();
-  var rect = this.NetworkUI.Rect;
+  var group = this.Network.GetGroup();
+  var rect = this.Network.Rect;
   var gridPath1 = [
     { Src:'SS41>OP'  },
     { SrcOffset:'SS41>OP', Offset: 'DY 0' },
@@ -167,15 +206,18 @@ N.Test.PiConnectionCreator.prototype.Render = function() {
     { Coord:'3 2 3', Sink:'SS33>IP', Angle: 30 }
   ];
 
+  this.connectionGroup = this.Network.GetGroup().group();
+
   this.RenderConnection(gridPath1);
   this.RenderConnection(gridPath2);
   this.RenderConnection(gridPath3);
   this.RenderConnection(gridPath4);
+  return this.connectionGroup;
 }
 
 N.Test.PiConnectionCreator.prototype.RenderConnection = function(gridPath) {
 
-  var router = this.NetworkUI.Router;
+  var router = this.Network.Router;
   var points = [];
   for(var i=0; i<gridPath.length; i++) {
     var gridPoints = router.GetPoint(gridPath[i]);
@@ -221,8 +263,7 @@ N.Test.PiConnectionCreator.prototype.RenderConnection = function(gridPath) {
     }
   }
 
-  var group = this.NetworkUI.GetGroup();
-  this.Path = group.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
+  this.connectionGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
 }
 
 N.Test.PiConnectionCreator.prototype.Vector = function(base, end) {
@@ -264,4 +305,31 @@ N.Test.PiConnectionCreator.prototype.ShortenVector = function(vec, dl) {
   return 'L'+xy.X+' '+xy.Y;
 }
 
+  //************************
+  //* N.Test.PiRouteFinder *
+  //************************
 
+N.Test.PiRouteFinder = function(network) {
+  this.Network = network;
+}
+
+N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAngle, router) {
+  // Draw a line from start to end
+  this.Segments = [];
+  var startPoints = router.GetNeuronOutputPosition(startNeuron);
+
+  this.Segments.push(startPoints[0]);
+  this.Segments.push(startPoints[1]);
+  this.Segments.push(router.GetLaneCenter(endNeuron.R, endNeuron.C));
+}
+
+
+
+N.Test.PiRouteFinder.prototype.GetPath = function() {
+  var path = 'M'+this.Segments[0].X+' '+this.Segments[0].Y;
+  for(var i=1; i<this.Segments.length; i++) {
+    var s = this.Segments[i];
+    path += 'L'+s.X+' '+s.Y;
+  }
+  return path;
+}

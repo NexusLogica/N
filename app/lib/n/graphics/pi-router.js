@@ -20,79 +20,122 @@ var N = N || {};
 N.UI = N.UI || {};
 
 /**
- * A class for routing connections between neuron compartments in a network.
+ * A class for routing connections between neuron compartments in a network. There are two arrays of information.
+ *
+ *   Thruway: These are the horizontal passages between neuron rows and at the top and bottom of the network container.
+ *   Lane: These are the vertical passageways between the thruways. Each lane is between neurons, and can be arbitrarily wide, depending on neurons spacing.
+ *   LaneRow: This is the collection of lanes in a row of neurons.
+ *
+ *   Note that a complicating issue is 'top' and 'bottom'. In the windows world top is higher on the screen but lower in y value. So to avoid this
+ *   complication the are YNeg and YPos, meaning a more negative y value or more positive one respectively, so YNeg will be higher on the screen
+ *   than YPos.
+ *
  * @class UI.Router
- * @param {N.UI.PiNetwork} networkUI
+ * @param {N.UI.PiNetwork} network
  * @constructor
  */
-N.UI.Router = function(networkUI) {
-  this.NetworkUI = networkUI;
-  this.Rows = [];
-  this.Cols = [];
+N.UI.Router = function(network) {
+  this.Network = network;
+  this.Thruways = [];
+  this.LaneRows = [];
 }
 
 /**
- * Build the router grid. This must be called prior to doing any actual routing of connectors.
- * @method BuildRoutingGrid
+ * Build the thruway and lane information from the network and neuron layouts. This must be called prior to doing any actual routing of connectors.
+ * @method BuildPassageInformation
  * @return {N.UI.Router} Returns a reference to self.
  */
-N.UI.Router.prototype.BuildRoutingGrid = function() {
-  var rows = this.NetworkUI.Rows;
+N.UI.Router.prototype.BuildPassageInformation = function() {
+  var rows = this.Network.Rows;
 
+  // Calculate the thruway information.
+  // Note that there is one more thruway than neuron rows.
+  // See note above on YNeg and YPos.
   for(var i=0; i<=rows.length; i++) {
-    var yTop = (i === 0 ? this.NetworkUI.Rect.Top : this._MaxRowY(i-1, 1.0));
-    var yBottom = (i === rows.length ? this.NetworkUI.Rect.Bottom : this._MaxRowY(i, -1));
+    var yNeg = (i === 0 ? this.Network.Rect.Top : this.MaximumNeuronRowY(i-1));
+    var yPos = (i === rows.length ? this.Network.Rect.Bottom : this.MinimumNeuronRowY(i));
 
-    this.Rows.push({ Top: yTop, Bottom: yBottom, Mid: 0.5*(yTop+yBottom) });
+    this.Thruways.push({ YNeg: yNeg, YPos: yPos, Mid: 0.5*(yNeg+yPos) });
   }
 
-  for(i=0; i<rows.length; i++) {
-    var column = [];
+  var networkLeft = this.Network.Rect.Left;
+  var networkRight = this.Network.Rect.Right;
 
-    var startX = this.NetworkUI.Rect.Left;
-    var row = this.NetworkUI.Rows[i];
+  // Calculate the lane information
+  for(i=0; i<rows.length; i++) {
+
+    var lanes = [];
+    var row = this.Network.Rows[i];
+    var left = networkLeft;
+    var thruNeg = this.Thruways[i];
+    var thruPos = this.Thruways[i+1];
+    lanes.ThruNeg = thruNeg;
+    lanes.ThruPos = thruPos;
+
     for(var j=0; j<row.Cols.length; j++) {
       var name = row.Cols[j].Name;
       if(name && name.length) {
-        var graphic = this.NetworkUI.GraphicsByName[name];
-        var right = graphic.X-graphic.Radius;
-        column.push({ Left: startX, Right: right, Mid: 0.5*(startX+right) });
-        startX = graphic.X+graphic.Radius;
+        var n = this.Network.NeuronsByName[name];
+        var right = n.X-n.Radius;
+        lanes.push({ Left: left, Right: right, Mid: 0.5*(left+right), ThruNeg: thruNeg, ThruPos: thruPos });
+        left = n.X+n.Radius;
       }
     }
-    column.push({ Left: startX, Right: this.NetworkUI.Rect.Right, Mid: 0.5*(startX+this.NetworkUI.Rect.Right) });
+    lanes.push({ Left: left, Right: networkRight, Mid: 0.5*(left+networkRight), ThruNeg: thruNeg, ThruPos: thruPos });
 
-    this.Cols.push(column);
+    this.LaneRows.push(lanes);
   }
 
   return this;
 }
 
+N.UI.Router.prototype.GetNeuronOutputPosition = function(neuron) {
+  var name = neuron;
+  if(!_.isString(neuron)) {
+    name = this.Network.Rows[neuron.R].Cols[neuron.C].Name;
+  }
+  var  n = this.Network.NeuronsByName[name];
+  var x = n.X;
+  var y = n.Y+n.Radius;
+  var thruway = this.LaneRows[n.Row+1];
+
+  return [{ X: x, Y: y}, { X: x, Y: thruway.Mid }];
+}
+
+N.UI.Router.prototype.GetLaneCenter = function(rowIndex, laneIndex) {
+  var lanes = this.LaneRows[rowIndex];
+  var lane = lanes[laneIndex];
+  var yNeg = lane.ThruNeg.YPos;
+  var yPos = lane.ThruPos.YNeg;
+
+  return { X: lane.Mid, Y: 0.5*(yNeg+yPos) };
+}
+
 N.UI.Router.prototype.GetPoint = function(rc) {
   var pos = [];
-  var name, x, y, rx, ry, drop, graphic;
+  var name, x, y, rx, ry, drop, n;
   if(rc.hasOwnProperty('Src')) {
     name = rc.Src.split('>')[0];
-    graphic = this.NetworkUI.GraphicsByName[name];
-    x = graphic.X;
-    y = graphic.Y+graphic.Radius;
-    drop = this.Rows[graphic.Row+1].Mid;
+    n = this.Network.NeuronsByName[name];
+    x = n.X;
+    y = n.Y+n.Radius;
+    drop = this.Thruways[n.Row+1].Mid;
     pos.push({ X: x, Y: y });
     this.ProcessOffset(pos, rc);
   }
   else if(rc.hasOwnProperty('SrcOffset')) {
     name = rc.SrcOffset.split('>')[0];
-    graphic = this.NetworkUI.GraphicsByName[name];
-    x = graphic.X;
-    y = graphic.Y+graphic.Radius;
-    drop = this.Rows[graphic.Row+1].Mid;
+    n = this.Network.NeuronsByName[name];
+    x = n.X;
+    y = n.Y+n.Radius;
+    drop = this.Thruways[n.Row+1].Mid;
     pos.push({ X: x, Y: drop });
     this.ProcessOffset(pos, rc);
   }
   else if(rc.hasOwnProperty('Coord')) {
     var indices = rc.Coord.split(' ');
-    ry = this.Rows[indices[0]].Mid;
-    rx = this.Cols[indices[1]][indices[2]].Mid;
+    ry = this.Thruways[indices[0]].Mid;
+    rx = this.LaneRows[indices[1]][indices[2]].Mid;
     pos.push({ X: rx, Y: ry });
     this.ProcessOffset(pos, rc);
   }
@@ -100,10 +143,10 @@ N.UI.Router.prototype.GetPoint = function(rc) {
   if(rc.hasOwnProperty('Sink')) {
     pos[0].Join = true;
     name = rc.Sink.split('>')[0];
-    graphic = this.NetworkUI.GraphicsByName[name];
-    x = graphic.X;
-    y = graphic.Y;
-    var r = graphic.Radius;
+    n = this.Network.NeuronsByName[name];
+    x = n.X;
+    y = n.Y;
+    var r = n.Radius;
     var angle = N.Rad(rc.Angle);
     rx = r*Math.cos(angle);
     ry = r*Math.sin(angle);
@@ -112,6 +155,12 @@ N.UI.Router.prototype.GetPoint = function(rc) {
   return pos;
 }
 
+/**
+ * If the segment is offset (not centered in a thruway or lane then use this routine will offset the segment.
+ * @method ProcessOffset
+ * @param {Array} pos An array of segment positions.
+ * @param {Object} rc An object containing row, column, and offset components that define the desired segment end.
+ */
 N.UI.Router.prototype.ProcessOffset = function(pos, rc) {
   if(pos.length && rc.hasOwnProperty('Offset')) {
     var offsetSize = 5.0;
@@ -133,17 +182,38 @@ N.UI.Router.prototype.ProcessOffset = function(pos, rc) {
 
 /**
  * Iterates through all the pi elements in a row and returns the greatest y value. In other words, returns the height of the circle most in the way.
- * @method _MaxRowY
- * @param i
+ * @method MaximumNeuronRowY
+ * @param {Integer} index The neuron row index
+ * @return {Real} Returns the y value of the row maximum
  * @protected
  */
-N.UI.Router.prototype._MaxRowY = function(i, direction) {
-  var row = this.NetworkUI.Rows[i];
+N.UI.Router.prototype.MaximumNeuronRowY = function(index) {
+  var row = this.Network.Rows[index];
   for(var i=0; i<row.Cols.length; i++) {
     var name = row.Cols[i].Name;
     if(name && name.length) {
-      var graphic = this.NetworkUI.GraphicsByName[name];
-      return graphic.Y+direction*graphic.Radius;
+      var n = this.Network.NeuronsByName[name];
+      return n.Y+n.Radius;
     }
   }
+  return null;
+}
+
+/**
+ * Iterates through all the pi elements in a row and returns the lowest y value. In other words, returns the height of the circle most in the way.
+ * @method MinimumNeuronRowY
+ * @param {Integer} index The neuron row index
+ * @return {Real} Returns the y value of the row minimum
+ * @protected
+ */
+N.UI.Router.prototype.MinimumNeuronRowY = function(index) {
+  var row = this.Network.Rows[index];
+  for(var i=0; i<row.Cols.length; i++) {
+    var name = row.Cols[i].Name;
+    if(name && name.length) {
+      var n = this.Network.NeuronsByName[name];
+      return n.Y-n.Radius;
+    }
+  }
+  return null;
 }
