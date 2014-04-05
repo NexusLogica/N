@@ -99,14 +99,14 @@ N.UI.Router.prototype.GetNeuronOutputPosition = function(neuron) {
   var y = n.Y+n.Radius;
   var lane = this.LaneRows[n.Row];
 
-  return [{ X: x, Y: y}, { X: x, Y: lane.ThruPos.Mid }];
+  return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.ThruPos.Mid) ];
 }
 
 N.UI.Router.prototype.GetLaneCenter = function(rowIndex, laneIndex) {
   var lanes = this.LaneRows[rowIndex];
   var lane = lanes[laneIndex];
 
-  return { X: lane.Mid, Y: lane.YMid };
+  return new N.UI.Vector(lane.Mid, lane.YMid);
 }
 
 N.UI.Router.prototype.GetPoint = function(rc) {

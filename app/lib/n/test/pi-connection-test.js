@@ -333,7 +333,7 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
 
   var start = this.Start.End;
   var end = this.End;
-  var vec = this.Normalize({ X: (end.X-start.X), Y: (end.Y-start.Y) });
+  var vec = (new N.UI.Vector((end.X-start.X), (end.Y-start.Y))).Normalize();
   var incVert = (vec.Y > 0.0 ? 1 : -1);
 
   // For each thruway...
@@ -379,6 +379,37 @@ N.Test.PiRouteFinder.prototype.GetPath = function(router) {
 }
 
 N.Test.PiRouteFinder.prototype.BuildPath = function(router) {
+
+  var simpleVertices = this.CreateSimpleVertices(router);
+  this.CalculateLengths(simpleVertices);
+  // Add chamfers.
+  this.Vertices = [];
+  this.Vertices.push(simpleVertices[0]);
+
+  var v1, v2;
+  for(var i=1; i<simpleVertices.length-1; i++) {
+    if(simpleVertices[i].Join) {
+      // From the points, construct
+      v1 = this.Vector(points[i-1], points[i]);
+      v2 = this.VectorFromSink(points[i+1]);
+      var v3 = this.FindIntersection(v1.X, v1.Y, v1.DX+v1.X, v1.DY+v1.Y, v2.X, v2.Y, v2.DX+v2.X, v2.DY+v2.Y);
+      newPoints.push(v3);
+      newPoints.push(v2);
+    }
+    else {
+      var chamferSize = 5;
+      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], chamferSize);
+      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], chamferSize);
+      this.Vertices.push(corner1);
+      this.Vertices.push(corner2);
+      //this.Vertices.push(simpleVertices[i]);
+    }
+  }
+
+  this.Vertices.push(simpleVertices[simpleVertices.length-1]);
+}
+
+N.Test.PiRouteFinder.prototype.CreateSimpleVertices = function(router) {
   var vertices = [];
   vertices.push(this.Start.Base);
   vertices.push(this.Start.End);
@@ -389,52 +420,18 @@ N.Test.PiRouteFinder.prototype.BuildPath = function(router) {
     var x = lane.Mid;
     var yPos = lane.ThruPos.Mid;
     var yNeg = lane.ThruNeg.Mid;
-    vertices.push( { X: x, Y: yPos } );
-    vertices.push( { X: x, Y: yNeg } );
+    vertices.push( new N.UI.Vector(x, yPos) );
+    vertices.push( new N.UI.Vector(x, yNeg) );
   }
 
   vertices.push(this.End);
+  return vertices;
+}
 
-  // Add chamfers.
-  this.Vertices = [];
-  this.Vertices.push(vertices[0]);
+N.Test.PiRouteFinder.prototype.CalculateLengths = function(simpleVertices) {
+  for(var i=0; i<simpleVertices.length-1; i++) {
+    var v1 = simpleVertices[i];
+    var v2 = simpleVertices[i+1];
 
-  var v1, v2;
-  for(i=1; i<vertices.length-1; i++) {
-    if(vertices[i].Join) {
-      // From the points, construct
-      v1 = this.Vector(points[i-1], points[i]);
-      v2 = this.VectorFromSink(points[i+1]);
-      var v3 = this.FindIntersection(v1.X, v1.Y, v1.DX+v1.X, v1.DY+v1.Y, v2.X, v2.Y, v2.DX+v2.X, v2.DY+v2.Y);
-      newPoints.push(v3);
-      newPoints.push(v2);
-    }
-    else {
-      v1 = this.Vector(vertices[i-1], vertices[i]);
-      v2 = this.Vector(vertices[i+1], vertices[i]);
-
-      var chamferSize = 5;
-  //    var minLen = (v1.Len < v2.Len ? v1.Len : v2.Len);
-  //    if(minLen < corner) { corner = minLen; }
-      var corner1 = this.ShortenVector(v1, chamferSize);
-      var corner2 = this.ShortenVector(v2, chamferSize);
-      this.Vertices.push(corner1);
-      this.Vertices.push(corner2);
-    }
   }
-
-  this.Vertices.push(vertices[vertices.length-1]);
-}
-
-N.Test.PiRouteFinder.prototype.Vector = function(base, end) {
-  var v = { DX: (end.X-base.X), DY: (end.Y-base.Y), X: base.X, Y: base.Y };
-  v.Len = Math.sqrt(v.DX*v.DX+v.DY*v.DY);
-  return v;
-}
-
-N.Test.PiRouteFinder.prototype.ShortenVector = function(vec, dl) {
-  var ratio = (vec.Len-dl)/vec.Len;
-  vec.DX *= ratio;
-  vec.DY *= ratio;
-  return { X: (vec.DX+vec.X), Y: (vec.DY+vec.Y) };
 }

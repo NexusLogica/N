@@ -11,6 +11,9 @@ All Rights Reserved.
 
 */
 
+'use strict';
+
+var N = N || {};
 N.UI = N.UI || {};
 
   //******************
