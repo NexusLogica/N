@@ -77,11 +77,11 @@ N.UI.Router.prototype.BuildPassageInformation = function() {
       if(name && name.length) {
         var n = this.Network.NeuronsByName[name];
         var right = n.X-n.Radius;
-        lanes.push({ Left: left, Right: right, Mid: 0.5*(left+right), ThruNeg: thruNeg, ThruPos: thruPos });
+        lanes.push({ Left: left, Right: right, Mid: 0.5*(left+right), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
         left = n.X+n.Radius;
       }
     }
-    lanes.push({ Left: left, Right: networkRight, Mid: 0.5*(left+networkRight), ThruNeg: thruNeg, ThruPos: thruPos });
+    lanes.push({ Left: left, Right: networkRight, Mid: 0.5*(left+networkRight), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
 
     this.LaneRows.push(lanes);
   }
@@ -97,18 +97,16 @@ N.UI.Router.prototype.GetNeuronOutputPosition = function(neuron) {
   var  n = this.Network.NeuronsByName[name];
   var x = n.X;
   var y = n.Y+n.Radius;
-  var thruway = this.LaneRows[n.Row+1];
+  var lane = this.LaneRows[n.Row];
 
-  return [{ X: x, Y: y}, { X: x, Y: thruway.Mid }];
+  return [{ X: x, Y: y}, { X: x, Y: lane.ThruPos.Mid }];
 }
 
 N.UI.Router.prototype.GetLaneCenter = function(rowIndex, laneIndex) {
   var lanes = this.LaneRows[rowIndex];
   var lane = lanes[laneIndex];
-  var yNeg = lane.ThruNeg.YPos;
-  var yPos = lane.ThruPos.YNeg;
 
-  return { X: lane.Mid, Y: 0.5*(yNeg+yPos) };
+  return { X: lane.Mid, Y: lane.YMid };
 }
 
 N.UI.Router.prototype.GetPoint = function(rc) {

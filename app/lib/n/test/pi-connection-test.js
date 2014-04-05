@@ -21,15 +21,20 @@ N.Test = N.Test || {};
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
-nSimAppControllers.controller('PiConnectionTestController', ['$scope',
-  function PiConnectionTestController($scope) {
+nSimAppControllers.controller('PiConnectionTestController', ['$scope', '$timeout',
+  function PiConnectionTestController($scope, $timeout) {
     $scope.Test = new N.Test.PiConnectionTest();
-    $scope.Test.CreateScenes();
-    $scope.Scenes = $scope.Test.Scenes;
+    $scope.Test.CreateScene();
+    $scope.Scenes = [ $scope.Test.Scene ];
+
+    $scope.$on('PiConnectionTest:OnInitialRenfer', function() {
+      $scope.next();
+    });
 
     $scope.next = function() {
-      $scope.Test.StateMachine.next();
+      $scope.Test.Next();
     }
+
   }
 ]);
 
@@ -38,9 +43,7 @@ var nSimAppDirectives = angular.module('nSimApp.directives');
 nSimAppDirectives.directive('piConnectionTest', [function() {
   function link($scope, $element, $attrs) {
     $($element).find('.pi-canvas').on('onInitialRender', function(event, renderer, scene) {
-      var connectionCreator = new N.Test.PiConnectionCreator(scene.Network);
-      var group = connectionCreator.Render();
-      scene.Network.AddConnectionDisplay('route', group);
+      $scope.$emit('PiConnectionTest:OnInitialRenfer');
     });
   }
 
@@ -57,11 +60,10 @@ nSimAppDirectives.directive('piConnectionTest', [function() {
   //***************************
 
 N.Test.PiConnectionTest = function() {
-  this.Scenes  = [];
   this.nextRouteIndex = 0;
   var _this = this;
   this.StateMachine = StateMachine.create({
-    initial: 'FullConnection',
+    initial: 'None',
     events: [
       { name: 'next',  from: '*', to: 'NextRouteTest' },
       { name: 'wait',  from: 'NextRouteTest', to: 'Waiting' }
@@ -82,24 +84,13 @@ N.Test.PiConnectionTest = function() {
   ];
 }
 
-N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
-  var network = this.Scenes[0].Network;
-  var newGroup = network.Group.group();
-  var route = this.Routes[this.NextRoute];
-  var routeFinder = new N.Test.PiRouteFinder(network);
-  routeFinder.FindRoute(route[0], route[1], 270.0, network.Router);
-  var pathString = routeFinder.GetPath();
-  newGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
-  network.AddConnectionDisplay('route', newGroup);
+N.Test.PiConnectionTest.prototype.CreateScene = function() {
+  this.Scene = this.Matrix();
+  N.Objects.Add(this.Scene);
 }
 
-N.Test.PiConnectionTest.prototype.CreateScenes = function() {
-  var creators = [ 'Matrix' ];
-  for(var i in creators) {
-    var scene = this[creators[i]]();
-    N.Objects.Add(scene);
-    this.Scenes.push(scene);
-  }
+N.Test.PiConnectionTest.prototype.Next = function() {
+  this.StateMachine.next();
 }
 
 N.Test.PiConnectionTest.prototype.Matrix = function() {
@@ -121,6 +112,8 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
 
   var numColumns = [ 5, 4, 5, 3, 5 ];
   var spacings   = [ 2.2, 3.0, 2.2, 3.5, 2.2 ];
+  //var numColumns = [ 4, 4, 4, 4 ];
+  //var spacings   = [ 2.2, 2.2, 2.2, 2.2 ];
   var config = { Name: 'Matrix', ShortName: 'M', Neurons: [], Display: { Width: networkWidth, Height: networkHeight, Rows: [] } };
   for(var i=0; i<numColumns.length; i++) {
     var rowDisplay = { RowId: 'Row'+i, NumCol: numCols,  Spacing: spacings[i], Y: rowY, Cols: [] };
@@ -141,6 +134,17 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
   scene.Width = 500;
   scene.Height = 500;
   return scene;
+}
+
+N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
+  var network = this.Scene.Network;
+  var newGroup = network.Group.group();
+  var route = this.Routes[this.NextRoute];
+  var routeFinder = new N.Test.PiRouteFinder(network);
+  routeFinder.FindRoute(route[0], route[1], 270.0, network.Router);
+  var pathString = routeFinder.GetPath(network.Router);
+  newGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
+  network.AddConnectionDisplay('route', newGroup);
 }
 
 N.Test.PiConnectionTest.SpinyStellate = {
@@ -315,21 +319,122 @@ N.Test.PiRouteFinder = function(network) {
 
 N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAngle, router) {
   // Draw a line from start to end
-  this.Segments = [];
   var startPoints = router.GetNeuronOutputPosition(startNeuron);
+  this.Start = { Base: startPoints[0], End: startPoints[1] };
 
-  this.Segments.push(startPoints[0]);
-  this.Segments.push(startPoints[1]);
-  this.Segments.push(router.GetLaneCenter(endNeuron.R, endNeuron.C));
+  // Determine the end point.
+  // First, are traveling down on the screen or up?
+  var startAboveEnd = (startNeuron.R < endNeuron.R ? true : false);
+  var fromX = router.GetNeuronOutputPosition(startNeuron)[0].X;
+  var toX   = router.GetNeuronOutputPosition(endNeuron)[0].X;
+  var laneRows = router.LaneRows[endNeuron.R];
+  var lane = laneRows[(fromX < toX ? endNeuron.C : endNeuron.C+1)];
+  this.End = { X:lane.Mid, Y:(startAboveEnd ? lane.ThruNeg.Mid : lane.ThruPos.Mid) };
+
+  var start = this.Start.End;
+  var end = this.End;
+  var vec = this.Normalize({ X: (end.X-start.X), Y: (end.Y-start.Y) });
+  var incVert = (vec.Y > 0.0 ? 1 : -1);
+
+  // For each thruway...
+  this.VerticalPassasges = [];
+  var thruIndexStart = startNeuron.R;
+  var thruIndexEnd = endNeuron.R;
+  for(var i = thruIndexStart; i !== thruIndexEnd; i += incVert) {
+
+    var laneIndex;
+    switch(i) {
+      case 3: laneIndex = 1; break;
+      case 2: laneIndex = 2; break;
+      case 1: laneIndex = 2; break;
+      default: laneIndex = 0;
+    }
+
+    this.VerticalPassasges.push( { LaneRowIndex: i, LaneIndex: laneIndex } );
+  }
 }
 
+N.Test.PiRouteFinder.prototype.DotProduct = function(v1, v2) {
+  return v1.X*v2.X+v1.Y*v2.Y;
+}
 
+N.Test.PiRouteFinder.prototype.Length = function(v) {
+  return Math.sqrt(v.X*v.X+v.Y*v.Y);
+}
 
-N.Test.PiRouteFinder.prototype.GetPath = function() {
-  var path = 'M'+this.Segments[0].X+' '+this.Segments[0].Y;
-  for(var i=1; i<this.Segments.length; i++) {
-    var s = this.Segments[i];
+N.Test.PiRouteFinder.prototype.Normalize = function(v) {
+  var lInv = 1.0/this.Length(v);
+  return { X: lInv*v.X, Y: lInv*v.Y };
+}
+
+N.Test.PiRouteFinder.prototype.GetPath = function(router) {
+  this.BuildPath(router);
+
+  var path = 'M'+this.Vertices[0].X+' '+this.Vertices[0].Y;
+  for(var i=1; i<this.Vertices.length; i++) {
+    var s = this.Vertices[i];
     path += 'L'+s.X+' '+s.Y;
   }
   return path;
+}
+
+N.Test.PiRouteFinder.prototype.BuildPath = function(router) {
+  var vertices = [];
+  vertices.push(this.Start.Base);
+  vertices.push(this.Start.End);
+
+  for(var i=0; i<this.VerticalPassasges.length; i++) {
+    var vp = this.VerticalPassasges[i];
+    var lane = router.LaneRows[vp.LaneRowIndex][vp.LaneIndex];
+    var x = lane.Mid;
+    var yPos = lane.ThruPos.Mid;
+    var yNeg = lane.ThruNeg.Mid;
+    vertices.push( { X: x, Y: yPos } );
+    vertices.push( { X: x, Y: yNeg } );
+  }
+
+  vertices.push(this.End);
+
+  // Add chamfers.
+  this.Vertices = [];
+  this.Vertices.push(vertices[0]);
+
+  var v1, v2;
+  for(i=1; i<vertices.length-1; i++) {
+    if(vertices[i].Join) {
+      // From the points, construct
+      v1 = this.Vector(points[i-1], points[i]);
+      v2 = this.VectorFromSink(points[i+1]);
+      var v3 = this.FindIntersection(v1.X, v1.Y, v1.DX+v1.X, v1.DY+v1.Y, v2.X, v2.Y, v2.DX+v2.X, v2.DY+v2.Y);
+      newPoints.push(v3);
+      newPoints.push(v2);
+    }
+    else {
+      v1 = this.Vector(vertices[i-1], vertices[i]);
+      v2 = this.Vector(vertices[i+1], vertices[i]);
+
+      var chamferSize = 5;
+  //    var minLen = (v1.Len < v2.Len ? v1.Len : v2.Len);
+  //    if(minLen < corner) { corner = minLen; }
+      var corner1 = this.ShortenVector(v1, chamferSize);
+      var corner2 = this.ShortenVector(v2, chamferSize);
+      this.Vertices.push(corner1);
+      this.Vertices.push(corner2);
+    }
+  }
+
+  this.Vertices.push(vertices[vertices.length-1]);
+}
+
+N.Test.PiRouteFinder.prototype.Vector = function(base, end) {
+  var v = { DX: (end.X-base.X), DY: (end.Y-base.Y), X: base.X, Y: base.Y };
+  v.Len = Math.sqrt(v.DX*v.DX+v.DY*v.DY);
+  return v;
+}
+
+N.Test.PiRouteFinder.prototype.ShortenVector = function(vec, dl) {
+  var ratio = (vec.Len-dl)/vec.Len;
+  vec.DX *= ratio;
+  vec.DY *= ratio;
+  return { X: (vec.DX+vec.X), Y: (vec.DY+vec.Y) };
 }

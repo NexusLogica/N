@@ -103,7 +103,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale) {
 
   this.Router = new N.UI.Router(this);
   this.Router.BuildPassageInformation();
-  this.ShowRoutes();
+  //this.ShowRoutes();
 }
 
 /**
