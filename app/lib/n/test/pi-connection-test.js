@@ -78,9 +78,10 @@ N.Test.PiConnectionTest = function() {
     }
   });
 
-  this.NextRoute = 0;
-  this.Routes = [
-      [ { R: 3, C: 0 }, { R: 0, C: 3 } ]
+  this.NextConnectionSetIndex = 0;
+  this.ConnectionSets = [
+    { Source: { R: 3, C: 0 }, Sinks: [ { R: 1, C: 3, Angle: 270 }, { R: 0, C: 4, Angle: 270 }, { R: 1, C: 0, Angle: 90 } ] },
+    { Source: { R: 0, C: 0 }, Sinks: [ { R: 1, C: 3, Angle: 270 }, { R: 0, C: 4, Angle: 270 }, { R: 4, C: 4, Angle: 90 } ] }
   ];
 }
 
@@ -138,13 +139,24 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
 
 N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
   var network = this.Scene.Network;
-  var newGroup = network.Group.group();
-  var route = this.Routes[this.NextRoute];
-  var routeFinder = new N.Test.PiRouteFinder(network);
-  routeFinder.FindRoute(route[0], route[1], 270.0, network.Router);
-  var pathString = routeFinder.GetPath(network.Router);
-  newGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
-  network.AddConnectionDisplay('route', newGroup);
+  var connectionGroup = network.Group.group();
+
+  var source = this.ConnectionSets[this.NextConnectionSetIndex].Source;
+  var sinks = this.ConnectionSets[this.NextConnectionSetIndex].Sinks;
+
+  for(var i in sinks) {
+    var routeFinder = new N.Test.PiRouteFinder(network);
+    routeFinder.FindRoute(source, sinks[i], sinks[i].Angle, network.Router);
+    var pathString = routeFinder.GetPath(network.Router);
+    connectionGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
+  }
+
+  network.AddConnectionDisplay('route', connectionGroup);
+
+  this.NextConnectionSetIndex++;
+  if(this.NextConnectionSetIndex === this.ConnectionSets.length) {
+    this.NextConnectionSetIndex = 0;
+  }
 }
 
 N.Test.PiConnectionTest.SpinyStellate = {
@@ -329,28 +341,35 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
   var toX   = router.GetNeuronOutputPosition(endNeuron)[0].X;
   var laneRows = router.LaneRows[endNeuron.R];
   var lane = laneRows[(fromX < toX ? endNeuron.C : endNeuron.C+1)];
-  this.End = { X:lane.Mid, Y:(startAboveEnd ? lane.ThruNeg.Mid : lane.ThruPos.Mid) };
+  this.End = new N.UI.Vector(lane.Mid, (startAboveEnd ? lane.ThruNeg.Mid : lane.ThruPos.Mid));
 
-  var start = this.Start.End;
-  var end = this.End;
-  var vec = (new N.UI.Vector((end.X-start.X), (end.Y-start.Y))).Normalize();
-  var incVert = (vec.Y > 0.0 ? 1 : -1);
+  // Which direction do we go?
+  this.IncVert = (startNeuron.R < endNeuron.R ? 1 : -1);
+
+  // The last vertex on the past found.
+  var currentVertex = this.Start.End;
 
   // For each thruway...
-  this.VerticalPassasges = [];
-  var thruIndexStart = startNeuron.R;
-  var thruIndexEnd = endNeuron.R;
-  for(var i = thruIndexStart; i !== thruIndexEnd; i += incVert) {
+  this.VerticalPassages = [];
+  var startNeuronRow = (this.IncVert > 0 ? startNeuron.R+1 : startNeuron.R);
+  for(var i = startNeuronRow; i !== endNeuron.R; i += this.IncVert) {
+    // Start by drawing a line from the last vertex exit to the end point.
+    var targetVec = (new N.UI.Vector(this.End, currentVertex)).Normalize();
+    var slope = targetVec.Y/targetVec.X;
 
-    var laneIndex;
-    switch(i) {
-      case 3: laneIndex = 1; break;
-      case 2: laneIndex = 2; break;
-      case 1: laneIndex = 2; break;
-      default: laneIndex = 0;
+    var lanes = router.LaneRows[i];
+    var diffs = [];
+    for(var j=0; j<lanes.length; j++) {
+      lane = lanes[j];
+      var dTarget = (lane.Mid-currentVertex.X)*slope+currentVertex.Y;
+      var dLane = lane.YMid;
+      var diff = dTarget-dLane;
+      diffs.push(Math.abs(diff));
     }
 
-    this.VerticalPassasges.push( { LaneRowIndex: i, LaneIndex: laneIndex } );
+    var laneIndex = N.IndexOfMin(diffs);
+
+    this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex } );
   }
 }
 
@@ -414,12 +433,13 @@ N.Test.PiRouteFinder.prototype.CreateSimpleVertices = function(router) {
   vertices.push(this.Start.Base);
   vertices.push(this.Start.End);
 
-  for(var i=0; i<this.VerticalPassasges.length; i++) {
-    var vp = this.VerticalPassasges[i];
+  for(var i=0; i<this.VerticalPassages.length; i++) {
+    var vp = this.VerticalPassages[i];
     var lane = router.LaneRows[vp.LaneRowIndex][vp.LaneIndex];
     var x = lane.Mid;
     var yPos = lane.ThruPos.Mid;
     var yNeg = lane.ThruNeg.Mid;
+    if(this.IncVert > 0) { var temp = yPos; yPos = yNeg; yNeg = temp; }
     vertices.push( new N.UI.Vector(x, yPos) );
     vertices.push( new N.UI.Vector(x, yNeg) );
   }

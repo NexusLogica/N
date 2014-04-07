@@ -261,6 +261,27 @@ N.ShortName = function(longName) {
 }
 
 /**
+ * Returns the index of the array entry with the smallest value. If the array passed in is null, undefined, or zero length the return value is -1.
+ * @method N.IndexOfMin
+ * @param {Array} array
+ * @returns {Integer}
+ */
+N.IndexOfMin = function(array) {
+  if(!array || array.length === 0) { return -1; }
+
+  var min = array[0];
+  var minIndex = 0;
+
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] < min) {
+      minIndex = i;
+      min = array[i];
+    }
+  }
+  return minIndex;
+}
+
+/**
  * Write to the system console (or some log, if overridden).
  * @method N.L
  * @param logText
