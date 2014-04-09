@@ -16,9 +16,9 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-  //******************
-  //* N.UI.Constants *
-  //******************
+  //********
+  //* N.UI *
+  //********
 
 N.UI.Categories = {
   Excitatory : {
@@ -30,4 +30,17 @@ N.UI.Categories = {
   Default : {
     TraceColor: '#000000'
   }
+}
+
+N.UI.SvgAddClass = function(svg, className) {
+  var classes = svg.attr('class').split(' ');
+  var str = _.union(classes, [className]).join(' ');
+  svg.attr( { 'class': str });
+}
+
+N.UI.SvgRemoveClass = function(svg, className) {
+  var classes = svg.attr('class').split(' ');
+  _.pull(classes, className);
+  var str = classes.join(' ');
+  svg.attr( { 'class': str });
 }

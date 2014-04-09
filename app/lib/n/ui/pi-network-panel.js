@@ -43,10 +43,12 @@ nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
     $scope.onCompartmentMouseEnter = function(event, piCompartment) {
       var compObj = piCompartment.CompartmentObj;
       $scope.Current.HoverPath = $scope.GetCompartmentPath(compObj)+' ('+compObj.Neuron.Name+' : '+compObj.Name+')';
+      piCompartment.Neuron.Highlight();
       $scope.$digest();
     }
 
     $scope.onCompartmentMouseLeave = function(event, piCompartment) {
+      piCompartment.Neuron.RemoveHighlight();
       $scope.Current.HoverPath = '';
       $scope.$digest();
     }

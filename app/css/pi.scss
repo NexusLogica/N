@@ -11,6 +11,8 @@ All Rights Reserved.
 
 */
 
+$secondary-font: "Raleway", sans-serif;
+
 .pi-canvas {
   display: block;
   $svg-opacity: 0.03;
@@ -97,6 +99,8 @@ stroke: wheat;
     &.selected {
       stroke-width: 2.25px;
       stroke: lighten(black, 20%);
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
     }
 
     &.excitatory-body {
@@ -134,6 +138,51 @@ stroke: wheat;
     &.acetylcholine-receptors {
       fill: darken(linen, $darker);
     }
+  }
+
+  .callout-label {
+    stroke: #666;
+    fill: #666;
+    font-weight: 100;
+    font-family: $secondary-font;
+    font-size: 6px;
+    text-anchor: middle;
+    alignment-baseline: middle;
+    dominant-baseline: central;
+    fill-opacity: 0;
+    stroke-opacity: 0;
+    //transition-property: stroke-opacity, fill-opacity;
+    //transition-duration: 1s;
+  }
+
+  .callout-line {
+    stroke: #666;
+    fill: #666;
+    fill-opacity: 0;
+    stroke-opacity: 0;
+    //transition-property: stroke-opacity, fill-opacity;
+    //transition-duration: 1.5s;
+  }
+
+  &.highlight {
+    .callout-label {
+      display:inline;
+      fill-opacity: 1;
+      stroke-opacity: 1;
+      transition-property: stroke-opacity, fill-opacity;
+      transition-duration: 2.5s;
+    }
+    .callout-line {
+      display:inline;
+      fill-opacity: 1;
+      stroke-opacity: 0.5;
+      transition-property: stroke-opacity, fill-opacity;
+      transition-duration: 3.0s;
+    }
+  }
+
+  &.highlight .callout-label {
+    display:inline;
   }
 }
 

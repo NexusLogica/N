@@ -73,18 +73,27 @@ N.UI.StandardNeuronTemplates = {
     compartments: [{
       name: 'Body',
       className: 'excitatory-body',
+      dockAngles: [ { from: 52.0, to: 80.0 }, { from: 110.0, to: 118.0 } ],
+      center: { r:0.35, angle: 30 },
+      callout: { r: 1.4, angle: 30 },
       segments: [
         { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
         { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
     },{
       name: 'Dendrites',
       className: 'dendrites',
+      dockAngles: [ { from: 160.0, to: 400.0 } ],
+      center: { r: 0.8, angle: -50 },
+      callout: { r: 1.4, angle: -50 },
       segments: [
         { radius: 0.65, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
     },{
       name: 'Acetylcholine Receptors',
       className: 'acetylcholine-receptors',
+      dockAngles: [ { from: 125.0, to: 145.0 } ],
+      center: { r: 0.8, angle: 135 },
+      callout: { r: 1.4, angle: 145 },
       segments: [
         { radius: 0.65, startAngle:  120, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]

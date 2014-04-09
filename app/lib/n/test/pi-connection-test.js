@@ -349,6 +349,8 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
   // The last vertex on the past found.
   var currentVertex = this.Start.End;
 
+  this.FindEndAngle(router, endNeuron, new N.UI.Vector(this.End, this.Start.End));
+
   // For each thruway...
   this.VerticalPassages = [];
   var startNeuronRow = (this.IncVert > 0 ? startNeuron.R+1 : startNeuron.R);
@@ -373,17 +375,8 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
   }
 }
 
-N.Test.PiRouteFinder.prototype.DotProduct = function(v1, v2) {
-  return v1.X*v2.X+v1.Y*v2.Y;
-}
+N.Test.PiRouteFinder.prototype.FindEndAngle = function(router, endNeuron, directionVector) {
 
-N.Test.PiRouteFinder.prototype.Length = function(v) {
-  return Math.sqrt(v.X*v.X+v.Y*v.Y);
-}
-
-N.Test.PiRouteFinder.prototype.Normalize = function(v) {
-  var lInv = 1.0/this.Length(v);
-  return { X: lInv*v.X, Y: lInv*v.Y };
 }
 
 N.Test.PiRouteFinder.prototype.GetPath = function(router) {

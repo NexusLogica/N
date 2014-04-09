@@ -30,16 +30,17 @@ N.UI.PiNeuron = function() {
 
 N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this.Neuron = neuron;
-  this._group = svgParent.group();
+  this.Group = svgParent.group();
   var classNameFull = 'pi-neuron';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
-  this._group.attr({ class: classNameFull });
+  this.Group.attr({ class: classNameFull });
 
   var _this = this;
   var compartmentMap = (neuron.Display ? neuron.Display.CompartmentMap : null);
   for(var i in this.compartments) {
     var compartment = this.compartments[i];
-    compartment.path = this._group.path(compartment.pathString).attr({ fill: compartment.color });
+    compartment.Neuron = this;
+    compartment.path = this.Group.path(compartment.pathString).attr({ fill: compartment.color });
 
     var compartmentClassName = 'compartment';
     if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
@@ -57,7 +58,33 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
       }
     }
   }
-  this._group.translate(this.X, this.Y);
+
+  if(compartmentMap) {
+    this.DrawCallouts(compartmentMap);
+  }
+
+  this.Group.translate(this.X, this.Y);
+}
+
+N.UI.PiNeuron.prototype.DrawCallouts = function(compartmentMap) {
+  var r = this.Radius;
+  for(var i in this.compartments) {
+    var compartment = this.compartments[i];
+    var pos = compartment.callout;
+    var target = compartment.center;
+    if(pos && target) {
+      var shortName = compartmentMap[compartment.name];
+      var coPos = new N.UI.Vector(r*pos.r*Math.cos(N.Rad(pos.angle)), r*pos.r*Math.sin(N.Rad(pos.angle)));
+      var tarPos = new N.UI.Vector(r*target.r*Math.cos(N.Rad(target.angle)), r*target.r*Math.sin(N.Rad(target.angle)));
+
+      var text = this.Group.plain(shortName);
+      var bbox = text.bbox();
+      text.move(coPos.X+bbox.x, coPos.Y+bbox.y).attr({class: 'callout-label' }).attr({ 'dominant-baseline': 'central'}).attr({ 'text-anchor': 'middle' });
+      var short = coPos.Shorten(tarPos, 5);
+
+      var line = this.Group.line(tarPos.X, tarPos.Y, short.X, short.Y).stroke({width: 1}).attr({class: 'callout-line' });
+    }
+  }
 }
 
 N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
@@ -80,8 +107,12 @@ N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
   });
 }
 
-N.UI.PiNeuron.prototype.GetGroup = function() {
-  return this._group;
+N.UI.PiNeuron.prototype.Highlight = function(compartment) {
+  N.UI.SvgAddClass(this.Group, 'highlight');
+}
+
+N.UI.PiNeuron.prototype.RemoveHighlight = function(compartment) {
+  N.UI.SvgRemoveClass(this.Group, 'highlight');
 }
 
   //************************

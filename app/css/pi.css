@@ -75,7 +75,9 @@ stroke: wheat;
   stroke-linejoin: round; }
   .pi-neuron .compartment.selected {
     stroke-width: 2.25px;
-    stroke: #333333; }
+    stroke: #333333;
+    transition-property: stroke, stroke-width;
+    transition-duration: 0.5s; }
   .pi-neuron .compartment.excitatory-body {
     fill: #d1e7c9; }
   .pi-neuron .compartment.inhibitory-body {
@@ -94,6 +96,36 @@ stroke: wheat;
     fill: #f1efe2; }
   .pi-neuron .compartment.acetylcholine-receptors {
     fill: linen; }
+.pi-neuron .callout-label {
+  stroke: #666;
+  fill: #666;
+  font-weight: 100;
+  font-family: "Raleway", sans-serif;
+  font-size: 6px;
+  text-anchor: middle;
+  alignment-baseline: middle;
+  dominant-baseline: central;
+  fill-opacity: 0;
+  stroke-opacity: 0; }
+.pi-neuron .callout-line {
+  stroke: #666;
+  fill: #666;
+  fill-opacity: 0;
+  stroke-opacity: 0; }
+.pi-neuron.highlight .callout-label {
+  display: inline;
+  fill-opacity: 1;
+  stroke-opacity: 1;
+  transition-property: stroke-opacity, fill-opacity;
+  transition-duration: 2.5s; }
+.pi-neuron.highlight .callout-line {
+  display: inline;
+  fill-opacity: 1;
+  stroke-opacity: 0.5;
+  transition-property: stroke-opacity, fill-opacity;
+  transition-duration: 3.0s; }
+.pi-neuron.highlight .callout-label {
+  display: inline; }
 
 .pi-network > rect {
   stroke-width: 0.8px;
