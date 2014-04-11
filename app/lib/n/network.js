@@ -49,7 +49,7 @@ N.Network.prototype.GetType = function() {
 }
 
 /**
- * Get the full path of the neuron.
+ * Get the full path of the network.
  * @method GetPath
  * @returns {string}
  */

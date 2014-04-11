@@ -80,8 +80,8 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSets = [
-    { Source: { R: 3, C: 0 }, Sinks: [ { R: 1, C: 3, Angle: 270 }, { R: 0, C: 4, Angle: 270 }, { R: 1, C: 0, Angle: 90 } ] },
-    { Source: { R: 0, C: 0 }, Sinks: [ { R: 1, C: 3, Angle: 270 }, { R: 0, C: 4, Angle: 270 }, { R: 4, C: 4, Angle: 90 } ] }
+    { Source: 'SS41>OP', Sinks: [ 'SS21>IP', 'SS15>IP', 'SS43>IP' ] },
+    { Source: 'SS11>OP', Sinks: [ 'SS24>IP', 'SS15>IP', 'SS55>IP' ] }
   ];
 }
 
@@ -334,27 +334,30 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
   var startPoints = router.GetNeuronOutputPosition(startNeuron);
   this.Start = { Base: startPoints[0], End: startPoints[1] };
 
+  var nStart = router.GetNeuron(startNeuron);
+  var nEnd   = router.GetNeuron(endNeuron);
+
   // Determine the end point.
   // First, are traveling down on the screen or up?
-  var startAboveEnd = (startNeuron.R < endNeuron.R ? true : false);
+  var startAboveEnd = (nStart.Row < nEnd.Row ? true : false);
   var fromX = router.GetNeuronOutputPosition(startNeuron)[0].X;
   var toX   = router.GetNeuronOutputPosition(endNeuron)[0].X;
-  var laneRows = router.LaneRows[endNeuron.R];
-  var lane = laneRows[(fromX < toX ? endNeuron.C : endNeuron.C+1)];
+  var laneRows = router.LaneRows[nEnd.Row];
+  var lane = laneRows[(fromX < toX ? nEnd.Col : nEnd.Col+1)];
   this.End = new N.UI.Vector(lane.Mid, (startAboveEnd ? lane.ThruNeg.Mid : lane.ThruPos.Mid));
 
   // Which direction do we go?
-  this.IncVert = (startNeuron.R < endNeuron.R ? 1 : -1);
+  this.IncVert = (nStart.Row < nEnd.Row ? 1 : -1);
 
   // The last vertex on the past found.
   var currentVertex = this.Start.End;
 
-  this.FindEndAngle(router, endNeuron, new N.UI.Vector(this.End, this.Start.End));
+  this.FindEndAngle(router, endNeuron, new N.UI.Vector(this.End, this.Start.End), this.End);
 
   // For each thruway...
   this.VerticalPassages = [];
-  var startNeuronRow = (this.IncVert > 0 ? startNeuron.R+1 : startNeuron.R);
-  for(var i = startNeuronRow; i !== endNeuron.R; i += this.IncVert) {
+  var startNeuronRow = (this.IncVert > 0 ? nStart.Row+1 : nStart.Row);
+  for(var i = startNeuronRow; i !== nEnd.Row; i += this.IncVert) {
     // Start by drawing a line from the last vertex exit to the end point.
     var targetVec = (new N.UI.Vector(this.End, currentVertex)).Normalize();
     var slope = targetVec.Y/targetVec.X;
@@ -375,7 +378,11 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
   }
 }
 
-N.Test.PiRouteFinder.prototype.FindEndAngle = function(router, endNeuron, directionVector) {
+N.Test.PiRouteFinder.prototype.FindEndAngle = function(router, endNeuron, directionVector, endPoint) {
+  var center = router.GetNeuron(endNeuron);
+  if(endNeuron.X > endPoint.X) {
+
+  }
 
 }
 

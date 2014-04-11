@@ -89,12 +89,14 @@ N.UI.Router.prototype.BuildPassageInformation = function() {
   return this;
 }
 
-N.UI.Router.prototype.GetNeuronOutputPosition = function(neuron) {
-  var name = neuron;
-  if(!_.isString(neuron)) {
-    name = this.Network.Rows[neuron.R].Cols[neuron.C].Name;
-  }
-  var  n = this.Network.NeuronsByName[name];
+N.UI.Router.prototype.GetNeuron = function(neuronName) {
+  var parts = neuronName.split('>');
+  var  n = this.Network.NeuronsByName[parts[0]];
+  return n;
+}
+
+N.UI.Router.prototype.GetNeuronOutputPosition = function(neuronName) {
+  var n = this.GetNeuron(neuronName);
   var x = n.X;
   var y = n.Y+n.Radius;
   var lane = this.LaneRows[n.Row];
