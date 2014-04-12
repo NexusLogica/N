@@ -208,6 +208,20 @@ N.FromPath = function(network, path) {
 }
 
 /**
+ * Returns the compartment from a path.
+ * @method N.CompFromPath
+ * @param {String} path
+ * @return {String} Returns the id of the compartment or null if nothing found.
+ */
+N.CompFromPath = function(path) {
+  var parts =  path.split('>');
+  if(parts.length === 2) {
+    return parts[1];
+  }
+  return null;
+}
+
+/**
  * Returns the object pointed to by the path relative to
  * @method N.FromConnectionPaths
  * @param {N.Network} network

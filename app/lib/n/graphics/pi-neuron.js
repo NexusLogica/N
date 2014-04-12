@@ -26,24 +26,26 @@ N.UI.PiNeuron = function() {
   this.Name = '';
   this.NeuronClassName = '';
   this.Neuron = null;
+  this.Compartments = {};
+  this.CompartmentsById = {};
 }
 
 N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
   this.Neuron = neuron;
   this.Group = svgParent.group();
   var classNameFull = 'pi-neuron';
-  if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
+  if(this.hasOwnProperty('ClassName')) { classNameFull += ' '+this.ClassName; }
   this.Group.attr({ class: classNameFull });
 
   var _this = this;
   var compartmentMap = (neuron.Display ? neuron.Display.CompartmentMap : null);
-  for(var i in this.compartments) {
-    var compartment = this.compartments[i];
+  for(var i in this.Compartments) {
+    var compartment = this.Compartments[i];
     compartment.Neuron = this;
     compartment.path = this.Group.path(compartment.pathString).attr({ fill: compartment.color });
 
     var compartmentClassName = 'compartment';
-    if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
+    if(compartment.hasOwnProperty('ClassName')) { compartmentClassName += ' '+compartment.ClassName; }
     if(this.NeuronClassName.length) { compartmentClassName += ' '+this.NeuronClassName; }
     compartment.path.attr( { class: compartmentClassName } );
 
@@ -52,6 +54,7 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
       if(neuronCompartmentName) {
         var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
         if(compartmentObj) {
+          this.CompartmentsById[compartmentObj.ShortName] = compartment;
           compartment.CompartmentObj = compartmentObj;
           this.AddEventHandlers(compartment);
         }
@@ -68,10 +71,10 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
 
 N.UI.PiNeuron.prototype.DrawCallouts = function(compartmentMap) {
   var r = this.Radius;
-  for(var i in this.compartments) {
-    var compartment = this.compartments[i];
-    var pos = compartment.callout;
-    var target = compartment.center;
+  for(var i in this.Compartments) {
+    var compartment = this.Compartments[i];
+    var pos = compartment.Callout;
+    var target = compartment.Center;
     if(pos && target) {
       var shortName = compartmentMap[compartment.name];
       var coPos = new N.UI.Vector(r*pos.r*Math.cos(N.Rad(pos.angle)), r*pos.r*Math.sin(N.Rad(pos.angle)));
@@ -275,16 +278,16 @@ N.UI.PiNeuronFactory = (function() {
 
     function BuildFromTemplate() {
       filledTemplate = {};
-      if(template.hasOwnProperty('className')) {
-        filledTemplate.className = template.className;
+      if(template.hasOwnProperty('ClassName')) {
+        filledTemplate.ClassName = template.ClassName;
       }
-      filledTemplate.compartments = {};
-      for(var i in template.compartments) {
-        var templateCompartment = template.compartments[i];
+      filledTemplate.Compartments = {};
+      for(var i in template.Compartments) {
+        var templateCompartment = template.Compartments[i];
         var pathString = PiCompartmentToPath(templateCompartment, radius);
         var compartment = _.cloneDeep(templateCompartment);
         compartment.pathString = pathString;
-        filledTemplate.compartments[compartment.name] = compartment;
+        filledTemplate.Compartments[compartment.name] = compartment;
       }
     }
 

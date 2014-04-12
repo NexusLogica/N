@@ -57,7 +57,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale) {
   this.Rows = _.clone(this.Network.Display.Rows);
 
   var classNameFull = 'pi-network';
-  if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
+  if(this.hasOwnProperty('ClassName')) { classNameFull += ' '+this.ClassName; }
   if(this.Network.ShortName.length) { classNameFull += ' '+this.Network.ShortName; }
   this.Group.attr({ class: classNameFull });
 

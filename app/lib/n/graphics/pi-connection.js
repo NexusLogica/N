@@ -32,7 +32,7 @@ N.UI.PiConnection.prototype.Render = function(neuron, svgParent) {
   this.Neuron = neuron;
   this._group = svgParent.group();
   var classNameFull = 'pi-neuron';
-  if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
+  if(this.hasOwnProperty('ClassName')) { classNameFull += ' '+this.ClassName; }
   this._group.attr({ class: classNameFull });
 
   var _this = this;
@@ -42,7 +42,7 @@ N.UI.PiConnection.prototype.Render = function(neuron, svgParent) {
     compartment.path = this._group.path(compartment.pathString).attr({ fill: compartment.color });
 
     var compartmentClassName = 'compartment';
-    if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
+    if(compartment.hasOwnProperty('ClassName')) { compartmentClassName += ' '+compartment.ClassName; }
     if(this.NeuronClassName.length) { compartmentClassName += ' '+this.NeuronClassName; }
     compartment.path.attr( { class: compartmentClassName } );
 
@@ -244,8 +244,8 @@ N.UI.PiConnectionFactory = (function() {
 
     function BuildFromTemplate() {
       filledTemplate = {};
-      if(template.hasOwnProperty('className')) {
-        filledTemplate.className = template.className;
+      if(template.hasOwnProperty('ClassName')) {
+        filledTemplate.ClassName = template.ClassName;
       }
       filledTemplate.compartments = {};
       for(var i in template.compartments) {

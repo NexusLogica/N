@@ -379,8 +379,9 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
 }
 
 N.Test.PiRouteFinder.prototype.FindEndAngle = function(router, endNeuron, directionVector, endPoint) {
-  var center = router.GetNeuron(endNeuron);
-  if(endNeuron.X > endPoint.X) {
+  var n = router.GetNeuron(endNeuron);
+  var comp = n.CompartmentsById[N.CompFromPath(endNeuron)];
+  if(n.X > endPoint.X) {
 
   }
 
