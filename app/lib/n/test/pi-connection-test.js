@@ -80,6 +80,7 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSets = [
+    { Source: 'SS41>OP', Sinks: [ 'SS21>IP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS21>IP', 'SS15>IP', 'SS43>IP' ] },
     { Source: 'SS11>OP', Sinks: [ 'SS24>IP', 'SS15>IP', 'SS55>IP' ] }
   ];
@@ -352,7 +353,7 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
   // The last vertex on the past found.
   var currentVertex = this.Start.End;
 
-  this.FindEndAngle(router, endNeuron, new N.UI.Vector(this.End, this.Start.End), this.End);
+  this.NeuronEnd = this.FindEndAngle(router, endNeuron, new N.UI.Vector(-(this.Start.End.X-nEnd.X), -(this.Start.End.Y-nEnd.Y)), this.End);
 
   // For each thruway...
   this.VerticalPassages = [];
@@ -381,10 +382,41 @@ N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endA
 N.Test.PiRouteFinder.prototype.FindEndAngle = function(router, endNeuron, directionVector, endPoint) {
   var n = router.GetNeuron(endNeuron);
   var comp = n.CompartmentsById[N.CompFromPath(endNeuron)];
-  if(n.X > endPoint.X) {
+  var angles = comp.DockAngles;
+  var quadrants = [ [], [], [], [] ]; // 0->90, 90->180, 180->270, 270->360
+  for (var i in angles) {
+    // Go through each quadrant.
+    var angle = angles[i];
+    var from = angle.From;
+    var to = angle.To;
+    if (from > to) { from -= 360.0; }
+    if (to > 360 || from > 360) { to -= 360.0; from -= 360.0; }
 
+    for (var j=0; j<4; j++) {
+      var low = 90*j;
+      var high = low+90;
+      if (from <= high || to >= low) {
+        quadrants[j].push(i);
+      }
+    }
   }
 
+  // Which quadrant is ideal?
+  var directionQuadrant = (directionVector.X < 0 ? (directionVector.Y > 0.0 ? 3 : 0) : (directionVector.Y > 0.0 ? 2 : 1));
+
+  var qi = directionQuadrant;
+  if(quadrants[directionQuadrant].length === 0) {
+    qi = (directionQuadrant+1 < 3 ? directionQuadrant+1 : 0);
+    if(quadrants[qi].length === 0) {
+      qi = (directionQuadrant-1 < 3 ? directionQuadrant-1 : 0);
+      if(quadrants[qi].length === 0) {
+        qi = (directionQuadrant-2 < 3 ? directionQuadrant-2 : 0);
+      }
+    }
+  }
+
+  var exitAngle = qi*90+45;
+  return { Angle: exitAngle, NeuronCenter: new N.UI.Vector(n.X, n.Y), Radius: n.Radius };
 }
 
 N.Test.PiRouteFinder.prototype.GetPath = function(router) {
@@ -446,6 +478,12 @@ N.Test.PiRouteFinder.prototype.CreateSimpleVertices = function(router) {
   }
 
   vertices.push(this.End);
+
+  var dx = Math.cos(N.Rad(this.NeuronEnd.Angle));
+  var dy = Math.sin(N.Rad(this.NeuronEnd.Angle));
+  var rOuter = this.NeuronEnd.Radius+10;
+  vertices.push(this.NeuronEnd.NeuronCenter.Clone().Offset(rOuter*dx, rOuter*dy));
+  vertices.push(this.NeuronEnd.NeuronCenter.Clone().Offset(this.NeuronEnd.Radius*dx, this.NeuronEnd.Radius*dy));
   return vertices;
 }
 

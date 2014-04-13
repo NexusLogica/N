@@ -62,3 +62,13 @@ N.UI.Vector.prototype.Distance = function(vec) {
   var y = this.Y-vec.Y;
   return Math.sqrt(x*x+y*y);
 }
+
+N.UI.Vector.prototype.Clone = function() {
+  return new N.UI.Vector(this.X, this.Y);
+}
+
+N.UI.Vector.prototype.Offset = function(x, y) {
+  this.X += x;
+  this.Y += y;
+  return new N.UI.Vector(this.X, this.Y);
+}
