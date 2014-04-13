@@ -328,6 +328,8 @@ N.Test.PiConnectionCreator.prototype.ShortenVector = function(vec, dl) {
 
 N.Test.PiRouteFinder = function(network) {
   this.Network = network;
+  this.ChamferSize = 5.0;
+  this.MinSegmentLength = 10.0;
 }
 
 N.Test.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAngle, router) {
@@ -430,37 +432,6 @@ N.Test.PiRouteFinder.prototype.GetPath = function(router) {
   return path;
 }
 
-N.Test.PiRouteFinder.prototype.BuildPath = function(router) {
-
-  var simpleVertices = this.CreateSimpleVertices(router);
-  this.CalculateLengths(simpleVertices);
-  // Add chamfers.
-  this.Vertices = [];
-  this.Vertices.push(simpleVertices[0]);
-
-  var v1, v2;
-  for(var i=1; i<simpleVertices.length-1; i++) {
-    if(simpleVertices[i].Join) {
-      // From the points, construct
-      v1 = this.Vector(points[i-1], points[i]);
-      v2 = this.VectorFromSink(points[i+1]);
-      var v3 = this.FindIntersection(v1.X, v1.Y, v1.DX+v1.X, v1.DY+v1.Y, v2.X, v2.Y, v2.DX+v2.X, v2.DY+v2.Y);
-      newPoints.push(v3);
-      newPoints.push(v2);
-    }
-    else {
-      var chamferSize = 5;
-      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], chamferSize);
-      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], chamferSize);
-      this.Vertices.push(corner1);
-      this.Vertices.push(corner2);
-      //this.Vertices.push(simpleVertices[i]);
-    }
-  }
-
-  this.Vertices.push(simpleVertices[simpleVertices.length-1]);
-}
-
 N.Test.PiRouteFinder.prototype.CreateSimpleVertices = function(router) {
   var vertices = [];
   vertices.push(this.Start.Base);
@@ -477,20 +448,72 @@ N.Test.PiRouteFinder.prototype.CreateSimpleVertices = function(router) {
     vertices.push( new N.UI.Vector(x, yNeg) );
   }
 
-  vertices.push(this.End);
-
   var dx = Math.cos(N.Rad(this.NeuronEnd.Angle));
   var dy = Math.sin(N.Rad(this.NeuronEnd.Angle));
   var rOuter = this.NeuronEnd.Radius+10;
-  vertices.push(this.NeuronEnd.NeuronCenter.Clone().Offset(rOuter*dx, rOuter*dy));
+
+  var v0 = vertices[vertices.length-1];
+  var v1 = this.End;
+  var v2 = this.NeuronEnd.NeuronCenter.Clone().Offset(rOuter*dx, rOuter*dy);
+  var v3 = this.FindIntersection(v0.X, v0.Y, v1.X, v1.Y, v2.X, v2.Y, this.NeuronEnd.NeuronCenter.X, this.NeuronEnd.NeuronCenter.Y);
+  vertices.push(v3);
+  vertices.push(v2);
   vertices.push(this.NeuronEnd.NeuronCenter.Clone().Offset(this.NeuronEnd.Radius*dx, this.NeuronEnd.Radius*dy));
   return vertices;
 }
 
+N.Test.PiRouteFinder.prototype.BuildPath = function(router) {
+
+  var simpleVertices = this.CreateSimpleVertices(router);
+  this.CalculateLengths(simpleVertices);
+
+  // Add chamfers.
+  this.Vertices = [];
+  this.Vertices.push(simpleVertices[0]);
+
+  for(var i=1; i<simpleVertices.length-1; i++) {
+    // Remove a segment.
+    if(simpleVertices[i].Join) {
+      // From the points, construct
+      var v0 = simpleVertices[i-1];
+      var v1 = simpleVertices[i];
+      var v2 = simpleVertices[i+1];
+      var v3 = simpleVertices[i+2];
+      var v4 = this.FindIntersection(v0.X, v0.Y, v1.X, v1.Y, v2.X, v2.Y, v3.X, v3.Y);
+      this.Vertices.push(v4);
+      i++; // Skip the next segment.
+    }
+    // Add a segment...
+    else {
+      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], this.ChamferSize);
+      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], this.ChamferSize);
+      this.Vertices.push(corner1);
+      this.Vertices.push(corner2);
+      //this.Vertices.push(simpleVertices[i]);
+    }
+  }
+
+  this.Vertices.push(simpleVertices[simpleVertices.length-1]);
+}
+
 N.Test.PiRouteFinder.prototype.CalculateLengths = function(simpleVertices) {
   for(var i=0; i<simpleVertices.length-1; i++) {
-    var v1 = simpleVertices[i];
-    var v2 = simpleVertices[i+1];
-
+    var len =  simpleVertices[i].Distance(simpleVertices[i+1]);
+    if(len < this.MinSegmentLength) {
+      simpleVertices[i].Join = true;
+    }
   }
 }
+
+N.Test.PiRouteFinder.prototype.FindIntersection = function(p0X, p0Y, p1X, p1Y, p2X, p2Y, p3X, p3Y) {
+  var s1X = p1X - p0X;
+  var s1Y = p1Y - p0Y;
+  var s2X = p3X - p2X;
+  var s2Y = p3Y - p2Y;
+
+  var s = (-s1Y * (p0X - p2X) + s1X * (p0Y - p2Y)) / (-s2X * s1Y + s1X * s2Y);
+  var t = ( s2X * (p0Y - p2Y) - s2Y * (p0X - p2X)) / (-s2X * s1Y + s1X * s2Y);
+
+  return new N.UI.Vector(p0X + (t * s1X), p0Y + (t * s1Y));
+}
+
