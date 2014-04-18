@@ -142,7 +142,7 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(routeInfo, endNeuron, direc
   var dx = Math.cos(N.Rad(exitAngle));
   var dy = Math.sin(N.Rad(exitAngle));
   var last = new N.UI.Vector(dx*n.Radius+n.X, dy*n.Radius+n.Y);
-  var nextToLast = new N.UI.Vector((dx*n.Radius+10.0)+n.X, (dy*n.Radius+10.0)+n.Y);
+  var nextToLast = new N.UI.Vector( dx*(n.Radius+10.0)+n.X, dy*(n.Radius+10.0)+n.Y);
 
   return { RequiresVert: requiresVert, VertDirection: vertDir, VertSide: (qi === 1 || qi === 2 ? 'L' : 'R'), Last: last, NextToLast: nextToLast };
 }
