@@ -34,7 +34,7 @@ N.UI = N.UI || {};
  * @param {N.UI.PiNetwork} network
  * @constructor
  */
-N.UI.Router = function(network) {
+N.UI.RouteInfo = function(network) {
   this.Network = network;
   this.Thruways = [];
   this.LaneRows = [];
@@ -43,9 +43,9 @@ N.UI.Router = function(network) {
 /**
  * Build the thruway and lane information from the network and neuron layouts. This must be called prior to doing any actual routing of connectors.
  * @method BuildPassageInformation
- * @return {N.UI.Router} Returns a reference to self.
+ * @return {N.UI.RouteInfo} Returns a reference to self.
  */
-N.UI.Router.prototype.BuildPassageInformation = function() {
+N.UI.RouteInfo.prototype.BuildPassageInformation = function() {
   var rows = this.Network.Rows;
 
   // Calculate the thruway information.
@@ -89,13 +89,13 @@ N.UI.Router.prototype.BuildPassageInformation = function() {
   return this;
 }
 
-N.UI.Router.prototype.GetNeuron = function(neuronName) {
+N.UI.RouteInfo.prototype.GetNeuron = function(neuronName) {
   var parts = neuronName.split('>');
   var  n = this.Network.NeuronsByName[parts[0]];
   return n;
 }
 
-N.UI.Router.prototype.GetNeuronOutputPosition = function(neuronName) {
+N.UI.RouteInfo.prototype.GetNeuronOutputPosition = function(neuronName) {
   var n = this.GetNeuron(neuronName);
   var x = n.X;
   var y = n.Y+n.Radius;
@@ -104,14 +104,14 @@ N.UI.Router.prototype.GetNeuronOutputPosition = function(neuronName) {
   return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.ThruPos.Mid) ];
 }
 
-N.UI.Router.prototype.GetLaneCenter = function(rowIndex, laneIndex) {
+N.UI.RouteInfo.prototype.GetLaneCenter = function(rowIndex, laneIndex) {
   var lanes = this.LaneRows[rowIndex];
   var lane = lanes[laneIndex];
 
   return new N.UI.Vector(lane.Mid, lane.YMid);
 }
 
-N.UI.Router.prototype.GetPoint = function(rc) {
+N.UI.RouteInfo.prototype.GetPoint = function(rc) {
   var pos = [];
   var name, x, y, rx, ry, drop, n;
   if(rc.hasOwnProperty('Src')) {
@@ -161,7 +161,7 @@ N.UI.Router.prototype.GetPoint = function(rc) {
  * @param {Array} pos An array of segment positions.
  * @param {Object} rc An object containing row, column, and offset components that define the desired segment end.
  */
-N.UI.Router.prototype.ProcessOffset = function(pos, rc) {
+N.UI.RouteInfo.prototype.ProcessOffset = function(pos, rc) {
   if(pos.length && rc.hasOwnProperty('Offset')) {
     var offsetSize = 5.0;
     var offsets = rc.Offset.split(' ');
@@ -187,7 +187,7 @@ N.UI.Router.prototype.ProcessOffset = function(pos, rc) {
  * @return {Real} Returns the y value of the row maximum
  * @protected
  */
-N.UI.Router.prototype.MaximumNeuronRowY = function(index) {
+N.UI.RouteInfo.prototype.MaximumNeuronRowY = function(index) {
   var row = this.Network.Rows[index];
   for(var i=0; i<row.Cols.length; i++) {
     var name = row.Cols[i].Name;
@@ -206,7 +206,7 @@ N.UI.Router.prototype.MaximumNeuronRowY = function(index) {
  * @return {Real} Returns the y value of the row minimum
  * @protected
  */
-N.UI.Router.prototype.MinimumNeuronRowY = function(index) {
+N.UI.RouteInfo.prototype.MinimumNeuronRowY = function(index) {
   var row = this.Network.Rows[index];
   for(var i=0; i<row.Cols.length; i++) {
     var name = row.Cols[i].Name;

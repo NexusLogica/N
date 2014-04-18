@@ -101,8 +101,8 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale) {
 
   this._label = this.Group.plain(this.Network.ShortName).move(-0.5*w+6, -0.5*h+3);
 
-  this.Router = new N.UI.Router(this);
-  this.Router.BuildPassageInformation();
+  this.RouteInfo = new N.UI.RouteInfo(this);
+  this.RouteInfo.BuildPassageInformation();
   //this.ShowRoutes();
 }
 
@@ -130,7 +130,7 @@ N.UI.PiNetwork.prototype.LoadFrom = function(json) {
 }
 
 N.UI.PiNetwork.prototype.ShowRoutes = function() {
-  var r = this.Router;
+  var r = this.RouteInfo;
   for(var i=0; i< r.LaneRows.length; i++) {
     var laneRow = r.LaneRows[i];
     var yNeg = laneRow.ThruNeg.YPos;
