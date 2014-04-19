@@ -324,6 +324,18 @@ N.Rad = function(angleDegrees) {
 }
 
 /**
+ * Converts an angle in radians to degrees.
+ *
+ * @method N.Deg
+ * @param {Real} angle Angle in radians
+ * @return {Real} Angle in degrees
+ *
+ */
+N.Deg = function(angleRadians) {
+  return angleRadians*180/Math.PI;
+}
+
+/**
  * Create a globally unique ID and return it as a string.
  * @method N.GenerateUUID
  * @return {String} Unique Identifier string

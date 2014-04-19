@@ -132,40 +132,33 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(routeInfo, endNeuron, direc
     }
   }
 
-  // Try a 45 degree exit angle and use that if possible.
+  // At this point we have already decided on a quadrant and we know it is a reasonable choice. Next
+  // see if a 45 degree exit angle is possible.
   var exitAngle = qi*90+45;
-/*  var success = false;
+  var success = false;
   for(i in quadrants[qi]) {
-    angleRange = angles[quadrants[qi][i]];
-    from = angleRange.From;
-    to = angleRange.To;
-    if (from > to) { from -= 360.0; }
-    if (to > 360 || from > 360) { to -= 360.0; from -= 360.0; }
-
-    if (to <= exitAngle && from >= exitAngle) {
+    angleRange = dockAngles[quadrants[qi][i]];
+    if(this.IsAngleWithinLimitAngles(exitAngle, angleRange.From, angleRange.To)) {
       success = true;
       break;
     }
   }
 
   if(!success) {
+    var ranges = [];
+    var totals = [];
     var quadLimitLow = qi*90;
-    var qualLimitHigh = quadLimitLow+90;
+    var quadLimitHigh = quadLimitLow+90;
     for(i in quadrants[qi]) {
-      angleRange = angles[quadrants[qi][i]];
-      from = angleRange.From;
-      to = angleRange.To;
-      if (from > to) { from -= 360.0; }
-      if (to > 360 || from > 360) { to -= 360.0; from -= 360.0; }
-
-      if (to <= exitAngle && from >= exitAngle) {
-        success = true;
-        break;
-      }
+      angleRange = dockAngles[quadrants[qi][i]];
+      var intersection = this.IntersectionOfRangeAndLimitAngles(angleRange.From, angleRange.To, quadLimitLow, quadLimitHigh);
+      ranges.push(intersection);
+      totals.push(-intersection.Total);
     }
+    var toUse = N.IndexOfMin(totals);
+    var bestIntersection = ranges[toUse];
+    exitAngle = bestIntersection.From+0.5*bestIntersection.Total;
   }
-
-*/
 
   var vertAngle = qi*90+45;
   var requiresVert;
@@ -212,10 +205,46 @@ N.UI.PiRouteFinder.prototype.IsRangeWithinLimitAngles = function(from, to, lower
     lower += 360.0;
     upper += 360.0;
   }
+  return false;
 }
 
-N.UI.PiRouteFinder.prototype.UnionOfRangeAndLimitAngles = function(from, to, upperLimit, lowerLimit) {
-  return { Lower: 0.0, Upper: 0.0, Total: 0.0 };
+/**
+ * Returns a boolean indicating if the
+ * @method IsAngleWithinLimitAngles
+ * @param angle
+ * @param lowerLimit
+ * @param upperLimit
+ * @returns {boolean}
+ * @constructor
+ */
+N.UI.PiRouteFinder.prototype.IsAngleWithinLimitAngles = function(angle, lowerLimit, upperLimit) {
+  var lower = lowerLimit-360;
+  var upper = upperLimit-360;
+  for(var i=0; i<3; i++) {
+    if(angle >= lower && angle <= upper) {
+      return true;
+    }
+    lower += 360.0;
+    upper += 360.0;
+  }
+  return false;
+}
+
+/**
+ * Finds the range, within this quadrant specified by the upper and lower limits, that is within the limits and
+ * within the to/from range. It assumes that the to/from range is definitely within the limit angles.
+ * @method IntersectionOfRangeAndLimitAngles
+ * @param from
+ * @param to
+ * @param lowerLimit
+ * @param upperLimit
+ * @returns {{Lower: number, Upper: number, Total: number}} Returns the new from/to intersection values and total angle
+ * @constructor
+ */
+N.UI.PiRouteFinder.prototype.IntersectionOfRangeAndLimitAngles = function(from, to, lowerLimit, upperLimit) {
+  var low = (from > lowerLimit ? from : lowerLimit);
+  var high = (from > lowerLimit ? from : lowerLimit);
+  return { From: low, To: high, Total: high-low };
 }
 
 N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
@@ -237,7 +266,9 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
     vertices.push( new N.UI.Vector(x, yNeg) );
   }
 
-  vertices.push( new N.UI.Vector(this.LastPassageX, vertices[vertices.length-1].Y) );
+  if(Math.abs(this.LastPassageX-vertices[vertices.length-1].X) > this.MinSegmentLength) {
+    vertices.push( new N.UI.Vector(this.LastPassageX, vertices[vertices.length-1].Y) );
+  }
 
   // We are almost there. If final connection into the neuron is more horizontal than vertical we need to
   // to add a path up the side of the neuron.
@@ -304,11 +335,15 @@ N.UI.PiRouteFinder.prototype.BuildPath = function(routeInfo) {
     }
     // Add a segment...
     else if(this.Chamfer && i<simpleVertices.length-1) {
-      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], this.ChamferSize);
-      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], this.ChamferSize);
+      var angle = this.AngleBetween(simpleVertices[i-1], simpleVertices[i], simpleVertices[i+1]);
+      var chamfer = this.ChamferSize;
+      if(angle < 75) {
+        chamfer = 0.5*this.ChamferSize;
+      }
+      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], chamfer);
+      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], chamfer);
       this.Vertices.push(corner1);
       this.Vertices.push(corner2);
-      //this.Vertices.push(simpleVertices[i]);
     }
     else {
       this.Vertices.push(simpleVertices[i]);
@@ -318,10 +353,21 @@ N.UI.PiRouteFinder.prototype.BuildPath = function(routeInfo) {
 //  this.Vertices.push(simpleVertices[simpleVertices.length-1]);
 }
 
+N.UI.PiRouteFinder.prototype.AngleBetween = function(v0, v1, v2) {
+  var dv0 = (new N.UI.Vector(v0, v1)).Normalize();
+  var dv1 = (new N.UI.Vector(v1, v2)).Normalize();
+  var dot = (dv0.X*dv1.X+dv0.Y*dv1.Y);
+  return N.Deg(Math.acos(dot));
+}
+
 N.UI.PiRouteFinder.prototype.CalculateLengths = function(simpleVertices) {
   for(var i=0; i<simpleVertices.length-1; i++) {
     var len =  simpleVertices[i].Distance(simpleVertices[i+1]);
-    if(len < this.MinSegmentLength) {
+    if(len < 0.001) {
+      simpleVertices.splice(i, 1);
+      i--;
+    }
+    else if(len < this.MinSegmentLength && (simpleVertices[i].X !== simpleVertices[i+1].X)) {
       simpleVertices[i].Join = true;
     }
   }
