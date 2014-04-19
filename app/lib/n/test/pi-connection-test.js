@@ -80,9 +80,10 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSets = [
-    { Source: 'SS41>OP', Sinks: [ 'SS15>IP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS21>IP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS43>IP' ] },
+    { Source: 'SS41>OP', Sinks: [ 'SS21>AIP' ] },
+    { Source: 'SS41>OP', Sinks: [ 'SS15>AIP' ] },
+    { Source: 'SS41>OP', Sinks: [ 'SS15>IP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS21>IP', 'SS15>IP', 'SS43>IP' ] },
     { Source: 'SS11>OP', Sinks: [ 'SS24>IP', 'SS15>IP', 'SS55>IP' ] }
   ];

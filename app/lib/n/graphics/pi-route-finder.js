@@ -39,13 +39,15 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAng
   var nStart = routeInfo.GetNeuron(startNeuron);
   var nEnd   = routeInfo.GetNeuron(endNeuron);
 
+  this.NeuronEnd = this.FindEndAngle(routeInfo, endNeuron, new N.UI.Vector(-(this.Start.End.X-nEnd.X), -(this.Start.End.Y-nEnd.Y)));
+
   // Determine the end point.
   // First, are traveling down on the screen or up?
   var startAboveEnd = (nStart.Row < nEnd.Row ? true : false);
   var fromX = routeInfo.GetNeuronOutputPosition(startNeuron)[0].X;
-  var toX   = routeInfo.GetNeuronOutputPosition(endNeuron)[0].X;
+  var toX   = this.NeuronEnd.NextToLast.X;
   var laneRows = routeInfo.LaneRows[nEnd.Row];
-  var lane = laneRows[(fromX < toX ? nEnd.Col : nEnd.Col+1)];
+  var lane = laneRows[(nEnd.X > toX ? nEnd.Col : nEnd.Col+1)];
   this.End = new N.UI.Vector(lane.Mid, (startAboveEnd ? lane.ThruNeg.Mid : lane.ThruPos.Mid));
 
   // Which direction do we go?
@@ -53,8 +55,6 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAng
 
   // The last vertex on the past found.
   var currentVertex = this.Start.End;
-
-  this.NeuronEnd = this.FindEndAngle(routeInfo, endNeuron, new N.UI.Vector(-(this.Start.End.X-nEnd.X), -(this.Start.End.Y-nEnd.Y)), this.End);
 
   // For each thruway...
   this.VerticalPassages = [];
@@ -78,6 +78,17 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAng
 
     this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex } );
   }
+
+  // Finally, get to the correct lateral position in the thruway.
+  var endLanes = routeInfo.LaneRows[nEnd.Row];
+  var endDiffs = [];
+  for(var k=0; k<endLanes.length; k++) {
+    lane = endLanes[k];
+    var endDiff = lane.Mid-toX;
+    endDiffs.push(Math.abs(endDiff));
+  }
+  this.LastPassageLane = N.IndexOfMin(endDiffs);
+  this.LastPassageX = routeInfo.LaneRows[nEnd.Row][this.LastPassageLane].Mid;
 }
 
 /**
@@ -87,26 +98,21 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAng
  * @param {N.UI.RouteInfo} routeInfo
  * @param {N.UI.PiNeuron} endNeuron
  * @param {N.UI.Vector} directionVector
- * @param {N.UI.Vector} endPoint
  * @returns {{RequiresVert: *, VertDirection: *, VertSide: string, Last: N.UI.Vector, NextToLast: N.UI.Vector}}
  */
-N.UI.PiRouteFinder.prototype.FindEndAngle = function(routeInfo, endNeuron, directionVector, endPoint) {
+N.UI.PiRouteFinder.prototype.FindEndAngle = function(routeInfo, endNeuron, directionVector) {
   var n = routeInfo.GetNeuron(endNeuron);
   var comp = n.CompartmentsById[N.CompFromPath(endNeuron)];
-  var angles = comp.DockAngles;
+  var dockAngles = comp.DockAngles;
   var quadrants = [ [], [], [], [] ]; // 0->90, 90->180, 180->270, 270->360
-  for (var i in angles) {
-    // Go through each quadrant.
-    var angle = angles[i];
-    var from = angle.From;
-    var to = angle.To;
-    if (from > to) { from -= 360.0; }
-    if (to > 360 || from > 360) { to -= 360.0; from -= 360.0; }
+  var angleRange, from, to;
 
+  // Is angle range
+  for (var i in dockAngles) {
+    // Go through each quadrant.
+    angleRange = dockAngles[i];
     for (var j=0; j<4; j++) {
-      var low = 90*j;
-      var high = low+90;
-      if (from <= high || to >= low) {
+      if(this.IsRangeWithinLimitAngles(angleRange.From, angleRange.To, j*90, (j+1)*90)) {
         quadrants[j].push(i);
       }
     }
@@ -126,8 +132,40 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(routeInfo, endNeuron, direc
     }
   }
 
+  // Try a 45 degree exit angle and use that if possible.
   var exitAngle = qi*90+45;
-  exitAngle += (qi === 0 || qi === 2 ? -1.0 : 1.0) * 20.0;
+/*  var success = false;
+  for(i in quadrants[qi]) {
+    angleRange = angles[quadrants[qi][i]];
+    from = angleRange.From;
+    to = angleRange.To;
+    if (from > to) { from -= 360.0; }
+    if (to > 360 || from > 360) { to -= 360.0; from -= 360.0; }
+
+    if (to <= exitAngle && from >= exitAngle) {
+      success = true;
+      break;
+    }
+  }
+
+  if(!success) {
+    var quadLimitLow = qi*90;
+    var qualLimitHigh = quadLimitLow+90;
+    for(i in quadrants[qi]) {
+      angleRange = angles[quadrants[qi][i]];
+      from = angleRange.From;
+      to = angleRange.To;
+      if (from > to) { from -= 360.0; }
+      if (to > 360 || from > 360) { to -= 360.0; from -= 360.0; }
+
+      if (to <= exitAngle && from >= exitAngle) {
+        success = true;
+        break;
+      }
+    }
+  }
+
+*/
 
   var vertAngle = qi*90+45;
   var requiresVert;
@@ -158,6 +196,28 @@ N.UI.PiRouteFinder.prototype.GetPath = function(routeInfo) {
   return path;
 }
 
+N.UI.PiRouteFinder.prototype.IsRangeWithinLimitAngles = function(from, to, lowerLimit, upperLimit) {
+  var lower = lowerLimit-360;
+  var upper = upperLimit-360;
+  for(var i=0; i<3; i++) {
+    if(from >= lower && from <= upper) {
+      return true;
+    }
+    if(to >= lower && to <= upper) {
+      return true;
+    }
+    if(from <= lower && to >= upper) {
+      return true;
+    }
+    lower += 360.0;
+    upper += 360.0;
+  }
+}
+
+N.UI.PiRouteFinder.prototype.UnionOfRangeAndLimitAngles = function(from, to, upperLimit, lowerLimit) {
+  return { Lower: 0.0, Upper: 0.0, Total: 0.0 };
+}
+
 N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
   var vertices = [];
 
@@ -176,6 +236,8 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
     vertices.push( new N.UI.Vector(x, yPos) );
     vertices.push( new N.UI.Vector(x, yNeg) );
   }
+
+  vertices.push( new N.UI.Vector(this.LastPassageX, vertices[vertices.length-1].Y) );
 
   // We are almost there. If final connection into the neuron is more horizontal than vertical we need to
   // to add a path up the side of the neuron.
