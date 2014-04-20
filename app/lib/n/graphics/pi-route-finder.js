@@ -31,7 +31,18 @@ N.UI.PiRouteFinder = function(network) {
   this.Chamfer = true;
 }
 
-N.UI.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAngle, routeInfo) {
+/**
+ * Find the general path for the route. This is the first of two steps, the other being BuildPath.
+ * @method FindRoute
+ * @param startNeuron
+ * @param endNeuron
+ * @param routeInfo
+ * @constructor
+ */
+N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo) {
+  var startNeuron = N.SourceFromConnectionPath(connection);
+  var endNeuron = N.SinkFromConnectionPath(connection);
+
   // Draw a line from start to end
   var startPoints = routeInfo.GetNeuronOutputPosition(startNeuron);
   this.Start = { Base: startPoints[0], End: startPoints[1] };
@@ -89,6 +100,48 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(startNeuron, endNeuron, endAng
   }
   this.LastPassageLane = N.IndexOfMin(endDiffs);
   this.LastPassageX = routeInfo.LaneRows[nEnd.Row][this.LastPassageLane].Mid;
+}
+
+N.UI.PiRouteFinder.prototype.BuildPath = function(routeInfo) {
+
+  var simpleVertices = this.CreateSimpleVertices(routeInfo);
+  this.CalculateLengths(simpleVertices);
+
+  // Add chamfers.
+  this.Vertices = [];
+  this.Vertices.push(simpleVertices[0]);
+
+  for(var i=1; i<simpleVertices.length; i++) {
+    // Remove a segment.
+    if(simpleVertices[i].Join && i < simpleVertices.length-2) {
+      // From the points, construct
+      var v0 = simpleVertices[i-1];
+      var v1 = simpleVertices[i];
+      var v2 = simpleVertices[i+1];
+      var v3 = simpleVertices[i+2];
+      var half = Math.abs(0.5*(v1.X-v2.X));
+      v1.Y += half*(v0.Y > v1.Y ? 1.0 : -1.0);
+      v2.Y += half*(v2.Y < v3.Y ? 1.0 : -1.0);
+      this.Vertices.push(v1);
+      this.Vertices.push(v2);
+      i++;
+    }
+    // Add a segment...
+    else if(this.Chamfer && i<simpleVertices.length-1) {
+      var angle = this.AngleBetween(simpleVertices[i-1], simpleVertices[i], simpleVertices[i+1]);
+      var chamfer = this.ChamferSize;
+      if(angle < 75) {
+        chamfer = 0.5*this.ChamferSize;
+      }
+      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], chamfer);
+      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], chamfer);
+      this.Vertices.push(corner1);
+      this.Vertices.push(corner2);
+    }
+    else {
+      this.Vertices.push(simpleVertices[i]);
+    }
+  }
 }
 
 /**
@@ -307,50 +360,6 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
   }
 
   return vertices;
-}
-
-N.UI.PiRouteFinder.prototype.BuildPath = function(routeInfo) {
-
-  var simpleVertices = this.CreateSimpleVertices(routeInfo);
-  this.CalculateLengths(simpleVertices);
-
-  // Add chamfers.
-  this.Vertices = [];
-  this.Vertices.push(simpleVertices[0]);
-
-  for(var i=1; i<simpleVertices.length; i++) {
-    // Remove a segment.
-    if(simpleVertices[i].Join && i < simpleVertices.length-2) {
-      // From the points, construct
-      var v0 = simpleVertices[i-1];
-      var v1 = simpleVertices[i];
-      var v2 = simpleVertices[i+1];
-      var v3 = simpleVertices[i+2];
-      var half = Math.abs(0.5*(v1.X-v2.X));
-      v1.Y += half*(v0.Y > v1.Y ? 1.0 : -1.0);
-      v2.Y += half*(v2.Y < v3.Y ? 1.0 : -1.0);
-      this.Vertices.push(v1);
-      this.Vertices.push(v2);
-      i++;
-    }
-    // Add a segment...
-    else if(this.Chamfer && i<simpleVertices.length-1) {
-      var angle = this.AngleBetween(simpleVertices[i-1], simpleVertices[i], simpleVertices[i+1]);
-      var chamfer = this.ChamferSize;
-      if(angle < 75) {
-        chamfer = 0.5*this.ChamferSize;
-      }
-      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], chamfer);
-      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], chamfer);
-      this.Vertices.push(corner1);
-      this.Vertices.push(corner2);
-    }
-    else {
-      this.Vertices.push(simpleVertices[i]);
-    }
-  }
-
-//  this.Vertices.push(simpleVertices[simpleVertices.length-1]);
 }
 
 N.UI.PiRouteFinder.prototype.AngleBetween = function(v0, v1, v2) {

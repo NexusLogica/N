@@ -80,13 +80,24 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSets = [
-    { Source: 'SS41>OP', Sinks: [ 'SS43>IP' ] },
+    { Source: 'SS41>OP', Sinks: [ 'SS43>OP' ] },
+    { Source: 'SS41>OP', Sinks: [ 'SS43>OP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS21>IP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS21>AIP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS15>AIP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS15>IP' ] },
     { Source: 'SS41>OP', Sinks: [ 'SS21>IP', 'SS15>IP', 'SS43>IP' ] },
     { Source: 'SS11>OP', Sinks: [ 'SS24>IP', 'SS15>IP', 'SS55>IP' ] }
+  ];
+  this.ConnectionSetArrays = [
+    ['SS41>OP->SS43>OP'],
+    ['SS41>OP->SS43>OP' ],
+    ['SS41>OP->SS21>IP' ],
+    ['SS41>OP->SS21>AIP' ],
+    ['SS41>OP->SS15>AIP' ],
+    ['SS41>OP->SS15>IP' ],
+    ['SS41>OP->SS21>IP', 'SS41>OP->SS15>IP', 'SS41>OP->SS43>IP' ],
+    ['SS11>OP->SS24>IP', 'SS11>OP->SS15>IP', 'SS11>OP->SS55>IP' ]
   ];
 }
 
@@ -143,23 +154,13 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
 }
 
 N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
-  var network = this.Scene.Network;
-  var connectionGroup = network.Group.group();
 
-  var source = this.ConnectionSets[this.NextConnectionSetIndex].Source;
-  var sinks = this.ConnectionSets[this.NextConnectionSetIndex].Sinks;
-
-  for(var i in sinks) {
-    var routeFinder = new N.UI.PiRouteFinder(network);
-    routeFinder.FindRoute(source, sinks[i], sinks[i].Angle, network.RouteInfo);
-    var pathString = routeFinder.GetPath(network.RouteInfo);
-    connectionGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
-  }
-
-  network.AddConnectionDisplay('route', connectionGroup);
+  this.RouteManager = new N.UI.PiRouteManager(this.Scene.Network);
+  this.RouteManager.AddConnections(this.ConnectionSetArrays[this.NextConnectionSetIndex]);
+  this.RouteManager.Render();
 
   this.NextConnectionSetIndex++;
-  if(this.NextConnectionSetIndex === this.ConnectionSets.length) {
+  if(this.NextConnectionSetIndex === this.ConnectionSetArrays.length) {
     this.NextConnectionSetIndex = 0;
   }
 }

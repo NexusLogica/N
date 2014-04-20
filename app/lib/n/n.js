@@ -244,6 +244,30 @@ N.FromConnectionPaths = function(network, paths) {
   return obj;
 }
 
+/**
+ * Returns the connection source from a path.
+ * @method N.SourceFromConnectionPath
+ * @param {String} path
+ * @return {String} Returns the id of the source connection.
+ */
+N.SourceFromConnectionPath = function(path) {
+  var i = path.indexOf('->');
+  var src = path.substring(0, i);
+  return src;
+}
+
+/**
+ * Returns the connection sink from a path.
+ * @method N.SinkFromConnectionPath
+ * @param {String} path
+ * @return {String} Returns the id of the sink connection.
+ */
+N.SinkFromConnectionPath = function(path) {
+  var i = path.indexOf('->');
+  var sink = path.substring(i+2);
+  return sink;
+}
+
 N.FromPathError = function(network, path, part, message) {
   N.L('Path Error: '+message);
   return { error: { message: message, network: network, path: path, part: part } };
