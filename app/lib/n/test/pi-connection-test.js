@@ -79,18 +79,9 @@ N.Test.PiConnectionTest = function() {
   });
 
   this.NextConnectionSetIndex = 0;
-  this.ConnectionSets = [
-    { Source: 'SS41>OP', Sinks: [ 'SS43>OP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS43>OP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS21>IP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS21>AIP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS15>AIP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS15>IP' ] },
-    { Source: 'SS41>OP', Sinks: [ 'SS21>IP', 'SS15>IP', 'SS43>IP' ] },
-    { Source: 'SS11>OP', Sinks: [ 'SS24>IP', 'SS15>IP', 'SS55>IP' ] }
-  ];
   this.ConnectionSetArrays = [
-    ['SS41>OP->SS43>OP'],
+    ['SS41>OP->SS22>OP' ],
+    ['SS52>OP->SS32>OP', 'SS52>OP->SS33>OP', 'SS52>OP->SS22>OP', 'SS52>OP->SS13>OP' ],
     ['SS41>OP->SS43>OP' ],
     ['SS41>OP->SS21>IP' ],
     ['SS41>OP->SS21>AIP' ],

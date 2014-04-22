@@ -37,9 +37,10 @@ N.UI.PiRouteFinder = function(network) {
  * @param startNeuron
  * @param endNeuron
  * @param routeInfo
+ * @param manager
  * @constructor
  */
-N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo) {
+N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager) {
   var startNeuron = N.SourceFromConnectionPath(connection);
   var endNeuron = N.SinkFromConnectionPath(connection);
 
@@ -70,6 +71,7 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo) {
   // For each thruway...
   this.VerticalPassages = [];
   var startNeuronRow = (this.IncVert > 0 ? nStart.Row+1 : nStart.Row);
+  var previousLane = nStart.Row;
   for(var i = startNeuronRow; i !== nEnd.Row; i += this.IncVert) {
     // Start by drawing a line from the last vertex exit to the end point.
     var targetVec = (new N.UI.Vector(this.End, currentVertex)).Normalize();
@@ -87,7 +89,10 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo) {
 
     var laneIndex = N.IndexOfMin(diffs);
 
+
     this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex } );
+
+    manager.AddLaneSegment(this, i, laneIndex);
   }
 
   // Finally, get to the correct lateral position in the thruway.
@@ -338,7 +343,7 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
   //   1) The next to final segment can be too short.
   //   2) The next to final segment can run backwards, adding a weird spike to the path. This is determined
   //      by calculating the angle between that two final segments. If abs(angle) < 90 the we need to remove it.
-
+  var horizontalAdded = false;
   for(i=0; i<2; i++) {
     var iNextToLast = vertices.length-1;
     var v0 = vertices[iNextToLast-1];
@@ -346,6 +351,18 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
     var v2 = this.NeuronEnd.NextToLast;
     var v3 = this.NeuronEnd.Last;
     var vIntersection = this.FindIntersection(v0.X, v0.Y, v1.X, v1.Y, v2.X, v2.Y, v3.X, v3.Y);
+
+    var dir = v1.Y-v0.Y;
+    if(!horizontalAdded && !this.NeuronEnd.RequiresVert && dir !== 0.0) {
+      if((dir < 0.0 && vIntersection.Y > v1.Y) || (dir > 0.0 && vIntersection.Y < v1.Y)) {
+        var horiz = vertices[vertices.length-1].Clone();
+        horiz.Offset(-1.0, 0.0);
+        vertices.push(horiz);
+        i--;
+        horizontalAdded = true;
+        continue;
+      }
+    }
 
     // Is the last vertex way too small?
     var len = vIntersection.Distance(v0);
