@@ -55,18 +55,32 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
   this.Network.AddConnectionDisplay(name, svgGroup);
 }
 
-N.UI.PiRouteManager.prototype.AddLaneSegment = function(finder, neuronRowIndex, laneIndex) {
+N.UI.PiRouteManager.prototype.AddLaneSegment = function(finder, neuronRowIndex, laneIndex, nextLaneIndex, verticalPassageIndex) {
   if(!this.CrowdedLanes[neuronRowIndex]) { this.CrowdedLanes[neuronRowIndex] = []; }
   if(!this.CrowdedLanes[neuronRowIndex][laneIndex]) { this.CrowdedLanes[neuronRowIndex][laneIndex] = []; }
-  this.CrowdedLanes[neuronRowIndex][laneIndex].push(finder);
+  this.CrowdedLanes[neuronRowIndex][laneIndex].push({ Finder: finder, NextLaneIndex: nextLaneIndex, VerticalPassageIndex: verticalPassageIndex });
 }
 
 N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
+  var laneOrder = function(a, b) {
+    return a.NextLaneIndex > b.NextLaneIndex;
+  }
+
   for(var i in this.CrowdedLanes) {
     for(var j in this.CrowdedLanes[i]) {
-      var lane = this.CrowdedLanes[i][j];
-      if(lane.length > 0) {
-        console.log('*** Lane['+i+']['+j+'] = '+lane.length);
+      var laneRoutes = this.CrowdedLanes[i][j];
+      if(laneRoutes.length > 1) {
+        console.log('*** LaneRoutes['+i+']['+j+'] = '+laneRoutes.length);
+        laneRoutes.sort(laneOrder);
+
+        var inc = 6;
+        var offset = -0.5*inc*(laneRoutes.length-1);
+
+        for(var k in laneRoutes) {
+          var route = laneRoutes[k];
+          route.Finder.SetVerticalPassageOffset(route.VerticalPassageIndex, offset);
+          offset += inc;
+        }
       }
     }
   }

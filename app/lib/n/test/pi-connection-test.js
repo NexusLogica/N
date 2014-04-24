@@ -80,7 +80,6 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSetArrays = [
-    ['SS41>OP->SS22>OP' ],
     ['SS52>OP->SS32>OP', 'SS52>OP->SS33>OP', 'SS52>OP->SS22>OP', 'SS52>OP->SS13>OP' ],
     ['SS41>OP->SS43>OP' ],
     ['SS41>OP->SS21>IP' ],

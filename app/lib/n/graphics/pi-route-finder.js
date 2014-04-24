@@ -71,7 +71,7 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
   // For each thruway...
   this.VerticalPassages = [];
   var startNeuronRow = (this.IncVert > 0 ? nStart.Row+1 : nStart.Row);
-  var previousLane = nStart.Row;
+  var previousLaneSegment = null;
   for(var i = startNeuronRow; i !== nEnd.Row; i += this.IncVert) {
     // Start by drawing a line from the last vertex exit to the end point.
     var targetVec = (new N.UI.Vector(this.End, currentVertex)).Normalize();
@@ -90,9 +90,18 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
     var laneIndex = N.IndexOfMin(diffs);
 
 
-    this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex } );
+    this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex, Offset: 0.0 } );
 
-    manager.AddLaneSegment(this, i, laneIndex);
+    if(previousLaneSegment !== null) {
+      manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, laneIndex, previousLaneSegment.VerticalPassageIndex);
+    }
+
+    previousLaneSegment = { NeuronRow: i, LaneIndex: laneIndex, VerticalPassageIndex: this.VerticalPassages.length-1 };
+  }
+
+  if(previousLaneSegment !== null) {
+    var lastLaneIndex = nEnd.Col+0.5;
+    manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, lastLaneIndex, previousLaneSegment.VerticalPassageIndex);
   }
 
   // Finally, get to the correct lateral position in the thruway.
@@ -147,6 +156,10 @@ N.UI.PiRouteFinder.prototype.BuildPath = function(routeInfo) {
       this.Vertices.push(simpleVertices[i]);
     }
   }
+}
+
+N.UI.PiRouteFinder.prototype.SetVerticalPassageOffset = function(verticalPassageIndex, offset) {
+  this.VerticalPassages[verticalPassageIndex].Offset = offset;
 }
 
 /**
@@ -316,7 +329,7 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
   for(var i=0; i<this.VerticalPassages.length; i++) {
     var vp = this.VerticalPassages[i];
     var lane = routeInfo.LaneRows[vp.LaneRowIndex][vp.LaneIndex];
-    var x = lane.Mid;
+    var x = lane.Mid+vp.Offset;
     var yPos = lane.ThruPos.Mid;
     var yNeg = lane.ThruNeg.Mid;
     if(this.IncVert > 0) { var temp = yPos; yPos = yNeg; yNeg = temp; }
