@@ -71,6 +71,8 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
   // For each thruway...
   this.VerticalPassages = [];
   var startNeuronRow = (this.IncVert > 0 ? nStart.Row+1 : nStart.Row);
+  manager.AddThruwaySegment(this, startNeuronRow, -1, 0, this.IncVert);
+
   var previousLaneSegment = null;
   for(var i = startNeuronRow; i !== nEnd.Row; i += this.IncVert) {
     // Start by drawing a line from the last vertex exit to the end point.
@@ -90,11 +92,14 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
     var laneIndex = N.IndexOfMin(diffs);
 
 
-    this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex, Offset: 0.0 } );
+    this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex, Offset: 0.0, VertOffset: 0.0 } );
+
+    // Add information to the manager related to segment passage. Used for offsets on crowded thruways and lanes.
 
     if(previousLaneSegment !== null) {
       manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, laneIndex, previousLaneSegment.VerticalPassageIndex);
     }
+    manager.AddThruwaySegment(this, i+1, this.VerticalPassages.length-2, this.VerticalPassages.length-1, this.IncVert);
 
     previousLaneSegment = { NeuronRow: i, LaneIndex: laneIndex, VerticalPassageIndex: this.VerticalPassages.length-1 };
   }
@@ -103,6 +108,7 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
     var lastLaneIndex = nEnd.Col+0.5;
     manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, lastLaneIndex, previousLaneSegment.VerticalPassageIndex);
   }
+  manager.AddThruwaySegment(this, i+1, this.VerticalPassages.length-1, this.VerticalPassages.length, this.IncVert);
 
   // Finally, get to the correct lateral position in the thruway.
   var endLanes = routeInfo.LaneRows[nEnd.Row];
@@ -161,6 +167,20 @@ N.UI.PiRouteFinder.prototype.BuildPath = function(routeInfo) {
 N.UI.PiRouteFinder.prototype.SetVerticalPassageOffset = function(verticalPassageIndex, offset) {
   this.VerticalPassages[verticalPassageIndex].Offset = offset;
 }
+
+N.UI.PiRouteFinder.prototype.SetHorizontalPassageOffset = function(routeInfo, offset) {
+// Finder: finder, StartSegIndex: startSegIndex, EndSegIndex: endSegIndex, VerticalDirection: verticalDirection
+  if(routeInfo.StartSegIndex === -1) {
+    this.Start.End += offset;
+  }
+  if(routeInfo.StartSegIndex >= 0) {
+    this.VerticalPassages[routeInfo.StartSegIndex].VertOffset = offset;
+  }
+  if(routeInfo.EndSegIndex < this.VerticalPassages-1) {
+    this.VerticalPassages[routeInfo.EndSegIndex].VertOffset = offset;
+  }
+}
+
 
 /**
  * This routine performs the not all so trivial task of finding the orientation of the final segment of the path, the one
@@ -323,7 +343,7 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
 
   // Add the two vertices from the base of the output to its drop position directly below it.
   vertices.push(this.Start.Base);
-  vertices.push(this.Start.End);
+  vertices.push(this.Start.End.Offset(0, (this.VerticalPassages.length > 0 ? this.VerticalPassages[0].VertOffset : 0.0)));
 
   // Go through all the thruways and lanes to get near the output neuron.
   for(var i=0; i<this.VerticalPassages.length; i++) {
@@ -333,8 +353,11 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
     var yPos = lane.ThruPos.Mid;
     var yNeg = lane.ThruNeg.Mid;
     if(this.IncVert > 0) { var temp = yPos; yPos = yNeg; yNeg = temp; }
-    vertices.push( new N.UI.Vector(x, yPos) );
-    vertices.push( new N.UI.Vector(x, yNeg) );
+
+    var vertOffsetFirst = this.VerticalPassages[i].VertOffset
+    var vertOffsetLast = (i < this.VerticalPassages.length-1 ? this.VerticalPassages[i+1].VertOffset : 0.0);
+    vertices.push( new N.UI.Vector(x, yPos+vertOffsetFirst) ); // First vertex of the lane.
+    vertices.push( new N.UI.Vector(x, yNeg+vertOffsetLast) ); // Second vertex of the lane.
   }
 
   if(Math.abs(this.LastPassageX-vertices[vertices.length-1].X) > this.MinSegmentLength) {

@@ -80,14 +80,14 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSetArrays = [
+    ['SS11>OP->SS24>IP', 'SS11>OP->SS15>IP', 'SS11>OP->SS55>IP' ],
     ['SS52>OP->SS32>OP', 'SS52>OP->SS33>OP', 'SS52>OP->SS22>OP', 'SS52>OP->SS13>OP' ],
     ['SS41>OP->SS43>OP' ],
     ['SS41>OP->SS21>IP' ],
     ['SS41>OP->SS21>AIP' ],
     ['SS41>OP->SS15>AIP' ],
     ['SS41>OP->SS15>IP' ],
-    ['SS41>OP->SS21>IP', 'SS41>OP->SS15>IP', 'SS41>OP->SS43>IP' ],
-    ['SS11>OP->SS24>IP', 'SS11>OP->SS15>IP', 'SS11>OP->SS55>IP' ]
+    ['SS41>OP->SS21>IP', 'SS41>OP->SS15>IP', 'SS41>OP->SS43>IP' ]
   ];
 }
 

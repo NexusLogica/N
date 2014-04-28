@@ -23,6 +23,7 @@ N.UI.PiRouteManager = function(network) {
   this.Network = network;
   this.Connections = [];
   this.CrowdedLanes = [];
+  this.CrowdedThruways = [];
 }
 
 N.UI.PiRouteManager.prototype.AddConnections = function(connections) {
@@ -46,6 +47,7 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
   }
 
   this.UncrowdRoutes();
+  this.UncrowdThruways();
 
   for(var j in this.RouteFinders) {
     var pathString = this.RouteFinders[j].GetPath(this.Network.RouteInfo);
@@ -61,6 +63,11 @@ N.UI.PiRouteManager.prototype.AddLaneSegment = function(finder, neuronRowIndex, 
   this.CrowdedLanes[neuronRowIndex][laneIndex].push({ Finder: finder, NextLaneIndex: nextLaneIndex, VerticalPassageIndex: verticalPassageIndex });
 }
 
+N.UI.PiRouteManager.prototype.AddThruwaySegment = function(finder, thruwayIndex, startSegIndex, endSegIndex, verticalDirection) {
+  if(!this.CrowdedThruways[thruwayIndex]) { this.CrowdedThruways[thruwayIndex] = []; }
+  this.CrowdedThruways[thruwayIndex].push({ Finder: finder, StartSegIndex: startSegIndex, EndSegIndex: endSegIndex, VerticalDirection: verticalDirection });
+}
+
 N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
   var laneOrder = function(a, b) {
     return a.NextLaneIndex > b.NextLaneIndex;
@@ -70,7 +77,7 @@ N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
     for(var j in this.CrowdedLanes[i]) {
       var laneRoutes = this.CrowdedLanes[i][j];
       if(laneRoutes.length > 1) {
-        console.log('*** LaneRoutes['+i+']['+j+'] = '+laneRoutes.length);
+        // console.log('*** LaneRoutes['+i+']['+j+'] = '+laneRoutes.length);
         laneRoutes.sort(laneOrder);
 
         var inc = 6;
@@ -81,6 +88,23 @@ N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
           route.Finder.SetVerticalPassageOffset(route.VerticalPassageIndex, offset);
           offset += inc;
         }
+      }
+    }
+  }
+}
+
+N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
+  for(var i in this.CrowdedThruways) {
+    var thruwayRoutes = this.CrowdedThruways[i];
+    if(thruwayRoutes.length > 0) {
+      console.log('*** ThruwayRoutes['+i+'] = '+thruwayRoutes.length);
+      var inc = 6;
+      var offset = -0.5*inc*(thruwayRoutes.length-1);
+
+      for(var j in thruwayRoutes) {
+        var route = thruwayRoutes[j];
+        route.Finder.SetHorizontalPassageOffset(route, offset);
+        offset += inc;
       }
     }
   }
