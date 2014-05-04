@@ -65,7 +65,7 @@ N.UI.PiRouteManager.prototype.AddLaneSegment = function(finder, neuronRowIndex, 
 
 N.UI.PiRouteManager.prototype.AddThruwaySegment = function(finder, thruwayIndex, startSegIndex, endSegIndex, verticalDirection) {
   if(!this.CrowdedThruways[thruwayIndex]) { this.CrowdedThruways[thruwayIndex] = []; }
-  this.CrowdedThruways[thruwayIndex].push({ Finder: finder, StartSegIndex: startSegIndex, EndSegIndex: endSegIndex, VerticalDirection: verticalDirection });
+  this.CrowdedThruways[thruwayIndex].push({ Finder: finder, StartSegIndex: startSegIndex, EndSegIndex: endSegIndex, VerticalDirection: verticalDirection, ThruwayIndex: thruwayIndex });
 }
 
 N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
@@ -96,7 +96,7 @@ N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
 N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
   for(var i in this.CrowdedThruways) {
     var thruwayRoutes = this.CrowdedThruways[i];
-    if(thruwayRoutes.length > 0) {
+    if(thruwayRoutes.length > 1) {
       console.log('*** ThruwayRoutes['+i+'] = '+thruwayRoutes.length);
       var inc = 6;
       var offset = -0.5*inc*(thruwayRoutes.length-1);

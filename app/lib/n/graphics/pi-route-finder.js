@@ -29,6 +29,7 @@ N.UI.PiRouteFinder = function(network) {
   this.ChamferSize = 5.0;
   this.MinSegmentLength = 10.0;
   this.Chamfer = true;
+  this.ThruwayOffsets = [];
 }
 
 /**
@@ -70,14 +71,17 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
 
   // For each thruway...
   this.VerticalPassages = [];
-  var startNeuronRow = (this.IncVert > 0 ? nStart.Row+1 : nStart.Row);
-  manager.AddThruwaySegment(this, startNeuronRow, -1, 0, this.IncVert);
+  var startRow = (this.IncVert > 0 ? nStart.Row+1 : nStart.Row);
+  this.StartNeuronRow = nStart.Row+1;
+  var thruwayIndex = this.StartNeuronRow;
+  manager.AddThruwaySegment(this, thruwayIndex, -1, 0, this.IncVert);
 
   var previousLaneSegment = null;
-  for(var i = startNeuronRow; i !== nEnd.Row; i += this.IncVert) {
+  for(var i = startRow; i !== nEnd.Row; i += this.IncVert) {
     // Start by drawing a line from the last vertex exit to the end point.
     var targetVec = (new N.UI.Vector(this.End, currentVertex)).Normalize();
     var slope = targetVec.Y/targetVec.X;
+    thruwayIndex += this.IncVert;
 
     var lanes = routeInfo.LaneRows[i];
     var diffs = [];
@@ -99,7 +103,7 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
     if(previousLaneSegment !== null) {
       manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, laneIndex, previousLaneSegment.VerticalPassageIndex);
     }
-    manager.AddThruwaySegment(this, i+1, this.VerticalPassages.length-2, this.VerticalPassages.length-1, this.IncVert);
+    manager.AddThruwaySegment(this, thruwayIndex, this.VerticalPassages.length-2, this.VerticalPassages.length-1, this.IncVert);
 
     previousLaneSegment = { NeuronRow: i, LaneIndex: laneIndex, VerticalPassageIndex: this.VerticalPassages.length-1 };
   }
@@ -108,7 +112,7 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager
     var lastLaneIndex = nEnd.Col+0.5;
     manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, lastLaneIndex, previousLaneSegment.VerticalPassageIndex);
   }
-  manager.AddThruwaySegment(this, i+1, this.VerticalPassages.length-1, this.VerticalPassages.length, this.IncVert);
+//  manager.AddThruwaySegment(this, i+1, this.VerticalPassages.length-1, this.VerticalPassages.length, this.IncVert);
 
   // Finally, get to the correct lateral position in the thruway.
   var endLanes = routeInfo.LaneRows[nEnd.Row];
@@ -169,9 +173,13 @@ N.UI.PiRouteFinder.prototype.SetVerticalPassageOffset = function(verticalPassage
 }
 
 N.UI.PiRouteFinder.prototype.SetHorizontalPassageOffset = function(routeInfo, offset) {
+  routeInfo.Offset = offset;
+  this.ThruwayOffsets[routeInfo.ThruwayIndex] = routeInfo;
 // Finder: finder, StartSegIndex: startSegIndex, EndSegIndex: endSegIndex, VerticalDirection: verticalDirection
+/*
   if(routeInfo.StartSegIndex === -1) {
-    this.Start.End += offset;
+    this.Start.End.Offset(0.0, offset);
+    this.Start.End.VertOffset = offset;
   }
   if(routeInfo.StartSegIndex >= 0) {
     this.VerticalPassages[routeInfo.StartSegIndex].VertOffset = offset;
@@ -179,6 +187,7 @@ N.UI.PiRouteFinder.prototype.SetHorizontalPassageOffset = function(routeInfo, of
   if(routeInfo.EndSegIndex < this.VerticalPassages-1) {
     this.VerticalPassages[routeInfo.EndSegIndex].VertOffset = offset;
   }
+*/
 }
 
 
@@ -343,7 +352,14 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
 
   // Add the two vertices from the base of the output to its drop position directly below it.
   vertices.push(this.Start.Base);
-  vertices.push(this.Start.End.Offset(0, (this.VerticalPassages.length > 0 ? this.VerticalPassages[0].VertOffset : 0.0)));
+  var thruwayIndex = this.StartNeuronRow;
+  var endOffset = 0.0;
+  if(this.ThruwayOffsets[thruwayIndex]) {
+    endOffset = this.ThruwayOffsets[thruwayIndex].Offset;
+  }
+  vertices.push(this.Start.End.Clone().Offset(0.0, endOffset));
+
+//  vertices.push(this.Start.End.Offset(0, (this.VerticalPassages.length > 0 ? this.VerticalPassages[0].VertOffset : 0.0)));
 
   // Go through all the thruways and lanes to get near the output neuron.
   for(var i=0; i<this.VerticalPassages.length; i++) {
@@ -354,8 +370,18 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function(routeInfo) {
     var yNeg = lane.ThruNeg.Mid;
     if(this.IncVert > 0) { var temp = yPos; yPos = yNeg; yNeg = temp; }
 
-    var vertOffsetFirst = this.VerticalPassages[i].VertOffset
-    var vertOffsetLast = (i < this.VerticalPassages.length-1 ? this.VerticalPassages[i+1].VertOffset : 0.0);
+    var vertOffsetFirst = 0.0;
+    if(this.ThruwayOffsets[thruwayIndex]) {
+      vertOffsetFirst += this.ThruwayOffsets[thruwayIndex].Offset;
+    }
+
+    thruwayIndex += this.IncVert;
+
+    var vertOffsetLast = 0.0;
+    if(this.ThruwayOffsets[thruwayIndex]) {
+      vertOffsetLast += this.ThruwayOffsets[thruwayIndex].Offset;
+    }
+
     vertices.push( new N.UI.Vector(x, yPos+vertOffsetFirst) ); // First vertex of the lane.
     vertices.push( new N.UI.Vector(x, yNeg+vertOffsetLast) ); // Second vertex of the lane.
   }
