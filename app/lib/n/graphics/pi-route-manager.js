@@ -94,18 +94,98 @@ N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
 }
 
 N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
+
   for(var i in this.CrowdedThruways) {
     var thruwayRoutes = this.CrowdedThruways[i];
     if(thruwayRoutes.length > 1) {
       console.log('*** ThruwayRoutes['+i+'] = '+thruwayRoutes.length);
+
+      // We need x values in the thruway info.
+      for(var j in thruwayRoutes) {
+        thruwayRoutes[j].Finder.UpdateThruwayInfo(thruwayRoutes[j]);
+      }
+
+      var groups = this.BreakCrowdIntoGroups(thruwayRoutes);
+
       var inc = 6;
       var offset = -0.5*inc*(thruwayRoutes.length-1);
-
-      for(var j in thruwayRoutes) {
-        var route = thruwayRoutes[j];
+      for(var k in thruwayRoutes) {
+        var route = thruwayRoutes[k];
         route.Finder.SetHorizontalPassageOffset(route, offset);
         offset += inc;
       }
     }
   }
+}
+
+N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
+  // These are, in the end, the groups to uncrowd, where each route in the group is overlapping of the others in the group.
+  var groups = thruwayCrowd.concat();
+
+  // Do this for each route. In the loop each route will end up in a group, by itself, or with others.
+  var numCombined;
+  do {
+    numCombined = 0;
+    for(var i in groups) {
+      var group = groups[i];
+
+      // These are the groups that have an overlap - there may be many.
+      var groupsContaining = [];
+      for(var j in groups) {
+        if(j !== i) {
+          var testGroup = groups[j];
+          if(this.Overlap(testGroup, group)) {
+            if(i > j) {
+              groups.splice(i);
+              groups.splice(j);
+            } else {
+              groups.splice(j);
+              groups.splice(i);
+            }
+            groups.push(this.CombineThruGroup(testGroup, group));
+            numCombined++;
+            break;
+          }
+        }
+      }
+      if(numCombined > 0) {
+        break;
+      }
+    }
+  } while(numCombined > 0);
+  return groups;
+}
+
+N.UI.PiRouteManager.prototype.Overlap = function(a, b) {
+  if(!(a.XMax < b.XMin || a.XMin > b.XMax)) {
+    return true;
+  }
+  return false;
+}
+
+N.UI.PiRouteManager.prototype.CombineThruGroup = function(groupA, groupB) {
+  var unionGroup = { Routes: [] };
+  if(groupA.hasOwnProperty('Finder')) {
+    unionGroup.Routes.push(groupA);
+  } else {
+    unionGroup.Routes = unionGroup.Routes.concat(groupA.Routes);
+  }
+  if(groupB.hasOwnProperty('Finder')) {
+    unionGroup.Routes.push(groupB);
+  } else {
+    unionGroup.Routes = unionGroup.Routes.concat(groupB.Routes);
+  }
+
+  unionGroup.Routes.XMin = unionGroup.Routes[0].XMin;
+  unionGroup.Routes.XMax = unionGroup.Routes[0].XMax;
+  for(var i=1; i<unionGroup.Routes.length; i++) {
+    if(unionGroup.Routes[i].XMin < unionGroup.Routes.XMin) {
+      unionGroup.Routes.XMin = unionGroup.Routes[i].XMin;
+    }
+    if(unionGroup.Routes[i].XMax > unionGroup.Routes.XMax) {
+      unionGroup.Routes.XMax = unionGroup.Routes[i].XMax;
+    }
+  }
+
+  return unionGroup;
 }
