@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>N Pi Connection Unit Tests</title>
+
+  <link rel="stylesheet" href="../../app/lib/qunit/qunit.css">
+  <script src="../../app/lib/qunit/qunit.js"></script>
+  <script src="../../app/lib/json2.js"></script>
+  <script src="../../app/lib/lodash/dist/lodash.js"></script>
+  <script src="../../app/lib/underscore.string/lib/underscore.string.js"></script>
+  <script src="../../app/lib/n/n.js"></script>
+  <script src="../../app/lib/n/signal.js"></script>
+  <script src="../../app/lib/n/network.js"></script>
+  <script src="../../app/lib/n/neuron.js"></script>
+  <script src="../../app/lib/n/compartments.js"></script>
+  <script src="../../app/lib/n/output-functions.js"></script>
+  <script src="../../app/lib/n/connection.js"></script>
+  <script src="../../app/lib/n/graphics/pi-route-manager.js"></script>
+
+
+  <script>
+  QUnit.assert.near = function( actual, expected, eps, message ) {
+    var hasEps = (arguments.length > 2 && typeof eps !== "string");
+    var actualMessage = (hasEps ? message : eps);
+    var tolerance = 1.0e-6;
+    if(hasEps) {
+      tolerance = eps;
+    }
+    var diff = Math.abs(actual-expected);
+    QUnit.push(diff < tolerance, actual, expected, actualMessage);
+  };
+
+  test("Overlap test", function() {
+    var routeManager = new N.UI.PiRouteManager({}); // Network...
+
+    var a = { Name: 'a', XMin: 1.0, XMax: 2.0, Finder: {} };
+    var b = { Name: 'b', XMin: 3.0, XMax: 4.0, Finder: {} };
+    var c = { Name: 'c', XMin: 0.0, XMax: 5.0, Finder: {} };
+    var d = { Name: 'd', XMin: 1.5, XMax: 2.5, Finder: {} };
+    var e = { Name: 'e', XMin: 2.5, XMax: 3.5, Finder: {} };
+    var overlap = routeManager.Overlap(a, b);
+
+    // Overlap testing
+    equal(routeManager.Overlap(a, a), true,  'Overlap');
+    equal(routeManager.Overlap(a, b), false, 'Don\'t overlap');
+    equal(routeManager.Overlap(a, c), true,  'Overlap');
+    equal(routeManager.Overlap(a, d), true,  'Overlap');
+    equal(routeManager.Overlap(a, e), false, 'Don\'t overlap');
+    equal(routeManager.Overlap(b, a), false, 'Don\'t overlap');
+    equal(routeManager.Overlap(b, b), true,  'Overlap');
+    equal(routeManager.Overlap(b, c), true,  'Overlap');
+    equal(routeManager.Overlap(b, d), false, 'Don\'t overlap');
+    equal(routeManager.Overlap(b, e), true,  'Overlap');
+    equal(routeManager.Overlap(c, a), true,  'Overlap');
+    equal(routeManager.Overlap(c, b), true,  'Overlap');
+    equal(routeManager.Overlap(c, c), true,  'Overlap');
+    equal(routeManager.Overlap(c, d), true,  'Overlap');
+    equal(routeManager.Overlap(c, e), true,  'Overlap');
+    equal(routeManager.Overlap(d, a), true,  'Overlap');
+    equal(routeManager.Overlap(d, b), false, 'Don\'t overlap');
+    equal(routeManager.Overlap(d, c), true,  'Overlap');
+    equal(routeManager.Overlap(d, d), true,  'Overlap');
+    equal(routeManager.Overlap(d, e), false, 'Don\'t overlap');
+
+    // Group testing
+    var groups = routeManager.BreakCrowdIntoGroups([a]);
+    equal(groups.length, 1, 'One in crowd');
+    equal(groups[0].Routes.length, 1, 'One in crowd, one in group');
+    equal(groups[0].Routes[0].Name, 'a', 'One in crowd, one in group, right name');
+
+
+
+  });
+
+  </script>
+</head>
+<body>
+
+<div id="qunit"></div>
+
+</body>
+</html>

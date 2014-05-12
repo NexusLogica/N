@@ -120,7 +120,10 @@ N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
 
 N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
   // These are, in the end, the groups to uncrowd, where each route in the group is overlapping of the others in the group.
-  var groups = thruwayCrowd.concat();
+  var groups = [];
+  for(var k in thruwayCrowd) {
+    groups.push(this.CombineThruGroup(thruwayCrowd[k], null));
+  }
 
   // Do this for each route. In the loop each route will end up in a group, by itself, or with others.
   var numCombined;
@@ -143,7 +146,7 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
               groups.splice(i);
             }
             groups.push(this.CombineThruGroup(testGroup, group));
-            numCombined++;
+            numCombined++
             break;
           }
         }
@@ -157,10 +160,10 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
 }
 
 N.UI.PiRouteManager.prototype.Overlap = function(a, b) {
-  if(!(a.XMax < b.XMin || a.XMin > b.XMax)) {
-    return true;
+  if(a.XMax <= b.XMin || b.XMax <= a.XMin) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 N.UI.PiRouteManager.prototype.CombineThruGroup = function(groupA, groupB) {
@@ -170,20 +173,22 @@ N.UI.PiRouteManager.prototype.CombineThruGroup = function(groupA, groupB) {
   } else {
     unionGroup.Routes = unionGroup.Routes.concat(groupA.Routes);
   }
-  if(groupB.hasOwnProperty('Finder')) {
-    unionGroup.Routes.push(groupB);
-  } else {
-    unionGroup.Routes = unionGroup.Routes.concat(groupB.Routes);
+  if (groupB) {
+    if(groupB.hasOwnProperty('Finder')) {
+      unionGroup.Routes.push(groupB);
+    } else {
+      unionGroup.Routes = unionGroup.Routes.concat(groupB.Routes);
+    }
   }
 
-  unionGroup.Routes.XMin = unionGroup.Routes[0].XMin;
-  unionGroup.Routes.XMax = unionGroup.Routes[0].XMax;
+  unionGroup.XMin = unionGroup.Routes[0].XMin;
+  unionGroup.XMax = unionGroup.Routes[0].XMax;
   for(var i=1; i<unionGroup.Routes.length; i++) {
-    if(unionGroup.Routes[i].XMin < unionGroup.Routes.XMin) {
-      unionGroup.Routes.XMin = unionGroup.Routes[i].XMin;
+    if(unionGroup.Routes[i].XMin < unionGroup.XMin) {
+      unionGroup.XMin = unionGroup.Routes[i].XMin;
     }
-    if(unionGroup.Routes[i].XMax > unionGroup.Routes.XMax) {
-      unionGroup.Routes.XMax = unionGroup.Routes[i].XMax;
+    if(unionGroup.Routes[i].XMax > unionGroup.XMax) {
+      unionGroup.XMax = unionGroup.Routes[i].XMax;
     }
   }
 
