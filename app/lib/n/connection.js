@@ -34,6 +34,7 @@ N.Connection = function() {
   this.Output         = 0.0;
   this.OutputStore    = new N.AnalogSignal('OutputStore', 'OS');
   this.Delay          = 1;
+  this.Category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
 }
 
 /**
