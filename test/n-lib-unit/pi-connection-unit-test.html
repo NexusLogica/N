@@ -34,34 +34,34 @@
   test("Overlap test", function() {
     var routeManager = new N.UI.PiRouteManager({}); // Network...
 
-    var a = { Name: 'a', XMin: 1.0, XMax: 2.0, Finder: {} };
-    var b = { Name: 'b', XMin: 3.0, XMax: 4.0, Finder: {} };
-    var c = { Name: 'c', XMin: 0.0, XMax: 5.0, Finder: {} };
-    var d = { Name: 'd', XMin: 1.5, XMax: 2.5, Finder: {} };
-    var e = { Name: 'e', XMin: 2.5, XMax: 3.5, Finder: {} };
+    var a = { Name: 'a', XMin: 1.0, XMax: 2.0 };
+    var b = { Name: 'b', XMin: 3.0, XMax: 4.0 };
+    var c = { Name: 'c', XMin: 0.0, XMax: 5.0 };
+    var d = { Name: 'd', XMin: 1.5, XMax: 2.5 };
+    var e = { Name: 'e', XMin: 2.5, XMax: 3.5 };
     var overlap = routeManager.Overlap(a, b);
 
     // Overlap testing
-    equal(routeManager.Overlap(a, a), true,  'Overlap');
-    equal(routeManager.Overlap(a, b), false, 'Don\'t overlap');
-    equal(routeManager.Overlap(a, c), true,  'Overlap');
-    equal(routeManager.Overlap(a, d), true,  'Overlap');
-    equal(routeManager.Overlap(a, e), false, 'Don\'t overlap');
-    equal(routeManager.Overlap(b, a), false, 'Don\'t overlap');
-    equal(routeManager.Overlap(b, b), true,  'Overlap');
-    equal(routeManager.Overlap(b, c), true,  'Overlap');
-    equal(routeManager.Overlap(b, d), false, 'Don\'t overlap');
-    equal(routeManager.Overlap(b, e), true,  'Overlap');
-    equal(routeManager.Overlap(c, a), true,  'Overlap');
-    equal(routeManager.Overlap(c, b), true,  'Overlap');
-    equal(routeManager.Overlap(c, c), true,  'Overlap');
-    equal(routeManager.Overlap(c, d), true,  'Overlap');
-    equal(routeManager.Overlap(c, e), true,  'Overlap');
-    equal(routeManager.Overlap(d, a), true,  'Overlap');
-    equal(routeManager.Overlap(d, b), false, 'Don\'t overlap');
-    equal(routeManager.Overlap(d, c), true,  'Overlap');
-    equal(routeManager.Overlap(d, d), true,  'Overlap');
-    equal(routeManager.Overlap(d, e), false, 'Don\'t overlap');
+    equal(routeManager.Overlap(a, a), true,  'Overlap aa');
+    equal(routeManager.Overlap(a, b), false, 'Don\'t overlap ab');
+    equal(routeManager.Overlap(a, c), true,  'Overlap ac');
+    equal(routeManager.Overlap(a, d), true,  'Overlap ad');
+    equal(routeManager.Overlap(a, e), false, 'Don\'t overlap ae');
+    equal(routeManager.Overlap(b, a), false, 'Don\'t overlap ba');
+    equal(routeManager.Overlap(b, b), true,  'Overlap bb');
+    equal(routeManager.Overlap(b, c), true,  'Overlap bc');
+    equal(routeManager.Overlap(b, d), false, 'Don\'t overlap bd');
+    equal(routeManager.Overlap(b, e), true,  'Overlap be');
+    equal(routeManager.Overlap(c, a), true,  'Overlap ca');
+    equal(routeManager.Overlap(c, b), true,  'Overlap cb');
+    equal(routeManager.Overlap(c, c), true,  'Overlap cc');
+    equal(routeManager.Overlap(c, d), true,  'Overlap cd');
+    equal(routeManager.Overlap(c, e), true,  'Overlap ce');
+    equal(routeManager.Overlap(d, a), true,  'Overlap da');
+    equal(routeManager.Overlap(d, b), false, 'Don\'t overlap db');
+    equal(routeManager.Overlap(d, c), true,  'Overlap dc');
+    equal(routeManager.Overlap(d, d), true,  'Overlap dd');
+    equal(routeManager.Overlap(d, e), false, 'Don\'t overlap de');
 
     // Group testing
     var groups = routeManager.BreakCrowdIntoGroups([a]);
@@ -69,8 +69,32 @@
     equal(groups[0].Routes.length, 1, 'One in crowd, one in group');
     equal(groups[0].Routes[0].Name, 'a', 'One in crowd, one in group, right name');
 
+    groups = routeManager.BreakCrowdIntoGroups([a, b]);
+    equal(groups.length, 2, 'Two in crowd');
+    equal(groups[0].Routes.length, 1, 'Two in crowd, one in group a');
+    equal(groups[0].Routes[0].Name, 'a', 'Two in crowd, one in group, right name a');
+    equal(groups[1].Routes.length, 1, 'Two in crowd, one in group b');
+    equal(groups[1].Routes[0].Name, 'b', 'Two in crowd, one in group, right name b');
 
+    groups = routeManager.BreakCrowdIntoGroups([a, c]);
+    equal(groups.length, 1, 'Two in crowd ac');
+    equal(groups[0].Routes.length, 2, 'Two in crowd, one in group ac');
+    equal(groups[0].Routes[0].Name, 'c', 'Two in crowd, one in group, right name ac c');
+    equal(groups[0].Routes[1].Name, 'a', 'Two in crowd, one in group, right name ac a');
 
+    groups = routeManager.BreakCrowdIntoGroups([a, b, e]) ;
+    equal(groups.length, 2, 'Three in crowd abe');
+    equal(groups[0].Routes.length, 1, 'Three in crowd, one in group abe a');
+    equal(groups[0].Routes[0].Name, 'a', 'Three in crowd, one in group, right name abe a');
+    equal(groups[1].Routes.length, 2, 'Three in crowd, two in group abe');
+    equal(groups[1].Routes[0].Name, 'e', 'Three in crowd, two in group abe, right name e');
+    equal(groups[1].Routes[1].Name, 'b', 'Three in crowd, two in group abe, right name b');
+
+    groups = routeManager.BreakCrowdIntoGroups([a, b, c, d, e]) ;
+    equal(groups.length, 1, 'Five in crowd abcde');
+    equal(groups[0].Routes.length, 5, 'Five in crowd, one in group abcde');
+    equal(groups[0].Routes[0].Name, 'e', 'Five in crowd, five in group abe, right name e');
+    equal(groups[0].Routes[1].Name, 'd', 'Five in crowd, five in group abe, right name b');
   });
 
   </script>

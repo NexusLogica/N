@@ -105,15 +105,19 @@ N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
         thruwayRoutes[j].Finder.UpdateThruwayInfo(thruwayRoutes[j]);
       }
 
-      var groups = this.BreakCrowdIntoGroups(thruwayRoutes);
+      var crowds = this.BreakCrowdIntoGroups(thruwayRoutes);
 
-      var inc = 6;
-      var offset = -0.5*inc*(thruwayRoutes.length-1);
-      for(var k in thruwayRoutes) {
-        var route = thruwayRoutes[k];
-        route.Finder.SetHorizontalPassageOffset(route, offset);
-        offset += inc;
+      for(var k in crowds) {
+        var crowd = crowds[k].Routes;
+        var inc = 6;
+        var offset = -0.5*inc*(crowd.length-1);
+        for(var m in crowd) {
+          var route = crowd[m];
+          route.Finder.SetHorizontalPassageOffset(route, offset);
+          offset += inc;
+        }
       }
+
     }
   }
 }
@@ -122,7 +126,8 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
   // These are, in the end, the groups to uncrowd, where each route in the group is overlapping of the others in the group.
   var groups = [];
   for(var k in thruwayCrowd) {
-    groups.push(this.CombineThruGroup(thruwayCrowd[k], null));
+    var route = thruwayCrowd[k];
+    groups.push({ Routes: [route], XMin: route.XMin, XMax: route.XMax });
   }
 
   // Do this for each route. In the loop each route will end up in a group, by itself, or with others.
@@ -139,11 +144,11 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
           var testGroup = groups[j];
           if(this.Overlap(testGroup, group)) {
             if(i > j) {
-              groups.splice(i);
-              groups.splice(j);
+              groups.splice(i, 1);
+              groups.splice(j, 1);
             } else {
-              groups.splice(j);
-              groups.splice(i);
+              groups.splice(j, 1);
+              groups.splice(i, 1);
             }
             groups.push(this.CombineThruGroup(testGroup, group));
             numCombined++
@@ -168,17 +173,9 @@ N.UI.PiRouteManager.prototype.Overlap = function(a, b) {
 
 N.UI.PiRouteManager.prototype.CombineThruGroup = function(groupA, groupB) {
   var unionGroup = { Routes: [] };
-  if(groupA.hasOwnProperty('Finder')) {
-    unionGroup.Routes.push(groupA);
-  } else {
-    unionGroup.Routes = unionGroup.Routes.concat(groupA.Routes);
-  }
+  unionGroup.Routes = unionGroup.Routes.concat(groupA.Routes);
   if (groupB) {
-    if(groupB.hasOwnProperty('Finder')) {
-      unionGroup.Routes.push(groupB);
-    } else {
-      unionGroup.Routes = unionGroup.Routes.concat(groupB.Routes);
-    }
+    unionGroup.Routes = unionGroup.Routes.concat(groupB.Routes);
   }
 
   unionGroup.XMin = unionGroup.Routes[0].XMin;

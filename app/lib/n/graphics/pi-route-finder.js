@@ -185,13 +185,11 @@ N.UI.PiRouteFinder.prototype.UpdateThruwayInfo = function(thruwayRouteInfo) {
   if(iStart === -1) {
     x1 = this.Start.Base.X;
   } else {
-    debugger;
     x1 = this.RouteInfo.LaneRows[this.VerticalPassages[iStart].LaneRowIndex][this.VerticalPassages[iStart].LaneIndex].Mid;
   }
   if(iEnd >= this.VerticalPassages.length) {
     x2 = this.End.X;
   } else {
-    debugger;
     x2 = this.RouteInfo.LaneRows[this.VerticalPassages[iEnd].LaneRowIndex][this.VerticalPassages[iEnd].LaneIndex].Mid;
   }
   if(x2 > x1) {
