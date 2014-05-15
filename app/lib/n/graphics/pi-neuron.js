@@ -223,7 +223,7 @@ N.UI.PiNeuronFactory = (function() {
         }
         else {
           angle = angleNow-angleNext;
-          N.L('CASE 3/4 = '+ angle);
+          //N.L('CASE 3/4 = '+ angle);
         }
   
         padding = (compartment.segments[iNext].hasOwnProperty('padding') ? compartment.segments[iNext].padding : defaultPadding);

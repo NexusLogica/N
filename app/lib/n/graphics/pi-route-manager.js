@@ -24,6 +24,7 @@ N.UI.PiRouteManager = function(network) {
   this.Connections = [];
   this.CrowdedLanes = [];
   this.CrowdedThruways = [];
+  this.PiConnections = [];
 }
 
 N.UI.PiRouteManager.prototype.AddConnections = function(connections) {
@@ -40,8 +41,9 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
   var svgGroup = this.Network.Group.group();
 
   this.RouteFinders = [];
+  var routeFinder;
   for(var i in this.Connections) {
-    var routeFinder = new N.UI.PiRouteFinder(this.Network);
+    routeFinder = new N.UI.PiRouteFinder(this.Network);
     routeFinder.FindRoute(this.Connections[i], this.Network.RouteInfo, this);
     this.RouteFinders.push(routeFinder);
   }
@@ -50,8 +52,15 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
   this.UncrowdThruways();
 
   for(var j in this.RouteFinders) {
-    var pathString = this.RouteFinders[j].GetPath(this.Network.RouteInfo);
-    svgGroup.path(pathString).attr({ 'fill': 'none', 'stroke-linejoin': 'round', class: 'pi-connection simple-excitatory-connection' });
+    routeFinder = this.RouteFinders[j];
+    var piConnection = new N.UI.PiConnection(routeFinder.Connection);
+
+    var pathString = routeFinder.GetPath(this.Network.RouteInfo);
+    var endInfo = routeFinder.GetEndInfo();
+
+    piConnection.CreatePath(svgGroup, pathString);
+    piConnection.CreateEnd(svgGroup, endInfo);
+    this.PiConnections.push(piConnection);
   }
 
   this.Network.AddConnectionDisplay(name, svgGroup);
@@ -98,7 +107,6 @@ N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
   for(var i in this.CrowdedThruways) {
     var thruwayRoutes = this.CrowdedThruways[i];
     if(thruwayRoutes.length > 1) {
-      console.log('*** ThruwayRoutes['+i+'] = '+thruwayRoutes.length);
 
       // We need x values in the thruway info.
       for(var j in thruwayRoutes) {

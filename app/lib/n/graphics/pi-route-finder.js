@@ -42,9 +42,11 @@ N.UI.PiRouteFinder = function(network) {
  * @constructor
  */
 N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager) {
+  this.Connection = connection;
+  var connectionPath = this.Connection.GetConnectionPath();
   this.RouteInfo = routeInfo;
-  var startNeuron = N.SourceFromConnectionPath(connection);
-  var endNeuron = N.SinkFromConnectionPath(connection);
+  var startNeuron = N.SourceFromConnectionPath(connectionPath);
+  var endNeuron = N.SinkFromConnectionPath(connectionPath);
 
   // Draw a line from start to end
   var startPoints = this.RouteInfo.GetNeuronOutputPosition(startNeuron);
@@ -169,6 +171,10 @@ N.UI.PiRouteFinder.prototype.BuildPath = function() {
   }
 }
 
+N.UI.PiRouteFinder.prototype.GetEndInfo = function() {
+  return { EndNeuronCenter: this.NeuronEnd.EndNeuronCenter, EndNeuronOuter: this.NeuronEnd.Last };
+}
+
 N.UI.PiRouteFinder.prototype.SetVerticalPassageOffset = function(verticalPassageIndex, offset) {
   this.VerticalPassages[verticalPassageIndex].Offset = offset;
 }
@@ -207,7 +213,7 @@ N.UI.PiRouteFinder.prototype.UpdateThruwayInfo = function(thruwayRouteInfo) {
  * @method FindEndAngle
  * @param {N.UI.PiNeuron} endNeuron
  * @param {N.UI.Vector} directionVector
- * @returns {{RequiresVert: *, VertDirection: *, VertSide: string, Last: N.UI.Vector, NextToLast: N.UI.Vector}}
+ * @returns {{RequiresVert: *, VertDirection: *, VertSide: string, Last: N.UI.Vector, NextToLast: N.UI.Vector, EndNeuronCenter: N.UI.Vector}}
  */
 N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector) {
   var n = this.RouteInfo.GetNeuron(endNeuron);
@@ -284,7 +290,7 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector)
   var last = new N.UI.Vector(dx*n.Radius+n.X, dy*n.Radius+n.Y);
   var nextToLast = new N.UI.Vector( dx*(n.Radius+10.0)+n.X, dy*(n.Radius+10.0)+n.Y);
 
-  return { RequiresVert: requiresVert, VertDirection: vertDir, VertSide: (qi === 1 || qi === 2 ? 'L' : 'R'), Last: last, NextToLast: nextToLast };
+  return { RequiresVert: requiresVert, VertDirection: vertDir, VertSide: (qi === 1 || qi === 2 ? 'L' : 'R'), Last: last, NextToLast: nextToLast, EndNeuronCenter: new N.UI.Vector(n.X, n.Y)  };
 }
 
 N.UI.PiRouteFinder.prototype.GetPath = function() {
@@ -402,7 +408,7 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function() {
   // We are almost there. If final connection into the neuron is more horizontal than vertical we need to
   // to add a path up the side of the neuron.
   if (this.NeuronEnd.RequiresVert) {
-    vertices.push(this.End);
+    vertices.push(this.End.Clone().Offset(0, (this.ThruwayOffsets[thruwayIndex] ? this.ThruwayOffsets[thruwayIndex].Offset : 0.0)));
     var vertical = vertices[vertices.length-1].Clone();
     vertical.Offset(0.0, this.NeuronEnd.VertDirection*100.0);
     vertices.push(vertical);

@@ -80,13 +80,13 @@ N.Test.PiConnectionTest = function() {
 
   this.NextConnectionSetIndex = 0;
   this.ConnectionSetArrays = [
-    ['SS11>OP->SS24>IP', 'SS11>OP->SS15>IP', 'SS11>OP->SS55>IP' ],
-    ['SS52>OP->SS32>OP', 'SS52>OP->SS33>OP', 'SS52>OP->SS22>OP', 'SS52>OP->SS13>OP' ],
+    ['SS41>OP->SS15>IP' ],
+    [ 'SS11>OP->SS24>IP', 'SS11>OP->SS15>IP', 'SS11>OP->SS55>IP' ],
+    [ 'SS52>OP->SS32>OP', 'SS52>OP->SS33>OP', 'SS52>OP->SS22>OP', 'SS52>OP->SS13>OP' ],
     ['SS41>OP->SS43>OP' ],
     ['SS41>OP->SS21>IP' ],
     ['SS41>OP->SS21>AIP' ],
     ['SS41>OP->SS15>AIP' ],
-    ['SS41>OP->SS15>IP' ],
     ['SS41>OP->SS21>IP', 'SS41>OP->SS15>IP', 'SS41>OP->SS43>IP' ]
   ];
 }
@@ -146,13 +146,24 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
 N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
 
   this.RouteManager = new N.UI.PiRouteManager(this.Scene.Network);
-  this.RouteManager.AddConnections(this.ConnectionSetArrays[this.NextConnectionSetIndex]);
+  this.RouteManager.AddConnections(this.ToConnectionStubs(this.ConnectionSetArrays[this.NextConnectionSetIndex]));
   this.RouteManager.Render();
 
   this.NextConnectionSetIndex++;
   if(this.NextConnectionSetIndex === this.ConnectionSetArrays.length) {
     this.NextConnectionSetIndex = 0;
   }
+}
+
+N.Test.PiConnectionTest.Next = -1;
+N.Test.PiConnectionTest.Categories = [ 'Excitatory', 'Inhibitory', 'Spine', 'GapJunction' ];
+
+N.Test.PiConnectionTest.prototype.ToConnectionStubs = function(pathArray) {
+  var stubs = _.map(pathArray, function(path) {
+    N.Test.PiConnectionTest.Next = (N.Test.PiConnectionTest.Next === 3 ? 0 : N.Test.PiConnectionTest.Next + 1);
+    return { GetConnectionPath: function() { return path; }, Category: N.Test.PiConnectionTest.Categories[N.Test.PiConnectionTest.Next] };
+  });
+  return stubs;
 }
 
 N.Test.PiConnectionTest.SpinyStellate = {

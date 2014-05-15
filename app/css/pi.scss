@@ -36,57 +36,65 @@ $secondary-font: "Raleway", sans-serif;
   }
 }
 
-/*
-stroke: lightskyeblue;
-stroke: darkgray;
-stroke: darkseagreen;
-stroke: gainsboro;
-stroke: lavendar;
-stroke: lightblue;
-stroke: lightcoral;
-stroke: lightgray;
-stroke: lightpink;
-stroke: lightsteelblue;
-stroke: mistyrose;
-stroke: moccasin;
-stroke: papayawhip;
-stroke: peachpuff;
-stroke: pink;
-stroke: powderblue;
-stroke: skyblue;
-stroke: thistle;
-stroke: wheat;
-
-*/
+.blah {
+  stroke: lightskyeblue;
+  stroke: darkgray;
+  stroke: darkseagreen;
+  stroke: gainsboro;
+  stroke: lavendar;
+  stroke: lightblue;
+  stroke: lightcoral;
+  stroke: lightgray;
+  stroke: lightpink;
+  stroke: lightsteelblue;
+  stroke: mistyrose;
+  stroke: moccasin;
+  stroke: papayawhip;
+  stroke: peachpuff;
+  stroke: pink;
+  stroke: powderblue;
+  stroke: skyblue;
+  stroke: thistle;
+  stroke: wheat;
+}
 
 $darker: 0%;
 $inactiveFill: #F6F6F6;
 
 .pi-connection {
-  &.simple-excitatory-connection {
-    stroke-width: 2.5;
-    stroke: darkseagreen;
+  stroke-width: 1.75;
 
-stroke: lightskyeblue;
-stroke: darkgray;
-stroke: darkseagreen;
-stroke: gainsboro;
-stroke: lavendar;
-stroke: lightblue;
-stroke: lightcoral;
-stroke: lightgray;
-stroke: lightpink;
-stroke: lightsteelblue;
-stroke: mistyrose;
-stroke: moccasin;
-stroke: papayawhip;
-stroke: peachpuff;
-stroke: pink;
-stroke: powderblue;
-stroke: skyblue;
-stroke: thistle;
-stroke: wheat;
+  &.pi-excitatory-connection {
+    stroke: gainsboro
+  }
+  &.pi-inhibitory-connection {
+    stroke: lighten(pink, 5%);
+  }
+  &.pi-spine-connection {
+    stroke: lighten(skyblue, 10%);
+  }
+  &.pi-gap-junction-connection {
+    stroke: darken(papayawhip, 10%);
+  }
+}
+.pi-connection-end {
+  stroke: powderblue;
+  stroke-width: 1.5;
+  fill: white;
+  stroke: lighten(black, 60%);
 
+  &.pi-excitatory-connection {
+    stroke: gainsboro
+  }
+  &.pi-inhibitory-connection {
+    stroke: lighten(pink, 5%);
+    fill: lighten(pink, 8%);
+  }
+  &.pi-spine-connection {
+    stroke: lighten(skyblue, 10%);
+  }
+  &.pi-gap-junction-connection {
+    stroke: darken(papayawhip, 10%);
   }
 }
 
@@ -104,7 +112,7 @@ stroke: wheat;
     }
 
     &.excitatory-body {
-      fill: darken(#D1E7C9, $darker);
+      fill: lighten(lightblue, 12%);
     }
 
     &.inhibitory-body {
@@ -132,7 +140,7 @@ stroke: wheat;
     }
 
     &.dendrites {
-      fill: darken(#F1EFE2, $darker);
+      fill: lighten(lightsteelblue, 13%);
     }
 
     &.acetylcholine-receptors {

@@ -24,31 +24,7 @@ All Rights Reserved.
   .pi-canvas svg text {
     alignment-baseline: hanging; }
 
-/*
-stroke: lightskyeblue;
-stroke: darkgray;
-stroke: darkseagreen;
-stroke: gainsboro;
-stroke: lavendar;
-stroke: lightblue;
-stroke: lightcoral;
-stroke: lightgray;
-stroke: lightpink;
-stroke: lightsteelblue;
-stroke: mistyrose;
-stroke: moccasin;
-stroke: papayawhip;
-stroke: peachpuff;
-stroke: pink;
-stroke: powderblue;
-stroke: skyblue;
-stroke: thistle;
-stroke: wheat;
-
-*/
-.pi-connection.simple-excitatory-connection {
-  stroke-width: 2.5;
-  stroke: darkseagreen;
+.blah {
   stroke: lightskyeblue;
   stroke: darkgray;
   stroke: darkseagreen;
@@ -69,6 +45,32 @@ stroke: wheat;
   stroke: thistle;
   stroke: wheat; }
 
+.pi-connection {
+  stroke-width: 1.75; }
+  .pi-connection.pi-excitatory-connection {
+    stroke: gainsboro; }
+  .pi-connection.pi-inhibitory-connection {
+    stroke: #ffdae0; }
+  .pi-connection.pi-spine-connection {
+    stroke: #b3e0f2; }
+  .pi-connection.pi-gap-junction-connection {
+    stroke: #ffdca2; }
+
+.pi-connection-end {
+  stroke: powderblue;
+  stroke-width: 1.5;
+  fill: white;
+  stroke: #999999; }
+  .pi-connection-end.pi-excitatory-connection {
+    stroke: gainsboro; }
+  .pi-connection-end.pi-inhibitory-connection {
+    stroke: #ffdae0;
+    fill: #ffe9ed; }
+  .pi-connection-end.pi-spine-connection {
+    stroke: #b3e0f2; }
+  .pi-connection-end.pi-gap-junction-connection {
+    stroke: #ffdca2; }
+
 .pi-neuron .compartment {
   stroke: #999999;
   stroke-width: 1.75px;
@@ -79,7 +81,7 @@ stroke: wheat;
     transition-property: stroke, stroke-width;
     transition-duration: 0.5s; }
   .pi-neuron .compartment.excitatory-body {
-    fill: #d1e7c9; }
+    fill: #dceef4; }
   .pi-neuron .compartment.inhibitory-body {
     fill: bisque; }
   .pi-neuron .compartment.proximal-basal-dendrites {
@@ -93,7 +95,7 @@ stroke: wheat;
   .pi-neuron .compartment.apical-dendrite-trunk {
     fill: #ebf4fa; }
   .pi-neuron .compartment.dendrites {
-    fill: #f1efe2; }
+    fill: #dfe7f2; }
   .pi-neuron .compartment.acetylcholine-receptors {
     fill: linen; }
 .pi-neuron .callout-label {
