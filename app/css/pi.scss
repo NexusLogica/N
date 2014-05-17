@@ -62,6 +62,7 @@ $darker: 0%;
 $inactiveFill: #F6F6F6;
 
 $electrode-color: darken(plum, 10%);
+$gap-junction-color: darken(papayawhip, 10%);
 
 .pi-connection {
   stroke-width: 1.75;
@@ -76,7 +77,7 @@ $electrode-color: darken(plum, 10%);
     stroke: lighten(skyblue, 10%);
   }
   &.pi-gap-junction-connection {
-    stroke: darken(papayawhip, 10%);
+    stroke: $gap-junction-color;
     stroke-width: 1.5;
   }
   &.pi-electrode-connection {
@@ -101,7 +102,8 @@ $electrode-color: darken(plum, 10%);
     stroke: lighten(skyblue, 10%);
   }
   &.pi-gap-junction-connection {
-    stroke: darken(papayawhip, 10%);
+    stroke: $gap-junction-color;
+    fill: $gap-junction-color;
   }
   &.pi-electrode-connection {
     stroke: $electrode-color;

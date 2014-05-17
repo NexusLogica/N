@@ -63,6 +63,18 @@ N.UI.PiConnection.prototype.CreateEnd = function(svgGroup, endInfo) {
         'l'+(2*h2)+' 0';
     svgGroup.path(pathString).rotate(N.Deg(angle), c.X, c.Y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.Connection.Category] } );
   }
+  else if(this.Connection.Category === 'GapJunction') {
+    var w = 9.0*scale;
+    var h = 2.0*scale;
+    var cornerDist = c.Distance(o)+gap+0.5;
+    pathString = 'M'+c.X+' '+c.Y+
+        'm'+cornerDist+' '+(0.5*w)+
+        'l'+h+' 0'+
+        'l0 -'+w+
+        'l-'+h+' 0'+
+        'l0 '+w;
+    svgGroup.path(pathString).rotate(N.Deg(angle), c.X, c.Y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.Connection.Category] } );
+  }
   else if(this.Connection.Category === 'Electrode') {
     w2 = 2.25*scale;
     h2 = 6*scale;

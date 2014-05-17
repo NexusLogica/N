@@ -93,8 +93,11 @@
     groups = routeManager.BreakCrowdIntoGroups([a, b, c, d, e]) ;
     equal(groups.length, 1, 'Five in crowd abcde');
     equal(groups[0].Routes.length, 5, 'Five in crowd, one in group abcde');
-    equal(groups[0].Routes[0].Name, 'e', 'Five in crowd, five in group abe, right name e');
-    equal(groups[0].Routes[1].Name, 'd', 'Five in crowd, five in group abe, right name b');
+    equal(groups[0].Routes[0].Name, 'c', 'Five in crowd, five in group abe, right name c');
+    equal(groups[0].Routes[1].Name, 'a', 'Five in crowd, five in group abe, right name a');
+    equal(groups[0].Routes[2].Name, 'd', 'Five in crowd, five in group abe, right name d');
+    equal(groups[0].Routes[3].Name, 'e', 'Five in crowd, five in group abe, right name e');
+    equal(groups[0].Routes[4].Name, 'b', 'Five in crowd, five in group abe, right name b');
   });
 
   </script>
