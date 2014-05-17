@@ -156,11 +156,11 @@ N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
 }
 
 N.Test.PiConnectionTest.Next = -1;
-N.Test.PiConnectionTest.Categories = [ 'Excitatory', 'Inhibitory', 'Spine', 'GapJunction' ];
+N.Test.PiConnectionTest.Categories = [ 'Excitatory', 'Inhibitory', 'Spine', 'GapJunction', 'Electrode' ];
 
 N.Test.PiConnectionTest.prototype.ToConnectionStubs = function(pathArray) {
   var stubs = _.map(pathArray, function(path) {
-    N.Test.PiConnectionTest.Next = (N.Test.PiConnectionTest.Next === 3 ? 0 : N.Test.PiConnectionTest.Next + 1);
+    N.Test.PiConnectionTest.Next = (N.Test.PiConnectionTest.Next === 4 ? 0 : N.Test.PiConnectionTest.Next + 1);
     return { GetConnectionPath: function() { return path; }, Category: N.Test.PiConnectionTest.Categories[N.Test.PiConnectionTest.Next] };
   });
   return stubs;

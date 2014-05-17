@@ -61,6 +61,8 @@ $secondary-font: "Raleway", sans-serif;
 $darker: 0%;
 $inactiveFill: #F6F6F6;
 
+$electrode-color: darken(plum, 10%);
+
 .pi-connection {
   stroke-width: 1.75;
 
@@ -75,6 +77,11 @@ $inactiveFill: #F6F6F6;
   }
   &.pi-gap-junction-connection {
     stroke: darken(papayawhip, 10%);
+    stroke-width: 1.5;
+  }
+  &.pi-electrode-connection {
+    stroke: $electrode-color;
+    stroke-width: 1.5;
   }
 }
 .pi-connection-end {
@@ -95,6 +102,10 @@ $inactiveFill: #F6F6F6;
   }
   &.pi-gap-junction-connection {
     stroke: darken(papayawhip, 10%);
+  }
+  &.pi-electrode-connection {
+    stroke: $electrode-color;
+    fill: $electrode-color;
   }
 }
 

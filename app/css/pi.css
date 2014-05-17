@@ -54,7 +54,11 @@ All Rights Reserved.
   .pi-connection.pi-spine-connection {
     stroke: #b3e0f2; }
   .pi-connection.pi-gap-junction-connection {
-    stroke: #ffdca2; }
+    stroke: #ffdca2;
+    stroke-width: 1.5; }
+  .pi-connection.pi-electrode-connection {
+    stroke: #d07ad0;
+    stroke-width: 1.5; }
 
 .pi-connection-end {
   stroke: powderblue;
@@ -70,6 +74,9 @@ All Rights Reserved.
     stroke: #b3e0f2; }
   .pi-connection-end.pi-gap-junction-connection {
     stroke: #ffdca2; }
+  .pi-connection-end.pi-electrode-connection {
+    stroke: #d07ad0;
+    fill: #d07ad0; }
 
 .pi-neuron .compartment {
   stroke: #999999;

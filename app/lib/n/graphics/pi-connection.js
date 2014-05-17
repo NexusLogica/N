@@ -16,10 +16,11 @@ var N = N || {};
 N.UI = N.UI || {};
 
 N.UI.PiConnectionClasses = {
-  'Excitatory':  'pi-excitatory-connection',
-  'Spine':       'pi-spine-connection',
-  'Inhibitory':  'pi-inhibitory-connection',
-  'GapJunction': 'pi-gap-junction-connection'
+  'Excitatory' : 'pi-excitatory-connection',
+  'Spine'      : 'pi-spine-connection',
+  'Inhibitory' : 'pi-inhibitory-connection',
+  'GapJunction': 'pi-gap-junction-connection',
+  'Electrode'  : 'pi-electrode-connection'
 }
 
   //*********************
@@ -43,14 +44,40 @@ N.UI.PiConnection.prototype.CreatePath = function(svgGroup, pathString) {
 }
 
 N.UI.PiConnection.prototype.CreateEnd = function(svgGroup, endInfo) {
-  var r = 4.0;
+  var scale = 1.0;
+  var center, w2, h2, centerDist, pathString, gap = 1.50;
+  var c = endInfo.EndNeuronCenter;
   var o = endInfo.EndNeuronOuter;
-  var center = o.Shorten(endInfo.EndNeuronCenter, -r-1.50).Offset(-r, -r);
-//  var dir = new N.UI.Vector(c, o).Shorten(-r);
-//  var center = dir.Offset(dir.X-r, dir.Y-r);
-//  var center = o.Clone().Offset(-r, -r);
+  var angle = Math.atan2(o.Y-c.Y, o.X-c.X);
 
-//  if(this.Connection.Category === 'Excitatory' || this.Connection.Category === 'Inhibitory') {
+  if(this.Connection.Category === 'Spine') {
+    w2 = 2.25*scale;
+    h2 = 1.5*scale;
+    centerDist = c.Distance(o)+h2+w2+gap;
+    pathString = 'M'+c.X+' '+c.Y+
+        'm'+centerDist+' 0'+
+        'm'+h2+' '+w2+
+        'a'+w2+' '+w2+' 0 1 0 0 -'+(2*w2)+
+        'l-'+(2*h2)+' 0'+
+        'a'+w2+' '+w2+' 0 1 0 0 '+(2*w2)+
+        'l'+(2*h2)+' 0';
+    svgGroup.path(pathString).rotate(N.Deg(angle), c.X, c.Y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.Connection.Category] } );
+  }
+  else if(this.Connection.Category === 'Electrode') {
+    w2 = 2.25*scale;
+    h2 = 6*scale;
+    centerDist = c.Distance(o)+gap;
+    pathString = 'M'+c.X+' '+c.Y+
+        'm'+centerDist+' 0'+
+        'l'+h2+' '+w2+
+        'l0 -'+(2*w2)+
+        'l-'+h2+' '+w2;
+    svgGroup.path(pathString).rotate(N.Deg(angle), c.X, c.Y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.Connection.Category] } );
+  }
+  else {
+    var r = 3.0*scale;
+    center = o.Shorten(c, -r-gap).Offset(-r, -r);
     svgGroup.circle(2*r).move(center.X, center.Y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.Connection.Category] } );
-//  }
+  }
+
 }
