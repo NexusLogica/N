@@ -13,6 +13,7 @@
   <script src="../../app/lib/n/network.js"></script>
   <script src="../../app/lib/n/neuron.js"></script>
   <script src="../../app/lib/n/compartments.js"></script>
+  <script src="../../app/lib/n/connection.js"></script>
 
 
   <script>
@@ -85,6 +86,92 @@
     report.WriteToLog();
   });
 
+  test("Network with child networks test", function() {
+    var childNetwork;
+    var network = new N.Network();
+    equal(network.GetNumNetworks(), 0, 'One network');
+
+    var numLayerNetworks = 3;
+    for(var i=0; i<numLayerNetworks; i++) {
+      childNetwork = new N.Network();
+      childNetwork.ShortName = 'L'+[3, 4, 6][i];
+      network.AddNetwork(childNetwork);
+    }
+    equal(network.GetNumNetworks(), numLayerNetworks, 'Three networks');
+
+    var childL4 = network.GetNetworkByName('L4');
+    equal(network.Networks[1], childL4, 'Get L4 by name');
+    equal(childL4.ParentNetwork, network, 'Get parent network');
+    equal(N.FromPath(network, 'L4'), childL4, 'Get L4 by path');
+
+    var childL6 = network.GetNetworkByName('L6');
+    var numLayer6Networks = 2;
+    for(i=0; i<numLayer6Networks; i++) {
+      childNetwork = new N.Network();
+      childNetwork.ShortName = ['a', 'b'][i];
+      childL6.AddNetwork(childNetwork);
+    }
+
+    var NetworkConfig = {
+      ShortName: 'C',
+      Templates: {
+        ExNeuronTemplate: {
+          ClassName: 'N.Neuron',
+          Compartments: [{
+            ClassName: 'N.Comp.LinearSummingInput',
+            ShortName: 'IP'
+          }, {
+            ClassName: 'N.Comp.OutputFromSignal',
+            ShortName: 'OP'
+          }]
+        }
+      },
+      Networks: [{
+        ShortName: 'L3',
+        Neurons: [
+          { ShortName: 'EX1', Template: 'ExNeuronTemplate' },
+          { ShortName: 'EX2', Template: 'ExNeuronTemplate' }
+        ]
+      }, {
+        ShortName: 'L4',
+        Neurons: [
+          { ShortName: 'SS1', Template: 'ExNeuronTemplate' },
+          { ShortName: 'SS2', Template: 'ExNeuronTemplate' },
+          { ShortName: 'SS3', Template: 'ExNeuronTemplate' }
+        ]
+      }, {
+        ShortName: 'L6',
+        Networks: [{
+          ShortName: 'a',
+          Neurons: [
+            { ShortName: 'NP1', Template: 'ExNeuronTemplate' },
+            { ShortName: 'NP2', Template: 'ExNeuronTemplate' }
+          ]
+        }, {
+          ShortName: 'b',
+          Neurons: [
+            { ShortName: 'IPYR1', Template: 'ExNeuronTemplate', Data: 'First' },
+            { ShortName: 'IPYR2', Template: 'ExNeuronTemplate' }
+          ]
+        }]
+      }],
+      Connections: [
+        { Path: 'L6/b:IPYR1>OP->L4:SS1>IP', Category: 'excitatory' }
+      ]
+    };
+
+    var layeredNetwork = new N.Network();
+    layeredNetwork.LoadFrom(NetworkConfig);
+
+    var first = N.FromPath(layeredNetwork, 'L6/b:IPYR1');
+    ok(first, 'First exists');
+    equal(first.Data, 'First', 'First has data');
+
+    var firstOutput = first.GetCompartmentByName('OP');
+    equal(firstOutput.GetNumOutputConnections(), 1, 'First num output connections');
+    equal(firstOutput.GetNumInputConnections(), 0, 'First num input connections');
+  });
+
   test("Network load test", function() {
     var network = new N.Network();
 
@@ -110,7 +197,8 @@
     N.Network.prototype.CreateTestNeuron = function(shortName, template, appendToCompartments) {
       var templateCopy = _.cloneDeep(template);
       for(var i in templateCopy.Compartments) { templateCopy.Compartments[i].ShortName += appendToCompartments; }
-      var n = this.AddNeuron((new N.Neuron(this)).LoadFrom({ ShortName: shortName, Name: 'Long'+shortName, Template: templateCopy }));
+      this.AddTemplates({ TemplateToUse: templateCopy });
+      var n = this.AddNeuron((new N.Neuron(this)).LoadFrom({ ShortName: shortName, Name: 'Long'+shortName, Template: 'TemplateToUse' }));
       return this;
     }
 

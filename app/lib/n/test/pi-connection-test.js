@@ -161,7 +161,7 @@ N.Test.PiConnectionTest.Categories = [ 'Excitatory', 'Inhibitory', 'Spine', 'Gap
 N.Test.PiConnectionTest.prototype.ToConnectionStubs = function(pathArray) {
   var stubs = _.map(pathArray, function(path) {
     N.Test.PiConnectionTest.Next = (N.Test.PiConnectionTest.Next === 4 ? 0 : N.Test.PiConnectionTest.Next + 1);
-    return { GetConnectionPath: function() { return path; }, Category: N.Test.PiConnectionTest.Categories[N.Test.PiConnectionTest.Next] };
+    return { GetPath: function() { return path; }, Category: N.Test.PiConnectionTest.Categories[N.Test.PiConnectionTest.Next] };
   });
   return stubs;
 }

@@ -24,17 +24,17 @@ var N = N || {};
  * @param network
  * @constructor
  */
-N.Connection = function() {
-  this.ClassName      = 'N.Connection';
+N.Connection = function(network) {
+  this.Network        = network;
   this.Id             = N.GenerateUUID();
-  this.Network        = null;
-  this.ConnectionPath = null;
+  this.Path           = null;
   this.Source         = null;
   this.Sink           = null;
   this.Output         = 0.0;
   this.OutputStore    = new N.AnalogSignal('OutputStore', 'OS');
   this.Delay          = 1;
   this.Category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
+  this.ValidationMessages = [];
 }
 
 /**
@@ -52,17 +52,7 @@ N.Connection.prototype.GetType = function() {
  * @returns {N.Type.Connection}
  */
 N.Connection.prototype.GetPath = function() {
-  return this.ConnectionPath;
-}
-
-/**
- * Sets the parent network. This is called by the network, so there is usually no need to call this directly.
- * @method SetNetwork
- * @param {N.Network} network
- * @constructor
- */
-N.Connection.prototype.SetNetwork = function(network) {
-  this.Network = network;
+  return this.Path;
 }
 
 /**
@@ -70,21 +60,12 @@ N.Connection.prototype.SetNetwork = function(network) {
  * @method Connect
  */
 N.Connection.prototype.Connect = function() {
-  var endPoints = N.FromConnectionPaths(this.Network, this.ConnectionPath);
+  var endPoints = N.FromConnectionPaths(this.Network, this.Path);
   if(!endPoints.error) {
     this.Source = endPoints.Source.ConnectOutput(this);
     this.Sink = endPoints.Sink.ConnectInput(this);
   }
   return this;
-}
-
-/**
- * Returns the full path of the connection.
- * @method GetConnectionPath
- * @returns {String} The full path.
- */
-N.Connection.prototype.GetConnectionPath = function() {
-  return this.ConnectionPath;
 }
 
 /**
@@ -103,6 +84,10 @@ N.Connection.prototype.Update = function(t) {
  * @param report
  */
 N.Connection.prototype.Validate = function(report) {
+  for(var j in this.ValidationMessages) {
+    report.Error(this.GetPath(), this.ValidationMessages[j]);
+  }
+
   if(!this.Source) { report.Warning(this.GetPath(), 'The connection has no source.'); }
   if(!this.Sink)   { report.Warning(this.GetPath(), 'The connection has no sink.'); }
 }
@@ -115,7 +100,12 @@ N.Connection.prototype.Validate = function(report) {
  */
 N.Connection.prototype.LoadFrom = function(json) {
   if(json.Template) {
-    var template = _.isString(json.Template) ? N.GetN(json.Template) : json.Template;
+    var template = this.Network.GetTemplate(json.Template);
+    if(template === null) {
+      this.ValidationMessages.push('ERROR: Unable to find template "'+json.Template+'"');
+      N.L(this.ValidationMessages[this.ValidationMessages.length-1]);
+      return;
+    }
     this.LoadFrom(template);
   }
 

@@ -90,11 +90,11 @@
     network.AddNeuron(newNeuron.LoadFrom({ Template: SinkTemplate, Name: 'Neuron3', ShortName: 'N3' }));
 
     var connectionSource = new N.Connection(network);
-    connectionSource.LoadFrom({ ConnectionPath: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 5 });
+    connectionSource.LoadFrom({ Path: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 5 });
     network.AddConnection(connectionSource);
 
     var connectionSink = new N.Connection(network);
-    connectionSink.LoadFrom({ ConnectionPath: ':N2>OP->:N3>IS', Gain: 1.5, Delay: 2 });
+    connectionSink.LoadFrom({ Path: ':N2>OP->:N3>IS', Gain: 1.5, Delay: 2 });
     network.AddConnection(connectionSink);
 
     var linkReport = network.Link();
@@ -147,7 +147,7 @@
     equal(network.GetNeuronByIndex(1).Name, 'Spiny Stellate Neuron 1', "Neuron 2 name");
     equal(network.GetNeuronByName('SS1').Name, 'Spiny Stellate Neuron 1', 'Neuron 2 long name');
 
-    var connection = (new N.Connection()).LoadFrom({ ConnectionPath: ':SRC1>OP->:SS1>IP', Delay: 0.005 });
+    var connection = (new N.Connection()).LoadFrom({ Path: ':SRC1>OP->:SS1>IP', Delay: 0.005 });
     network.AddConnection(connection).Connect();
 
     equal(network.GetNumConnections(), 1, 'Num connections in network');

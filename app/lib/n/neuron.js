@@ -36,6 +36,7 @@ N.Neuron = function(network) {
   this.Compartments = [];
   this.CompartmentsByName = {};
   this.Network    = network;
+  this.ValidationMessages = [];
 }
 
 /**
@@ -116,6 +117,10 @@ N.Neuron.prototype.Update = function(time) {
 N.Neuron.prototype.Validate = function(report) {
   if(this.Compartments.length === 0) { report.Warning(this.GetPath(), 'The neuron has no components.'); }
 
+  for(var j in this.ValidationMessages) {
+    report.Error(this.GetPath(), this.ValidationMessages[j]);
+  }
+
   for(var i=0; i<this.Compartments.length; i++) {
     try {
       this.Compartments[i].Validate(report);
@@ -134,7 +139,12 @@ N.Neuron.prototype.Validate = function(report) {
  */
 N.Neuron.prototype.LoadFrom = function(json) {
   if(json.Template) {
-    var template = _.isString(json.Template) ? N.GetN(json.Template) : json.Template;
+    var template = this.Network.GetTemplate(json.Template);
+    if(template === null) {
+      this.ValidationMessages.push('ERROR: Unable to find template "'+json.Template+'"');
+      N.L(this.ValidationMessages[this.ValidationMessages.length-1]);
+      return;
+    }
     this.LoadFrom(template);
   }
 
