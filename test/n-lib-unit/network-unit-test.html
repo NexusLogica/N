@@ -115,48 +115,62 @@
     var NetworkConfig = {
       ShortName: 'C',
       Templates: {
-        ExNeuronTemplate: {
+        NOutput: {
           ClassName: 'N.Neuron',
           Compartments: [{
-            ClassName: 'N.Comp.LinearSummingInput',
-            ShortName: 'IP'
-          }, {
             ClassName: 'N.Comp.OutputFromSignal',
             ShortName: 'OP'
           }]
+        },
+        NEx: {
+          Template: 'NOutput',
+          Compartments: [{
+            ClassName: 'N.Comp.LinearSummingInput',
+            ShortName: 'IP'
+          }]
+        },
+        NInit: {
+          Initialize: function() {
+            this.OutputStore.AppendDataArray(N.RandConstArray({Range: [0.0, 0.5], EndTime: 0.0, Num: 5 }));
+          }
         }
       },
       Networks: [{
         ShortName: 'L3',
         Neurons: [
-          { ShortName: 'EX1', Template: 'ExNeuronTemplate' },
-          { ShortName: 'EX2', Template: 'ExNeuronTemplate' }
+          { ShortName: 'EX1', Template: 'NEx' },
+          { ShortName: 'EX2', Template: 'NEx' }
         ]
       }, {
         ShortName: 'L4',
         Neurons: [
-          { ShortName: 'SS1', Template: 'ExNeuronTemplate' },
-          { ShortName: 'SS2', Template: 'ExNeuronTemplate' },
-          { ShortName: 'SS3', Template: 'ExNeuronTemplate' }
+          { ShortName: 'SS1', Template: 'NEx' },
+          { ShortName: 'SS2', Template: 'NEx' },
+          { ShortName: 'SS3', Template: 'NEx' }
         ]
       }, {
         ShortName: 'L6',
         Networks: [{
           ShortName: 'a',
           Neurons: [
-            { ShortName: 'NP1', Template: 'ExNeuronTemplate' },
-            { ShortName: 'NP2', Template: 'ExNeuronTemplate' }
+            { ShortName: 'NP1', Template: 'NEx' },
+            { ShortName: 'NP2', Template: 'NEx' }
           ]
         }, {
           ShortName: 'b',
           Neurons: [
-            { ShortName: 'IPYR1', Template: 'ExNeuronTemplate', Data: 'First' },
-            { ShortName: 'IPYR2', Template: 'ExNeuronTemplate' }
+            { ShortName: 'IPYR1', Template: 'NEx', Data: 'First' },
+            { ShortName: 'IPYR2', Template: 'NEx' }
           ]
         }]
       }],
       Connections: [
-        { Path: 'L6/b:IPYR1>OP->L4:SS1>IP', Category: 'excitatory' }
+        { Path: 'L6/b:IPYR1>OP->L4:SS1>IP', Category: 'excitatory', Gain: 0.8 },
+        { Path: 'L6/b:IPYR1>OP->L4:SS2>IP', Category: 'excitatory', Gain: 1.0 },
+        { Path: 'L6/b:IPYR1>OP->L4:SS3>IP', Category: 'excitatory', Gain: 1.2 },
+        { Path: 'L6/b:IPYR2>OP->L4:SS1>IP', Category: 'excitatory', Gain: 0.4 },
+        { Path: 'L6/b:IPYR2>OP->L4:SS2>IP', Category: 'excitatory', Gain: 0.5 },
+        { Path: 'L6/b:IPYR2>OP->L4:SS3>IP', Category: 'excitatory', Gain: 0.6 }
       ]
     };
 
@@ -168,8 +182,15 @@
     equal(first.Data, 'First', 'First has data');
 
     var firstOutput = first.GetCompartmentByName('OP');
-    equal(firstOutput.GetNumOutputConnections(), 1, 'First num output connections');
+    equal(firstOutput.GetNumOutputConnections(), 3, 'First num output connections');
+    equal(N.FromPath(layeredNetwork, 'L6/b:IPYR2>OP').GetNumOutputConnections(), 3, 'Second num output connections');
     equal(firstOutput.GetNumInputConnections(), 0, 'First num input connections');
+
+    equal(N.FromPath(layeredNetwork, 'L4:SS1>IP').GetNumInputConnections(), 2, 'Input is 2');
+    equal(N.FromPath(layeredNetwork, 'L4:SS2>IP').GetNumInputConnections(), 2, 'Input is 2');
+    equal(N.FromPath(layeredNetwork, 'L4:SS3>IP').GetNumInputConnections(), 2, 'Input is 2');
+
+
   });
 
   test("Network load test", function() {

@@ -75,6 +75,13 @@ N.Comp.GetOutputAt = function(t) {
   return this.OutputStore.GetValue(t);
 }
 
+N.Comp.LoadFrom = function(json) {
+  for(var i in json) {
+    this[i] = json[i];
+  }
+  return this;
+}
+
 N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
   constructorFunction.prototype.ConnectOutput = N.Comp.ConnectOutput;
@@ -86,9 +93,10 @@ N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.GetNumComparmentSinks = N.Comp.GetNumComparmentSinks;
   constructorFunction.prototype.ConnectToCompartments = N.Comp.ConnectToCompartments;
   constructorFunction.prototype.GetOutputAt = N.Comp.GetOutputAt;
+  constructorFunction.prototype.LoadFrom = N.Comp.LoadFrom;
 }
 
-N.Comp.Initialize = function(compartment) {
+N.Comp.InitializeCompartment = function(compartment) {
   compartment.OutputStore = new N.AnalogSignal('OutputStore', 'OS');
   compartment.InputConnections = [];
   compartment.OutputConnections = [];
@@ -122,7 +130,7 @@ N.Comp.OutputFromSignal = function(neuron, name, shortName) {
   this.Signal     = null;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.OutputFromSignal);
@@ -175,7 +183,7 @@ N.Comp.Output = function(neuron, name, shortName) {
   this.Output      = 0.0;
   this.IsOutputComponent = true;
   this.OutputLogic = null;
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.Output);
@@ -210,13 +218,6 @@ N.Comp.Output.prototype.Validate = function(report) {
   if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
 }
 
-N.Comp.Output.prototype.LoadFrom = function(json) {
-  for(var i in json) {
-    this[i] = json[i];
-  }
-  return this;
-}
-
   //********************
   //* N.Comp.InputSink *
   //********************
@@ -238,7 +239,7 @@ N.Comp.InputSink = function(neuron, name, shortName) {
   this.Output      = 0.0;
   this.IsOutputComponent = true;
   this.OutputLogic = null;
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.InputSink);
@@ -287,7 +288,7 @@ N.Comp.InhibitoryOutput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.InhibitoryOutput);
@@ -324,7 +325,7 @@ N.Comp.LinearSummingInput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.LinearSummingInput);
@@ -402,7 +403,7 @@ N.Comp.SignalInput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.SignalInput = null;
   this.Sum         = 0.0;
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.SignalInput);
@@ -471,7 +472,7 @@ N.Comp.AcetylcholineInput = function(neuron, name, shortName) {
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
-  N.Comp.Initialize(this);
+  N.Comp.InitializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.AcetylcholineInput);
