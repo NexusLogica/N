@@ -8,7 +8,9 @@
   <script src="../../app/lib/qunit/qunit.js"></script>
   <script src="../../app/lib/json2.js"></script>
   <script src="../../app/lib/lodash/dist/lodash.js"></script>
+  <script src="../../app/lib/random/random-0.26.js"></script>
   <script src="../../app/lib/n/n.js"></script>
+  <script src="../../app/lib/n/random.js"></script>
   <script src="../../app/lib/n/signal.js"></script>
   <script src="../../app/lib/n/network.js"></script>
   <script src="../../app/lib/n/neuron.js"></script>
@@ -114,15 +116,24 @@
 
     var NetworkConfig = {
       ShortName: 'C',
+      RandSeed: 42,
       Templates: {
         NOutput: {
           ClassName: 'N.Neuron',
           Compartments: [{
             ClassName: 'N.Comp.OutputFromSignal',
-            ShortName: 'OP'
+            ShortName: 'OP',
+            Initialize: function() { console.log('*** Hi - '+this.Neuron.ShortName); }
           }]
         },
         NEx: {
+          Template: 'NOutput',
+          Compartments: [{
+            ClassName: 'N.Comp.LinearSummingInput',
+            ShortName: 'IP'
+          }]
+        },
+        NFS: {
           Template: 'NOutput',
           Compartments: [{
             ClassName: 'N.Comp.LinearSummingInput',

@@ -39,6 +39,7 @@ N.Network = function(parentNetwork) {
   this.NetworksByName      = {};
   this.Templates           = {};
   this.ValidationMessages  = [];
+  this.Random              = (parentNetwork ? parentNetwork.Random : new N.Rand.RandomGenerator());
 }
 
 /**
@@ -191,7 +192,6 @@ N.Network.prototype.GetNeuronByName = function(name) {
 N.Network.prototype.AddConnection = function(connection) {
   this.Connections.push(connection);
   this.ConnectionsByPath[connection.GetPath()] = connection;
-  connection.SetNetwork(this);
   return connection;
 }
 
@@ -307,7 +307,7 @@ N.Network.prototype.Validate = function(report) {
  * @param {JSON} json The JSON object containing the configuration.
  * @returns {Network} Returns a reference to self
  */
-N.Network.prototype.LoadFrom = function(json) {
+N.Network.prototype.LoadFrom = function(json, recursive) {
   if(json.Templates) {
     this.Templates = _.clone(json.Templates);
   }
@@ -319,7 +319,7 @@ N.Network.prototype.LoadFrom = function(json) {
       N.L(this.ValidationMessages[this.ValidationMessages.length-1]);
       return;
     }
-    this.LoadFrom(template);
+    this.LoadFrom(template, true);
   }
 
   for(var i in json) {
@@ -338,6 +338,11 @@ N.Network.prototype.LoadFrom = function(json) {
         this.AddNetwork(network);
       }
     }
+    else if(i === 'RandSeed') {
+      if(!this.ParentNetwork) {
+        this.Random.SetSeed(json[i]);
+      }
+    }
     else if(i === 'Display') {
       this.Display = {};
       _.merge(this.Display, json[i]);
@@ -351,11 +356,36 @@ N.Network.prototype.LoadFrom = function(json) {
     for(var m in json.Connections) {
       var connectionJson = json.Connections[m];
       var connection = N.NewN(connectionJson.ClassName || 'N.Connection', this).LoadFrom(connectionJson);
-      connection.Connect();
+      this.AddConnection(connection);
+    }
+  }
+
+  if(!recursive) {
+    for(var n in this.Connections) {
+      this.Connections[n].Connect();
+    }
+
+    if(!this.ParentNetwork) {
+      this.Initialize();
     }
   }
 
   return this;
+}
+
+N.Network.prototype.Initialize = function(templateName) {
+  for(var i in this.Networks) {
+    this.Networks[i].Initialize();
+  }
+  for(var j in this.Neurons) {
+    this.Neurons[j].Initialize();
+  }
+  for(var k in this.Connections) {
+    var connection = this.Connections[k];
+    if(connection.Initialize) {
+      connection.Initialize();
+    }
+  }
 }
 
 N.Network.prototype.GetTemplate = function(templateName) {

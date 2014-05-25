@@ -94,7 +94,7 @@ N.Rand.RandomGenerator.prototype.GetRandomDouble = function(minValue, maxValue) 
 N.Rand.RandomGenerator.prototype.GetRandSignalArray = function(data) {  //{Range: [0.0, 0.5], TimeEnd: 0, Num: 5 }
   var a = [];
   var val = this.GetRandomDouble(data.Range[0], data.Range[1]);
-  for(var i = data.TimeEnd-data.Num; i <= data.TimeEnd; i++) {
+  for(var i = data.TimeEnd-(data.Num-1); i <= data.TimeEnd; i++) {
     a.push({ t: i, v: val });
   }
   return a;

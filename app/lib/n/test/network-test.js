@@ -47,6 +47,7 @@ N.NetworkTest.prototype.CreateScenes = function() {
   for(var i=0; i<N.NetworkTest.TestConfigurations.length; i++) {
     var config = N.NetworkTest.TestConfigurations[i];
     var network = N.NewN(config.Network.ClassName);
+    network.AddTemplates({ 'N.NetworkTest.SpinyStellate': N.NetworkTest.SpinyStellate });
     network.LoadFrom(config.Network);
 
     var scene = new N.UI.Scene.Network();

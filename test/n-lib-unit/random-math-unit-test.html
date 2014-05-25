@@ -56,6 +56,12 @@
     QUnit.assert.near(avg, 0.25, 0.025, 'Average of lower half close to 0.25 actually '+avg);
     avg = _.average(arRealHigh);
     QUnit.assert.near(avg, 0.75, 0.025, 'Average of upper half close to 0.75 actually '+avg);
+
+    var arConst = random.GetRandSignalArray({ Range: [0.0, 0.5], TimeEnd: -1, Num: 5 });
+    equal(arConst.length, 5, 'Array length');
+    equal(arConst[0].v, arConst[4].v, 'Array same');
+    equal(arConst[1].v, arConst[3].v, 'Array same');
+    equal(arConst[2].v, arConst[3].v, 'Array same');
   });
 
 

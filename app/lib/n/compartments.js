@@ -77,6 +77,9 @@ N.Comp.GetOutputAt = function(t) {
 
 N.Comp.LoadFrom = function(json) {
   for(var i in json) {
+    if(i === 'OutputStore') {
+      this.OutputStore.LoadFrom(json[i]);
+    }
     this[i] = json[i];
   }
   return this;

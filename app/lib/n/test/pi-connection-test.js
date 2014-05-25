@@ -133,7 +133,9 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
     rowY += vertSpacing;
   }
 
-  var network = (new N.Network()).LoadFrom(config);
+  var network = new N.Network()
+  network.AddTemplates({ 'N.Test.PiConnectionTest.SpinyStellate' : N.Test.PiConnectionTest.SpinyStellate });
+  network.LoadFrom(config);
 
   var scene = new N.UI.Scene.Network();
   scene.SetNetwork(network, scale, { x:0, y:0});

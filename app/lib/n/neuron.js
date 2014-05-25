@@ -168,6 +168,15 @@ N.Neuron.prototype.LoadFrom = function(json) {
   return this;
 }
 
+N.Neuron.prototype.Initialize = function() {
+  for(var i in this.Compartments) {
+    var compartment = this.Compartments[i];
+    if(compartment.Initialize) {
+      compartment.Initialize();
+    }
+  }
+}
+
 N.Neuron.prototype.ToData = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
