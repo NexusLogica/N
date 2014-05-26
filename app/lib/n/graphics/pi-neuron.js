@@ -23,7 +23,6 @@ N.UI.PiNeuron = function() {
   this.X = 0;
   this.Y = 0;
   this._set = null;
-  this.Name = '';
   this.NeuronClassName = '';
   this.Neuron = null;
   this.Compartments = {};
@@ -54,7 +53,7 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
       if(neuronCompartmentName) {
         var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
         if(compartmentObj) {
-          this.CompartmentsById[compartmentObj.ShortName] = compartment;
+          this.CompartmentsById[compartmentObj.Name] = compartment;
           compartment.CompartmentObj = compartmentObj;
           this.AddEventHandlers(compartment);
         }

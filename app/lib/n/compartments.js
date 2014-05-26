@@ -41,7 +41,7 @@ N.Comp.GetNumOutputConnections = function() {
 }
 
 N.Comp.GetPath = function() {
-  return this.Neuron.GetPath()+'>'+this.ShortName;
+  return this.Neuron.GetPath()+'>'+this.Name;
 }
 
 N.Comp.AddComparmentSink = function(compartment) {
@@ -120,13 +120,11 @@ N.Comp.InitializeCompartment = function(compartment) {
  * @class Comp.OutputFromSignal
  * @param neuron
  * @param name
- * @param shortName
  * @constructor
  */
-N.Comp.OutputFromSignal = function(neuron, name, shortName) {
+N.Comp.OutputFromSignal = function(neuron, name) {
   this.ClassName  = 'N.Comp.OutputFromSignal';
-  this.Name       = name;
-  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
+  this.Name  = name;
   this.Category   = 'Output';
 
   this.Neuron     = neuron;
@@ -176,10 +174,9 @@ N.Comp.OutputFromSignal.prototype.Validate = function(report) {
   //* N.Comp.Output *
   //*****************
 
-N.Comp.Output = function(neuron, name, shortName) {
+N.Comp.Output = function(neuron, name) {
   this.ClassName   = 'N.Comp.Output';
   this.Name        = name;
-  this.ShortName   = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category    = 'Output';
 
   this.Neuron      = neuron;
@@ -229,13 +226,11 @@ N.Comp.Output.prototype.Validate = function(report) {
  * @class N.Comp.InputSink
  * @param neuron
  * @param name
- * @param shortName
  * @constructor
  */
-N.Comp.InputSink = function(neuron, name, shortName) {
+N.Comp.InputSink = function(neuron, name) {
   this.ClassName   = 'N.Comp.InputSink';
   this.Name        = name;
-  this.ShortName   = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category    = 'Output';
 
   this.Neuron      = neuron;
@@ -282,10 +277,9 @@ N.Comp.InputSink.prototype.LoadFrom = function(json) {
   //* N.Comp.InhibitoryOutput *
   //***************************
 
-N.Comp.InhibitoryOutput = function(neuron, name, shortName) {
+N.Comp.InhibitoryOutput = function(neuron, name) {
   this.ClassName  = 'N.Comp.InhibitoryOutput';
   this.Name       = name;
-  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category   = 'InhibitoryOutput';
 
   this.Neuron     = neuron;
@@ -319,10 +313,9 @@ N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
   //* N.Comp.LinearSummingInput *
   //*****************************
 
-N.Comp.LinearSummingInput = function(neuron, name, shortName) {
+N.Comp.LinearSummingInput = function(neuron, name) {
   this.ClassName   = 'N.Comp.LinearSummingInput';
   this.Name       = name;
-  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category   = 'Input';
 
   this.Neuron     = neuron;
@@ -394,13 +387,11 @@ N.Comp.LinearSummingInput.prototype.ToJSON = function() {
  * @class Comp.SignalInput
  * @param neuron
  * @param name
- * @param shortName
  * @constructor
  */
-N.Comp.SignalInput = function(neuron, name, shortName) {
+N.Comp.SignalInput = function(neuron, name) {
   this.ClassName   = 'N.Comp.SignalInput';
   this.Name       = name;
-  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category   = 'Input';
 
   this.Neuron     = neuron;
@@ -463,13 +454,11 @@ N.Comp.SignalInput.prototype.ToJSON = function() {
  * @class Comp.AcetylcholineInput
  * @param {N.Neuron} neuron
  * @param {String} name
- * @param {Stirng} shortName
  * @constructor
  */
-N.Comp.AcetylcholineInput = function(neuron, name, shortName) {
+N.Comp.AcetylcholineInput = function(neuron, name) {
   this.ClassName   = 'N.Comp.LinearSummingInput';
   this.Name       = name;
-  this.ShortName  = (shortName && shortName.length > 0 ? shortName : N.ShortName(name));
   this.Category   = 'Input';
 
   this.Neuron     = neuron;

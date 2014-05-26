@@ -43,7 +43,7 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
   this.RouteFinders = [];
   var routeFinder;
   for(var i in this.Connections) {
-    routeFinder = new N.UI.PiRouteFinder(this.Network);
+    routeFinder = new N.UI.PiRouteFinder();
     routeFinder.FindRoute(this.Connections[i], this.Network.RouteInfo, this);
     this.RouteFinders.push(routeFinder);
   }

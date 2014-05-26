@@ -42,9 +42,8 @@
   });
 
   test("AnalogSignal tests", function() {
-    var signal = new N.AnalogSignal('FirstAnalogSignal');
-    equal(signal.Name, 'FirstAnalogSignal', 'Long name');
-    equal(signal.ShortName, 'FAS', 'Short name');
+    var signal = new N.AnalogSignal('FAS');
+    equal(signal.Name, 'FAS', 'Name');
 
     equal(signal.GetNumSamples(), 0, "No initial samples");
     QUnit.assert.near(signal.GetValue(1.0), 0.0, "Value with no samples");
@@ -75,9 +74,8 @@
   });
 
   test("DiscreteSignal tests", function() {
-    var signal = new N.DiscreteSignal('FirstDiscreteSignal');
-    equal(signal.Name, 'FirstDiscreteSignal', 'Long name');
-    equal(signal.ShortName, 'FDS', 'Short name');
+    var signal = new N.DiscreteSignal('FDS');
+    equal(signal.Name, 'FDS', 'Name');
 
     equal(signal.StateType, N.DiscreteSignal.BISTATE, "Initial state is bistate");
     signal.SetStateType(N.DiscreteSignal.TRISTATE);

@@ -291,7 +291,7 @@ N.ToFixed = function(value, precision) {
   return stringValue;
 }
 
-N.ShortName = function(longName) {
+N.ShortenName = function(longName) {
   if(!longName) { return ''; }
   var reg = /[A-Z0-9]*/g;
   var matches = longName.match(reg);

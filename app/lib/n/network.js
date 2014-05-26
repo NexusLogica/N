@@ -27,8 +27,8 @@ var N = N || {};
 N.Network = function(parentNetwork) {
   this.ClassName           = 'N.Network';
   this.Id                  = null;
+  this.LongName            = '';
   this.Name                = '';
-  this.ShortName           = '';
   this.Category            = 'Default';
   this.Neurons             = [];
   this.NeuronsByName       = {};
@@ -57,7 +57,7 @@ N.Network.prototype.GetType = function() {
  * @returns {string}
  */
 N.Network.prototype.GetPath = function() {
-  return (this.ParentNetwork ? this.ParentNetwork.GetPath() : '/')+this.ShortName;
+  return (this.ParentNetwork ? this.ParentNetwork.GetPath() : '/')+this.Name;
 }
 
 /**
@@ -96,14 +96,14 @@ N.Network.prototype.GetRoot = function() {
  * @returns {N.Network}
  */
 N.Network.prototype.AddNetwork = function(network) {
-  if(network.ShortName.length === 0) {
+  if(network.Name.length === 0) {
     throw N.L('ERROR: N.Network.AddNetwork: No name for network.');
   }
-  if(this.NetworksByName[network.ShortName]) {
-    throw N.L('ERROR: N.Network.AddNetwork: The network '+network.ShortName+' already exists in '+this.ShortName+'.');
+  if(this.NetworksByName[network.Name]) {
+    throw N.L('ERROR: N.Network.AddNetwork: The network '+network.Name+' already exists in '+this.Name+'.');
   }
   this.Networks.push(network);
-  this.NetworksByName[network.ShortName] = network;
+  this.NetworksByName[network.Name] = network;
   network.SetParentNetwork(this);
   return network;
 }
@@ -145,12 +145,12 @@ N.Network.prototype.GetNetworkByName = function(name) {
  * @returns {N.Neuron}
  */
 N.Network.prototype.AddNeuron = function(neuron) {
-  if(neuron.ShortName.length === 0) {
+  if(neuron.Name.length === 0) {
     N.L('ERROR: N.Network.AddNeuron: No short name for neuron.');
     throw 'ERROR: N.Network.AddNeuron: No short name for neuron.';
   }
   this.Neurons.push(neuron);
-  this.NeuronsByName[neuron.ShortName] = neuron;
+  this.NeuronsByName[neuron.Name] = neuron;
   neuron.SetNetwork(this);
   return neuron;
 }
@@ -230,7 +230,7 @@ N.Network.prototype.GetConnectionsByPath = function(path) {
  * @returns {String} The concatinated short names of this network and its parents, separated by '/'.
  */
 N.Network.prototype.GetFullPath = function() {
-  return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '') + '/' + this.ShortName;
+  return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '') + '/' + this.Name;
 }
 
 N.Network.prototype.Link = function() {
@@ -328,7 +328,7 @@ N.Network.prototype.LoadFrom = function(json, recursive) {
         var neuronJson = json.Neurons[j];
         var neuron = N.NewN(neuronJson.ClassName || 'N.Neuron', this).LoadFrom(neuronJson);
         this.Neurons.push(neuron);
-        this.NeuronsByName[neuron.ShortName] = neuron;
+        this.NeuronsByName[neuron.Name] = neuron;
       }
     }
     else if(i === 'Networks') {

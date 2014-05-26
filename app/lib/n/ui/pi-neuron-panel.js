@@ -28,7 +28,7 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 nSimAppControllers.controller('PiNeuronPanelController', ['$scope',
   function PiNeuronPanelController($scope) {
     $scope.onCompartmentMouseEnter = function(event, compartment) {
-      console.log('mouseEnter on ['+compartment.Neuron.Neuron.ShortName+'.'+compartment.Neuron.ShortName+':'+compartment.ShortName+']');
+      console.log('mouseEnter on ['+compartment.Neuron.Neuron.Name+'.'+compartment.Neuron.Name+':'+compartment.Name+']');
     }
   }
 ]);

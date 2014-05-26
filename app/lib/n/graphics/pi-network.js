@@ -58,7 +58,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale) {
 
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('ClassName')) { classNameFull += ' '+this.ClassName; }
-  if(this.Network.ShortName.length) { classNameFull += ' '+this.Network.ShortName; }
+  if(this.Network.Name.length) { classNameFull += ' '+this.Network.Name; }
   this.Group.attr({ class: classNameFull });
 
   var w = this.Width*this.Scale, h = this.Height*this.Scale;
@@ -83,9 +83,9 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale) {
           var template = neuron.Display.Template;
           var radius = scale*neuron.Display.Radius;
           var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
-          graphic.NeuronClassName = neuron.ShortName;
+          graphic.NeuronClassName = neuron.Name;
           this.Neurons.push(graphic);
-          this.NeuronsByName[neuron.ShortName] = graphic;
+          this.NeuronsByName[neuron.Name] = graphic;
 
           graphic.X = this.Scale*(j*spacing-0.5*spacing*(numColumns-1));
           graphic.Y = row.Y*this.Scale;
@@ -99,7 +99,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale) {
     }
   }
 
-  this._label = this.Group.plain(this.Network.ShortName).move(-0.5*w+6, -0.5*h+3);
+  this._label = this.Group.plain(this.Network.Name).move(-0.5*w+6, -0.5*h+3);
 
   this.RouteInfo = new N.UI.RouteInfo(this);
   this.RouteInfo.BuildPassageInformation();

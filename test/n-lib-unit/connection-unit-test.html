@@ -33,23 +33,19 @@
 
   var SourceTemplate = {
     ClassName: 'N.Neuron',
-    Name: 'SourceNeuron',
-    ShortName: 'SRC',
+    Name: 'SRC',
     Compartments: [{
       ClassName: 'N.Comp.OutputFromSignal',
-      Name: 'Output',
-      ShortName: 'OP'
+      Name: 'OP'
     }]
   }
 
   var SpinyNeuronTemplate = {
     ClassName: 'N.Neuron',
-    Name: 'SimpleNeuron',
-    ShortName: 'SN',
+    Name: 'SN',
     Compartments: [{
       ClassName: 'N.Comp.Output',
-      Name: 'Output',
-      ShortName: 'OP',
+      Name: 'OP',
       InitialOutput: 0.0,
       OutputLogic: {
         OutputFunc: N.Comp.OutputFunc.LinearSum,
@@ -59,19 +55,16 @@
       }
     },{
       ClassName: 'N.Comp.LinearSummingInput',
-      Name: 'Input',
-      ShortName: 'IP'
+      Name: 'IP'
     }]
   }
 
   var SinkTemplate = {
     ClassName: 'N.Neuron',
-    Name: 'SinkNeuron',
-    ShortName: 'SNK',
+    Name: 'SNK',
     Compartments: [{
       ClassName: 'N.Comp.InputSink',
-      Name: 'InputSink',
-      ShortName: 'IS'
+      Name: 'IS'
     }]
   }
 
@@ -84,13 +77,13 @@
     var cycles = 100;
 
     var newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SourceTemplate', Name: 'Neuron1', ShortName: 'N1' }));
+    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SourceTemplate', Name: 'N1' }));
     newNeuron.GetCompartmentByName('OP').SetSignal(N.Signal.CreatePulseSignal({ durationOff: 10, durationOn: 10, signalLength: cycles, offset: 0.0, amplitude: 0.50, lowValue: 0.1}));
 
     newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SpinyNeuronTemplate', Name: 'Neuron2', ShortName: 'N2' }));
+    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SpinyNeuronTemplate', Name: 'N2' }));
     newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SinkTemplate', Name: 'Neuron3', ShortName: 'N3' }));
+    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SinkTemplate', Name: 'N3' }));
 
     var connectionSource = new N.Connection(network);
     connectionSource.LoadFrom({ Path: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 5 });
@@ -135,21 +128,20 @@
     network.AddTemplates({ SourceTemplate: SourceTemplate, SpinyNeuronTemplate: SpinyNeuronTemplate, SinkTemplate: SinkTemplate });
 
     var json = {
-      Name: 'Layer1',
-      ShortName: 'L1',
+      Name: 'L1',
       Neurons: [{
-        Template: 'SourceTemplate', Name: 'Source 1', ShortName: 'SRC1'
+        Template: 'SourceTemplate', Name: 'SRC1'
       },{
-        Template: 'SpinyNeuronTemplate', Name: 'Spiny Stellate Neuron 1', ShortName: 'SS1'
+        Template: 'SpinyNeuronTemplate', Name: 'SS1'
       }]
     }
 
     network.LoadFrom(json);
     equal(network.GetNumNeurons(), 2, 'Two neurons');
-    equal(network.GetNeuronByIndex(0).Name, 'Source 1', 'Neuron 1 name');
-    equal(network.GetNeuronByName('SRC1').Name, 'Source 1', 'Neuron 1 long name');
-    equal(network.GetNeuronByIndex(1).Name, 'Spiny Stellate Neuron 1', "Neuron 2 name");
-    equal(network.GetNeuronByName('SS1').Name, 'Spiny Stellate Neuron 1', 'Neuron 2 long name');
+    equal(network.GetNeuronByIndex(0).Name, 'SRC1', 'Neuron 1 name');
+    equal(network.GetNeuronByName('SRC1').Name, 'SRC1', 'Neuron 1 long name');
+    equal(network.GetNeuronByIndex(1).Name, 'SS1', "Neuron 2 name");
+    equal(network.GetNeuronByName('SS1').Name, 'SS1', 'Neuron 2 long name');
 
     var connection = (new N.Connection(network)).LoadFrom({ Path: ':SRC1>OP->:SS1>IP', Delay: 0.005 });
     network.AddConnection(connection).Connect();

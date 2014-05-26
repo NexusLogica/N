@@ -30,8 +30,7 @@ var N = N || {};
 N.Neuron = function(network) {
   this.ClassName  = 'N.Neuron';
   this.Id         = N.GenerateUUID();
-  this.Name       = '';
-  this.ShortName  = '';
+  this.Short      = '';
   this.Category   = 'Default';
   this.Compartments = [];
   this.CompartmentsByName = {};
@@ -54,7 +53,7 @@ N.Neuron.prototype.GetType = function() {
  * @returns {string}
  */
 N.Neuron.prototype.GetPath = function() {
-  return this.Network.GetPath()+':'+this.ShortName;
+  return this.Network.GetPath()+':'+this.Name;
 }
 
 /**
@@ -75,7 +74,6 @@ N.Neuron.prototype.SetNetwork = function(network) {
 N.Neuron.prototype.AddCompartment = function(compartment) {
   this.Compartments.push(compartment);
   this.CompartmentsByName[compartment.Name] = compartment;
-  this.CompartmentsByName[compartment.ShortName] = compartment;
   return compartment;
 }
 

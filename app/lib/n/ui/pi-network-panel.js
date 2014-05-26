@@ -70,7 +70,7 @@ nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
     }
 
     $scope.GetCompartmentPath = function(compartment) {
-      return compartment.Neuron.Network.GetFullPath()+':'+compartment.Neuron.ShortName+'>'+compartment.ShortName;
+      return compartment.Neuron.Network.GetFullPath()+':'+compartment.Neuron.Name+'>'+compartment.Name;
     }
   }
 ]);

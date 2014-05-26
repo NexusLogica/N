@@ -33,7 +33,7 @@ N.DISCRETE = 2;
  * @param {String} shortName
  */
 
-N.AnalogSignal = function(name, shortName) {
+N.AnalogSignal = function(name) {
   this.ClassName  = 'N.AnalogSignal';
   this.Type       = N.ANALOG;
   this.Id         = N.GenerateUUID();
@@ -44,7 +44,6 @@ N.AnalogSignal = function(name, shortName) {
   this._finder    = new N.TableSearch();
   this.Start      = 0.0;
   this.Name       = (typeof name === 'string' ? name : '');
-  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : '');
   this.Category   = 'Default';
   this.Min        = 0.0;
   this.Max        = 0.0;
@@ -232,7 +231,7 @@ N.AnalogSignal.prototype.ToJSON = function() {
  * @param shortName
  * @constructor
  */
-N.DiscreteSignal = function(name, shortName) {
+N.DiscreteSignal = function(name) {
   this.ClassName  = 'N.DiscreteSignal';
   this.Type       = N.DISCRETE;
   this.Id         = N.GenerateUUID();
@@ -244,7 +243,6 @@ N.DiscreteSignal = function(name, shortName) {
   this._finder    = new N.TableSearch();
   this.Start      = 0.0;
   this.Name       = (typeof name === 'string' ? name : '');
-  this.ShortName  = (typeof name === 'string' ? N.ShortName(name) : '');
   this.Category   = 'Default';
   this.Min        = 0;
   this.Max        = 0;

@@ -31,12 +31,11 @@
 
     equal(neuron.GetNumCompartments(), 0, "No initial compartments");
 
-    var outputCompartment = new N.Comp.OutputFromSignal(neuron, 'StateOutput');
+    var outputCompartment = new N.Comp.OutputFromSignal(neuron, 'SO');
     neuron.AddCompartment(outputCompartment);
 
     equal(neuron.GetNumCompartments(), 1, "One compartment");
-    equal(neuron.Compartments[0].Name, 'StateOutput', "Compartment name");
-    equal(neuron.Compartments[0].ShortName, 'SO', 'Compartment short name');
+    equal(neuron.Compartments[0].Name, 'SO', 'Compartment short name');
 
     var signal = (new N.DiscreteSignal()).LoadFrom( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
     outputCompartment.SetSignal(signal);

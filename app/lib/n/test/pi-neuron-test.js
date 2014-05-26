@@ -57,13 +57,11 @@ N.PiNeuronTest.prototype.CreateScenes = function() {
 }
 
 N.PiNeuronTest.TestConfigurations = [{
-    Name: 'Simple State Output',
     Neuron: {
       ClassName: 'N.Neuron',
       Compartments: [{
         ClassName: 'N.Comp.OutputFromSignal',
-        Name: 'StateOutput',
-        ShortName: 'SO',
+        Name: 'SO',
         Signal: {
           ClassName: 'N.DiscreteSignal',
           DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
@@ -75,17 +73,14 @@ N.PiNeuronTest.TestConfigurations = [{
       }
     }
   },{
-    Name: 'Spiny Stellate',
     Neuron: {
       ClassName: 'N.Neuron',
       Compartments: [{
         ClassName: 'N.Comp.Output',
-        Name: 'Output',
-        ShortName: 'OP'
+        Name: 'OP'
       },{
         ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'Input',
-        ShortName: 'IP'
+        Name: 'IP'
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.Stellate',
@@ -93,17 +88,14 @@ N.PiNeuronTest.TestConfigurations = [{
       }
     }
   },{
-    Name: 'Inhibitory Interneuron',
     Neuron: {
       ClassName: 'N.Neuron',
       Compartments: [{
         ClassName: 'N.Comp.InhibitoryOutput',
-        Name: 'InhibitoryOutput',
-        ShortName: 'IOP'
+        Name: 'IOP'
       },{
         ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'Input',
-        ShortName: 'IP'
+        Name: 'IP'
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',

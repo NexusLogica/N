@@ -24,8 +24,7 @@ N.UI = N.UI || {};
   //* N.UI.PiRouteFinder *
   //**********************
 
-N.UI.PiRouteFinder = function(network) {
-  this.Network = network;
+N.UI.PiRouteFinder = function() {
   this.ChamferSize = 5.0;
   this.MinSegmentLength = 10.0;
   this.Chamfer = true;

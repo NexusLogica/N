@@ -28,10 +28,9 @@ N.NeuronFactory.StateOutput = {
 }
 
 N.Neuron = function() {
-  this.ClassName    = "N.Neuron";
+  this.ClassName    = 'N.Neuron';
   this.Id           = N.GenerateUUID();
-  this.Name         = "";
-  this.ShortName    = "";
+  this.Name         = '';
   this.Category     = 'Default';
   this.Compartments = [];
 }
@@ -45,7 +44,7 @@ N.Neuron.prototype.GetNumCompartments = function() {
 }
 
 N.Neuron.prototype.ToJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === "_finder" ? undefined : v); });
+  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }
 
@@ -54,5 +53,5 @@ N.Neuron.prototype.ToJSON = function() {
   //***********************
 
 N.OutputCompartment = function() {
-  this.ClassName  = "N.OutputCompartment";
+  this.ClassName  = 'N.OutputCompartment';
 }

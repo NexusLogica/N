@@ -24,7 +24,7 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 nSimAppControllers.controller('PiSignalTraceSceneController', ['$scope',
   function PiSignalTraceSceneController($scope) {
     $scope.onCompartmentMouseEnter = function(event, compartment) {
-      console.log('mouseEnter on ['+compartment.SignalTrace.SignalTrace.ShortName+'.'+compartment.SignalTrace.ShortName+':'+compartment.ShortName+']');
+      console.log('mouseEnter on ['+compartment.SignalTrace.SignalTrace.Name+'.'+compartment.SignalTrace.Name+':'+compartment.Name+']');
     }
   }
 ]);

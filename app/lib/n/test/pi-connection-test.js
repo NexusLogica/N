@@ -121,12 +121,12 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
   var spacings   = [ 2.2, 3.0, 2.2, 3.5, 2.2 ];
   //var numColumns = [ 4, 4, 4, 4 ];
   //var spacings   = [ 2.2, 2.2, 2.2, 2.2 ];
-  var config = { Name: 'Matrix', ShortName: 'M', Neurons: [], Display: { Width: networkWidth, Height: networkHeight, Rows: [] } };
+  var config = { Name: 'M', Neurons: [], Display: { Width: networkWidth, Height: networkHeight, Rows: [] } };
   for(var i=0; i<numColumns.length; i++) {
     var rowDisplay = { RowId: 'Row'+i, NumCol: numCols,  Spacing: spacings[i], Y: rowY, Cols: [] };
     for(var j=0; j<numColumns[i]; j++) {
       var name = 'SS'+(i+1)+(j+1);
-      config.Neurons.push({ ClassName: 'N.Neuron', Template: 'N.Test.PiConnectionTest.SpinyStellate', Name: 'SpinyStellate1', ShortName: name });
+      config.Neurons.push({ ClassName: 'N.Neuron', Template: 'N.Test.PiConnectionTest.SpinyStellate', Name: name });
       rowDisplay.Cols.push({ Name: name });
     }
     config.Display.Rows.push(rowDisplay);
@@ -170,20 +170,16 @@ N.Test.PiConnectionTest.prototype.ToConnectionStubs = function(pathArray) {
 
 N.Test.PiConnectionTest.SpinyStellate = {
   ClassName: 'N.Neuron',
-  Name: 'SpinyStellate',
-  ShortName: 'SS',
+  Name: 'SS',
   Compartments: [{
     ClassName: 'N.Comp.Output',
-    Name: 'Output',
-    ShortName: 'OP'
+    Name: 'OP'
   },{
     ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'Input',
-    ShortName: 'IP'
+    Name: 'IP'
   },{
     ClassName: 'N.Comp.AcetylcholineInput',
-    Name: 'AcetylcholineInput',
-    ShortName: 'AIP'
+    Name: 'AIP'
   }],
   Display: {
     Template: 'N.UI.StandardNeuronTemplates.Stellate',

@@ -62,20 +62,16 @@ N.NetworkTest.prototype.CreateScenes = function() {
 
 N.NetworkTest.SpinyStellate = {
   ClassName: 'N.Neuron',
-  Name: 'SpinyStellate',
-  ShortName: 'SS',
+  Name: 'SS',
   Compartments: [{
     ClassName: 'N.Comp.Output',
-    Name: 'Output',
-    ShortName: 'OP'
+    Name: 'OP'
   },{
     ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'Input',
-    ShortName: 'IP'
+    Name: 'IP'
   },{
     ClassName: 'N.Comp.AcetylcholineInput',
-    Name: 'AcetylcholineInput',
-    ShortName: 'AIP'
+    Name: 'AIP'
   }],
   Display: {
     Template: 'N.UI.StandardNeuronTemplates.Stellate',
@@ -90,19 +86,15 @@ N.NetworkTest.TestConfigurations = [{
   //* Simple Network *
   //******************
 
-  Name: 'Simple Network',
   Network: {
     ClassName: 'N.Network',
-    Name: 'SimpleNetwork',
-    ShortName: 'SN',
+    Name: 'SN',
     Neurons: [{
       ClassName: 'N.Neuron',
-      Name: 'Input',
-      ShortName: 'IP',
+      Name: 'IP',
       Compartments: [{
         ClassName: 'N.Comp.OutputFromSignal',
-        Name: 'StateOutput',
-        ShortName: 'SO',
+        Name: 'SO',
         Signal: {
           ClassName: 'N.DiscreteSignal',
           DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
@@ -115,16 +107,13 @@ N.NetworkTest.TestConfigurations = [{
       }
     },{
       ClassName: 'N.Neuron',
-      Name: 'RelayNeuron',
-      ShortName: 'RN',
+      Name: 'RN',
       Compartments: [{
         ClassName: 'N.Comp.Output',
-        Name: 'Output',
-        ShortName: 'OP'
+        Name: 'OP'
       },{
         ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'Input',
-        ShortName: 'IP'
+        Name: 'IP'
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron',
@@ -133,12 +122,10 @@ N.NetworkTest.TestConfigurations = [{
       }
     },{
       ClassName: 'N.Neuron',
-      Name: 'Output',
-      ShortName: 'OP',
+      Name: 'OP',
       Compartments: [{
         ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'Input',
-        ShortName: 'IN'
+        Name: 'IN'
       }],
       Display: {
         Template: 'N.UI.StandardNeuronTemplates.OutputSink',
@@ -166,27 +153,25 @@ N.NetworkTest.TestConfigurations = [{
   //* Layer 4 Network *
   //*******************
 
-  Name: 'Layer 4 Network',
   Network: {
     ClassName: 'N.Network',
-    Name: 'Layer4',
-    ShortName: 'L4',
+    Name: 'L4',
     Neurons: [{
-      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate1', ShortName: 'SS1'},{
-      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate2', ShortName: 'SS2'},{
-      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate3', ShortName: 'SS3'},{
-      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate4', ShortName: 'SS4'},{
-      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SpinyStellate5', ShortName: 'SS5'},{
-      ClassName: 'N.Neuron', Name: 'Inhibitory1', ShortName: 'IN1',
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SS1'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SS2'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SS3'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SS4'},{
+      ClassName: 'N.Neuron', Template: 'N.NetworkTest.SpinyStellate', Name: 'SS5'},{
+      ClassName: 'N.Neuron', Name: 'IN1',
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     },{
-      ClassName: 'N.Neuron', Name: 'Inhibitory2', ShortName: 'IN2',
+      ClassName: 'N.Neuron', Name: 'IN2',
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     },{
-      ClassName: 'N.Neuron', Name: 'Inhibitory3', ShortName: 'IN3',
+      ClassName: 'N.Neuron', Name: 'IN3',
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     },{
-      ClassName: 'N.Neuron', Name: 'Inhibitory4', ShortName: 'IN4',
+      ClassName: 'N.Neuron', Name: 'IN4',
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     }],
     Display: {

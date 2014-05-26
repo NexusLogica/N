@@ -22,31 +22,25 @@
 
   var SimpleNeuronTemplate = {
     ClassName: 'N.Neuron',
-    Name: 'SimpleNeuron',
-    ShortName: 'SN',
+    Name: 'SN',
     Compartments: [{
       ClassName: 'N.Comp.Output',
-      Name: 'Output',
-      ShortName: 'OP'
+      Name: 'OP'
     },{
       ClassName: 'N.Comp.LinearSummingInput',
-      Name: 'Input',
-      ShortName: 'IP'
+      Name: 'IP'
     },{
       ClassName: 'N.Comp.AcetylcholineInput',
-      Name: 'AcetylcholineInput',
-      ShortName: 'AIP'
+      Name: 'AIP'
     }]
   }
 
   var SourceTemplate = {
     ClassName: 'N.Neuron',
-    Name: 'SourceNeuron',
-    ShortName: 'SRC',
+    Name: 'SRC',
     Compartments: [{
       ClassName: 'N.Comp.OutputFromSignal',
-      Name: 'Output',
-      ShortName: 'OP'
+      Name: 'OP'
     }]
   }
 
@@ -67,13 +61,12 @@
     equal(network.GetNumNeurons(), 0, 'No initial neurons');
 
     var newNeuron = new N.Neuron();
-    newNeuron.Name = 'Neuron1';
-    newNeuron.ShortName = 'N1';
+    newNeuron.Name = 'N1';
     network.AddNeuron(newNeuron);
 
     equal(network.GetNumNeurons(), 1, 'One neuron');
-    equal(network.GetNeuronByIndex(0).Name, 'Neuron1', "Neuron name");
-    equal(network.GetNeuronByName('N1').Name, 'Neuron1', 'Neuron long name');
+    equal(network.GetNeuronByIndex(0).Name, 'N1', "Neuron name");
+    equal(network.GetNeuronByName('N1').Name, 'N1', 'Neuron long name');
 
     newNeuron.Update = function(t) { this.UpdateCalled = true; this.Times = this.Times ? (this.Times.push(t) && this.Times) : ([ t ]);  }
 
@@ -96,7 +89,7 @@
     var numLayerNetworks = 3;
     for(var i=0; i<numLayerNetworks; i++) {
       childNetwork = new N.Network();
-      childNetwork.ShortName = 'L'+[3, 4, 6][i];
+      childNetwork.Name = 'L'+[3, 4, 6][i];
       network.AddNetwork(childNetwork);
     }
     equal(network.GetNumNetworks(), numLayerNetworks, 'Three networks');
@@ -110,34 +103,34 @@
     var numLayer6Networks = 2;
     for(i=0; i<numLayer6Networks; i++) {
       childNetwork = new N.Network();
-      childNetwork.ShortName = ['a', 'b'][i];
+      childNetwork.Name = ['a', 'b'][i];
       childL6.AddNetwork(childNetwork);
     }
 
     var NetworkConfig = {
-      ShortName: 'C',
+      Name: 'C',
       RandSeed: 42,
       Templates: {
         NOutput: {
           ClassName: 'N.Neuron',
           Compartments: [{
             ClassName: 'N.Comp.OutputFromSignal',
-            ShortName: 'OP',
-            Initialize: function() { console.log('*** Hi - '+this.Neuron.ShortName); }
+            Name: 'OP',
+            Initialize: function() { console.log('*** Hi - '+this.Neuron.Name); }
           }]
         },
         NEx: {
           Template: 'NOutput',
           Compartments: [{
             ClassName: 'N.Comp.LinearSummingInput',
-            ShortName: 'IP'
+            Name: 'IP'
           }]
         },
         NFS: {
           Template: 'NOutput',
           Compartments: [{
             ClassName: 'N.Comp.LinearSummingInput',
-            ShortName: 'IP'
+            Name: 'IP'
           }]
         },
         NInit: {
@@ -147,31 +140,31 @@
         }
       },
       Networks: [{
-        ShortName: 'L3',
+        Name: 'L3',
         Neurons: [
-          { ShortName: 'EX1', Template: 'NEx' },
-          { ShortName: 'EX2', Template: 'NEx' }
+          { Name: 'EX1', Template: 'NEx' },
+          { Name: 'EX2', Template: 'NEx' }
         ]
       }, {
-        ShortName: 'L4',
+        Name: 'L4',
         Neurons: [
-          { ShortName: 'SS1', Template: 'NEx' },
-          { ShortName: 'SS2', Template: 'NEx' },
-          { ShortName: 'SS3', Template: 'NEx' }
+          { Name: 'SS1', Template: 'NEx' },
+          { Name: 'SS2', Template: 'NEx' },
+          { Name: 'SS3', Template: 'NEx' }
         ]
       }, {
-        ShortName: 'L6',
+        Name: 'L6',
         Networks: [{
-          ShortName: 'a',
+          Name: 'a',
           Neurons: [
-            { ShortName: 'NP1', Template: 'NEx' },
-            { ShortName: 'NP2', Template: 'NEx' }
+            { Name: 'NP1', Template: 'NEx' },
+            { Name: 'NP2', Template: 'NEx' }
           ]
         }, {
-          ShortName: 'b',
+          Name: 'b',
           Neurons: [
-            { ShortName: 'IPYR1', Template: 'NEx', Data: 'First' },
-            { ShortName: 'IPYR2', Template: 'NEx' }
+            { Name: 'IPYR1', Template: 'NEx', Data: 'First' },
+            { Name: 'IPYR2', Template: 'NEx' }
           ]
         }]
       }],
@@ -208,66 +201,65 @@
     var network = new N.Network();
 
     var json = {
-      Name: 'Layer1',
-      ShortName: 'L1',
+      Name: 'L1',
       Neurons: [{
-        ClassName: 'N.Neuron', Name: 'Cajal–Retzius 1', ShortName: 'CR1'
+        ClassName: 'N.Neuron', Name: 'CR1'
       },{
-        ClassName: 'N.Neuron', Name: 'Inhibitory Interneuron 1', ShortName: 'INB1'
+        ClassName: 'N.Neuron', Name: 'INB1'
       }]
     }
 
     network.LoadFrom(json);
     equal(network.GetNumNeurons(), 2, 'Two neurons');
-    equal(network.GetNeuronByIndex(0).Name, 'Cajal–Retzius 1', "Neuron 1 name");
-    equal(network.GetNeuronByName('CR1').Name, 'Cajal–Retzius 1', 'Neuron 1 long name');
-    equal(network.GetNeuronByIndex(1).Name, 'Inhibitory Interneuron 1', "Neuron 2 name");
-    equal(network.GetNeuronByName('INB1').Name, 'Inhibitory Interneuron 1', 'Neuron 2 long name');
+    equal(network.GetNeuronByIndex(0).Name, 'CR1', "Neuron 1 name");
+    equal(network.GetNeuronByName('CR1').Name, 'CR1', 'Neuron 1 long name');
+    equal(network.GetNeuronByIndex(1).Name, 'INB1', "Neuron 2 name");
+    equal(network.GetNeuronByName('INB1').Name, 'INB1', 'Neuron 2 long name');
   });
 
   test("Path object test", function() {
-    N.Network.prototype.CreateTestNeuron = function(shortName, template, appendToCompartments) {
+    N.Network.prototype.CreateTestNeuron = function(name, template, appendToCompartments) {
       var templateCopy = _.cloneDeep(template);
-      for(var i in templateCopy.Compartments) { templateCopy.Compartments[i].ShortName += appendToCompartments; }
+      for(var i in templateCopy.Compartments) { templateCopy.Compartments[i].Name += appendToCompartments; }
       this.AddTemplates({ TemplateToUse: templateCopy });
-      var n = this.AddNeuron((new N.Neuron(this)).LoadFrom({ ShortName: shortName, Name: 'Long'+shortName, Template: 'TemplateToUse' }));
+      var n = this.AddNeuron((new N.Neuron(this)).LoadFrom({ Name: name, Template: 'TemplateToUse' }));
       return this;
     }
 
-    var parentNetwork = (new N.Network()).LoadFrom({ShortName: "L1"}).CreateTestNeuron("L1N1", SimpleNeuronTemplate, 1);
+    var parentNetwork = (new N.Network()).LoadFrom({Name: "L1"}).CreateTestNeuron("L1N1", SimpleNeuronTemplate, 1);
     equal(parentNetwork.GetNeuronByName('L1N1').GetCompartmentByName('AIP1').ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
 
     parentNetwork.AddNetwork((new N.Network())
-        .LoadFrom({ ShortName: 'L2-1'})
+        .LoadFrom({ Name: 'L2-1'})
         .CreateTestNeuron("L2N1", SimpleNeuronTemplate, 2)
         .CreateTestNeuron("L2N2", SimpleNeuronTemplate, 3));
 
     parentNetwork.AddNetwork((new N.Network())
-        .LoadFrom({ ShortName: 'L2-2'})
+        .LoadFrom({ Name: 'L2-2'})
         .CreateTestNeuron("L3N1", SimpleNeuronTemplate, 4)
         .CreateTestNeuron("L3N2", SimpleNeuronTemplate, 5));
 
     parentNetwork.GetNetworkByName('L2-2').AddNetwork((new N.Network())
-        .LoadFrom({ ShortName: 'L3-1'})
+        .LoadFrom({ Name: 'L3-1'})
         .CreateTestNeuron("L4N1", SimpleNeuronTemplate, 6)
         .CreateTestNeuron("L4N2", SimpleNeuronTemplate, 7));
 
     var target = N.FromPath(parentNetwork, ':L1N1>AIP1');
     equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
-    equal(target.Neuron.ShortName, 'L1N1', 'Compartment\'s neuron name');
+    equal(target.Neuron.Name, 'L1N1', 'Compartment\'s neuron name');
 
     var net = N.FromPath(parentNetwork, './L2-1');
     var target = N.FromPath(net, ':L2N1>AIP2');
     equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
-    equal(target.Neuron.ShortName, 'L2N1', 'Compartment\'s neuron name');
+    equal(target.Neuron.Name, 'L2N1', 'Compartment\'s neuron name');
 
     var target = N.FromPath(parentNetwork, 'L2-2:L3N2>AIP5');
     equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
-    equal(target.ShortName, 'AIP5', 'Compartment\'s name');
+    equal(target.Name, 'AIP5', 'Compartment\'s name');
 
     var target = N.FromPath(parentNetwork.GetNetworkByName('L2-1'), '../L2-2/L3-1:L4N1>OP6');
     equal(target.ClassName, 'N.Comp.Output', 'Compartment name');
-    equal(target.ShortName, 'OP6', 'Compartment\'s name');
+    equal(target.Name, 'OP6', 'Compartment\'s name');
 
   });
 
