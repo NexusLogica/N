@@ -48,7 +48,13 @@ N.UI.Scene.Network = function() {
  * @param scalePixelsPerUnit {
  * @param position
  */
-N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, position) {
+N.UI.Scene.Network.prototype.SetNetwork = function(network, position) {
+  this.Network = new N.UI.PiNetwork().LoadFrom(network.Display).SetNetwork(network);
+  this.Position = position;
+  return this.Network.Construct(this.RenderMappings);
+}
+
+N.UI.Scene.Network.prototype.SetScale = function(scalePixelsPerUnit) {
   this.Network = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit).SetNetwork(network);
   this.Scale = scalePixelsPerUnit;
   this.Position = position;
@@ -56,7 +62,7 @@ N.UI.Scene.Network.prototype.SetNetwork = function(network, scalePixelsPerUnit, 
 
 N.UI.Scene.Network.prototype.Render = function(svgParent) {
  // this.Scale = this.Fit(svgParent);
-  this.Network.Render(svgParent, this.Scale);
+  this.Network.Render(svgParent, this.Scale, this.RenderMappings);
 }
 
 N.UI.Scene.Network.prototype.Fit = function(svgParent) {
