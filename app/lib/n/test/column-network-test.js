@@ -67,7 +67,7 @@ N.ColumnNetworkTest.prototype.CreateScenes = function() {
     var network = (new N.Network()).AddTemplates({ 'N.ColumnNetworkTest.SpinyStellate': N.ColumnNetworkTest.SpinyStellate }).LoadFrom(config.Network);
 
     var scene = new N.UI.NetworkScene();
-    var unscaledRectangle = scene.Layout(network, renderMappings);
+    scene.Layout(network, renderMappings);
     this.Scenes.push(scene);
   }
 }
@@ -146,8 +146,6 @@ N.ColumnNetworkTest.TestConfigurations = [{
       }
     }],
     Display: {
-      Width: 3.2,
-      Height: 1.2,
       Rows: [
         { RowId: 'main', NumPoints: 3, Spacing: 1.0, Y: 0.0,
           Cols: [
@@ -187,8 +185,6 @@ N.ColumnNetworkTest.TestConfigurations = [{
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     }],
     Display: {
-      Width: 4.2,
-      Height: 1.5,
       Rows: [
         {
           RowId: 'top', NumCol: 5,  Spacing: 0.8, Y: -0.2,

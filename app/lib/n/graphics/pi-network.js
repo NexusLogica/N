@@ -57,13 +57,15 @@ N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
 
   this.Rows = _.cloneDeep(this.NetworkJSON.Rows);
 
-  var width = this.NetworkJSON.MaxWidth;
+  var width = this.NetworkJSON.IdealWidth;
 
   var height = renderMappings.RowSpacing;
   for(var k in this.Rows) {
     height += this.Rows[k].Height+renderMappings.RowSpacing;
   }
-  return { Width: width, Height: height };
+  this.UnscaledWidth = width;
+  this.UnscaledHeight = height;
+  return this;
 }
 
 N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
@@ -78,7 +80,9 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
 
   this.Scale = scale;
 
-  var w = this.Width*this.Scale, h = this.Height*this.Scale;
+  var w = this.Scale*(_.isUndefined(this.Width) ? this.NetworkJSON.IdealWidth : this.Width);
+  var h = this.Scale*(_.isUndefined(this.Height) ? this.NetworkJSON.IdealHeight : this.Height);
+
   this.Rect = { Left: -0.5*w, Top: -0.5*h, Right: 0.5*w, Bottom: 0.5*h };
 
   this._outerRect = this.Group.rect(w, h)
@@ -178,14 +182,17 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
   if(singles.length > 0) { cols.push(singles); }
 
   var maxWidth = 0;
+  var totalHeight = 0;
   var rows = [];
   for(i in cols) {
     var dimensions = this.CalculateRowDimensions(cols[i], renderMappings);
     maxWidth = (dimensions.Width > maxWidth ? dimensions.Width : maxWidth);
+    totalHeight += dimensions.Height;
     rows.push({ Cols: cols[i], Spacing: dimensions.Spacing, Height: dimensions.Height });
   }
+  totalHeight += (cols.length+1)*renderMappings.RowSpacing
 
-  var networkJson = { Rows: rows, MaxWidth: maxWidth };
+  var networkJson = { Rows: rows, IdealWidth: maxWidth+2*renderMappings.ColumnSpacing, IdealHeight: totalHeight };
   return networkJson;
 }
 

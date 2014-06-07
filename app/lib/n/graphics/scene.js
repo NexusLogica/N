@@ -34,9 +34,6 @@ N.UI.NetworkScene = function() {
   this.Id = N.GenerateUUID();
 }
 
-N.UI.NetworkScene.prototype.LayoutToFitRectangle = function(network, rectangle) {
-}
-
 /**
  *
  * @method SetNetwork
@@ -47,17 +44,26 @@ N.UI.NetworkScene.prototype.LayoutToFitRectangle = function(network, rectangle) 
 N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
   this.Network = (new N.UI.PiNetwork()).LoadFrom(network.Display).SetNetwork(network);
   this.RenderMappings = renderMappings;
-  this.ScaledRectangle = this.Network.Layout(this.RenderMappings);
+  this.Network.Layout(this.RenderMappings);
+//  this.UnscaledWidth = this.Network.UnscaledWidth
+//  this.UnscaledHeight = this.Network.UnscaledHeight;
 }
 
-N.UI.NetworkScene.prototype.SetScale = function(scalePixelsPerUnit) {
-  this.Network = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit).SetNetwork(network);
-  this.Scale = scalePixelsPerUnit;
-  this.Position = position;
+/**
+ * @method ScaleToWidth
+ * @param width
+ * @param paddingHoriz
+ * @param paddingVert
+ * @constructor
+ */
+N.UI.NetworkScene.prototype.ScaleToFitWidth = function(width, paddingHoriz, paddingVert) {
+  var w = width-2*paddingHoriz;
+  this.Scale = w/this.Network.UnscaledWidth;
+  this.IdealContainerWidth = w;
+  this.IdealContainerHeight = this.Network.UnscaledHeight*this.Scale+2*paddingVert;
 }
 
 N.UI.NetworkScene.prototype.Render = function(svgParent, network) {
- // this.Scale = this.Fit(svgParent);
   this.Network.Render(svgParent, this.Scale, this.RenderMappings);
 }
 

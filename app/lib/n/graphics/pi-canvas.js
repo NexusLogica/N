@@ -47,7 +47,17 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
 
       var Configure = function() {
         var size = GetSize();
+
+        var padding = (_.isUndefined($attrs.piPadding) ? 20 : $attrs.piPadding);
+
+        if(!_.isUndefined($attrs.piFitWidth)) {
+          $scope.scene.ScaleToFitWidth(size.Width, padding, padding);
+          size.Height = $scope.scene.IdealContainerHeight;
+          $element.height(size.Height);
+        }
+
         var svg = SVG($element[0]).size(size.Width, size.Height);
+
         var backgroundRect = svg.rect(size.Width, size.Height).attr({ class: 'pi-canvas' });
         svg.MainGroup = svg.group();
 
