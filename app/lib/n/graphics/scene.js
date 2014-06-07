@@ -15,30 +15,26 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-/**
- * This is the Scene namespace for N user interface.
- *
- * @namespace UI.Scene
- */
-N.UI.Scene = N.UI.Scene || {};
-
-  //**********************
-  //* N.UI.Scene.Network *
-  //**********************
+  //*********************
+  //* N.UI.NetworkScene *
+  //*********************
 
 /**
  * This is the scene handler for network scenes.
- * @class UI.Scene.Network
+ * @class UI.NetworkScene
  * @constructor
  */
 
-N.UI.Scene.Network = function() {
-  this.ClassName = 'N.UI.Scene.Network';
+N.UI.NetworkScene = function() {
+  this.ClassName = 'N.UI.NetworkScene';
   this.Network = null;
   this.Neurons = {};
   this.Origin = 'center';
   this.Scale = 100;
   this.Id = N.GenerateUUID();
+}
+
+N.UI.NetworkScene.prototype.LayoutToFitRectangle = function(network, rectangle) {
 }
 
 /**
@@ -48,24 +44,24 @@ N.UI.Scene.Network = function() {
  * @param scalePixelsPerUnit {
  * @param position
  */
-N.UI.Scene.Network.prototype.SetNetwork = function(network, position) {
-  this.Network = new N.UI.PiNetwork().LoadFrom(network.Display).SetNetwork(network);
-  this.Position = position;
-  return this.Network.Construct(this.RenderMappings);
+N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
+  this.Network = (new N.UI.PiNetwork()).LoadFrom(network.Display).SetNetwork(network);
+  this.RenderMappings = renderMappings;
+  this.ScaledRectangle = this.Network.Layout(this.RenderMappings);
 }
 
-N.UI.Scene.Network.prototype.SetScale = function(scalePixelsPerUnit) {
+N.UI.NetworkScene.prototype.SetScale = function(scalePixelsPerUnit) {
   this.Network = new N.UI.PiNetwork().LoadFrom(network.Display).SetScale(scalePixelsPerUnit).SetNetwork(network);
   this.Scale = scalePixelsPerUnit;
   this.Position = position;
 }
 
-N.UI.Scene.Network.prototype.Render = function(svgParent) {
+N.UI.NetworkScene.prototype.Render = function(svgParent, network) {
  // this.Scale = this.Fit(svgParent);
   this.Network.Render(svgParent, this.Scale, this.RenderMappings);
 }
 
-N.UI.Scene.Network.prototype.Fit = function(svgParent) {
+N.UI.NetworkScene.prototype.Fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
@@ -78,18 +74,18 @@ N.UI.Scene.Network.prototype.Fit = function(svgParent) {
   }
 }
 
-  //*********************
-  //* N.UI.Scene.Neuron *
-  //*********************
+  //********************
+  //* N.UI.NeuronScene *
+  //********************
 
-N.UI.Scene.Neuron = function() {
-  this.ClassName = 'N.UI.Scene.Neuron';
+N.UI.NeuronScene = function() {
+  this.ClassName = 'N.UI.NeuronScene';
   this.Neurons = {};
   this.Origin = 'center';
   this.Id = N.GenerateUUID();
 }
 
-N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
+N.UI.NeuronScene.prototype.SetNeuron = function(neuron, radius, position) {
   var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
   this.Neuron = neuron;
   this.NeuronGraphic = piGraphic;
@@ -97,26 +93,26 @@ N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
   this.Position = position;
 }
 
-N.UI.Scene.Neuron.prototype.Render = function(svgParent) {
+N.UI.NeuronScene.prototype.Render = function(svgParent) {
   this.NeuronGraphic.Render(this.Neuron, svgParent);
 }
 
-  //**************************
-  //* N.UI.Scene.SignalTrace *
-  //**************************
+  //*************************
+  //* N.UI.SignalTraceScene *
+  //*************************
 
-N.UI.Scene.SignalTrace = function() {
-  this.ClassName = 'N.UI.Scene.SignalTrace';
+N.UI.SignalTraceScene = function() {
+  this.ClassName = 'N.UI.SignalTraceScene';
   this.Signal = {};
   this.Id = N.GenerateUUID();
 }
 
-N.UI.Scene.SignalTrace.prototype.SetSignal = function(signalId) {
+N.UI.SignalTraceScene.prototype.SetSignal = function(signalId) {
   this.SignalId = signalId;
   this._traceRenderer = new N.UI.SignalTraceRenderer();
 }
 
-N.UI.Scene.SignalTrace.prototype.Render = function(svgParent) {
+N.UI.SignalTraceScene.prototype.Render = function(svgParent) {
   this._w = svgParent.parent.width();
   this._h = svgParent.parent.height();
   this._traceRenderer.Configure(svgParent, this.SignalId);
@@ -129,6 +125,6 @@ N.UI.Scene.SignalTrace.prototype.Render = function(svgParent) {
 }
 
 // TODO: Used?
-N.UI.Scene.SignalTrace.prototype.SetScale = function(min, max) {
+N.UI.SignalTraceScene.prototype.SetScale = function(min, max) {
   this._traceRenderer.SetScale(min, max);
 }

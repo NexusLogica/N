@@ -21,9 +21,9 @@ N.Test = N.Test || {};
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
-nSimAppControllers.controller('NetworkTestController', ['$scope',
-  function NetworkTestController($scope) {
-    $scope.Test = new N.NetworkTest();
+nSimAppControllers.controller('NetworkColumnTestController', ['$scope',
+  function NetworkColumnTestController($scope) {
+    $scope.Test = new N.ColumnNetworkTest();
     $scope.Test.CreateScenes();
     $scope.Scenes = $scope.Test.Scenes;
     $scope.TestInfo = { Name: 'Column Network Test' };
@@ -35,46 +35,44 @@ nSimAppControllers.controller('NetworkTestItemController', ['$scope',
   }
 ]);
 
-  //*****************
-  //* N.NetworkTest *
-  //*****************
+var MyController = function($scope) {
+  $scope.Text = '['+$scope.scene.ClassName+']';
+}
 
-N.NetworkTest = function() {
+  //***********************
+  //* N.ColumnNetworkTest *
+  //***********************
+
+N.ColumnNetworkTest = function() {
   this.Scenes  = [];
 }
 
-N.NetworkTest.prototype.CreateScenes = function() {
+N.ColumnNetworkTest.prototype.CreateScenes = function() {
 //  var scale = 140;
   var scale = 70;
-//  for(var i=0; i<N.NetworkTest.TestConfigurations.length; i++) {
-  for(var i=1; i<N.NetworkTest.TestConfigurations.length; i++) {
-    var config = N.NetworkTest.TestConfigurations[i];
-    var network = N.NewN(config.Network.ClassName);
-    network.AddTemplates({ 'N.NetworkTest.SpinyStellate': N.NetworkTest.SpinyStellate });
-    network.LoadFrom(config.Network);
+//  for(var i=0; i<N.ColumnNetworkTest.TestConfigurations.length; i++) {
+  var renderMappings = {
+    'ColumnSpacing': 0.3,
+    'RowSpacing': 0.3,
+    'SS' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
+    'IN' : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
+    'IP' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
+    'OP' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
+    'RN' : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
+    'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
+  };
 
-    var scene = new N.UI.Scene.Network();
-    scene.RenderMappings = {
-      'ColumnSpacing': 0.3,
-      'RowSpacing': 0.3,
-      'SS' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
-      'IN' : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
-      'IP' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
-      'OP' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
-      'RN' : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
-      'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
-    };
-    scene.SetNetwork(network, scale, { x:0, y:0});
-    scene.Id = 'N.NetworkTest.'+(i+1);
+  for(var i=1; i<N.ColumnNetworkTest.TestConfigurations.length; i++) {
+    var config = N.ColumnNetworkTest.TestConfigurations[i];
+    var network = (new N.Network()).AddTemplates({ 'N.ColumnNetworkTest.SpinyStellate': N.ColumnNetworkTest.SpinyStellate }).LoadFrom(config.Network);
 
-    scene.Width = config.Network.Display.Width*scale+60;
-    scene.Height = config.Network.Display.Height*scale+60;
-    N.Objects.Add(scene);
+    var scene = new N.UI.NetworkScene();
+    var unscaledRectangle = scene.Layout(network, renderMappings);
     this.Scenes.push(scene);
   }
 }
 
-N.NetworkTest.SpinyStellate = {
+N.ColumnNetworkTest.SpinyStellate = {
   ClassName: 'N.Neuron',
   Name: 'SS',
   Compartments: [{
@@ -94,7 +92,7 @@ N.NetworkTest.SpinyStellate = {
   }
 }
 
-N.NetworkTest.TestConfigurations = [{
+N.ColumnNetworkTest.TestConfigurations = [{
 
   //******************
   //* Simple Network *
@@ -171,11 +169,11 @@ N.NetworkTest.TestConfigurations = [{
     ClassName: 'N.Network',
     Name: 'L4',
     Neurons: [{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[0]'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[1]'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[2]'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[3]'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[4]'},{
+      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},{
+      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},{
+      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},{
+      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},{
+      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},{
       Name: 'IN[0]',
       Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
     },{

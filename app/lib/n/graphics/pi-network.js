@@ -50,14 +50,14 @@ N.UI.PiNetwork.prototype.AddConnectionDisplay = function(name, group) {
   this.ConnectionsDisplays[name] = group;
 }
 
-N.UI.PiNetwork.prototype.Construct = function(renderMappings) {
+N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
 
   this.NetworkJSON = this.CreateStackedLayout(renderMappings);
   console.log('***** json='+JSON.stringify(this.NetworkJSON, undefined, 2));
 
   this.Rows = _.cloneDeep(this.NetworkJSON.Rows);
 
-  var width = _.max(this.Rows, function(r) { return r.MaxWidth; });
+  var width = this.NetworkJSON.MaxWidth;
 
   var height = renderMappings.RowSpacing;
   for(var k in this.Rows) {

@@ -403,4 +403,5 @@ N.Network.prototype.AddTemplates = function(templates) {
     var template = templates[i];
     this.Templates[i] = _.clone(template);
   }
+  return this;
 }
