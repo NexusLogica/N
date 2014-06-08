@@ -50,11 +50,11 @@ N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
 }
 
 /**
- * @method ScaleToWidth
+ * Calculates the scale that will fit the network to a given width.
+ * @method ScaleToFitWidth
  * @param width
  * @param paddingHoriz
  * @param paddingVert
- * @constructor
  */
 N.UI.NetworkScene.prototype.ScaleToFitWidth = function(width, paddingHoriz, paddingVert) {
   var w = width-2*paddingHoriz;
@@ -78,59 +78,4 @@ N.UI.NetworkScene.prototype.Fit = function(svgParent) {
   else {
     return 0.9*svgHeight/this.Network.Height;
   }
-}
-
-  //********************
-  //* N.UI.NeuronScene *
-  //********************
-
-N.UI.NeuronScene = function() {
-  this.ClassName = 'N.UI.NeuronScene';
-  this.Neurons = {};
-  this.Origin = 'center';
-  this.Id = N.GenerateUUID();
-}
-
-N.UI.NeuronScene.prototype.SetNeuron = function(neuron, radius, position) {
-  var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
-  this.Neuron = neuron;
-  this.NeuronGraphic = piGraphic;
-  this.Radius = radius;
-  this.Position = position;
-}
-
-N.UI.NeuronScene.prototype.Render = function(svgParent) {
-  this.NeuronGraphic.Render(this.Neuron, svgParent);
-}
-
-  //*************************
-  //* N.UI.SignalTraceScene *
-  //*************************
-
-N.UI.SignalTraceScene = function() {
-  this.ClassName = 'N.UI.SignalTraceScene';
-  this.Signal = {};
-  this.Id = N.GenerateUUID();
-}
-
-N.UI.SignalTraceScene.prototype.SetSignal = function(signalId) {
-  this.SignalId = signalId;
-  this._traceRenderer = new N.UI.SignalTraceRenderer();
-}
-
-N.UI.SignalTraceScene.prototype.Render = function(svgParent) {
-  this._w = svgParent.parent.width();
-  this._h = svgParent.parent.height();
-  this._traceRenderer.Configure(svgParent, this.SignalId);
-  this._padding = 15;
-  this._box = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };
-  this._traceRenderer.SetCanvasBoundary(this._box);
-
-  this._backgroundRect = svgParent.rect(this._box.width, this._box.height).move(this._box.x, this._box.y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
-  this._traceRenderer.Render();
-}
-
-// TODO: Used?
-N.UI.SignalTraceScene.prototype.SetScale = function(min, max) {
-  this._traceRenderer.SetScale(min, max);
 }

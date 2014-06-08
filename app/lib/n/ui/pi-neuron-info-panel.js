@@ -29,6 +29,11 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
  */
 nSimAppControllers.controller('PiNeuronInfoPanelController', ['$scope',
   function PiNeuronInfoPanelController($scope) {
-
+    $scope.$on('pi-canvas:event', function(broadcastEvent, event, obj) {
+      if(obj.GetType() === N.Type.PiCompartment) {
+        switch(event.type) {
+        }
+      }
+    });
   }
 ]);

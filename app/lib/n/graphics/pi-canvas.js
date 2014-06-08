@@ -15,6 +15,8 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
+var nSimAppControllers = angular.module('nSimApp.controllers');
+
   //**********************
   //* PiCanvas Directive *
   //**********************
@@ -25,8 +27,8 @@ N.UI = N.UI || {};
  */
 nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
   return {
+    restrict: 'AEC',
     scope : {
-      'text': '@stuff',
       'scene': '=piScene'
     },
     link : function($scope, $element, $attrs) {
@@ -46,14 +48,19 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
       }
 
       var Configure = function() {
+        $element.addClass('pi-canvas');
+
         var size = GetSize();
 
         var padding = (_.isUndefined($attrs.piPadding) ? 20 : $attrs.piPadding);
 
-        if(!_.isUndefined($attrs.piFitWidth)) {
+        if(!_.isUndefined($attrs.piFitWidth) && $scope.scene.ScaleToFitWidth) {
           $scope.scene.ScaleToFitWidth(size.Width, padding, padding);
           size.Height = $scope.scene.IdealContainerHeight;
           $element.height(size.Height);
+        }
+        else {
+          $scope.scene.ScaleToFit(size.Width, size.Height, padding, padding);
         }
 
         var svg = SVG($element[0]).size(size.Width, size.Height);
@@ -64,6 +71,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
         var origin = ($attrs.canvasOrigin ? $attrs.canvasOrigin : 'center');
         switch(origin) {
           case 'center': { svg.MainGroup.translate(0.5*size.Width, 0.5*size.Height); break; }
+          case 'upper-left': { break; }
         }
 
         $scope.scene.Render(svg.MainGroup);
@@ -76,5 +84,19 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
 
       Configure();
     }
+  }
+}]);
+
+  //******************************
+  //* PiEventReceiver Controller *
+  //******************************
+
+/**
+ * This Angular JS directive is for creating an SVG canvas.
+ * @class directive.piCanvas
+ */
+nSimAppControllers.controller('PiEventReceiver', ['$scope', function($scope) {
+  $scope.OnEvent = function(event, obj) {
+    $scope.$broadcast('pi-canvas:event', event, obj);
   }
 }]);

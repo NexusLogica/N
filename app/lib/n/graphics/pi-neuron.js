@@ -93,19 +93,9 @@ N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
   var node = piCompartment.path.node;
   jQuery.data(node, 'piCompartment', piCompartment);
 
-  $(node).on('mouseenter', function(event) {
+  $(node).on('mouseenter mouseleave click', function(event) {
     var piCompartment = $(event.target).data('piCompartment');
-    $(this).closest('.pi-canvas').scope().onCompartmentMouseEnter(event, piCompartment);
-  });
-
-  $(node).on('mouseleave', function(event) {
-    var piCompartment = $(event.target).data('piCompartment');
-    $(this).closest('.pi-canvas').scope().onCompartmentMouseLeave(event, piCompartment);
-  });
-
-  $(node).on('click', function(event) {
-    var piCompartment = $(event.target).data('piCompartment');
-    $(this).closest('.pi-canvas').scope().onCompartmentClick(event, piCompartment);
+    $(this).closest('.pi-canvas').scope().OnEvent(event, piCompartment);
   });
 }
 
@@ -115,6 +105,27 @@ N.UI.PiNeuron.prototype.Highlight = function(compartment) {
 
 N.UI.PiNeuron.prototype.RemoveHighlight = function(compartment) {
   N.UI.SvgRemoveClass(this.Group, 'highlight');
+}
+
+N.UI.PiNeuron.prototype.GetType = function() {
+  return N.Type.PiNeuron;
+}
+
+  //**********************
+  //* N.UI.PiCompartment *
+  //**********************
+
+N.UI.PiCompartment = function() {
+}
+
+N.UI.PiCompartment.prototype.GetType = function() {
+  return N.Type.PiCompartment;
+}
+
+N.UI.PiCompartment.prototype.Clone = function() {
+  var c = new N.UI.PiCompartment();
+  _.assign(c, this);
+  return c;
 }
 
   //************************
@@ -271,7 +282,16 @@ N.UI.PiNeuronFactory = (function() {
       }
       var pin = new N.UI.PiNeuron();
 
-      _.assign(pin, _.cloneDeep(filledTemplate));
+      for(var i in filledTemplate) {
+        if(i === 'Compartments') {
+          var compartments = filledTemplate[i];
+          for(var j in compartments) {
+            pin.Compartments[j] = compartments[j].Clone();
+          }
+        } else {
+          pin[i] = _.cloneDeep(filledTemplate[i]);
+        }
+      }
       return pin;
     }
 
@@ -284,7 +304,10 @@ N.UI.PiNeuronFactory = (function() {
       for(var i in template.Compartments) {
         var templateCompartment = template.Compartments[i];
         var pathString = PiCompartmentToPath(templateCompartment, radius);
-        var compartment = _.cloneDeep(templateCompartment);
+
+        var compartment = new N.UI.PiCompartment();
+        _.assign(compartment, _.cloneDeep(templateCompartment));
+
         compartment.pathString = pathString;
         filledTemplate.Compartments[compartment.name] = compartment;
       }

@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : signal-trace.js
+File     : pi-signal-trace.js
 Project  : N Simulator Library
 Purpose  : Source file for signal trace user interface objects.
 Revisions: Original definition by Lawrence Gunn.
@@ -15,6 +15,21 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
+  //*************************
+  //* SignalTraceController *
+  //*************************
+
+nSimAppDirectives.directive('piTraceView', [function() {
+  return {
+    restrict: 'A',
+    link : function($scope, $element, $attrs) {
+      $scope.$on('graph:range-modification', function(event, min, max) {
+        $scope.scene.TraceRenderer.SetScale(min, max);
+      });
+    }
+  };
+}]);
+
   //****************************
   //* N.UI.SignalTraceRenderer *
   //****************************
@@ -23,76 +38,76 @@ N.UI.SignalTraceRenderer = function() {
 }
 
 N.UI.SignalTraceRenderer.prototype.Configure = function(svgParent, signal) {
-  this._svgParent = svgParent;
-  this.Signal = N.Objects.Get(signal);
-  this._needsRecalc = true;
-  this._boundary = { x:0, y:0, width: svgParent.width(), height: svgParent.height() };
-  this._timeAtOrigin = 0.0;
-  this._yAtOrigin = 0.0;
-  this._scale = 1.0; // Default
+  this.SvgParent = svgParent;
+  this.Signal = signal;
+  this.NeedsRecalc = true;
+  this.Boundary = { x:0, y:0, width: svgParent.width(), height: svgParent.height() };
+  this.TimeAtOrigin = 0.0;
+  this.YAtOrigin = 0.0;
+  this.Scale = 1.0; // Default
   var num = this.Signal.GetNumSamples();
   if(num > 1) {
     var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
-    this._scale = this._boundary.width/range;
+    this.Scale = this.Boundary.Width/range;
   }
 }
 
 N.UI.SignalTraceRenderer.prototype.SetCanvasBoundary = function(box) {
-  this._boundary = box;
+  this.Boundary = box;
 
   var num = this.Signal.GetNumSamples();
   if(num > 1) {
     var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
-    this._scale = this._boundary.width/range;
+    this.Scale = this.Boundary.Width/range;
   }
 
-  this._needsRecalc = true;
+  this.NeedsRecalc = true;
 }
 
 N.UI.SignalTraceRenderer.prototype.SetScale = function(min, max) {
   var num = this.Signal.GetNumSamples();
   if(num > 1) {
     var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
-    this._scale = (this._boundary.width/range)/(max-min);
-    this._timeAtOrigin = range*min;
+    this.Scale = (this.Boundary.Width/range)/(max-min);
+    this.TimeAtOrigin = range*min;
   }
-  this._needsRecalc = true;
+  this.NeedsRecalc = true;
   this.Render();
 }
 
 N.UI.SignalTraceRenderer.prototype.SetAbsoluteScale = function(timeAtOrigin, scale) {
-  this._timeAtOrigin = timeAtOrigin;
-  this._scale = scale;
-  this._needsRecalc = true;
+  this.TimeAtOrigin = timeAtOrigin;
+  this.Scale = scale;
+  this.NeedsRecalc = true;
 }
 
 N.UI.SignalTraceRenderer.prototype.Render = function() {
-  if(this._needsRecalc) {
-    this._needsRecalc = false;
+  if(this.NeedsRecalc) {
+    this.NeedsRecalc = false;
     this.CalculateVerticalRange();
     this.CalculateHorizontalRange();
   }
 
-  this._RenderXAxis();
+  this.RenderXAxis();
 
   if(this.Signal.GetNumSamples() > 1) {
     if(this.Signal.Type === N.ANALOG) {
-      this._RenderAnalogTrace();
+      this.RenderAnalogTrace();
     }
     else {
-      this._RenderDiscreteTrace();
+      this.RenderDiscreteTrace();
     }
   }
 }
 
-N.UI.SignalTraceRenderer.prototype._RenderAnalogTrace = function() {
-  var t = this.Signal.GetTimeByIndex(this._startIndex);
-  var val = this.Signal.GetValueByIndex(this._startIndex);
+N.UI.SignalTraceRenderer.prototype.RenderAnalogTrace = function() {
+  var t = this.Signal.GetTimeByIndex(this.StartIndex);
+  var val = this.Signal.GetValueByIndex(this.StartIndex);
   var tScaled = this.TimeToPixel(t);
   var valScaled = this.YToPixel(val);
   var p = 'M'+tScaled+' '+valScaled;
 
-  for(var i=this._startIndex+1; i <= this._endIndex; i++) {
+  for(var i=this.StartIndex+1; i <= this.EndIndex; i++) {
     t = this.Signal.GetTimeByIndex(i);
     val = this.Signal.GetValueByIndex(i);
     tScaled = this.TimeToPixel(t);
@@ -100,25 +115,25 @@ N.UI.SignalTraceRenderer.prototype._RenderAnalogTrace = function() {
     p += 'L'+tScaled+' '+valScaled;
   }
 
-  if(!this._path) {
-    this._path = this._svgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
+  if(!this.Path) {
+    this.Path = this.SvgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
     var extra = 200;
-    this._clipRect = this._svgParent.rect(this._boundary.width, this._boundary.height+2*extra).move(this._boundary.x, this._boundary.y-extra);
-    this._path.clipWith(this._clipRect);
+    this.ClipRect = this.SvgParent.rect(this.Boundary.Width, this.Boundary.Height+2*extra).move(this.Boundary.X, this.Boundary.Y-extra);
+    this.Path.clipWith(this.ClipRect);
   }
   else {
-    this._path.plot(p);
+    this.Path.plot(p);
   }
 }
 
-N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
-  var t = this.Signal.GetTimeByIndex(this._startIndex);
-  var prevState = this.Signal.GetValueByIndex(this._startIndex);
+N.UI.SignalTraceRenderer.prototype.RenderDiscreteTrace = function() {
+  var t = this.Signal.GetTimeByIndex(this.StartIndex);
+  var prevState = this.Signal.GetValueByIndex(this.StartIndex);
   var tScaled = this.TimeToPixel(t);
   var statePrevScaled = this.YToPixel(prevState);
   var p = 'M'+tScaled+' '+statePrevScaled;
 
-  for(var i=this._startIndex+1; i <= this._endIndex; i++) {
+  for(var i=this.StartIndex+1; i <= this.EndIndex; i++) {
     t = this.Signal.GetTimeByIndex(i);
     var state = this.Signal.GetValueByIndex(i);
     if(state !== prevState) {
@@ -128,25 +143,25 @@ N.UI.SignalTraceRenderer.prototype._RenderDiscreteTrace = function() {
       p += 'L'+tScaled+' '+stateScaled;
       statePrevScaled = stateScaled;
     }
-    else if(i === this._endIndex) {
+    else if(i === this.EndIndex) {
       tScaled = this.TimeToPixel(t);
       p += 'L'+tScaled+' '+statePrevScaled;
     }
     prevState = state;
   }
 
-  if(!this._path) {
-    this._path = this._svgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
+  if(!this.Path) {
+    this.Path = this.SvgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
     var extra = 200;
-    this._clipRect = this._svgParent.rect(this._boundary.width, this._boundary.height+2*extra).move(this._boundary.x, this._boundary.y-extra);
-    this._path.clipWith(this._clipRect);
+    this.ClipRect = this.SvgParent.rect(this.Boundary.Width, this.Boundary.Height+2*extra).move(this.Boundary.X, this.Boundary.Y-extra);
+    this.Path.clipWith(this.ClipRect);
   }
   else {
-    this._path.plot(p);
+    this.Path.plot(p);
   }
 }
 
-N.UI.SignalTraceRenderer.prototype._RenderXAxis = function() {
+N.UI.SignalTraceRenderer.prototype.RenderXAxis = function() {
   var y = this.YToPixel(0.0);
   var p = '';
   if(this.Signal.GetNumSamples() > 1) {
@@ -155,17 +170,17 @@ N.UI.SignalTraceRenderer.prototype._RenderXAxis = function() {
     p = 'M'+xStart+' '+y+'L'+xEnd+' '+y;
   }
   else {
-    p = 'M'+this._boundary.x+' '+y+'L'+(this._boundary.x+this._boundary.width)+' '+y;
+    p = 'M'+this.Boundary.X+' '+y+'L'+(this.Boundary.X+this.Boundary.Width)+' '+y;
   }
 
-  if(!this._xAxis) {
-    this._xAxis = this._svgParent.path(p).attr({ class: 'axis', 'stroke-dasharray': '6, 6', fill: 'none' });
+  if(!this.XAxis) {
+    this.XAxis = this.SvgParent.path(p).attr({ class: 'axis', 'stroke-dasharray': '6, 6', fill: 'none' });
     var extra = 200;
-    this._clipRect = this._svgParent.rect(this._boundary.width, this._boundary.height+2*extra).move(this._boundary.x, this._boundary.y-extra);
-    this._xAxis.clipWith(this._clipRect);
+    this.ClipRect = this.SvgParent.rect(this.Boundary.Width, this.Boundary.Height+2*extra).move(this.Boundary.X, this.Boundary.Y-extra);
+    this.XAxis.clipWith(this.ClipRect);
   }
   else {
-    this._xAxis.plot(p);
+    this.XAxis.plot(p);
   }
 }
 
@@ -175,20 +190,20 @@ N.UI.SignalTraceRenderer.prototype._RenderXAxis = function() {
 // where scale is d(pixel)/d(time)
 //
 N.UI.SignalTraceRenderer.prototype.TimeToPixel = function(time) {
-  var pixel = this._scale*(time-this._timeAtOrigin)+this._boundary.x;
+  var pixel = this.Scale*(time-this.TimeAtOrigin)+this.Boundary.X;
   return pixel;
 }
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
 N.UI.SignalTraceRenderer.prototype.PixelToTime = function(pixel) {
-  var time = (pixel+this._timeAtOrigin-this._boundary.x)/this._scale;
+  var time = (pixel+this.TimeAtOrigin-this.Boundary.X)/this.Scale;
   return time;
 }
 
 N.UI.SignalTraceRenderer.prototype.YToPixel = function(y) {
-  var pixelUp = this._yScale*y+this._yOriginPixels;
-  var pixelDown = this._boundary.y+this._boundary.height - pixelUp;
+  var pixelUp = this.YScale*y+this.YOriginPixels;
+  var pixelDown = this.Boundary.Y+this.Boundary.Height - pixelUp;
   return pixelDown;
 }
 
@@ -200,16 +215,16 @@ N.UI.SignalTraceRenderer.prototype.PixelToY = function(pixel) {
 
 N.UI.SignalTraceRenderer.prototype.CalculateVerticalRange = function() {
   var range = (this.Signal.MaxLimit-this.Signal.MinLimit);
-  this._yScale = this._boundary.height/range;
-  this._yAtBottom = this.Signal.MinLimit;
-  this._yOriginPixels = -this._boundary.height*this.Signal.MinLimit/range;
+  this.YScale = this.Boundary.Height/range;
+  this.YAtBottom = this.Signal.MinLimit;
+  this.YOriginPixels = -this.Boundary.Height*this.Signal.MinLimit/range;
 }
 
 N.UI.SignalTraceRenderer.prototype.CalculateHorizontalRange = function() {
-  this._startIndex = this.Signal.GetIndexBeforeTime(this._timeAtOrigin);
-  var timeAtEnd = this._timeAtOrigin+this._boundary.width/this._scale;
-  this._endIndex = this.Signal.GetIndexBeforeTime(timeAtEnd);
-  if(this._endIndex < this.Signal.GetNumSamples()-1) {
-    this._endIndex++;
+  this.StartIndex = this.Signal.GetIndexBeforeTime(this.TimeAtOrigin);
+  var timeAtEnd = this.TimeAtOrigin+this.Boundary.Width/this.Scale;
+  this.EndIndex = this.Signal.GetIndexBeforeTime(timeAtEnd);
+  if(this.EndIndex < this.Signal.GetNumSamples()-1) {
+    this.EndIndex++;
   }
 }

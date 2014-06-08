@@ -14,18 +14,6 @@ nSimAppControllers.controller('SimulationController', ['$scope',
   function SimulationController($scope) {
   }]);
 
-  //*************************
-  //* SignalTraceController *
-  //*************************
-
-nSimAppControllers.controller('SignalTraceController', ['$scope', '$rootScope',
-  function SignalTraceController($scope) {
-    $scope.$on('graph:range-modification', function(event, min, max) {
-      $scope.renderer.Scene.SetScale(min, max);
-    });
-  }
-]);
-
   //*********************************
   //* SignalGraphControlsController *
   //*********************************

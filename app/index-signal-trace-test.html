@@ -17,7 +17,28 @@
 
   <div ng-include="'partials/title-bar.html'"></div>
 
-  <div class="container" ng-include="'partials/test/signal-trace-test.html'" ng-controller="SignalTraceTestController"></div>
+  <div class="container" ng-controller="SignalTraceTestController">
+    <div class="row test-top">
+      <div class="n-med-title col-lg-5 col-md-7">{{TestInfo.Name}}</div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-13">
+        <div class="row signal-trace-test"  ng-repeat="scene in Scenes">
+          <div class="col-lg-3 col-lg-offset-3 col-md-6  n-small-title">Name: <span style="font-weight: normal">{{scene.TraceRenderer.Signal.Name}}</span> </div>
+
+          <div class="signal-trace-test-container col-lg-6 col-md-6">
+            <div class="pi-scene pi-signal-trace-scene row">
+              <pi-canvas class="signal-trace-canvas" pi-scene="scene" pi-trace-view canvas-origin="upper-left"></pi-canvas>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-7">
+        <div ng-include="'partials/signal-graph-controls.html'"></div>
+      </div>
+    </div>
+  </div>
 
   <script src="lib/jquery-2.0.2.js"></script>
   <script src="lib/jquery-ui/ui/jquery-ui.js"></script>
@@ -34,11 +55,9 @@
   <script src="lib/n/n.js"></script>
   <script src="lib/n/signal.js"></script>
   <script src="lib/n/graphics/constants.js"></script>
-  <script src="lib/n/graphics/scene.js"></script>
+  <script src="lib/n/graphics/pi-signal-trace-scene.js"></script>
   <script src="lib/n/graphics/pi-canvas.js"></script>
-  <script src="lib/n/graphics/signal-trace.js"></script>
-
-  <script src="lib/n/ui/pi-signal-trace-scene.js"></script>
+  <script src="lib/n/graphics/pi-signal-trace.js"></script>
 
   <script src="lib/n/test/signal-trace-test.js"></script>
   <script src="js/controllers.js"></script>

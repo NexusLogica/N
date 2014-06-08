@@ -23,12 +23,17 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('SignalTraceTestController', ['$scope',
   function SignalTraceTestController($scope) {
+
+    $scope.TestInfo = { Name: 'Signal Trace Test' };
+
     var testSignals = new N.SignalTraceTest();
     testSignals.CreateSignals();
     $scope.Scenes = testSignals.Scenes;
     $scope.signalsMinRange = 0.0;
     $scope.signalsMaxRange = 0.10;
     $scope.signals = testSignals.Signals;
+
+
     $scope.$on('graph-controls:range-modification', function(event, min, max) {
       $scope.$broadcast('graph:range-modification', min, max);
     });
@@ -56,22 +61,16 @@ N.SignalTraceTest.prototype.CreateSignals = function() {
   this._timeStart = 0.0;
   for(var test in testFuncs) {
     signal = this[testFuncs[test]]();
-    N.Objects.Add(signal);
-
-    scene = new N.UI.Scene.SignalTrace();
-    scene.SetSignal(signal.Id);
-    N.Objects.Add(scene);
+    scene = new N.UI.SignalTraceScene();
+    scene.SetSignal(signal);
     this.Scenes.push(scene);
   }
 
   var offsets = [ 0.0, 0.004, 0.008, 0.012, 0.016, 0.020, 0.024 ];
   for(var i in offsets) {
     signal = this.CreateGeneratedPulse(offsets[i]);
-    N.Objects.Add(signal);
-
-    scene = new N.UI.Scene.SignalTrace();
-    scene.SetSignal(signal.Id);
-    N.Objects.Add(scene);
+    scene = new N.UI.SignalTraceScene();
+    scene.SetSignal(signal);
     this.Scenes.push(scene);
   }
 }

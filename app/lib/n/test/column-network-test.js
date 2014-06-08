@@ -35,10 +35,6 @@ nSimAppControllers.controller('NetworkTestItemController', ['$scope',
   }
 ]);
 
-var MyController = function($scope) {
-  $scope.Text = '['+$scope.scene.ClassName+']';
-}
-
   //***********************
   //* N.ColumnNetworkTest *
   //***********************
@@ -64,7 +60,10 @@ N.ColumnNetworkTest.prototype.CreateScenes = function() {
 
   for(var i=1; i<N.ColumnNetworkTest.TestConfigurations.length; i++) {
     var config = N.ColumnNetworkTest.TestConfigurations[i];
-    var network = (new N.Network()).AddTemplates({ 'N.ColumnNetworkTest.SpinyStellate': N.ColumnNetworkTest.SpinyStellate }).LoadFrom(config.Network);
+    var network = (new N.Network()).AddTemplates(
+        { 'N.ColumnNetworkTest.SpinyStellate': N.ColumnNetworkTest.SpinyStellate,
+          'N.ColumnNetworkTest.FastSpiking': N.ColumnNetworkTest.FastSpiking
+        }).LoadFrom(config.Network);
 
     var scene = new N.UI.NetworkScene();
     scene.Layout(network, renderMappings);
@@ -89,6 +88,23 @@ N.ColumnNetworkTest.SpinyStellate = {
     Template: 'N.UI.StandardNeuronTemplates.Stellate',
     Radius: 0.3,
     CompartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
+  }
+}
+
+N.ColumnNetworkTest.FastSpiking = {
+  ClassName: 'N.Neuron',
+  Name: 'FS',
+  Compartments: [{
+    ClassName: 'N.Comp.Output',
+    Name: 'OP'
+  },{
+    ClassName: 'N.Comp.LinearSummingInput',
+    Name: 'IP'
+  }],
+  Display: {
+    Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
+    Radius: 0.2,
+    CompartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
   }
 }
 
@@ -166,24 +182,17 @@ N.ColumnNetworkTest.TestConfigurations = [{
   Network: {
     ClassName: 'N.Network',
     Name: 'L4',
-    Neurons: [{
-      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},{
-      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},{
-      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},{
-      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},{
-      Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},{
-      Name: 'IN[0]',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    },{
-      Name: 'IN[1]',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    },{
-      Name: 'IN[2]',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    },{
-      Name: 'IN[3]',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    }],
+    Neurons: [
+      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},
+      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},
+      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},
+      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},
+      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
+      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[0]'},
+      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[1]'},
+      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[2]'},
+      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
+    ],
     Display: {
       Rows: [
         {

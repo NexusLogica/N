@@ -32,7 +32,11 @@ N.Type = {
   Connection:     4,
   AnalogSignal:   5,
   DiscreteSignal: 6,
-  CustomSignal:   7
+  CustomSignal:   7,
+  PiNetwork:      8,
+  PiNeuron:       9,
+  PiCompartment:  10,
+  PiConnection:   11
 };
 
 /**

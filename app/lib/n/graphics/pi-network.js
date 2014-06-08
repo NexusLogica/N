@@ -53,7 +53,7 @@ N.UI.PiNetwork.prototype.AddConnectionDisplay = function(name, group) {
 N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
 
   this.NetworkJSON = this.CreateStackedLayout(renderMappings);
-  console.log('***** json='+JSON.stringify(this.NetworkJSON, undefined, 2));
+  // console.log('***** json='+JSON.stringify(this.NetworkJSON, undefined, 2));
 
   this.Rows = _.cloneDeep(this.NetworkJSON.Rows);
 
