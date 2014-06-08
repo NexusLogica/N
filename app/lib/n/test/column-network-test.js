@@ -44,9 +44,6 @@ N.ColumnNetworkTest = function() {
 }
 
 N.ColumnNetworkTest.prototype.CreateScenes = function() {
-//  var scale = 140;
-  var scale = 70;
-//  for(var i=0; i<N.ColumnNetworkTest.TestConfigurations.length; i++) {
   var renderMappings = {
     'ColumnSpacing': 0.3,
     'RowSpacing': 0.3,

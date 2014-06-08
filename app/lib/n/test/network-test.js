@@ -44,19 +44,26 @@ N.NetworkTest = function() {
 }
 
 N.NetworkTest.prototype.CreateScenes = function() {
-  var scale = 140;
+  var renderMappings = {
+    'ColumnSpacing': 0.3,
+    'RowSpacing': 0.3,
+    'SS' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
+    'IN' : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
+    'IP' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
+    'OP' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
+    'RN' : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
+    'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
+  };
+
   for(var i=0; i<N.NetworkTest.TestConfigurations.length; i++) {
     var config = N.NetworkTest.TestConfigurations[i];
-    var network = N.NewN(config.Network.ClassName);
-    network.AddTemplates({ 'N.NetworkTest.SpinyStellate': N.NetworkTest.SpinyStellate });
-    network.LoadFrom(config.Network);
+    var network = (new N.Network()).AddTemplates(
+        { 'N.NetworkTest.SpinyStellate': N.NetworkTest.SpinyStellate,
+          'N.NetworkTest.FastSpiking': N.NetworkTest.FastSpiking
+        }).LoadFrom(config.Network);
 
-    var scene = new N.UI.Scene.Network();
-    scene.SetNetwork(network, scale, { x:0, y:0});
-    scene.Id = 'N.NetworkTest.'+(i+1);
-    scene.Width = config.Network.Display.Width*scale+60;
-    scene.Height = config.Network.Display.Height*scale+60;
-    N.Objects.Add(scene);
+    var scene = new N.UI.NetworkScene();
+    scene.Layout(network, renderMappings);
     this.Scenes.push(scene);
   }
 }
@@ -78,6 +85,23 @@ N.NetworkTest.SpinyStellate = {
     Template: 'N.UI.StandardNeuronTemplates.Stellate',
     Radius: 0.3,
     CompartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
+  }
+}
+
+N.NetworkTest.FastSpiking = {
+  ClassName: 'N.Neuron',
+  Name: 'FS',
+  Compartments: [{
+    ClassName: 'N.Comp.Output',
+    Name: 'OP'
+  },{
+    ClassName: 'N.Comp.LinearSummingInput',
+    Name: 'IP'
+  }],
+  Display: {
+    Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
+    Radius: 0.2,
+    CompartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
   }
 }
 
@@ -135,8 +159,6 @@ N.NetworkTest.TestConfigurations = [{
       }
     }],
     Display: {
-      Width: 3.2,
-      Height: 1.2,
       Rows: [
         { RowId: 'main', NumPoints: 3, Spacing: 1.0, Y: 0.0,
           Cols: [
@@ -157,27 +179,18 @@ N.NetworkTest.TestConfigurations = [{
   Network: {
     ClassName: 'N.Network',
     Name: 'L4',
-    Neurons: [{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS1'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS2'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS3'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS4'},{
-      Template: 'N.NetworkTest.SpinyStellate', Name: 'SS5'},{
-      Name: 'IN1',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    },{
-      Name: 'IN2',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    },{
-      Name: 'IN3',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    },{
-      Name: 'IN4',
-      Display: { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.2 }
-    }],
+    Neurons: [
+      {Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[0]'},
+      {Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[1]'},
+      {Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[2]'},
+      {Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[3]'},
+      {Template: 'N.NetworkTest.SpinyStellate', Name: 'SS[4]'},
+      {Template: 'N.NetworkTest.FastSpiking', Name: 'IN[0]'},
+      {Template: 'N.NetworkTest.FastSpiking', Name: 'IN[1]'},
+      {Template: 'N.NetworkTest.FastSpiking', Name: 'IN[2]'},
+      {Template: 'N.NetworkTest.FastSpiking', Name: 'IN[3]'}
+    ],
     Display: {
-      Width: 4.2,
-      Height: 1.5,
       Rows: [
         {
           RowId: 'top', NumCol: 5,  Spacing: 0.8, Y: -0.2,
