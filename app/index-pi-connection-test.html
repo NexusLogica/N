@@ -19,7 +19,33 @@
 
   <div ng-include="'partials/title-bar.html'"></div>
 
-  <div class="container" ng-include="'partials/test/pi-connection-test.html'">
+  <div class="container" ng-controller="PiConnectionTestController"  pi-event-reflector>
+    <div class="row test-top">
+      <div class="n-med-title col-lg-5 col-md-7">{{TestInfo.Name}}</div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-lg-offset-2">
+        <div class="row pi-connection-test"  ng-repeat="scene in Scenes" ng-controller="PiEventReceiver">
+          <div>
+            <button type="button" class="btn btn-default" ng-click="next()">Next</button>
+          </div>
+          <div class="pi-scene pi-network-panel row" ng-controller="PiNetworkPanelController">
+
+            <div class="pi-canvas-column col-lg-8 col-md-8">
+              <pi-canvas pi-scene="scene" pi-fit-width pi-padding="20"></pi-canvas>
+              <div class="path" ng-bind="Current.HoverPath"></div>
+            </div>
+
+            <div class="col-lg-5 col-md-5 pi-network-console">
+              <div class="pi-neuron-info-panel" ng-controller="PiNeuronInfoPanelController">
+                <div class="item"><span>Compartment: </span><span>{{Current.Selected}}</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="lib/jquery-2.0.2.js"></script>
@@ -44,7 +70,7 @@
   <script src="lib/n/signal.js"></script>
   <script src="lib/n/graphics/constants.js"></script>
   <script src="lib/n/graphics/vector.js"></script>
-  <script src="lib/n/graphics/scene.js"></script>
+  <script src="lib/n/graphics/pi-network-scene.js"></script>
   <script src="lib/n/graphics/pi-canvas.js"></script>
   <script src="lib/n/graphics/pi-network.js"></script>
   <script src="lib/n/graphics/pi-neuron.js"></script>

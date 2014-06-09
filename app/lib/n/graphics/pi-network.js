@@ -75,7 +75,6 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
 
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('ClassName')) { classNameFull += ' '+this.ClassName; }
-  if(this.Network.Name.length) { classNameFull += ' '+this.Network.Name; }
   this.Group.attr({ class: classNameFull });
 
   this.Scale = scale;
@@ -94,6 +93,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
   var lastHeight = 0;
   for(var i=0; i<this.Rows.length; i++) {
     var row = this.Rows[i];
+    var rowX = -0.5*row.Width*this.Scale;
     var spacing = row.Spacing;
     var numColumns = row.Cols.length;
     rowY += 0.5*row.Height+renderMappings.RowSpacing+lastHeight;
@@ -104,20 +104,23 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
       if(col.Name) {
         var neuron = this.Network.GetNeuronByName(col.Name);
         if(neuron) {
-          var template = renderMappings[col.GroupName];
+          var template = this.GetTemplate(renderMappings, col.GroupName);
           var radius = this.Scale*template.Radius;
-          var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(template.Template, col.Radius*this.Scale);
+          var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(template.Template, radius);
           graphic.NeuronClassName = neuron.Name;
           this.Neurons.push(graphic);
           this.NeuronsByName[neuron.Name] = graphic;
 
-          graphic.X = this.Scale*(j*spacing-0.5*spacing*(numColumns-1));
-          graphic.Y = rowY*this.Scale;
           graphic.Radius = radius;
+          rowX += radius;
+          graphic.X = rowX;
+          graphic.Y = rowY*this.Scale;
           graphic.Row = i;
           graphic.Col = j;
 
           graphic.Render(neuron, this.Group);
+
+          rowX += graphic.Radius+spacing*this.Scale;
         }
       }
     }
@@ -137,6 +140,25 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
  */
 N.UI.PiNetwork.prototype.GetGroup = function() {
   return this.Group;
+}
+
+N.UI.PiNetwork.prototype.GetTemplate = function(renderMappings, groupName) {
+  var template = renderMappings[groupName];
+  if(!template) {
+    var gn = groupName;
+    while(true) {
+      var gnNew = this.GetGroupName(gn);
+      if(gnNew === gn) {
+        return null;
+      }
+      template = renderMappings[gnNew];
+      if(template) {
+        return template;
+      }
+      gn = gnNew;
+    }
+  }
+  return template;
 }
 
 N.UI.PiNetwork.prototype.LoadFrom = function(json) {
@@ -170,7 +192,8 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
   var neurons = network.Neurons;
   var groups = {};
   for(var i in neurons) {
-    var groupName = this.GetGroupName(neurons[i].Name);
+    var name = neurons[i].Name;
+    var groupName = this.GetGroupNameData(name);
     if(!groups[groupName.GroupName]) { groups[groupName.GroupName] = [ groupName ]; } else { groups[groupName.GroupName].push(groupName); }
   }
 
@@ -188,7 +211,7 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
     var dimensions = this.CalculateRowDimensions(cols[i], renderMappings);
     maxWidth = (dimensions.Width > maxWidth ? dimensions.Width : maxWidth);
     totalHeight += dimensions.Height;
-    rows.push({ Cols: cols[i], Spacing: dimensions.Spacing, Height: dimensions.Height });
+    rows.push({ Cols: cols[i], Spacing: dimensions.Spacing, Height: dimensions.Height, Width: dimensions.Width });
   }
   totalHeight += (cols.length+1)*renderMappings.RowSpacing
 
@@ -203,7 +226,7 @@ N.UI.PiNetwork.prototype.CalculateRowDimensions = function(row, renderMappings) 
   var height = 0;
   for(var i = 0; i<row.length; i++) {
     var neuron = row[i];
-    var data = renderMappings[neuron.GroupName];
+    var data = this.GetTemplate(renderMappings, neuron.GroupName);
     if(!data) {
       data = renderMappings.Default;
     }
@@ -220,11 +243,22 @@ N.UI.PiNetwork.prototype.CalculateRowDimensions = function(row, renderMappings) 
   row.Width = offset-spacing;
   var actualSpacing = row.Width-rFirst-rLast;
   var finalSpacing = (row.length > 2 ? actualSpacing/(row.length-1) : 1);
-  return { Width: row.Width, Spacing: finalSpacing, Height: height };
+  return { Width: row.Width, Spacing: spacing, Height: height };
 }
 
 N.UI.PiNetwork.prototype.GetGroupName = function(name) {
-  var i1 = name.indexOf('[');
+  var i1 = name.lastIndexOf('[');
+  if(i1 !== -1) {
+    var i2 = name.indexOf(']', i1);
+    if(i2 !== -1) {
+      return name.substr(0, i1);
+    }
+  }
+  return name;
+}
+
+N.UI.PiNetwork.prototype.GetGroupNameData = function(name) {
+  var i1 = name.lastIndexOf('[');
   if(i1 !== -1) {
     var i2 = name.indexOf(']', i1);
     if(i2 !== -1) {
@@ -233,3 +267,4 @@ N.UI.PiNetwork.prototype.GetGroupName = function(name) {
   }
   return { Name: name,  GroupName: name };
 }
+

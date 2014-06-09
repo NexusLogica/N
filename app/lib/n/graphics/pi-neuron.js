@@ -45,7 +45,6 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
 
     var compartmentClassName = 'compartment';
     if(compartment.hasOwnProperty('ClassName')) { compartmentClassName += ' '+compartment.ClassName; }
-    if(this.NeuronClassName.length) { compartmentClassName += ' '+this.NeuronClassName; }
     compartment.path.attr( { class: compartmentClassName } );
 
     if(compartmentMap) {
