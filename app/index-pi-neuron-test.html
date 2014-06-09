@@ -17,7 +17,20 @@
 
   <div ng-include="'partials/title-bar.html'"></div>
 
-  <div class="container" ng-include="'partials/test/pi-neuron-test.html'" ng-controller="PiNeuronTestController">
+  <div class="container" ng-controller="PiNeuronTestController"  pi-event-reflector>
+    <div class="row test-top">
+      <div class="n-med-title col-lg-5 col-md-7">Pi Neuron UI Test</div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-lg-offset-2">
+        <div class="row pi-neuron-test"  ng-repeat="scene in Scenes">
+          <div class="pi-scene pi-neuron-panel row" ng-controller="PiNeuronPanelController">
+            <pi-canvas class="col-lg-4 col-md-4" pi-scene="scene" pi-fit-width pi-padding="20"></pi-canvas>
+            <div class="col-lg-5 col-md-5 pi-neuron-console"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="lib/jquery-2.0.2.js"></script>
@@ -39,7 +52,7 @@
   <script src="lib/n/signal.js"></script>
   <script src="lib/n/graphics/constants.js"></script>
   <script src="lib/n/graphics/vector.js"></script>
-  <script src="lib/n/graphics/scene.js"></script>
+  <script src="lib/n/graphics/pi-neuron-scene.js"></script>
   <script src="lib/n/graphics/pi-canvas.js"></script>
   <script src="lib/n/graphics/pi-network.js"></script>
   <script src="lib/n/graphics/pi-neuron.js"></script>

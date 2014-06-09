@@ -26,14 +26,26 @@ N.UI.NeuronScene = function() {
   this.Id = N.GenerateUUID();
 }
 
-N.UI.NeuronScene.prototype.SetNeuron = function(neuron, radius, position) {
-  var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
-  this.Neuron = neuron;
-  this.NeuronGraphic = piGraphic;
-  this.Radius = radius;
-  this.Position = position;
+N.UI.NeuronScene.prototype.SetNeuron = function(neuron, template) {
+  this.Template = template;
+  this.NeuronObj = neuron;
+}
+
+/**
+ * Calculates the scale that will fit the network to a given width.
+ * @method ScaleToFitWidth
+ * @param width
+ * @param paddingHoriz
+ * @param paddingVert
+ */
+N.UI.NeuronScene.prototype.ScaleToFitWidth = function(width, paddingHoriz, paddingVert) {
+  var w = width-2*paddingHoriz;
+  this.Scale = 0.5*w;
+  this.IdealContainerWidth = width;
+  this.IdealContainerHeight = width;
 }
 
 N.UI.NeuronScene.prototype.Render = function(svgParent) {
-  this.NeuronGraphic.Render(this.Neuron, svgParent);
+  this.Neuron = N.UI.PiNeuronFactory.CreatePiNeuron(this.Template, this.Scale);
+  this.Neuron.Render(this.NeuronObj, svgParent);
 }

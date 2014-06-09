@@ -43,15 +43,13 @@ N.PiNeuronTest = function() {
 }
 
 N.PiNeuronTest.prototype.CreateScenes = function() {
+
   for(var i=0; i<N.PiNeuronTest.TestConfigurations.length; i++) {
     var config = N.PiNeuronTest.TestConfigurations[i];
-    var neuron = N.NewN(config.Neuron.ClassName);
-    neuron.LoadFrom(config.Neuron);
+    var neuron = (new N.Neuron()).LoadFrom(config.Neuron);
 
-    var scene = new N.UI.Scene.Neuron();
-    scene.SetNeuron(neuron, config.Neuron.Display.Radius, { x:0, y:0});
-    scene.Id = 'N.PiNeuronTest.'+(i+1);
-    N.Objects.Add(scene);
+    var scene = new N.UI.NeuronScene();
+    scene.SetNeuron(neuron, config.Neuron.Display.Template);
     this.Scenes.push(scene);
   }
 }

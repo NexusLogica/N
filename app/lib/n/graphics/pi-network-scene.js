@@ -31,12 +31,11 @@ N.UI.NetworkScene = function() {
   this.Neurons = {};
   this.Origin = 'center';
   this.Scale = 100;
-  this.Id = N.GenerateUUID();
 }
 
 /**
  *
- * @method SetNetwork
+ * @method Layout
  * @param network {Object} The N.Network object to be displayed in the scene.
  * @param scalePixelsPerUnit {
  * @param position
@@ -45,8 +44,6 @@ N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
   this.Network = (new N.UI.PiNetwork()).LoadFrom(network.Display).SetNetwork(network);
   this.RenderMappings = renderMappings;
   this.Network.Layout(this.RenderMappings);
-//  this.UnscaledWidth = this.Network.UnscaledWidth
-//  this.UnscaledHeight = this.Network.UnscaledHeight;
 }
 
 /**
