@@ -55,7 +55,7 @@ N.ColumnNetworkTest.prototype.CreateScenes = function() {
     'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
   };
 
-  for(var i=1; i<N.ColumnNetworkTest.TestConfigurations.length; i++) {
+  for(var i=1; i<N.ColumnNetworkTest.TestConfigurations.length-1; i++) {
     var config = N.ColumnNetworkTest.TestConfigurations[i];
     var network = (new N.Network()).AddTemplates(
         { 'N.ColumnNetworkTest.SpinyStellate': N.ColumnNetworkTest.SpinyStellate,
@@ -115,7 +115,6 @@ N.ColumnNetworkTest.TestConfigurations = [{
     ClassName: 'N.Network',
     Name: 'SN',
     Neurons: [{
-      ClassName: 'N.Neuron',
       Name: 'IP',
       Compartments: [{
         ClassName: 'N.Comp.OutputFromSignal',
@@ -177,7 +176,28 @@ N.ColumnNetworkTest.TestConfigurations = [{
   //*******************
 
   Network: {
-    ClassName: 'N.Network',
+    Networks: [{
+      Name: 'L4',
+      Neurons: [
+        {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},
+        {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},
+        {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},
+        {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},
+        {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
+        {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[0]'},
+        {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[1]'},
+        {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[2]'},
+        {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
+      ]
+    }]
+  }
+},{
+
+  //*******************
+  //* Layer 4 Network *
+  //*******************
+
+  Network: {
     Name: 'L4',
     Neurons: [
       {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},
@@ -191,28 +211,11 @@ N.ColumnNetworkTest.TestConfigurations = [{
       {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
     ],
     Display: {
-      Rows: [
-        {
-          RowId: 'top', NumCol: 5,  Spacing: 0.8, Y: -0.2,
-          Cols: [
-            { Name: 'SS[0]' },
-            { Name: 'SS[1]' },
-            { Name: 'SS[2]' },
-            { Name: 'SS[3]' },
-            { Name: 'SS[4]' }
-          ]
-        },
-        {
-          RowId: 'bottom', NumPoints: 4, Spacing: 0.6,  Y:  0.4,
-          Cols: [
-            { Name: 'IN[0]' },
-            { Name: 'IN[1]' },
-            { Name: 'IN[2]' },
-            { Name: 'IN[3]' }
-          ]
-        }
-      ]
+      Rows: [{
+        Neurons: [ 'SS[0]', 'SS[1]', 'SS[2]', 'SS[3]', 'SS[4]' ]
+      },{
+        Neurons: [ 'IN[0]', 'IN[1]', 'IN[2]', 'IN[3]' ]
+      }]
     }
   }
-
 }];

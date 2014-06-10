@@ -29,6 +29,7 @@ N.UI.PiNetwork = function() {
   this.ConnectionsDisplays = {};
   this.Group = null;
   this.NetworkJSON = {};
+  this.Networks = [];
 }
 
 /**
@@ -53,7 +54,7 @@ N.UI.PiNetwork.prototype.AddConnectionDisplay = function(name, group) {
 N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
 
   this.NetworkJSON = this.CreateStackedLayout(renderMappings);
-  // console.log('***** json='+JSON.stringify(this.NetworkJSON, undefined, 2));
+  console.log('***** json='+JSON.stringify(this.NetworkJSON, undefined, 2));
 
   this.Rows = _.cloneDeep(this.NetworkJSON.Rows);
 
@@ -63,6 +64,15 @@ N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
   for(var k in this.Rows) {
     height += this.Rows[k].Height+renderMappings.RowSpacing;
   }
+
+  for(k in this.Networks) {
+    height += this.Networks[k].UnscaledHeight;
+    var w = this.Networks[k].UnscaledWidth;
+    if(w > width) {
+      width = w;
+    }
+  }
+
   this.UnscaledWidth = width;
   this.UnscaledHeight = height;
   return this;
@@ -79,8 +89,8 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
 
   this.Scale = scale;
 
-  var w = this.Scale*(_.isUndefined(this.Width) ? this.NetworkJSON.IdealWidth : this.Width);
-  var h = this.Scale*(_.isUndefined(this.Height) ? this.NetworkJSON.IdealHeight : this.Height);
+  var w = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
+  var h = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
 
   this.Rect = { Left: -0.5*w, Top: -0.5*h, Right: 0.5*w, Bottom: 0.5*h };
 
@@ -88,6 +98,11 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
     .radius(2)
     .move(this.Rect.Left, this.Rect.Top)
     .attr({ class: 'single'});
+
+  for(var ii in this.Networks) {
+    var childNetwork = this.Networks[ii];
+    childNetwork.Render(svgParent, this.Scale, renderMappings);
+  }
 
   var rowY = -h/2/this.Scale;
   var lastHeight = 0;
@@ -189,9 +204,17 @@ N.UI.PiNetwork.prototype.CreateStackedLayout = function(renderMappings) {
 }
 
 N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, renderMappings) {
+  var networkJson = { };
+
+  for(var i in network.Networks) {
+    var childNetwork = (new N.UI.PiNetwork()).SetNetwork(network.Networks[i]);
+    childNetwork.Layout(renderMappings);
+    this.Networks.push(childNetwork);
+  }
+
   var neurons = network.Neurons;
   var groups = {};
-  for(var i in neurons) {
+  for(i in neurons) {
     var name = neurons[i].Name;
     var groupName = this.GetGroupNameData(name);
     if(!groups[groupName.GroupName]) { groups[groupName.GroupName] = [ groupName ]; } else { groups[groupName.GroupName].push(groupName); }
@@ -215,7 +238,10 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
   }
   totalHeight += (cols.length+1)*renderMappings.RowSpacing
 
-  var networkJson = { Rows: rows, IdealWidth: maxWidth+2*renderMappings.ColumnSpacing, IdealHeight: totalHeight };
+  networkJson.Rows = rows;
+  networkJson.IdealWidth = maxWidth+2*renderMappings.ColumnSpacing;
+  networkJson.IdealHeight = totalHeight;
+
   return networkJson;
 }
 
