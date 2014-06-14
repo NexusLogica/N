@@ -158,8 +158,8 @@ N.UI.PiCompartment.prototype.ShowConnections = function() {
   piOutput = _.filter(piOutput);
 
   this.RouteManager = new N.UI.PiRouteManager(findTop(thisNetwork));
-  this.RouteManager.AddConnections(input);
-  this.RouteManager.AddConnections(output);
+  this.RouteManager.AddConnections(piInput);
+  this.RouteManager.AddConnections(piOutput);
   this.RouteManager.Render();
   return this;
 }

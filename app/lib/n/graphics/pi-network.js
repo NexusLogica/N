@@ -91,13 +91,16 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
 
   this.Scale = scale;
 
-  var w = this.ScaledWidth = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
-  var h = this.ScaledHeight = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
+  // If no
+  if(!this.ParentNetwork) {
+    this.ScaledWidth = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
+  }
+  this.ScaledHeight = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
 
-  this.Rect = { Left: 0, Top: 0, Right: w, Bottom: h };
+  this.Rect = { Left: 0, Top: 0, Right: this.ScaledWidth, Bottom: this.ScaledHeight };
 
   if(this.DrawBorder) {
-    this.OuterRect = this.Group.rect(w, h)
+    this.OuterRect = this.Group.rect(this.ScaledWidth, this.ScaledHeight)
       .radius(2)
       .move(this.Rect.Left, this.Rect.Top)
       .attr({ class: 'single'});
@@ -108,7 +111,10 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
   for(var ii in this.Networks) {
     var childNetwork = this.Networks[ii];
     childNetwork.DrawBorder = false;
+
+    childNetwork.ScaledWidth = this.ScaledWidth;
     childNetwork.Y = y;
+
     childNetwork.Render(this.Group, this.Scale, renderMappings);
     childNetwork.RenderBackground((ii % 2 ? 'background-light-tan-odd' : 'background-light-tan-even'), padding);
 
@@ -119,7 +125,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
     }
   }
 
-  var rowY = 0;//-h/2/this.Scale;
+  var rowY = 0;
   var lastHeight = 0;
   for(var i=0; i<this.Rows.length; i++) {
     var row = this.Rows[i];

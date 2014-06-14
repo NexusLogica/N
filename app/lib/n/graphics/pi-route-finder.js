@@ -43,9 +43,8 @@ N.UI.PiRouteFinder = function(piConnection) {
  * @constructor
  */
 N.UI.PiRouteFinder.prototype.FindRoute = function(manager) {
-  this.routeInfo = this.PiConnection.RouteInfo;
-  var connectionPath = this.Connection.GetPath();
-  this.RouteInfo = routeInfo;
+  var connectionPath = this.PiConnection.Connection.GetPath();
+  this.RouteInfo = this.PiConnection.Network.RouteInfo;
   var startNeuron = N.SourceFromConnectionPath(connectionPath);
   var endNeuron = N.SinkFromConnectionPath(connectionPath);
 

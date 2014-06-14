@@ -55,8 +55,8 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
     var pathString = piConnection.RouteFinder.GetPath();
     var endInfo = piConnection.RouteFinder.GetEndInfo();
 
-    piConnection.CreatePath(svgGroup, pathString);
-    piConnection.CreateEnd(svgGroup, endInfo);
+    piConnection.CreatePath(piConnection.Network.Group.group(), pathString);
+    piConnection.CreateEnd(piConnection.Network.Group.group(), endInfo);
   }
 
   this.Network.AddConnectionDisplay(name, svgGroup);

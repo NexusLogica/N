@@ -177,7 +177,7 @@ N.ColumnNetworkTest.TestConfigurations = [{
 
   Network: {
     Connections: [
-      { Path: 'L3:SS[0]>OP->L4:IN[0]>IP' }
+      //{ Path: 'L3:SS[0]>OP->L4:IN[0]>IP' }
     ],
     Networks: [{
       Name: 'L3',
@@ -193,7 +193,7 @@ N.ColumnNetworkTest.TestConfigurations = [{
         { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
       ],
       Connections: [
-        //{ Path: ':SS[0]>OP->:IN[0]>IP' }
+        { Path: ':SS[0]>OP->:IN[0]>IP' }
       ]
     }, {
       Name: 'L4',
@@ -202,11 +202,14 @@ N.ColumnNetworkTest.TestConfigurations = [{
         { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},
         { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},
         { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
+//        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
         { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[0]'},
         { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[1]'},
         { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[2]'},
         { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
+      ],
+      Connections: [
+        { Path: ':SS[0]>OP->:IN[0]>IP' }
       ]
     }]
   }
