@@ -24,7 +24,9 @@ N.UI = N.UI || {};
   //* N.UI.PiRouteFinder *
   //**********************
 
-N.UI.PiRouteFinder = function() {
+N.UI.PiRouteFinder = function(piConnection) {
+  this.PiConnection = piConnection;
+  this.Connection = this.PiConnection.Connection;
   this.ChamferSize = 5.0;
   this.MinSegmentLength = 10.0;
   this.Chamfer = true;
@@ -40,8 +42,8 @@ N.UI.PiRouteFinder = function() {
  * @param manager
  * @constructor
  */
-N.UI.PiRouteFinder.prototype.FindRoute = function(connection, routeInfo, manager) {
-  this.Connection = connection;
+N.UI.PiRouteFinder.prototype.FindRoute = function(manager) {
+  this.routeInfo = this.PiConnection.RouteInfo;
   var connectionPath = this.Connection.GetPath();
   this.RouteInfo = routeInfo;
   var startNeuron = N.SourceFromConnectionPath(connectionPath);

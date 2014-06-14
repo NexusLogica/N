@@ -53,11 +53,13 @@ N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
  * @param paddingHoriz
  * @param paddingVert
  */
-N.UI.NetworkScene.prototype.ScaleToFitWidth = function(width, paddingHoriz, paddingVert) {
-  var w = width-2*paddingHoriz;
+N.UI.NetworkScene.prototype.ScaleToFitWidth = function(width, padding) {
+  var w = width-padding.Horizontal();
   this.Scale = w/this.Network.UnscaledWidth;
   this.IdealContainerWidth = w;
-  this.IdealContainerHeight = this.Network.UnscaledHeight*this.Scale+2*paddingVert;
+  this.IdealContainerHeight = this.Network.UnscaledHeight*this.Scale+padding.Vertical();
+  this.Network.X = padding.Left();
+  this.Network.Y = padding.Top();
 }
 
 N.UI.NetworkScene.prototype.Render = function(svgParent, network) {

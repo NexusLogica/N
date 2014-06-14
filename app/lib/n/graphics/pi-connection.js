@@ -27,8 +27,9 @@ N.UI.PiConnectionClasses = {
   //* N.UI.PiConnection *
   //*********************
 
-N.UI.PiConnection = function(connection) {
-  this.Connection = connection;
+N.UI.PiConnection = function(network, connection) {
+  this.Network = network;        // The parent PiNetwork.
+  this.Connection = connection;  // The N.Connection object.
 }
 
 N.UI.PiConnection.prototype.SetPath = function(path) {

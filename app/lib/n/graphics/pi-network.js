@@ -19,7 +19,8 @@ N.UI = N.UI || {};
   //* N.UI.PiNetwork *
   //******************
 
-N.UI.PiNetwork = function() {
+N.UI.PiNetwork = function(parentNetwork) {
+  this.ParentNetwork = parentNetwork;
   this.X = 0;
   this.Y = 0;
   this._set = null;
@@ -30,6 +31,7 @@ N.UI.PiNetwork = function() {
   this.Group = null;
   this.NetworkJSON = {};
   this.Networks = [];
+  this.DrawBorder = true;
 }
 
 /**
@@ -60,7 +62,7 @@ N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
 
   var width = this.NetworkJSON.IdealWidth;
 
-  var height = renderMappings.RowSpacing;
+  var height = (this.Rows.length > 0 ? renderMappings.RowSpacing : 0);
   for(var k in this.Rows) {
     height += this.Rows[k].Height+renderMappings.RowSpacing;
   }
@@ -89,26 +91,39 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
 
   this.Scale = scale;
 
-  var w = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
-  var h = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
+  var w = this.ScaledWidth = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
+  var h = this.ScaledHeight = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
 
-  this.Rect = { Left: -0.5*w, Top: -0.5*h, Right: 0.5*w, Bottom: 0.5*h };
+  this.Rect = { Left: 0, Top: 0, Right: w, Bottom: h };
 
-  this._outerRect = this.Group.rect(w, h)
-    .radius(2)
-    .move(this.Rect.Left, this.Rect.Top)
-    .attr({ class: 'single'});
-
-  for(var ii in this.Networks) {
-    var childNetwork = this.Networks[ii];
-    childNetwork.Render(svgParent, this.Scale, renderMappings);
+  if(this.DrawBorder) {
+    this.OuterRect = this.Group.rect(w, h)
+      .radius(2)
+      .move(this.Rect.Left, this.Rect.Top)
+      .attr({ class: 'single'});
   }
 
-  var rowY = -h/2/this.Scale;
+  var padding = new N.UI.Padding(0, 2);
+  var y = 0.0;
+  for(var ii in this.Networks) {
+    var childNetwork = this.Networks[ii];
+    childNetwork.DrawBorder = false;
+    childNetwork.Y = y;
+    childNetwork.Render(this.Group, this.Scale, renderMappings);
+    childNetwork.RenderBackground((ii % 2 ? 'background-light-tan-odd' : 'background-light-tan-even'), padding);
+
+    y += childNetwork.ScaledHeight+padding.Vertical();
+
+    if(ii < this.Networks.length-1) {
+      this.Group.line(30, y, this.ScaledWidth-30, y).attr({ 'class': 'network-separator' });
+    }
+  }
+
+  var rowY = 0;//-h/2/this.Scale;
   var lastHeight = 0;
   for(var i=0; i<this.Rows.length; i++) {
     var row = this.Rows[i];
-    var rowX = -0.5*row.Width*this.Scale;
+    var rowX = 0.5*(this.ScaledWidth-row.Width*this.Scale);
     var spacing = row.Spacing;
     var numColumns = row.Cols.length;
     rowY += 0.5*row.Height+renderMappings.RowSpacing+lastHeight;
@@ -122,6 +137,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
           var template = this.GetTemplate(renderMappings, col.GroupName);
           var radius = this.Scale*template.Radius;
           var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(template.Template, radius);
+          graphic.Network = this;
           graphic.NeuronClassName = neuron.Name;
           this.Neurons.push(graphic);
           this.NeuronsByName[neuron.Name] = graphic;
@@ -141,10 +157,17 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
     }
   }
 
-  this._label = this.Group.plain(this.Network.Name).move(-0.5*w+6, -0.5*h+3);
+  this._label = this.Group.plain(this.Network.Name).move(6, 3);
 
   this.RouteInfo = new N.UI.RouteInfo(this);
   this.RouteInfo.BuildPassageInformation();
+}
+
+N.UI.PiNetwork.prototype.RenderBackground = function(className, padding) {
+  this.OuterRect = this.Group.rect(this.Rect.Right-this.Rect.Left-padding[3]-padding[1], this.Rect.Bottom-this.Rect.Top-padding[2]-padding[0])
+    .move(this.Rect.Left+padding[3], this.Rect.Top+padding[0])
+    .back()
+    .attr({ class: className});
 }
 
 /**
@@ -207,7 +230,7 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
   var networkJson = { };
 
   for(var i in network.Networks) {
-    var childNetwork = (new N.UI.PiNetwork()).SetNetwork(network.Networks[i]);
+    var childNetwork = (new N.UI.PiNetwork(this)).SetNetwork(network.Networks[i]);
     childNetwork.Layout(renderMappings);
     this.Networks.push(childNetwork);
   }

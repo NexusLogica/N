@@ -51,6 +51,7 @@ N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
       var neuronCompartmentName = compartmentMap[compartment.name];
       if(neuronCompartmentName) {
         var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
+        compartment.SetCompartmentObj(compartmentObj);
         if(compartmentObj) {
           this.CompartmentsById[compartmentObj.Name] = compartment;
           compartment.CompartmentObj = compartmentObj;
@@ -115,10 +116,56 @@ N.UI.PiNeuron.prototype.GetType = function() {
   //**********************
 
 N.UI.PiCompartment = function() {
+  this.CompartmentObj = null;
 }
 
 N.UI.PiCompartment.prototype.GetType = function() {
   return N.Type.PiCompartment;
+}
+
+N.UI.PiCompartment.prototype.SetCompartmentObj = function(compartmentObj) {
+  this.CompartmentObj = compartmentObj;
+  return this;
+}
+
+N.UI.PiCompartment.prototype.ShowConnections = function() {
+  if(!this.CompartmentObj) { return; }
+
+  // Get the input connections paths
+  var input  = this.CompartmentObj.InputConnections;
+  var output = this.CompartmentObj.OutputConnections;
+
+  var thisNetwork = this.Neuron.Network;
+  var createPiConnection = function(connection) {
+    var net = thisNetwork;
+    do {
+      if (connection.Network === net.Network) {
+        return new N.UI.PiConnection(net, connection);
+      }
+    } while((net = net.ParentNetwork));
+    return null;
+  }
+
+  var findTop = function(network) {
+    var net = network;
+    while(!_.isUndefined(net.ParentNetwork)) { net = net.ParentNetwork; }
+    return net;
+  };
+
+  var piInput = _.map(input, createPiConnection);
+  var piOutput = _.map(output, createPiConnection);
+  piInput = _.filter(piInput);
+  piOutput = _.filter(piOutput);
+
+  this.RouteManager = new N.UI.PiRouteManager(findTop(thisNetwork));
+  this.RouteManager.AddConnections(input);
+  this.RouteManager.AddConnections(output);
+  this.RouteManager.Render();
+  return this;
+}
+
+N.UI.PiCompartment.prototype.HideConnections = function() {
+  return this;
 }
 
 N.UI.PiCompartment.prototype.Clone = function() {

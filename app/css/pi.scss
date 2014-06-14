@@ -223,4 +223,19 @@ $gap-junction-color: darken(papayawhip, 10%);
     text-anchor: start;
     alignment-baseline: hanging;
   }
+
+  .background-light-tan-even {
+    fill: #fdfcfb;
+    stroke: none;
+  }
+
+  .background-light-tan-odd {
+    fill: #faf7f4;
+    stroke: none;
+  }
+
+  .network-separator {
+    stroke-width: 1px;
+    stroke: lighten(gainsboro, 7%);
+  }
 }

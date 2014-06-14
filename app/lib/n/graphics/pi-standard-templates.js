@@ -120,12 +120,14 @@ N.UI.StandardNeuronTemplates = {
     Compartments: [{
       name: 'Body',
       ClassName: 'inhibitory-body',
+      DockAngles: [ { From: 35.0, To: 145.0 } ],
       segments: [
         { radius: 0.53, startAngle: 150, direction: 1, facing: 1, padding: 0.05 },
         { radius: 1.00, startAngle: 30, direction: 1, facing: -1, padding: 0.05 }]
     },{
       name: 'Dendrites',
       ClassName: 'dendrites',
+      DockAngles: [ { From: 155.0, To: 380.0 } ],
       segments: [
         { radius: 0.63, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle: 390, direction: -1, facing: 1, padding: 0.05 }]

@@ -135,7 +135,7 @@ N.GetN = function(className) {
  */
 N.FromPath = function(network, path) {
   // Break the path into
-  var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.]+)|(\:[a-zA-Z0-9\-\_\.]+)|(\>[a-zA-Z0-9\-\_\.]+)|([a-zA-Z0-9\-\_\.]+)/g;
+  var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.\[\]]+)|(\:[a-zA-Z0-9\-\_\.\[\]]+)|(\>[a-zA-Z0-9\-\_\.\[\]]+)|([a-zA-Z0-9\-\_\.\[\]]+)/g;
   var parts = path.match(regex);
   N.L('Path='+parts.join('^'));
   if (parts.length === 0) {
@@ -256,7 +256,7 @@ N.FromConnectionPaths = function(network, paths) {
  */
 N.SourceFromConnectionPath = function(path) {
   var i = path.indexOf('->');
-  var src = path.substring(0, i);
+  var src = path.substring((path[0] === ':' ? 1 : 0), i);
   return src;
 }
 
@@ -268,7 +268,7 @@ N.SourceFromConnectionPath = function(path) {
  */
 N.SinkFromConnectionPath = function(path) {
   var i = path.indexOf('->');
-  var sink = path.substring(i+2);
+  var sink = path.substring((path[i+2] === ':' ? i+3 : i+2));
   return sink;
 }
 

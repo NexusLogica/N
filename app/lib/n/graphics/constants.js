@@ -44,3 +44,26 @@ N.UI.SvgRemoveClass = function(svg, className) {
   var str = classes.join(' ');
   svg.attr( { 'class': str });
 }
+
+N.UI.Padding = function() {
+  var p0 = arguments[0];
+  var p1 = arguments[1];
+  if(arguments.length === 0) {
+    this.P = [ 0, 0, 0, 0];
+  } else if(arguments.length === 1) {
+    this.P = [ p0, p0, p0, p0];
+  } else if(arguments.length === 2) {
+    this.P = [ p0, p1, p0, p1];
+  } else if(arguments.length === 4) {
+    var p2 = arguments[2];
+    var p3 = arguments[3];
+    this.P = [ p0, p1, p2, p3];
+  }
+}
+
+N.UI.Padding.prototype.Top         = function() { return this.P[0]; }
+N.UI.Padding.prototype.Right       = function() { return this.P[1]; }
+N.UI.Padding.prototype.Bottom      = function() { return this.P[2]; }
+N.UI.Padding.prototype.Left        = function() { return this.P[3]; }
+N.UI.Padding.prototype.Vertical    = function() { return this.P[0]+this.P[2]; }
+N.UI.Padding.prototype.Horizontal  = function() { return this.P[1]+this.P[3]; }

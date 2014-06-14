@@ -52,15 +52,15 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
 
         var size = GetSize();
 
-        var padding = (_.isUndefined($attrs.piPadding) ? 20 : $attrs.piPadding);
+        var padding = new N.UI.Padding((_.isUndefined($attrs.piPadding) ? 20 : parseInt($attrs.piPadding)));
 
         if(!_.isUndefined($attrs.piFitWidth) && $scope.scene.ScaleToFitWidth) {
-          $scope.scene.ScaleToFitWidth(size.Width, padding, padding);
+          $scope.scene.ScaleToFitWidth(size.Width, padding);
           size.Height = $scope.scene.IdealContainerHeight;
           $element.height(size.Height);
         }
         else {
-          $scope.scene.ScaleToFit(size.Width, size.Height, padding, padding);
+          $scope.scene.ScaleToFit(size.Width, size.Height, padding);
         }
 
         var svg = SVG($element[0]).size(size.Width, size.Height);
@@ -68,7 +68,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
         var backgroundRect = svg.rect(size.Width, size.Height).attr({ class: 'pi-canvas' });
         svg.MainGroup = svg.group();
 
-        var origin = ($attrs.canvasOrigin ? $attrs.canvasOrigin : 'center');
+        var origin = ($attrs.canvasOrigin ? $attrs.canvasOrigin : 'upper-left');
         switch(origin) {
           case 'center': { svg.MainGroup.translate(0.5*size.Width, 0.5*size.Height); break; }
           case 'upper-left': { break; }

@@ -149,3 +149,12 @@ All Rights Reserved.
   font-family: 'Helvetica';
   text-anchor: start;
   alignment-baseline: hanging; }
+.pi-network .background-light-tan-even {
+  fill: #fdfcfb;
+  stroke: none; }
+.pi-network .background-light-tan-odd {
+  fill: #faf7f4;
+  stroke: none; }
+.pi-network .network-separator {
+  stroke-width: 1px;
+  stroke: #eeeeee; }

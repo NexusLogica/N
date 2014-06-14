@@ -66,6 +66,7 @@ nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
     var OnCompartmentClick = function(event, piCompartment) {
       var classes, str;
       if($scope.Current.SelectedCompartment) {
+        $scope.Current.SelectedCompartment.HideConnections();
         var path = $scope.Current.SelectedCompartment.path;
         classes = path.attr('class').split(' ');
         str = _.without(classes, 'selected').join(' ');
@@ -75,6 +76,7 @@ nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
       $scope.Current.Selected = GetCompartmentPath(piCompartment.CompartmentObj);
       $scope.Current.SelectedCompartment = piCompartment;
       classes = piCompartment.path.attr('class').split(' ');
+      piCompartment.ShowConnections();
       str = _.union(classes, ['selected']).join(' ');
       piCompartment.path.attr( { 'class': str });
       $scope.$digest();
