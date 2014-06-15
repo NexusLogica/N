@@ -31,6 +31,7 @@ N.UI.PiNetwork = function(parentNetwork) {
   this.Group = null;
   this.NetworkJSON = {};
   this.Networks = [];
+  this.NetworksByName = {};
   this.DrawBorder = true;
 }
 
@@ -44,6 +45,26 @@ N.UI.PiNetwork = function(parentNetwork) {
 N.UI.PiNetwork.prototype.SetNetwork = function(network) {
   this.Network = network;
   return this;
+}
+
+/**
+ * Get a PiNetwork object owned by this PiNetwork object given the network name.
+ * @method GetNetworkByName
+ * @param {String} shortName
+ * @returns {N.UI.PiNetwork}
+ */
+N.UI.PiNetwork.prototype.GetNetworkByName = function(name) {
+  return this.NetworksByName[name];
+}
+
+/**
+ * Get a PiNetwork object owned by this PiNetwork object given the network name.
+ * @method GetNeuronByName
+ * @param {String} shortName
+ * @returns {N.UI.PiNeuron}
+ */
+N.UI.PiNetwork.prototype.GetNeuronByName = function(name) {
+  return this.NeuronsByName[name];
 }
 
 N.UI.PiNetwork.prototype.AddConnectionDisplay = function(name, group) {
@@ -239,6 +260,7 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
     var childNetwork = (new N.UI.PiNetwork(this)).SetNetwork(network.Networks[i]);
     childNetwork.Layout(renderMappings);
     this.Networks.push(childNetwork);
+    this.NetworksByName[childNetwork.Network.Name] = childNetwork;
   }
 
   var neurons = network.Neurons;

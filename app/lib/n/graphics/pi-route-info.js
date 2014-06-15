@@ -46,57 +46,116 @@ N.UI.RouteInfo = function(network) {
  * @return {N.UI.RouteInfo} Returns a reference to self.
  */
 N.UI.RouteInfo.prototype.BuildPassageInformation = function() {
-  var rows = this.Network.Rows;
-
-  // Calculate the thruway information.
-  // Note that there is one more thruway than neuron rows.
-  // See note above on YNeg and YPos.
-  for(var i=0; i<=rows.length; i++) {
-    var yNeg = (i === 0 ? this.Network.Rect.Top : this.MaximumNeuronRowY(i-1));
-    var yPos = (i === rows.length ? this.Network.Rect.Bottom : this.MinimumNeuronRowY(i));
-
-    this.Thruways.push({ YNeg: yNeg, YPos: yPos, Mid: 0.5*(yNeg+yPos) });
+  if(this.Network.Networks.length > 0) {
+    this.CopyChildNetworks();
   }
+  else {
+    var rows = this.Network.Rows;
 
-  var networkLeft = this.Network.Rect.Left;
-  var networkRight = this.Network.Rect.Right;
+    // Calculate the thruway information.
+    // Note that there is one more thruway than neuron rows.
+    // See note above on YNeg and YPos.
+    for(var i=0; i<=rows.length; i++) {
+      var yNeg = (i === 0 ? this.Network.Rect.Top : this.MaximumNeuronRowY(i-1));
+      var yPos = (i === rows.length ? this.Network.Rect.Bottom : this.MinimumNeuronRowY(i));
 
-  // Calculate the lane information
-  for(i=0; i<rows.length; i++) {
-
-    var lanes = [];
-    var row = this.Network.Rows[i];
-    var left = networkLeft;
-    var thruNeg = this.Thruways[i];
-    var thruPos = this.Thruways[i+1];
-    lanes.ThruNeg = thruNeg;
-    lanes.ThruPos = thruPos;
-
-    for(var j=0; j<row.Cols.length; j++) {
-      var name = row.Cols[j].Name;
-      if(name && name.length) {
-        var n = this.Network.NeuronsByName[name];
-        var right = n.X-n.Radius;
-        lanes.push({ Left: left, Right: right, Mid: 0.5*(left+right), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
-        left = n.X+n.Radius;
-      }
+      this.Thruways.push({ YNeg: yNeg, YPos: yPos, Mid: 0.5*(yNeg+yPos) });
     }
-    lanes.push({ Left: left, Right: networkRight, Mid: 0.5*(left+networkRight), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
 
-    this.LaneRows.push(lanes);
+    var networkLeft = this.Network.Rect.Left;
+    var networkRight = this.Network.Rect.Right;
+
+    // Calculate the lane information
+    for(i=0; i<rows.length; i++) {
+
+      var lanes = [];
+      var row = this.Network.Rows[i];
+      var left = networkLeft;
+      var thruNeg = this.Thruways[i];
+      var thruPos = this.Thruways[i+1];
+      lanes.ThruNeg = thruNeg;
+      lanes.ThruPos = thruPos;
+
+      for(var j=0; j<row.Cols.length; j++) {
+        var name = row.Cols[j].Name;
+        if(name && name.length) {
+          var n = this.Network.NeuronsByName[name];
+          var right = n.X-n.Radius;
+          lanes.push({ Left: left, Right: right, Mid: 0.5*(left+right), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
+          left = n.X+n.Radius;
+        }
+      }
+      lanes.push({ Left: left, Right: networkRight, Mid: 0.5*(left+networkRight), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
+
+      this.LaneRows.push(lanes);
+    }
   }
 
   return this;
 }
 
-N.UI.RouteInfo.prototype.GetNeuron = function(neuronName) {
+N.UI.RouteInfo.prototype.CopyChildNetworks = function() {
+  var childNetwork, yOffset, routeInfo;
+  for(var i in this.Network.Networks) {
+    childNetwork = this.Network.Networks[i];
+    yOffset = childNetwork.Y;
+    routeInfo = childNetwork.RouteInfo;
+
+    // Copy, offset and insert the thruways.
+    for(var j in routeInfo.Thruways) {
+      var thruway = routeInfo.Thruways[j];
+
+      // If we are starting a new  there is a thruway above then combine them.
+      if(j === '0' && this.Thruways.length > 0) {
+        var thruPrev = this.Thruways[this.Thruways.length-1];
+        thruPrev.YPos = thruway.YPos+yOffset;
+        thruPrev.Mid = 0.5*(thruPrev.YPos+thruPrev.YNeg);
+      } else {
+        var thruOffset = { YNeg: thruway.YNeg+yOffset, Mid: thruway.Mid+yOffset, YPos: thruway.YPos+yOffset };
+        this.Thruways.push(thruOffset);
+      }
+    }
+  }
+
+  //console.log("**** "+JSON.stringify(this.Thruways, undefined, 2));
+
+  // Do the above, but now for lane-rows and use the thruway info for offsets.
+  var m = 0
+  for(i in this.Network.Networks) {
+    childNetwork = this.Network.Networks[i];
+    yOffset = childNetwork.Y;
+    routeInfo = childNetwork.RouteInfo;
+
+    for(var k in routeInfo.LaneRows) {
+      var thruNeg = this.Thruways[m];
+      var thruPos = this.Thruways[m+1];
+
+      var laneRow = routeInfo.LaneRows[k];
+      var laneRowCopy = _.cloneDeep(laneRow);
+      laneRowCopy.ThruNeg = _.cloneDeep(thruNeg);
+      laneRowCopy.ThruPos = _.cloneDeep(thruPos);
+      for(var l in laneRowCopy) {
+        var lane = laneRowCopy[l];
+        lane.Mid += yOffset;
+        lane.ThruNeg = _.cloneDeep(thruNeg);
+        lane.ThruPos = _.cloneDeep(thruPos);
+      }
+
+      this.LaneRows.push(laneRowCopy);
+      m++;
+    }
+  }
+  //console.log("**** "+JSON.stringify(this.LaneRows, undefined, 2));
+}
+
+N.UI.RouteInfo.prototype.GetNeuron = function(network, neuronName) {
   var parts = neuronName.split('>');
-  var  n = this.Network.NeuronsByName[parts[0]];
+  var  n = N.FromPath(network, parts[0]);
   return n;
 }
 
-N.UI.RouteInfo.prototype.GetNeuronOutputPosition = function(neuronName) {
-  var n = this.GetNeuron(neuronName);
+N.UI.RouteInfo.prototype.GetNeuronOutputPosition = function(network, neuronName) {
+  var n = this.GetNeuron(network, neuronName);
   var x = n.X;
   var y = n.Y+n.Radius;
   var lane = this.LaneRows[n.Row];
