@@ -158,3 +158,14 @@ All Rights Reserved.
 .pi-network .network-separator {
   stroke-width: 1px;
   stroke: #eeeeee; }
+
+.pi-grid > rect {
+  stroke-width: 1.4px;
+  stroke: #f4f4f4;
+  fill: #fdfbf8;
+  fill: #FDFDFD; }
+.pi-grid .grid-dot {
+  fill: blue; }
+.pi-grid .grid-path-line {
+  stroke: black;
+  fill: none; }

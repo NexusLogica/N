@@ -57,6 +57,10 @@ N.UI.Vector.prototype.Normalize = function() {
   return this;
 }
 
+N.UI.Vector.prototype.DotProduct = function(vec) {
+  return this.X*vec.X+this.Y*vec.Y;
+}
+
 N.UI.Vector.prototype.Distance = function(vec) {
   var x = this.X-vec.X;
   var y = this.Y-vec.Y;

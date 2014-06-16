@@ -239,3 +239,21 @@ $gap-junction-color: darken(papayawhip, 10%);
     stroke: lighten(gainsboro, 7%);
   }
 }
+
+.pi-grid {
+  >rect {
+    stroke-width: 1.4px;
+    stroke: #f4f4f4;
+    fill: lighten(#FCF8F2, 1.5%);
+    fill: #FDFDFD;
+  }
+
+  .grid-dot {
+    fill: blue;
+  }
+
+  .grid-path-line {
+    stroke: black;
+    fill: none;
+  }
+}
