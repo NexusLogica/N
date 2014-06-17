@@ -51,15 +51,25 @@ N.GridTest = function() {
 N.GridTest.prototype.Grids = [{
   Name: 'First',
   Rows: 20,
-  Cols: 30,
-  Blocks: [{
-  }],
+  Cols: 25,
+  Blocks: [
+    { X: 3, Y: 5, W: 4, H: 4 },
+    { X: 19, Y: 1, W: 5, H: 5 },
+    { X: 13, Y: 10, W: 4, H: 4 }
+//    { X: 3, Y: 5, W: 2, H: 2 }
+  ],
   Lines: [{
-    Start: { X: 0, Y: 0 },
+    Start: { X: 10, Y: 8 },
     End: { X: 12, Y: 3 }
   }, {
-    Start: { X: 0, Y: 0 },
-    End: { X: 10, Y: 12 }
+    Start: { X: 10, Y: 8 },
+    End: { X: 23, Y: 0 }
+  }, {
+    Start: { X: 10, Y: 8 },
+    End: { X: 20, Y: 15 }
+  }, {
+    Start: { X: 10, Y: 8 },
+    End: { X: 2, Y: 7 }
   }]
 }];
 

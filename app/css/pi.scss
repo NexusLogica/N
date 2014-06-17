@@ -253,7 +253,16 @@ $gap-junction-color: darken(papayawhip, 10%);
   }
 
   .grid-path-line {
-    stroke: black;
+    stroke: #dddddd;
     fill: none;
+    stroke-width: 3px;
+    stroke-linejoin: bevel;
+  }
+
+  .block-edge {
+    fill: none;
+    stroke: red;
+
+    stroke-opacity: 0.5;
   }
 }

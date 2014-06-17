@@ -167,5 +167,11 @@ All Rights Reserved.
 .pi-grid .grid-dot {
   fill: blue; }
 .pi-grid .grid-path-line {
-  stroke: black;
-  fill: none; }
+  stroke: #dddddd;
+  fill: none;
+  stroke-width: 3px;
+  stroke-linejoin: bevel; }
+.pi-grid .block-edge {
+  fill: none;
+  stroke: red;
+  stroke-opacity: 0.5; }
