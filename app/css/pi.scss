@@ -250,6 +250,7 @@ $gap-junction-color: darken(papayawhip, 10%);
 
   .grid-dot {
     fill: blue;
+    fill: none;
   }
 
   .grid-path-line {
@@ -259,9 +260,17 @@ $gap-junction-color: darken(papayawhip, 10%);
     stroke-linejoin: bevel;
   }
 
+  .grid-circle {
+    stroke: lighten(black, 60%);
+    stroke-width: 1.75px;
+    stroke-linejoin: round;
+    fill: lighten(lightblue, 12%);
+  }
+
   .block-edge {
     fill: none;
     stroke: red;
+    stroke: none;
 
     stroke-opacity: 0.5;
   }

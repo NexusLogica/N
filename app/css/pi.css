@@ -165,13 +165,20 @@ All Rights Reserved.
   fill: #fdfbf8;
   fill: #FDFDFD; }
 .pi-grid .grid-dot {
-  fill: blue; }
+  fill: blue;
+  fill: none; }
 .pi-grid .grid-path-line {
   stroke: #dddddd;
   fill: none;
   stroke-width: 3px;
   stroke-linejoin: bevel; }
+.pi-grid .grid-circle {
+  stroke: #999999;
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  fill: #dceef4; }
 .pi-grid .block-edge {
   fill: none;
   stroke: red;
+  stroke: none;
   stroke-opacity: 0.5; }

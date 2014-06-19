@@ -32,8 +32,12 @@ nSimAppControllers.controller('GridTestController', ['$scope', '$timeout',
         var scene = $scope.Scenes[i];
         var config = $scope.Test.Grids[i];
         for(var j in config.Lines) {
-          var path = scene.Grid.CreateStringPath(config.Lines[j].Start, config.Lines[j].End);
-          var pathObj = scene.Grid.Group.path(path).attr({ 'class': 'grid-path-line' });
+          var start = config.Lines[j].Start;
+          for(var k in config.Lines[j].Ends) {
+            var end = config.Lines[j].Ends[k];
+            var path = scene.Grid.CreateStringPath({ X: start[0], Y: start[1] }, end);
+            var pathObj = scene.Grid.Group.path(path).attr({ 'class': 'grid-path-line' });
+          }
         }
       }
     }, 1);
@@ -48,29 +52,38 @@ N.GridTest = function() {
   this.Scenes  = [];
 }
 
+var s
 N.GridTest.prototype.Grids = [{
   Name: 'First',
-  Rows: 20,
-  Cols: 25,
+  Rows: 30,
+  Cols: 35,
   Blocks: [
-    { X: 3, Y: 5, W: 4, H: 4 },
-    { X: 19, Y: 1, W: 5, H: 5 },
-    { X: 13, Y: 10, W: 4, H: 4 }
+//    { X: 3, Y: 5, W: 4, H: 4 },
+//    { X: 19, Y: 1, W: 5, H: 5 },
+//    { X: 13, Y: 10, W: 4, H: 4 }
 //    { X: 3, Y: 5, W: 2, H: 2 }
   ],
+  Circles: {
+    'SS[0]': { X: 6,  Y: 5, R: 1.5 },
+    'SS[1]': { X: 16, Y: 5, R: 1.5 },
+    'SS[2]': { X: 26, Y: 5, R: 1.5 },
+    'SS[3]': { X: 6,  Y: 15, R: 1.5 },
+    'SS[4]': { X: 16, Y: 15, R: 1.5 },
+    'SS[5]': { X: 26, Y: 15, R: 1.5 }
+},
   Lines: [{
-    Start: { X: 10, Y: 8 },
-    End: { X: 12, Y: 3 }
-  }, {
-    Start: { X: 10, Y: 8 },
-    End: { X: 23, Y: 0 }
-  }, {
-    Start: { X: 10, Y: 8 },
-    End: { X: 20, Y: 15 }
-  }, {
-    Start: { X: 10, Y: 8 },
-    End: { X: 2, Y: 7 }
-  }]
+    Start: [ 0, 0],
+    Ends: [
+      { Target: 'SS[0]', StartAngle: 10, EndAngle: 70 },
+      { Target: 'SS[1]', StartAngle: 10, EndAngle: 70 },
+      { Target: 'SS[2]', StartAngle: 10, EndAngle: 70 },
+      { Target: 'SS[3]', StartAngle: 10, EndAngle: 70 },
+      { Target: 'SS[4]', StartAngle: 10, EndAngle: 70 },
+      { Target: 'SS[5]', StartAngle: 10, EndAngle: 70 }
+//    Start: [ 9, 8],
+//    Start: [ 0, 0],
+//    Ends: [[12, 3], [23, 0], [20, 15], [2, 7]]
+  ]}]
 }];
 
 N.GridTest.prototype.CreateScenes = function() {
