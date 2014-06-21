@@ -177,8 +177,8 @@ N.ColumnNetworkTest.TestConfigurations = [{
 
   Network: {
     Connections: [
-      { Path: 'L3:SS[2]>OP->L4:IN[3]>IP' },
-      { Path: 'L3:SS[2]>OP->L4:SS[0]>IP' },
+      { Path: 'L3:SS[2]>OP->L3:IN[3]>IP' },
+      { Path: 'L3:SS[2]>OP->L3:SS[0]>IP' },
       { Path: 'L3:SS[2]>OP->L4:SS[1]>IP' },
       { Path: 'L3:SS[2]>OP->L4:SS[2]>IP' },
       { Path: 'L3:SS[2]>OP->L4:SS[3]>IP' },

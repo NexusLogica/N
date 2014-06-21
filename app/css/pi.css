@@ -170,7 +170,7 @@ All Rights Reserved.
 .pi-grid .grid-path-line {
   stroke: #dddddd;
   fill: none;
-  stroke-width: 3px;
+  stroke-width: 2px;
   stroke-linejoin: bevel; }
 .pi-grid .grid-circle {
   stroke: #999999;

@@ -64,15 +64,16 @@ N.GridTest.prototype.Grids = [{
 //    { X: 3, Y: 5, W: 2, H: 2 }
   ],
   Circles: {
-    'SS[0]': { X: 6,  Y: 5, R: 1.5 },
+    'SS[0]': { X: 8,  Y: 5, R: 1.5 },
     'SS[1]': { X: 16, Y: 5, R: 1.5 },
-    'SS[2]': { X: 26, Y: 5, R: 1.5 },
-    'SS[3]': { X: 6,  Y: 15, R: 1.5 },
-    'SS[4]': { X: 16, Y: 15, R: 1.5 },
-    'SS[5]': { X: 26, Y: 15, R: 1.5 }
+    'SS[2]': { X: 24, Y: 5, R: 1.5 },
+    'SS[3]': { X: 8,  Y: 11, R: 1.5 },
+    'SS[4]': { X: 16, Y: 11, R: 1.5 },
+    'SS[5]': { X: 24, Y: 11, R: 1.5 }
 },
   Lines: [{
-    Start: [ 0, 0],
+    //Start: [ 0, 0],
+    Start: [ 16, 8],
     Ends: [
       { Target: 'SS[0]', StartAngle: 10, EndAngle: 70 },
       { Target: 'SS[1]', StartAngle: 10, EndAngle: 70 },
@@ -80,7 +81,6 @@ N.GridTest.prototype.Grids = [{
       { Target: 'SS[3]', StartAngle: 10, EndAngle: 70 },
       { Target: 'SS[4]', StartAngle: 10, EndAngle: 70 },
       { Target: 'SS[5]', StartAngle: 10, EndAngle: 70 }
-//    Start: [ 9, 8],
 //    Start: [ 0, 0],
 //    Ends: [[12, 3], [23, 0], [20, 15], [2, 7]]
   ]}]
