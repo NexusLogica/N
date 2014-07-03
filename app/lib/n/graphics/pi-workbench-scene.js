@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : scenes.js
+File     : pi-workbench-scene.js
 Project  : N Simulator Library
 Purpose  : Source file for scenes.
 Revisions: Original definition by Lawrence Gunn.
@@ -15,22 +15,23 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-  //*********************
-  //* N.UI.NetworkScene *
-  //*********************
+  //***********************
+  //* N.UI.WorkbenchScene *
+  //***********************
 
 /**
  * This is the scene handler for network scenes.
- * @class UI.NetworkScene
+ * @class UI.WorkbenchScene
  * @constructor
  */
 
-N.UI.NetworkScene = function() {
-  this.ClassName = 'N.UI.NetworkScene';
+N.UI.WorkbenchScene = function() {
+  this.ClassName = 'N.UI.WorkbenchScene';
   this.Network = null;
   this.Neurons = {};
   this.Origin = 'center';
   this.Scale = 100;
+  this.CentralPadding = 20;
   this.X = 0;
   this.Y = 0;
 }
@@ -42,11 +43,8 @@ N.UI.NetworkScene = function() {
  * @param scalePixelsPerUnit {
  * @param position
  */
-N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
-  this.Network = (new N.UI.PiNetwork()).LoadFrom(network.Display).SetNetwork(network);
-  this.RenderMappings = renderMappings;
-  this.Network.Layout(this.RenderMappings);
-  return this;
+N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
+  this.NetworkScene = (new N.UI.NetworkScene()).Layout(workbench.Network, renderMappings);
 }
 
 /**
@@ -56,21 +54,21 @@ N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
  * @param paddingHoriz
  * @param paddingVert
  */
-N.UI.NetworkScene.prototype.ScaleToFitWidth = function(width, padding) {
+N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
-  this.Scale = w/this.Network.UnscaledWidth;
+  this.NetworkScene.ScaleToFitWidth(w/2, new N.UI.Padding(0, this.CentralPadding, 0, 0));
   this.IdealContainerWidth = w;
-  this.IdealContainerHeight = this.Network.UnscaledHeight*this.Scale+padding.Vertical();
-  this.Network.X = padding.Left();
-  this.Network.Y = padding.Top();
+  this.IdealContainerHeight = this.NetworkScene.IdealContainerHeight;
+  this.NetworkScene.Network.X = padding.Left();
+  this.NetworkScene.Network.Y = padding.Top();
 }
 
-N.UI.NetworkScene.prototype.Render = function(svgParent) {
+N.UI.WorkbenchScene.prototype.Render = function(svgParent) {
   this.Group = svgParent.group().move(this.X, this.Y);
-  this.Network.Render(this.Group, this.Scale, this.RenderMappings);
+  this.NetworkScene.Render(this.Group);
 }
 
-N.UI.NetworkScene.prototype.Fit = function(svgParent) {
+N.UI.WorkbenchScene.prototype.Fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;

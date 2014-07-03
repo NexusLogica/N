@@ -15,9 +15,9 @@ All Rights Reserved.
 var N = N || {};
 N.Test = N.Test || {};
 
-  //*************************
-  //* NetworkTestController *
-  //*************************
+  //*******************************
+  //* NetworkColumnTestController *
+  //*******************************
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" ng-app="nSimApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Column Network Test: Nexus Logica</title>
+  <link rel="shortcut icon" href="./img/pi.ico" />
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="lib/jquery-ui/themes/pepper-grinder/jquery-ui.css"/>
+  <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css"/>
+  <link rel="stylesheet" href="lib/slider/css/slider.css"/>
+  <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="css/n.css"/>
+  <link rel="stylesheet" href="css/pi.css"/>
+</head>
+<body>
+
+  <div ng-include="'partials/title-bar.html'"></div>
+
+
+  <div class="container" ng-controller="WorkBenchTestController"  pi-event-reflector>
+    <div class="row test-top">
+      <div class="n-med-title col-lg-5 col-md-7">{{TestInfo.Name}}</div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-lg-offset-2">
+        <div class="row pi-network-test"  ng-repeat="scene in Scenes" ng-controller="PiEventReceiver">
+          <div class="pi-scene pi-network-panel row" ng-controller="PiNetworkPanelController">
+
+            <div class="pi-canvas-column col-lg-8 col-md-8">
+              <pi-canvas pi-scene="scene" pi-fit-width pi-padding="20"></pi-canvas>
+              <div class="path" ng-bind="Current.HoverPath"></div>
+            </div>
+
+            <div class="col-lg-5 col-md-5 pi-network-console">
+              <div class="pi-neuron-info-panel" ng-controller="PiNeuronInfoPanelController">
+                <div class="item"><span>Compartment: </span><span>{{Current.Selected}}</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/jquery-2.0.2.js"></script>
+  <script src="lib/jquery-ui/ui/jquery-ui.js"></script>
+  <script src="lib/lodash/dist/lodash.js"></script>
+  <script src="lib/underscore.string/lib/underscore.string.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.js"></script>
+  <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular-route/angular-route.js"></script>
+  <script src="lib/random/random-0.26.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+  <script src="lib/svg.js/svg.js"></script>
+  <script src="lib/n/n.js"></script>
+  <script src="lib/n/random.js"></script>
+  <script src="lib/n/network.js"></script>
+  <script src="lib/n/neuron.js"></script>
+  <script src="lib/n/compartments.js"></script>
+  <script src="lib/n/connection.js"></script>
+  <script src="lib/n/signal.js"></script>
+  <script src="lib/n/workbench.js"></script>
+  <script src="lib/n/graphics/constants.js"></script>
+  <script src="lib/n/graphics/vector.js"></script>
+  <script src="lib/n/graphics/pi-network-scene.js"></script>
+  <script src="lib/n/graphics/pi-workbench-scene.js"></script>
+  <script src="lib/n/graphics/pi-canvas.js"></script>
+  <script src="lib/n/graphics/pi-network.js"></script>
+  <script src="lib/n/graphics/pi-neuron.js"></script>
+  <script src="lib/n/graphics/pi-connection.js"></script>
+  <script src="lib/n/graphics/pi-route-info.js"></script>
+  <script src="lib/n/graphics/pi-route-manager.js"></script>
+  <script src="lib/n/graphics/pi-route-finder.js"></script>
+  <script src="lib/n/graphics/pi-standard-templates.js"></script>
+
+  <script src="lib/n/ui/pi-network-panel.js"></script>
+  <script src="lib/n/ui/pi-neuron-info-panel.js"></script>
+
+  <script src="lib/n/test/work-bench-test.js"></script>
+  <script src="js/controllers.js"></script>
+
+
+</body>
+</html>
