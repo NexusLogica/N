@@ -57,12 +57,23 @@ N.Neuron.prototype.GetPath = function() {
 }
 
 /**
- * Get the full path of the neuron.
- * @method GetPath
- * @returns {string}
+ * Set the network.
+ * @method SetNetwork
+ * @returns {this}
  */
 N.Neuron.prototype.SetNetwork = function(network) {
-  return this.Network = network;
+  this.Network = network;
+  return this;
+}
+
+/**
+ * Set the neuron name.
+ * @method SetName
+ * @returns {this}
+ */
+N.Neuron.prototype.SetName = function(name) {
+  this.Name = name;
+  return this;
 }
 
 /**

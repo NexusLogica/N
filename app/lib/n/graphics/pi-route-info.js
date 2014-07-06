@@ -38,6 +38,7 @@ N.UI.RouteInfo = function(network) {
   this.Network = network;
   this.Thruways = [];
   this.LaneRows = [];
+  this.Debug = true;
 }
 
 /**
@@ -91,6 +92,11 @@ N.UI.RouteInfo.prototype.BuildPassageInformation = function() {
     }
   }
 
+  if(this.Debug) {
+    console.log('**** Route Info for '+(!_.isEmpty(this.Network.Network.Name) ? this.Network.Network.Name : 'Root Network'));
+    console.log('**** Thruways:\n'+JSON.stringify(this.Thruways, undefined, 2));
+    console.log('**** LaneRows:\n'+JSON.stringify(this.LaneRows, undefined, 2));
+  }
   return this;
 }
 
@@ -136,7 +142,7 @@ N.UI.RouteInfo.prototype.CopyChildNetworks = function() {
       laneRowCopy.ThruPos = _.cloneDeep(thruPos);
       for(var l in laneRowCopy) {
         var lane = laneRowCopy[l];
-        lane.Mid += yOffset;
+        lane.YMid += yOffset;
         lane.ThruNeg = _.cloneDeep(thruNeg);
         lane.ThruPos = _.cloneDeep(thruPos);
       }

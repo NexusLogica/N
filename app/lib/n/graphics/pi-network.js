@@ -97,7 +97,7 @@ N.UI.PiNetwork.prototype.Layout = function(renderMappings) {
   }
 
   this.UnscaledWidth = width;
-  this.UnscaledHeight = height;
+  this.UnscaledHeight = (height !== 0 ? height : 0.3);
   return this;
 }
 
@@ -162,7 +162,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
         var neuron = this.Network.GetNeuronByName(col.Name);
         if(neuron) {
           var template = this.GetTemplate(renderMappings, col.GroupName);
-          var radius = this.Scale*template.Radius;
+          var radius = this.Scale*(neuron.Display && neuron.Display.Radius ? neuron.Display.Radius : template.Radius);
           var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(template.Template, radius);
           graphic.Network = this;
           graphic.NeuronClassName = neuron.Name;
@@ -287,7 +287,7 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
     totalHeight += dimensions.Height;
     rows.push({ Cols: cols[i], Spacing: dimensions.Spacing, Height: dimensions.Height, Width: dimensions.Width });
   }
-  totalHeight += (cols.length+1)*renderMappings.RowSpacing
+  totalHeight += (cols.length+1)*renderMappings.RowSpacing;
 
   networkJson.Rows = rows;
   networkJson.IdealWidth = maxWidth+2*renderMappings.ColumnSpacing;
@@ -307,7 +307,8 @@ N.UI.PiNetwork.prototype.CalculateRowDimensions = function(row, renderMappings) 
     if(!data) {
       data = renderMappings.Default;
     }
-    var r = data.Radius;
+    var neuronObj = this.Network.NeuronsByName[neuron.Name];
+    var r = (neuronObj.Display && neuronObj.Display.Radius ? neuronObj.Display.Radius : data.Radius);
     neuron.Radius = r;
     var d = 2*r;
     if(i === 0) { rFirst = r; }

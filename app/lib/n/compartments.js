@@ -183,6 +183,14 @@ N.Comp.Output = function(neuron, name) {
   this.Output      = 0.0;
   this.IsOutputComponent = true;
   this.OutputLogic = null;
+  this.IoMetaData = {
+    Inputs:[{
+      Name: 'Main', PropName: 'InputConnections'
+    }],
+    Outputs:[{
+      Name: 'Main', PropName: 'OutputConnections'
+    }]
+  }
   N.Comp.InitializeCompartment(this);
 }
 
@@ -321,6 +329,12 @@ N.Comp.LinearSummingInput = function(neuron, name) {
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
+  this.IoMetaData = {
+    Inputs:[
+      { Name: 'Main', PropName: 'InputConnections' }
+    ],
+    Outputs:[]
+  }
   N.Comp.InitializeCompartment(this);
 }
 

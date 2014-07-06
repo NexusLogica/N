@@ -31,6 +31,7 @@ N.UI.PiRouteFinder = function(piConnection) {
   this.MinSegmentLength = 10.0;
   this.Chamfer = true;
   this.ThruwayOffsets = [];
+  this.Debug = true;
 }
 
 /**
@@ -57,7 +58,7 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(manager) {
   this.StartRow = this.GetRow(nStart);
   this.EndRow   = this.GetRow(nEnd);
 
-  this.NeuronEnd = this.FindEndAngle(endNeuron, new N.UI.Vector(-(this.Start.End.X-nEnd.X), -(this.Start.End.Y-nEnd.Y)));
+  this.NeuronEnd = this.FindEndAngle(endNeuron, new N.UI.Vector(-(this.Start.End.X-(nEnd.X+nEnd.Network.X)), -(this.Start.End.Y-(nEnd.Y+nEnd.Network.Y))));
 
   // Determine the end point.
   // First, are traveling down on the screen or up?
@@ -129,6 +130,13 @@ N.UI.PiRouteFinder.prototype.FindRoute = function(manager) {
   }
   this.LastPassageLane = N.IndexOfMin(endDiffs);
   this.LastPassageX = this.RouteInfo.LaneRows[this.EndRow][this.LastPassageLane].Mid;
+
+  if(this.Debug) {
+    console.log('**** Route Found for '+this.Connection.Path);
+    console.log('**** Vertical Passages:\n'+JSON.stringify(this.VerticalPassages, undefined, 2));
+    console.log('**** Neuron End:\n'+JSON.stringify(this.NeuronEnd, undefined, 2));
+    console.log('**** End:\n'+JSON.stringify(this.End, undefined, 2));
+  }
 }
 
 N.UI.PiRouteFinder.prototype.BuildPath = function() {
@@ -281,10 +289,10 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector)
   var requiresVert;
   var vertDir;
   switch(qi) {
-    case 0: requiresVert = exitAngle < vertAngle; vertDir = -1.0; break;
-    case 1: requiresVert = exitAngle > vertAngle; vertDir = -1.0; break;
-    case 2: requiresVert = exitAngle < vertAngle; vertDir =  1.0; break;
-    case 3: requiresVert = exitAngle > vertAngle; vertDir =  1.0; break;
+    case 0: requiresVert = exitAngle <= vertAngle; vertDir = -1.0; break;
+    case 1: requiresVert = exitAngle >= vertAngle; vertDir = -1.0; break;
+    case 2: requiresVert = exitAngle <= vertAngle; vertDir =  1.0; break;
+    case 3: requiresVert = exitAngle >= vertAngle; vertDir =  1.0; break;
   }
 
   var dx = Math.cos(N.Rad(exitAngle));

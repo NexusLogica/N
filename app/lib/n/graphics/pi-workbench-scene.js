@@ -58,7 +58,7 @@ N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
   this.NetworkScene.ScaleToFitWidth(w/2, new N.UI.Padding(0, this.CentralPadding, 0, 0));
   this.IdealContainerWidth = w;
-  this.IdealContainerHeight = this.NetworkScene.IdealContainerHeight;
+  this.IdealContainerHeight = this.NetworkScene.IdealContainerHeight+padding.Vertical();
   this.NetworkScene.Network.X = padding.Left();
   this.NetworkScene.Network.Y = padding.Top();
 }

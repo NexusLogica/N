@@ -295,11 +295,27 @@ N.ToFixed = function(value, precision) {
   return stringValue;
 }
 
+/**
+ * Take capitals of camel case identifier and make an abbreviation, AsAnExample123 -> AAE123.
+ * @method ShortenName
+ * @param longName
+ * @returns {string}
+ */
 N.ShortenName = function(longName) {
   if(!longName) { return ''; }
   var reg = /[A-Z0-9]*/g;
   var matches = longName.match(reg);
   return matches.join('');
+}
+
+/**
+ * Remove [ and ] and replace with . separators.
+ * @method CleanName
+ * @param name
+ * @returns {string}
+ */
+N.CleanName = function(name) {
+  return name.replace(/\]\[/g, '-').replace(/\[/g, '-').replace(/\]/g, '');
 }
 
 /**

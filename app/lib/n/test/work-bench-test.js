@@ -48,11 +48,12 @@ N.WorkbenchTest.prototype.CreateScenes = function() {
   var renderMappings = {
     'ColumnSpacing': 0.3,
     'RowSpacing': 0.3,
-    'SS' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
-    'IN' : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
-    'IP' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
-    'OP' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
-    'RN' : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
+    'SS'  : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
+    'IN'  : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
+    'IP'  : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
+    'OP'  : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
+    'RN'  : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
+    'SRC' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.3 },
     'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
   };
 
