@@ -38,7 +38,7 @@ N.UI.RouteInfo = function(network) {
   this.Network = network;
   this.Thruways = [];
   this.LaneRows = [];
-  this.Debug = true;
+  this.Debug = false;
 }
 
 /**
@@ -162,11 +162,11 @@ N.UI.RouteInfo.prototype.GetNeuron = function(network, neuronName) {
 
 N.UI.RouteInfo.prototype.GetNeuronOutputPosition = function(network, neuronName) {
   var n = this.GetNeuron(network, neuronName);
-  var x = n.X;
-  var y = n.Y+n.Radius;
+  var x = n.X+ n.Network.X;
+  var y = n.Y+ n.Network.Y+n.Radius;
   var lane = this.LaneRows[n.Row];
 
-  return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.ThruPos.Mid) ];
+  return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.ThruPos.Mid+n.Network.Y) ];
 }
 
 N.UI.RouteInfo.prototype.GetLaneCenter = function(rowIndex, laneIndex) {

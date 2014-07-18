@@ -131,6 +131,15 @@ N.Comp.OutputFromSignal = function(neuron, name) {
   this.Signal     = null;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
+  this.IoMetaData = {
+    Inputs:[],
+    Outputs:[{
+      Name: 'Main', PropName: 'OutputConnections'
+    }],
+    Signals:[{
+      Name: 'Main', PropName: 'OutputStore'
+    }]
+  }
   N.Comp.InitializeCompartment(this);
 }
 
@@ -245,6 +254,12 @@ N.Comp.InputSink = function(neuron, name) {
   this.Output      = 0.0;
   this.IsOutputComponent = true;
   this.OutputLogic = null;
+  this.IoMetaData = {
+    Inputs:[{
+      Name: 'Main', PropName: 'InputConnections'
+    }],
+    Outputs:[]
+  }
   N.Comp.InitializeCompartment(this);
 }
 

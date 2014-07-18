@@ -47,8 +47,8 @@ N.UI.PiRouteManager.prototype.Render = function(name) {
     piConnection.RouteFinder.FindRoute(this);
   }
 
-  this.UncrowdRoutes();
-  this.UncrowdThruways();
+  //this.UncrowdRoutes();
+  //this.UncrowdThruways();
 
   for(i in this.Connections) {
     piConnection = this.Connections[i]

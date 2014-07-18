@@ -34,6 +34,8 @@ N.UI.WorkbenchScene = function() {
   this.CentralPadding = 20;
   this.X = 0;
   this.Y = 0;
+  this.NetworkPadding = new N.UI.Padding(0, Math.ceil(0.5*this.CentralPadding), 0, 0);
+  this.GraphPadding = new N.UI.Padding(0, 0, Math.floor(0.5*this.CentralPadding), 0);
 }
 
 /**
@@ -45,6 +47,26 @@ N.UI.WorkbenchScene = function() {
  */
 N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
   this.NetworkScene = (new N.UI.NetworkScene()).Layout(workbench.Network, renderMappings);
+  this.SignalGraphScene = (new N.UI.SignalGraphScene());
+
+  var traceStyle = { Inputs: 'workbench-inputs', Targets: 'workbench-targets', Outputs: 'workbench-outputs' };
+
+  for(var i in workbench.Network.Networks) {
+    var network = workbench.Network.Networks[i];
+    console.log('*** Network name '+network.Name);
+    for(var j in network.Neurons) {
+      var neuron = network.Neurons[j];
+      console.log('  *** Neuron '+neuron.Name);
+      for(var k in neuron.Compartments) {
+        var compartment = neuron.Compartments[k];
+        console.log('    *** Compartment '+compartment.Name);
+        for(var m in compartment.IoMetaData.Signals) {
+          var signalData = compartment.IoMetaData.Signals[m];
+          this.SignalGraphScene.AddTraceFromSource(compartment, signalData.PropName);
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -56,19 +78,30 @@ N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
  */
 N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
-  this.NetworkScene.ScaleToFitWidth(w/2, new N.UI.Padding(0, this.CentralPadding, 0, 0));
+  this.NetworkScene.ScaleToFitWidth(w/2, this.NetworkPadding);
   this.IdealContainerWidth = w;
   this.IdealContainerHeight = this.NetworkScene.IdealContainerHeight+padding.Vertical();
   this.NetworkScene.Network.X = padding.Left();
   this.NetworkScene.Network.Y = padding.Top();
+
 }
 
-N.UI.WorkbenchScene.prototype.Render = function(svgParent) {
-  this.Group = svgParent.group().move(this.X, this.Y);
+N.UI.WorkbenchScene.prototype.Render = function(svgParent, size, padding) {
+  debugger;
+  this.Width = size.Width;
+  this.Height = size.Height;
+  this.Padding = padding;
+
+  var networkWidth = this.NetworkScene.Network.Width-this.NetworkPadding.Horizontal();
+  var graphWidth = this.Width-networkWidth;
+
+  this.Group = svgParent.group().move(this.X, this.Y).attr({ 'class': 'pi-workbench-scene' });
   this.NetworkScene.Render(this.Group);
+  this.SignalGraphScene.Render(this.Group, { Width: this.Width, Height: this.Height }, this.GraphPadding);
 }
 
 N.UI.WorkbenchScene.prototype.Fit = function(svgParent) {
+  debugger;
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;

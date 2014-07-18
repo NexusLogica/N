@@ -147,6 +147,7 @@ N.UI.StandardNeuronTemplates = {
     Compartments: [{
       name: 'Input',
       ClassName: 'dendrites',
+      DockAngles: [ { From: 225.0, To: 315.0 } ],
       segments: [
         { outerRadius: 1.00, innerRadius: 0.4 }]
     }]

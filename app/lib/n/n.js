@@ -137,7 +137,7 @@ N.FromPath = function(network, path) {
   // Break the path into
   var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.\[\]]+)|(\:[a-zA-Z0-9\-\_\.\[\]]+)|(\>[a-zA-Z0-9\-\_\.\[\]]+)|([a-zA-Z0-9\-\_\.\[\]]+)/g;
   var parts = path.match(regex);
-  N.L('Path='+parts.join('^'));
+  ////// N.L('Path='+parts.join('^'));
   if (parts.length === 0) {
     return N.FromPathError(network, path, path, 'Error in path');
   }
@@ -234,7 +234,7 @@ N.CompFromPath = function(path) {
  */
 N.FromConnectionPaths = function(network, paths) {
   var parts = paths.split(/->/);
-  N.L('Connection parts: '+parts.join('  ->  '));
+  ////// N.L('Connection parts: '+parts.join('  ->  '));
   if(parts.length !== 2) {
     return N.FromPathError(network, paths, '', 'Invalid connection path format \''+paths+'\'');
   }

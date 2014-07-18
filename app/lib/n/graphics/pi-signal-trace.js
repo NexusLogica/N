@@ -39,17 +39,18 @@ N.UI.SignalTraceRenderer = function() {
 
 N.UI.SignalTraceRenderer.prototype.Configure = function(svgParent, signal) {
   this.SvgParent = svgParent;
-  this.Signal = signal;
+  if(_.isDefined(signal) && signal.Source) {
+    this.Source = signal;
+  }
+  else {
+    this.Signal = signal;
+  }
+
   this.NeedsRecalc = true;
   this.Boundary = { x:0, y:0, width: svgParent.width(), height: svgParent.height() };
   this.TimeAtOrigin = 0.0;
   this.YAtOrigin = 0.0;
   this.Scale = 1.0; // Default
-  var num = this.Signal.GetNumSamples();
-  if(num > 1) {
-    var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
-    this.Scale = this.Boundary.Width/range;
-  }
 }
 
 N.UI.SignalTraceRenderer.prototype.SetCanvasBoundary = function(box) {
@@ -82,6 +83,13 @@ N.UI.SignalTraceRenderer.prototype.SetAbsoluteScale = function(timeAtOrigin, sca
 }
 
 N.UI.SignalTraceRenderer.prototype.Render = function() {
+  if(this.Source) {
+    this.Signal = this.Source.Source[this.Source.PropName];
+  }
+  if(!this.Signal) {
+    return;
+  }
+
   if(this.NeedsRecalc) {
     this.NeedsRecalc = false;
     this.CalculateVerticalRange();

@@ -54,6 +54,7 @@ N.WorkbenchTest.prototype.CreateScenes = function() {
     'OP'  : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
     'RN'  : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
     'SRC' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.3 },
+    'SNK' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.3 },
     'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
   };
 

@@ -66,7 +66,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
         var svg = SVG($element[0]).size(size.Width, size.Height);
 
         var backgroundRect = svg.rect(size.Width, size.Height).attr({ class: 'pi-canvas' });
-        svg.MainGroup = svg.group();
+        svg.MainGroup = svg.group().size(size.Width, size.Height);
 
         var origin = ($attrs.canvasOrigin ? $attrs.canvasOrigin : 'upper-left');
         switch(origin) {
@@ -74,7 +74,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
           case 'upper-left': { break; }
         }
 
-        $scope.scene.Render(svg.MainGroup);
+        $scope.scene.Render(svg.MainGroup, size, padding);
 
         $timeout(function() {
           $element.trigger('onInitialRender', [$scope]);
