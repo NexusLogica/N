@@ -114,14 +114,14 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
 
   // If no
   if(!this.ParentNetwork) {
-    this.ScaledWidth = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
+    this.Width = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
   }
-  this.ScaledHeight = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
+  this.Height = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
 
-  this.Rect = { Left: 0, Top: 0, Right: this.ScaledWidth, Bottom: this.ScaledHeight };
+  this.Rect = { Left: 0, Top: 0, Right: this.Width, Bottom: this.Height };
 
   if(this.DrawBorder) {
-    this.OuterRect = this.Group.rect(this.ScaledWidth, this.ScaledHeight)
+    this.OuterRect = this.Group.rect(this.Width, this.Height)
       .radius(2)
       .move(this.Rect.Left, this.Rect.Top)
       .attr({ class: 'single'});
@@ -133,16 +133,16 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
     var childNetwork = this.Networks[ii];
     childNetwork.DrawBorder = false;
 
-    childNetwork.ScaledWidth = this.ScaledWidth;
+    childNetwork.Width = this.Width;
     childNetwork.Y = y;
 
     childNetwork.Render(this.Group, this.Scale, renderMappings);
     childNetwork.RenderBackground((ii % 2 ? 'background-light-tan-odd' : 'background-light-tan-even'), padding);
 
-    y += childNetwork.ScaledHeight+padding.Vertical();
+    y += childNetwork.Height+padding.Vertical();
 
     if(ii < this.Networks.length-1) {
-      this.Group.line(30, y, this.ScaledWidth-30, y).attr({ 'class': 'network-separator' });
+      this.Group.line(30, y, this.Width-30, y).attr({ 'class': 'network-separator' });
     }
   }
 
@@ -150,7 +150,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
   var lastHeight = 0;
   for(var i=0; i<this.Rows.length; i++) {
     var row = this.Rows[i];
-    var rowX = 0.5*(this.ScaledWidth-row.Width*this.Scale);
+    var rowX = 0.5*(this.Width-row.Width*this.Scale);
     var spacing = row.Spacing;
     var numColumns = row.Cols.length;
     rowY += 0.5*row.Height+renderMappings.RowSpacing+lastHeight;

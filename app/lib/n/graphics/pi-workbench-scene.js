@@ -35,7 +35,7 @@ N.UI.WorkbenchScene = function() {
   this.X = 0;
   this.Y = 0;
   this.NetworkPadding = new N.UI.Padding(0, Math.ceil(0.5*this.CentralPadding), 0, 0);
-  this.GraphPadding = new N.UI.Padding(0, 0, Math.floor(0.5*this.CentralPadding), 0);
+  this.GraphPadding = new N.UI.Padding(0, 0, 0, Math.floor(0.5*this.CentralPadding));
 }
 
 /**
@@ -78,7 +78,7 @@ N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
  */
 N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
-  this.NetworkScene.ScaleToFitWidth(w/2, this.NetworkPadding);
+  this.NetworkScene.ScaleToFitWidth(0.5*(w-this.CentralPadding), this.NetworkPadding);
   this.IdealContainerWidth = w;
   this.IdealContainerHeight = this.NetworkScene.IdealContainerHeight+padding.Vertical();
   this.NetworkScene.Network.X = padding.Left();
@@ -87,17 +87,18 @@ N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
 }
 
 N.UI.WorkbenchScene.prototype.Render = function(svgParent, size, padding) {
-  debugger;
   this.Width = size.Width;
   this.Height = size.Height;
   this.Padding = padding;
 
-  var networkWidth = this.NetworkScene.Network.Width-this.NetworkPadding.Horizontal();
-  var graphWidth = this.Width-networkWidth;
-
   this.Group = svgParent.group().move(this.X, this.Y).attr({ 'class': 'pi-workbench-scene' });
   this.NetworkScene.Render(this.Group);
-  this.SignalGraphScene.Render(this.Group, { Width: this.Width, Height: this.Height }, this.GraphPadding);
+
+  var networkWidth = this.NetworkScene.Network.Width+this.NetworkPadding.Horizontal();
+  var graphWidth = this.Width-this.Padding.Horizontal()-networkWidth-this.GraphPadding.Horizontal();
+  this.SignalGraphScene.X = networkWidth+this.GraphPadding.Left()+this.Padding.Left();
+  this.SignalGraphScene.Y = this.Padding.Top();
+  this.SignalGraphScene.Render(this.Group, { Width: graphWidth, Height: this.Height-this.Padding.Vertical() }, this.GraphPadding);
 }
 
 N.UI.WorkbenchScene.prototype.Fit = function(svgParent) {

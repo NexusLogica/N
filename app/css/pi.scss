@@ -240,6 +240,13 @@ $gap-junction-color: darken(papayawhip, 10%);
   }
 }
 
+.pi-signal-graph {
+  .graph-background {
+    fill: lighten(gainsboro, 12%);
+    stroke: lighten(gainsboro, 7%);
+  }
+}
+
 .pi-grid {
   >rect {
     stroke-width: 1.4px;

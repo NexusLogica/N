@@ -159,6 +159,10 @@ All Rights Reserved.
   stroke-width: 1px;
   stroke: #eeeeee; }
 
+.pi-signal-graph .graph-background {
+  fill: #fbfbfb;
+  stroke: #eeeeee; }
+
 .pi-grid > rect {
   stroke-width: 1.4px;
   stroke: #f4f4f4;

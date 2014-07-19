@@ -50,7 +50,7 @@ N.UI.SignalGraph.prototype.Render = function(svgParent, size, padding) {
 
   this.Group = this.SvgParent.group().size(this.Width, this.Height).attr({ 'class': 'pi-signal-graph' });
 
-  this.Group.rect(this.Width-this.Padding.Horizontal(), this.Height-this.Padding.Vertical()).move(this.Padding.Left(), this.Padding.Top());
+  this.Group.rect(this.Width-this.Padding.Horizontal(), this.Height-this.Padding.Vertical()).move(this.Padding.Left(), this.Padding.Top()).attr({ 'class': 'graph-background'});
 
   if(this.Traces.length === 0) {
     this.RenderEmptyGraph();
