@@ -30,85 +30,100 @@ nSimAppDirectives.directive('piTraceView', [function() {
   };
 }]);
 
-  //****************************
-  //* N.UI.SignalTraceRenderer *
-  //****************************
+  //********************
+  //* N.UI.SignalTrace *
+  //********************
 
-N.UI.SignalTraceRenderer = function() {
-}
-
-N.UI.SignalTraceRenderer.prototype.Configure = function(svgParent, signal) {
-  this.SvgParent = svgParent;
-  if(_.isDefined(signal) && signal.Source) {
-    this.Source = signal;
-  }
-  else {
-    this.Signal = signal;
-  }
-
+N.UI.SignalTrace = function() {
   this.NeedsRecalc = true;
-  this.Boundary = { x:0, y:0, width: svgParent.width(), height: svgParent.height() };
   this.TimeAtOrigin = 0.0;
   this.YAtOrigin = 0.0;
   this.Scale = 1.0; // Default
 }
 
-N.UI.SignalTraceRenderer.prototype.SetCanvasBoundary = function(box) {
-  this.Boundary = box;
-
-  var num = this.Signal.GetNumSamples();
-  if(num > 1) {
-    var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
-    this.Scale = this.Boundary.Width/range;
+N.UI.SignalTrace.prototype.SetSignal = function(signal) {
+  if(!_.isUndefined(signal) && signal.Source) {
+    this.Source = signal;
   }
-
-  this.NeedsRecalc = true;
+  else {
+    this.Signal = signal;
+  }
+  return this;
 }
 
-N.UI.SignalTraceRenderer.prototype.SetScale = function(min, max) {
+N.UI.SignalTrace.prototype.AddClasses = function(classes) {
+  this.AdditionalClasses = this.AdditionalClasses || [];
+  if(_.isArray(classes)) {
+    this.AdditionalClasses = this.AdditionalClasses.concat(classes);
+  }
+  else {
+    this.AdditionalClasses.push(classes);
+  }
+  return this;
+}
+
+N.UI.SignalTrace.prototype.SetScale = function(min, max) {
   var num = this.Signal.GetNumSamples();
   if(num > 1) {
     var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
-    this.Scale = (this.Boundary.Width/range)/(max-min);
+    this.Scale = (this.Pos.Width/range)/(max-min);
     this.TimeAtOrigin = range*min;
   }
   this.NeedsRecalc = true;
   this.Render();
 }
 
-N.UI.SignalTraceRenderer.prototype.SetAbsoluteScale = function(timeAtOrigin, scale) {
+N.UI.SignalTrace.prototype.SetAbsoluteScale = function(timeAtOrigin, scale) {
   this.TimeAtOrigin = timeAtOrigin;
   this.Scale = scale;
   this.NeedsRecalc = true;
 }
 
-N.UI.SignalTraceRenderer.prototype.Render = function() {
+N.UI.SignalTrace.prototype.Render = function(svgParent, pos, padding) {
+  this.SvgParent = svgParent;
+  this.Pos = pos;
+  this.Group = this.SvgParent.group().move(this.Pos.X, this.Pos.Y).size(this.Pos.Width, this.Pos.Height).attr({ 'class': 'pi-signal-trace' });
+  N.UI.SvgAddClass(this.Group, this.AdditionalClasses);
+  this.Background = this.Group.rect(this.Pos.Width, this.Pos.Height).attr({ 'class': 'background' });
+
   if(this.Source) {
     this.Signal = this.Source.Source[this.Source.PropName];
   }
+
   if(!this.Signal) {
+    this.RenderNoData();
     return;
   }
 
   if(this.NeedsRecalc) {
     this.NeedsRecalc = false;
+
+     var num = this.Signal.GetNumSamples();
+    if(num > 1) {
+      var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
+      this.Scale = this.Pos.Width/range;
+    }
+
     this.CalculateVerticalRange();
     this.CalculateHorizontalRange();
   }
 
-  this.RenderXAxis();
 
   if(this.Signal.GetNumSamples() > 1) {
+    this.RenderXAxis();
+
     if(this.Signal.Type === N.ANALOG) {
       this.RenderAnalogTrace();
     }
     else {
       this.RenderDiscreteTrace();
     }
+  } else {
+    this.RenderNoData();
   }
 }
 
-N.UI.SignalTraceRenderer.prototype.RenderAnalogTrace = function() {
+N.UI.SignalTrace.prototype.RenderAnalogTrace = function() {
   var t = this.Signal.GetTimeByIndex(this.StartIndex);
   var val = this.Signal.GetValueByIndex(this.StartIndex);
   var tScaled = this.TimeToPixel(t);
@@ -124,9 +139,9 @@ N.UI.SignalTraceRenderer.prototype.RenderAnalogTrace = function() {
   }
 
   if(!this.Path) {
-    this.Path = this.SvgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
+    this.Path = this.Group.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
     var extra = 200;
-    this.ClipRect = this.SvgParent.rect(this.Boundary.Width, this.Boundary.Height+2*extra).move(this.Boundary.X, this.Boundary.Y-extra);
+    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
     this.Path.clipWith(this.ClipRect);
   }
   else {
@@ -134,7 +149,7 @@ N.UI.SignalTraceRenderer.prototype.RenderAnalogTrace = function() {
   }
 }
 
-N.UI.SignalTraceRenderer.prototype.RenderDiscreteTrace = function() {
+N.UI.SignalTrace.prototype.RenderDiscreteTrace = function() {
   var t = this.Signal.GetTimeByIndex(this.StartIndex);
   var prevState = this.Signal.GetValueByIndex(this.StartIndex);
   var tScaled = this.TimeToPixel(t);
@@ -159,9 +174,9 @@ N.UI.SignalTraceRenderer.prototype.RenderDiscreteTrace = function() {
   }
 
   if(!this.Path) {
-    this.Path = this.SvgParent.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
+    this.Path = this.Group.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
     var extra = 200;
-    this.ClipRect = this.SvgParent.rect(this.Boundary.Width, this.Boundary.Height+2*extra).move(this.Boundary.X, this.Boundary.Y-extra);
+    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
     this.Path.clipWith(this.ClipRect);
   }
   else {
@@ -169,7 +184,7 @@ N.UI.SignalTraceRenderer.prototype.RenderDiscreteTrace = function() {
   }
 }
 
-N.UI.SignalTraceRenderer.prototype.RenderXAxis = function() {
+N.UI.SignalTrace.prototype.RenderXAxis = function() {
   var y = this.YToPixel(0.0);
   var p = '';
   if(this.Signal.GetNumSamples() > 1) {
@@ -178,13 +193,13 @@ N.UI.SignalTraceRenderer.prototype.RenderXAxis = function() {
     p = 'M'+xStart+' '+y+'L'+xEnd+' '+y;
   }
   else {
-    p = 'M'+this.Boundary.X+' '+y+'L'+(this.Boundary.X+this.Boundary.Width)+' '+y;
+    p = 'M'+this.Pos.X+' '+y+'L'+(this.Pos.X+this.Pos.Width)+' '+y;
   }
 
   if(!this.XAxis) {
-    this.XAxis = this.SvgParent.path(p).attr({ class: 'axis', 'stroke-dasharray': '6, 6', fill: 'none' });
+    this.XAxis = this.Group.path(p).attr({ class: 'axis', 'stroke-dasharray': '6, 6', fill: 'none' });
     var extra = 200;
-    this.ClipRect = this.SvgParent.rect(this.Boundary.Width, this.Boundary.Height+2*extra).move(this.Boundary.X, this.Boundary.Y-extra);
+    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
     this.XAxis.clipWith(this.ClipRect);
   }
   else {
@@ -197,42 +212,48 @@ N.UI.SignalTraceRenderer.prototype.RenderXAxis = function() {
 //
 // where scale is d(pixel)/d(time)
 //
-N.UI.SignalTraceRenderer.prototype.TimeToPixel = function(time) {
-  var pixel = this.Scale*(time-this.TimeAtOrigin)+this.Boundary.X;
+N.UI.SignalTrace.prototype.TimeToPixel = function(time) {
+  var pixel = this.Scale*(time-this.TimeAtOrigin)+this.Pos.X;
   return pixel;
 }
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
-N.UI.SignalTraceRenderer.prototype.PixelToTime = function(pixel) {
-  var time = (pixel+this.TimeAtOrigin-this.Boundary.X)/this.Scale;
+N.UI.SignalTrace.prototype.PixelToTime = function(pixel) {
+  var time = (pixel+this.TimeAtOrigin-this.Pos.X)/this.Scale;
   return time;
 }
 
-N.UI.SignalTraceRenderer.prototype.YToPixel = function(y) {
+N.UI.SignalTrace.prototype.YToPixel = function(y) {
   var pixelUp = this.YScale*y+this.YOriginPixels;
-  var pixelDown = this.Boundary.Y+this.Boundary.Height - pixelUp;
+  var pixelDown = this.Pos.Y+this.Pos.Height - pixelUp;
   return pixelDown;
 }
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
-N.UI.SignalTraceRenderer.prototype.PixelToY = function(pixel) {
+N.UI.SignalTrace.prototype.PixelToY = function(pixel) {
   return 0;
 }
 
-N.UI.SignalTraceRenderer.prototype.CalculateVerticalRange = function() {
+N.UI.SignalTrace.prototype.CalculateVerticalRange = function() {
   var range = (this.Signal.MaxLimit-this.Signal.MinLimit);
-  this.YScale = this.Boundary.Height/range;
+  this.YScale = this.Pos.Height/range;
   this.YAtBottom = this.Signal.MinLimit;
-  this.YOriginPixels = -this.Boundary.Height*this.Signal.MinLimit/range;
+  this.YOriginPixels = -this.Pos.Height*this.Signal.MinLimit/range;
 }
 
-N.UI.SignalTraceRenderer.prototype.CalculateHorizontalRange = function() {
+N.UI.SignalTrace.prototype.CalculateHorizontalRange = function() {
   this.StartIndex = this.Signal.GetIndexBeforeTime(this.TimeAtOrigin);
-  var timeAtEnd = this.TimeAtOrigin+this.Boundary.Width/this.Scale;
+  var timeAtEnd = this.TimeAtOrigin+this.Pos.Width/this.Scale;
   this.EndIndex = this.Signal.GetIndexBeforeTime(timeAtEnd);
   if(this.EndIndex < this.Signal.GetNumSamples()-1) {
     this.EndIndex++;
   }
 }
+
+N.UI.SignalTrace.prototype.RenderNoData = function() {
+  this.NoDataText = this.Group.text('no data').attr({ 'class': 'no-data' });
+  this.NoDataText.move(0.5*this.Pos.Width, 0.5*this.Pos.Height-this.NoDataText.bbox().cy);
+}
+

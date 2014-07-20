@@ -198,6 +198,9 @@ N.Comp.Output = function(neuron, name) {
     }],
     Outputs:[{
       Name: 'Main', PropName: 'OutputConnections'
+    }],
+    Signals:[{
+      Name: 'Main', PropName: 'OutputStore'
     }]
   }
   N.Comp.InitializeCompartment(this);
@@ -258,7 +261,10 @@ N.Comp.InputSink = function(neuron, name) {
     Inputs:[{
       Name: 'Main', PropName: 'InputConnections'
     }],
-    Outputs:[]
+    Outputs:[],
+    Signals:[{
+      Name: 'Main', PropName: 'OutputStore'
+    }]
   }
   N.Comp.InitializeCompartment(this);
 }
@@ -348,7 +354,10 @@ N.Comp.LinearSummingInput = function(neuron, name) {
     Inputs:[
       { Name: 'Main', PropName: 'InputConnections' }
     ],
-    Outputs:[]
+    Outputs:[],
+    Signals:[{
+      Name: 'Main', PropName: 'OutputStore'
+    }]
   }
   N.Comp.InitializeCompartment(this);
 }

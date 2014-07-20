@@ -175,7 +175,7 @@ N.Test.SignalTraceTestRenderer.prototype.Configure = function(svgParent, signalI
   this._svgParent = svgParent;
   this._w = this._svgParent.width();
   this._h = this._svgParent.height();
-  this._traceRenderer = new N.UI.SignalTraceRenderer();
+  this._traceRenderer = new N.UI.SignalTrace();
   this._traceRenderer.Configure(svgParent, signalId);
   this._padding = 15;
   this._box = { x: this._padding, y: this._padding, width: (this._w-2*this._padding), height: (this._h-2*this._padding) };

@@ -31,15 +31,12 @@ N.UI.SignalGraph = function() {
   this.Traces = [];
 }
 
-N.UI.SignalGraph.prototype.AddTraceFromSource = function(source, propName) {
-  this.Traces.push({ Source: source, PropName: propName });
+N.UI.SignalGraph.prototype.AddTraceFromSource = function(source, propName, additionalClasses) {
+  this.Traces.push({ Source: source, PropName: propName, AdditionalClasses: additionalClasses });
 }
 
 N.UI.SignalGraph.prototype.AddTrace = function(signal) {
   this.Traces.push({ Signal: signal});
-}
-
-N.UI.SignalGraph.prototype.Configure = function() {
 }
 
 N.UI.SignalGraph.prototype.Render = function(svgParent, size, padding) {
@@ -57,15 +54,20 @@ N.UI.SignalGraph.prototype.Render = function(svgParent, size, padding) {
     return;
   }
 
-  var h = this.Height-this.Padding.Vertical();
+  var h = Math.floor((this.Height-this.Padding.Vertical())/this.Traces.length);
   var w = this.Width-this.Padding.Horizontal();
 
   // Add traces
   var yOffset = 0;
   for(var i in this.Traces) {
     var trace = this.Traces[i];
-    trace.Group = this.SvgParent.group().move(0, yOffset).size(w, h);
-    trace.SignalGraphic = new N.UI.SignalTraceRenderer(trace.Group, { Source: trace.Source, PropName: trace.PropName } );
+    trace.SignalGraphic = (new N.UI.SignalTrace()).
+        AddClasses([ (i % 2 ? 'even' : 'odd') ]).
+        SetSignal({ Source: trace.Source, PropName: trace.PropName }).
+        Render(this.Group, { X: this.Padding.Left(), Y: yOffset+this.Padding.Top(), Width: w, Height: h }, new N.UI.Padding(0, 0));
+    if(trace.AdditionalClasses) {
+      trace.SignalGraphic.AddClasses(trace.AdditionalClasses);
+    }
     yOffset += h;
   }
 }

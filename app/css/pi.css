@@ -162,6 +162,18 @@ All Rights Reserved.
 .pi-signal-graph .graph-background {
   fill: #fbfbfb;
   stroke: #eeeeee; }
+.pi-signal-graph .pi-signal-trace .background {
+  fill: papayawhip; }
+.pi-signal-graph .pi-signal-trace.even .background {
+  fill: #fffbf4; }
+.pi-signal-graph .pi-signal-trace.odd .background {
+  fill: #fff9ef; }
+.pi-signal-graph .pi-signal-trace .no-data {
+  stroke: #e8e8e8;
+  fill: #e8e8e8;
+  font-family: "Raleway", sans-serif;
+  font-size: 25px;
+  text-anchor: middle; }
 
 .pi-grid > rect {
   stroke-width: 1.4px;

@@ -33,16 +33,20 @@ N.UI.Categories = {
 }
 
 N.UI.SvgAddClass = function(svg, className) {
-  var classes = svg.attr('class').split(' ');
-  var str = _.union(classes, [className]).join(' ');
-  svg.attr( { 'class': str });
+  if(className) {
+    var classes = svg.attr('class').split(' ');
+    var str = _.union(classes, (_.isArray(className) ? className : [className])).join(' ');
+    svg.attr( { 'class': str });
+  }
 }
 
 N.UI.SvgRemoveClass = function(svg, className) {
-  var classes = svg.attr('class').split(' ');
-  _.pull(classes, className);
-  var str = classes.join(' ');
-  svg.attr( { 'class': str });
+  if(className) {
+    var classes = svg.attr('class').split(' ');
+    _.pull(classes, className);
+    var str = classes.join(' ');
+    svg.attr( { 'class': str });
+  }
 }
 
 N.UI.Padding = function() {

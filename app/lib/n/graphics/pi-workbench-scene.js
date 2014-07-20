@@ -59,9 +59,10 @@ N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
       console.log('  *** Neuron '+neuron.Name);
       for(var k in neuron.Compartments) {
         var compartment = neuron.Compartments[k];
-        console.log('    *** Compartment '+compartment.Name);
+        console.log('    *** Compartment '+compartment.Name+'/'+compartment.ClassName);
         for(var m in compartment.IoMetaData.Signals) {
           var signalData = compartment.IoMetaData.Signals[m];
+          console.log('      *** Prop = '+signalData.PropName);
           this.SignalGraphScene.AddTraceFromSource(compartment, signalData.PropName);
         }
       }
@@ -80,7 +81,7 @@ N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
   this.NetworkScene.ScaleToFitWidth(0.5*(w-this.CentralPadding), this.NetworkPadding);
   this.IdealContainerWidth = w;
-  this.IdealContainerHeight = this.NetworkScene.IdealContainerHeight+padding.Vertical();
+  this.IdealContainerHeight = Math.ceil(this.NetworkScene.IdealContainerHeight+padding.Vertical());
   this.NetworkScene.Network.X = padding.Left();
   this.NetworkScene.Network.Y = padding.Top();
 

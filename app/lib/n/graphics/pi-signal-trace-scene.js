@@ -27,7 +27,7 @@ N.UI.SignalTraceScene = function() {
 
 N.UI.SignalTraceScene.prototype.SetSignal = function(signal) {
   this.Signal = signal;
-  this.TraceRenderer = new N.UI.SignalTraceRenderer();
+  this.TraceRenderer = new N.UI.SignalTrace();
 }
 
 /**
