@@ -144,9 +144,9 @@ All Rights Reserved.
   fill: #FDFDFD; }
 .pi-network > text {
   fill: gray;
-  stroke: gray;
-  font-size: 20px;
-  font-family: 'Helvetica';
+  stroke: none;
+  font-size: 14px;
+  font-family: "Raleway", sans-serif;
   text-anchor: start;
   alignment-baseline: hanging; }
 .pi-network .background-light-tan-even {
@@ -169,7 +169,7 @@ All Rights Reserved.
 .pi-signal-graph .pi-signal-trace.odd .background {
   fill: #fff9ef; }
 .pi-signal-graph .pi-signal-trace .no-data {
-  stroke: #e8e8e8;
+  stroke: none;
   fill: #e8e8e8;
   font-family: "Raleway", sans-serif;
   font-size: 25px;

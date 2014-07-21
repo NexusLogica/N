@@ -1,0 +1,32 @@
+<!--      <div class="col-lg-12 col-lg-offset-2">
+            <div class="pi-scene pi-workbench-panel row" ng-controller="PiWorkbenchPanelController">
+
+
+            <div class="col-lg-5 col-md-5" ng-include="pi-workbenchkk">
+              <div class="pi-neuron-info-panel" ng-controller="PiNeuronInfoPanelController">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+-->
+<div class="pi-scene row">
+  <div class="pi-canvas-column col-lg-8 col-md-8">
+    <pi-canvas pi-scene="workbenchScene" pi-fit-width pi-padding="20"></pi-canvas>
+    <pi-hover-path class="path">Selected: <span ng-bind="Current.HoverPath"></span></pi-hover-path>
+  </div>
+<!--
+  <div class="pi-canvas-column col-lg-8 col-md-8">
+    <div class="pi-canvas" pi-canvas pi-scene="{{scene}}"></div>
+    <div class="path" ng-bind="Current.HoverPath"></div>
+  </div>
+  <div class="col-lg-5 col-md-5 pi-workbench-">
+
+    <div class="pi-neuron-info-panel" ng-controller="PiWorkbenchPanelController">
+      <div class="item"><span>Compartment: </span><span>{{Current.Selected}}</span></div>
+    </div>
+
+  </div>
+-->
+</div>

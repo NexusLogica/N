@@ -21,18 +21,13 @@ N.Test = N.Test || {};
 
 var nSimAppControllers = angular.module('nSimApp.controllers');
 
-nSimAppControllers.controller('WorkBenchTestController', ['$scope',
-  function WorkBenchTestController($scope) {
+nSimAppControllers.controller('WorkbenchTestController', ['$scope',
+  function WorkbenchTestController($scope) {
     $scope.Test = new N.WorkbenchTest();
     $scope.Test.CreateScenes();
-    $scope.Scenes = $scope.Test.Scenes;
-    $scope.TestInfo = { Name: 'Work Bench Test' };
+    $scope.Workbenches = $scope.Test.Workbenches;
+    $scope.TestInfo = { Name: 'Workbench Tests' };
     document.title = $scope.TestInfo.Name+': Nexus Logica';
-  }
-]);
-
-nSimAppControllers.controller('WorkBenchItemController', ['$scope',
-  function NetworkTestItemController($scope) {
   }
 ]);
 
@@ -41,7 +36,7 @@ nSimAppControllers.controller('WorkBenchItemController', ['$scope',
   //*******************
 
 N.WorkbenchTest = function() {
-  this.Scenes  = [];
+  this.Workbenches  = [];
 }
 
 N.WorkbenchTest.prototype.CreateScenes = function() {
@@ -68,7 +63,7 @@ N.WorkbenchTest.prototype.CreateScenes = function() {
 
     var scene = new N.UI.WorkbenchScene();
     scene.Layout(workbench, renderMappings);
-    this.Scenes.push(scene);
+    this.Workbenches.push(scene);
   }
 }
 

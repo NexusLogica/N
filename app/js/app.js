@@ -10,4 +10,5 @@ angular.module('nSimApp', ['nSimApp.filters', 'nSimApp.services', 'nSimApp.direc
   }]);
 
 angular.module('nSimApp.controllers', []);
+angular.module('nSimApp.directives',  []);
 

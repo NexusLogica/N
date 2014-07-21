@@ -217,9 +217,9 @@ $gap-junction-color: darken(papayawhip, 10%);
 
   >text {
     fill: gray;
-    stroke: gray;
-    font-size: 20px;
-    font-family: 'Helvetica';
+    stroke: none;
+    font-size: 14px;
+    font-family: $secondary-font;
     text-anchor: start;
     alignment-baseline: hanging;
   }
@@ -261,7 +261,7 @@ $gap-junction-color: darken(papayawhip, 10%);
     }
 
     .no-data {
-      stroke: #e8e8e8;
+      stroke: none;
       fill: #e8e8e8;
       font-family: $secondary-font;
       font-size: 25px;

@@ -31,7 +31,13 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
     scope : {
       'scene': '=piScene'
     },
+    controller: function($scope) {
+    },
     link : function($scope, $element, $attrs) {
+
+      $element.scope().OnEvent = function(event, obj) {
+        $scope.$emit('pi-canvas:event-broadcast-request', event, obj);
+      }
 
       var GetSvgParent = function() {
         return $element.children('svg')[0].instance;
@@ -97,6 +103,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
  */
 nSimAppControllers.controller('PiEventReceiver', ['$scope', function($scope) {
   $scope.OnEvent = function(event, obj) {
+    debugger;
     $scope.$broadcast('pi-canvas:event', event, obj);
   }
 }]);
