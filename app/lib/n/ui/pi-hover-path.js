@@ -19,8 +19,6 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
 /**
  * The network scene controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNetworkPanelController"&gt;...<br/>
  * @class PiNetworkPanelController
@@ -28,54 +26,55 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 angular.module('nSimApp.directives').directive('piHoverPath', [ function() {
   return {
     restrict: 'E',
+    template: '<div class="pi-hover-path"><span class="action">Neuron:</span> <span class="path" ng-bind="current.hoverPath"></span></div>',
     controller: function($scope) {
-      $scope.Current = {};
-      $scope.Current.HoverPath = '';
-      $scope.Current.Selected = '';
-      $scope.Current.Compartment = null;
-      $scope.Current.SelectedCompartment = null;
+      $scope.current = {};
+      $scope.current.hoverPath = '';
+      $scope.current.selected = '';
+      $scope.current.compartment = null;
+      $scope.current.selectedCompartment = null;
 
       $scope.$on('pi-canvas:event', function(broadcastEvent, event, obj) {
         if(obj.GetType() === N.Type.PiCompartment) {
           switch(event.type) {
-            case 'mouseenter' : OnCompartmentMouseEnter(event, obj); break;
-            case 'mouseleave' : OnCompartmentMouseLeave(event, obj); break;
-            case 'click'      : OnCompartmentClick(event, obj);      break;
+            case 'mouseenter' : onCompartmentMouseEnter(event, obj); break;
+            case 'mouseleave' : onCompartmentMouseLeave(event, obj); break;
+            case 'click'      : onCompartmentClick(event, obj);      break;
           }
         }
       });
 
       /**
-       * Sets HoverPath scope variable on mouse entering a compartment.
+       * Sets hoverPath scope variable on mouse entering a compartment.
        * @method onCompartmentMouseEnter
        * @param event
        * @param compartment
        */
-      var OnCompartmentMouseEnter = function(event, piCompartment) {
+      var onCompartmentMouseEnter = function(event, piCompartment) {
         var compObj = piCompartment.CompartmentObj;
-        $scope.Current.HoverPath = GetCompartmentPath(compObj);
+        $scope.current.hoverPath = getCompartmentPath(compObj);
         piCompartment.Neuron.Highlight();
         $scope.$digest();
       }
 
-      var OnCompartmentMouseLeave = function(event, piCompartment) {
+      var onCompartmentMouseLeave = function(event, piCompartment) {
         piCompartment.Neuron.RemoveHighlight();
-        $scope.Current.HoverPath = '';
+        $scope.current.hoverPath = '';
         $scope.$digest();
       }
 
-      var OnCompartmentClick = function(event, piCompartment) {
+      var onCompartmentClick = function(event, piCompartment) {
         var classes, str;
-        if($scope.Current.SelectedCompartment) {
-          $scope.Current.SelectedCompartment.HideConnections();
-          var path = $scope.Current.SelectedCompartment.path;
+        if($scope.current.SelectedCompartment) {
+          $scope.current.SelectedCompartment.HideConnections();
+          var path = $scope.current.SelectedCompartment.path;
           classes = path.attr('class').split(' ');
           str = _.without(classes, 'selected').join(' ');
           path.attr( { 'class': str });
         }
 
-        $scope.Current.Selected = GetCompartmentPath(piCompartment.CompartmentObj);
-        $scope.Current.SelectedCompartment = piCompartment;
+        $scope.current.selected = getCompartmentPath(piCompartment.CompartmentObj);
+        $scope.current.selectedCompartment = piCompartment;
         classes = piCompartment.path.attr('class').split(' ');
         piCompartment.ShowConnections();
         str = _.union(classes, ['selected']).join(' ');
@@ -83,7 +82,7 @@ angular.module('nSimApp.directives').directive('piHoverPath', [ function() {
         $scope.$digest();
       }
 
-      var GetCompartmentPath = function(compartment) {
+      var getCompartmentPath = function(compartment) {
         return compartment.Neuron.Network.GetFullPath()+':'+compartment.Neuron.Name+'>'+compartment.Name;
       }
     }

@@ -1,10 +1,10 @@
 /**********************************************************************
  
-File     : workbench.js
+File     : workbench-test.js
 Project  : N Simulator Library
-Purpose  : Source file for neuron relate objects.
+Purpose  : Source file for workbench test definition objects.
 Revisions: Original definition by Lawrence Gunn.
-           2014/02/19
+           2014/07/23
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -15,7 +15,7 @@ All Rights Reserved.
 var N = N || {};
 
   //***************
-  //* N.Workbench *
+  //* N.WorkbenchTest *
   //***************
 
 /**
@@ -23,23 +23,18 @@ var N = N || {};
  * @class Workbench
  * @constructor
  */
-N.Workbench = function(parentNetwork) {
-  this.ClassName           = 'N.Workbench';
+N.WorkbenchTest = function(parentNetwork) {
+  this.ClassName           = 'N.WorkbenchTest';
   this.Id                  = null;
-  this.Name                = '';
-  this.tests               = []; // N.WorkbenchTest array
-  var test = new N.WorkbenchTest(this);
-  test.name = 'Unnamed';
-  test.description = 'No description yet';
-  this.tests.push(test);
+  this.name                = '';
 }
 
 /**
  * Sets the extra templates.
  * @method AddTemplates
- * @returns {N.Workbench}
+ * @returns {N.WorkbenchTest}
  */
-N.Workbench.prototype.AddTemplates = function(templates) {
+N.WorkbenchTest.prototype.AddTemplates = function(templates) {
   this.AdditionalTemplates = _.cloneDeep(templates);
   return this;
 }
@@ -47,9 +42,9 @@ N.Workbench.prototype.AddTemplates = function(templates) {
 /**
  * Returns the object type.
  * @method SetTargets
- * @returns {N.Workbench}
+ * @returns {N.WorkbenchTest}
  */
-N.Workbench.prototype.SetTargets = function(targets) {
+N.WorkbenchTest.prototype.SetTargets = function(targets) {
   this.Targets = _.cloneDeep(targets);
   var config = this.CreateNetwork();
 
@@ -89,9 +84,9 @@ N.Workbench.prototype.SetTargets = function(targets) {
 /**
  * Adds an input sink to the input network.
  * @method AddInputSource
- * @returns {N.Workbench}
+ * @returns {N.WorkbenchTest}
  */
-N.Workbench.prototype.AddInputSource = function(compartment, inputMeta, inputNetwork) {
+N.WorkbenchTest.prototype.AddInputSource = function(compartment, inputMeta, inputNetwork) {
   var cleanName = N.CleanName(compartment.Neuron.Name);
   var cleanCompartmentName = N.CleanName(compartment.Name+(inputMeta.Name !== 'Main' ? '['+inputMeta.Name+']' : ''));
   var fullCleanName = 'SRC['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
@@ -117,9 +112,9 @@ N.Workbench.prototype.AddInputSource = function(compartment, inputMeta, inputNet
 /**
  * Adds an output sink to the output network.
  * @method AddOutputSource
- * @returns {N.Workbench}
+ * @returns {N.WorkbenchTest}
  */
-N.Workbench.prototype.AddOutputSource = function(compartment, outputMeta, outputNetwork) {
+N.WorkbenchTest.prototype.AddOutputSource = function(compartment, outputMeta, outputNetwork) {
   var cleanName = N.CleanName(compartment.Neuron.Name);
   var cleanCompartmentName = N.CleanName(compartment.Name+(outputMeta.Name !== 'Main' ? '['+outputMeta.Name+']' : ''));
   var fullCleanName = 'SNK['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
@@ -147,7 +142,7 @@ N.Workbench.prototype.AddOutputSource = function(compartment, outputMeta, output
  * @method CreateNetwork
  * @returns {Object}
  */
-N.Workbench.prototype.CreateNetwork = function() {
+N.WorkbenchTest.prototype.CreateNetwork = function() {
   var config = { Networks: [], Connections: [] };
   var inputNetwork = { Name: 'Inputs', Neurons: [] };
   var targetNetwork = { Name: 'Targets', Neurons: this.Targets };

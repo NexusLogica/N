@@ -46,6 +46,7 @@ N.UI.WorkbenchScene = function() {
  * @param position
  */
 N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
+  this.workbench = workbench;
   this.NetworkScene = (new N.UI.NetworkScene()).Layout(workbench.Network, renderMappings);
   this.SignalGraphScene = (new N.UI.SignalGraphScene());
 

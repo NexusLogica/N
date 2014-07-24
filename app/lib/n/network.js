@@ -230,7 +230,7 @@ N.Network.prototype.GetConnectionsByPath = function(path) {
  * @returns {String} The concatinated short names of this network and its parents, separated by '/'.
  */
 N.Network.prototype.GetFullPath = function() {
-  return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '') + '/' + this.Name;
+  return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '/') + this.Name;
 }
 
 N.Network.prototype.Link = function() {
