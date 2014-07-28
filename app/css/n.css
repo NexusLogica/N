@@ -73,8 +73,13 @@ body {
   -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2); }
 
-textarea {
-  margin-top: 20px; }
+.pi-body .modal-dialog .modal-header {
+  padding: 4px 12px; }
+.pi-body .modal-dialog .modal-body {
+  padding: 10px 12px; }
+.pi-body .modal-dialog .modal-footer {
+  border-top: none;
+  padding: 10px 12px; }
 
 .header {
   padding: 0px 0px 7px 0px;
@@ -338,6 +343,23 @@ textarea {
         margin-left: 40px; }
     .pi-workbench-panel .console .top-header .dropdown {
       display: inline-block; }
+
+.pi-workbench-test-panel {
+  padding: 10px 10px; }
+  .pi-workbench-test-panel .properties .name {
+    font-size: 15px;
+    font-weight: bold; }
+  .pi-workbench-test-panel .properties .description {
+    font-size: 15px;
+    font-weight: 100; }
+  .pi-workbench-test-panel .properties .edit {
+    float: right;
+    font-weight: 100;
+    font-size: 15px; }
+  .pi-workbench-test-panel .input-type-form {
+    margin-top: 15px;
+    border-top: 1px solid #eeeeee;
+    padding-top: 5px; }
 
 .pi-connection-test .pi-network-panel .pi-canvas {
   height: 500px;

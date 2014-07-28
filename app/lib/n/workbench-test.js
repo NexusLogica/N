@@ -14,9 +14,9 @@ All Rights Reserved.
 
 var N = N || {};
 
-  //***************
+  //*******************
   //* N.WorkbenchTest *
-  //***************
+  //*******************
 
 /**
  * A network object which can contain neurons or child networks.
@@ -27,6 +27,8 @@ N.WorkbenchTest = function(parentNetwork) {
   this.ClassName           = 'N.WorkbenchTest';
   this.Id                  = null;
   this.name                = '';
+  this.inputSignals        = [];
+  this.inputSignals.push({ type: 'voltage', start: 0.0, duration: 0.010, shape: 'square', amplitude: '0.02'});
 }
 
 /**

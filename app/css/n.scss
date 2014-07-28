@@ -9,6 +9,8 @@ $text-color: #000000;
 $text-color-med: #888888;
 $text-color-light: #cccccc;
 
+$separator-color-light: #eeeeee;
+
 $color-darkest: #153450;
 $color-dark: #294052;
 $color-med-dark: #447294;
@@ -50,6 +52,12 @@ $padding-med: 20px;
   font-size: $font-size-med;
   font-family: $helv-font;
   color: $color-dark;
+}
+
+@mixin separator-border {
+  margin-top: 15px;
+  border-top: 1px solid $separator-color-light;
+  padding-top: 5px;
 }
 
 @mixin border-radius($radius) {
@@ -137,8 +145,19 @@ body {
   box-shadow: $drop-shadow;
 }
 
-textarea {
-  margin-top: $padding-med;
+.pi-body {
+  .modal-dialog {
+    .modal-header {
+      padding: 4px 12px;
+    }
+    .modal-body {
+      padding: 10px 12px;
+    }
+    .modal-footer {
+      border-top: none;
+      padding: 10px 12px;
+    }
+  }
 }
 
 //*****************************
@@ -529,6 +548,35 @@ textarea {
         display: inline-block;
       }
     }
+  }
+}
+
+.pi-workbench-test-panel {
+  padding: 10px 10px;
+
+  .properties {
+    .name {
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .description {
+      font-size: 15px;
+      font-weight: 100;
+    }
+
+    .edit {
+      float: right;
+      font-weight: 100;
+      font-size: 15px;
+    }
+  }
+
+  .properties-edit {
+
+  }
+
+  .input-type-form {
+    @include separator-border();
   }
 }
 

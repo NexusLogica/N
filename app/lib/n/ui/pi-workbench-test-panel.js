@@ -27,12 +27,23 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
     },
     templateUrl: 'partials/pi-workbench-test-panel.html',
     controller: ['$scope', function ($scope) {
-      console.log($scope);
+      $scope.propertiesCopy = {};
 
+      $scope.inputTypes = [ { name: 'Voltage', type: 'voltage' }, { name: 'Spiking', type: 'spiking' } ];
 
     }],
-    link: function(scope, element, attrs) {
+    link: function($scope, $element, $attrs) {
 
+      $scope.showPropertiesEdit = function() {
+        $scope.propertiesCopy = { name: $scope.test.name, description: $scope.test.description };
+        $element.find('.properties-edit').modal('show');
+      }
+
+      $scope.saveProperties = function() {
+        $scope.test.name = $scope.propertiesCopy.name;
+        $scope.test.description = $scope.propertiesCopy.description;
+        $element.find('.properties-edit').modal('hide');
+      }
     }
   };
 }]);

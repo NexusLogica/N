@@ -23,7 +23,7 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('WorkbenchTestController', ['$scope',
   function WorkbenchTestController($scope) {
-    $scope.Test = new N.WorkbenchTest();
+    $scope.Test = new N.WorkbenchTestScenes();
     $scope.Test.CreateScenes();
     $scope.Workbenches = $scope.Test.Workbenches;
     $scope.TestInfo = { Name: 'Workbench Tests' };
@@ -31,15 +31,15 @@ nSimAppControllers.controller('WorkbenchTestController', ['$scope',
   }
 ]);
 
-  //*******************
-  //* N.WorkbenchTest *
-  //*******************
+  //*************************
+  //* N.WorkbenchTestScenes *
+  //*************************
 
-N.WorkbenchTest = function() {
+N.WorkbenchTestScenes = function() {
   this.Workbenches  = [];
 }
 
-N.WorkbenchTest.prototype.CreateScenes = function() {
+N.WorkbenchTestScenes.prototype.CreateScenes = function() {
   var renderMappings = {
     'ColumnSpacing': 0.3,
     'RowSpacing': 0.3,
@@ -53,12 +53,12 @@ N.WorkbenchTest.prototype.CreateScenes = function() {
     'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
   };
 
-  for(var i=0; i<N.WorkbenchTest.TestConfigurations.length; i++) {
-    var config = N.WorkbenchTest.TestConfigurations[i];
+  for(var i=0; i<N.WorkbenchTestScenes.TestConfigurations.length; i++) {
+    var config = N.WorkbenchTestScenes.TestConfigurations[i];
 
     var workbench = (new N.Workbench()).AddTemplates(
-        { 'N.WorkbenchTest.SpinyStellate': N.WorkbenchTest.SpinyStellate,
-          'N.WorkbenchTest.FastSpiking': N.WorkbenchTest.FastSpiking
+        { 'N.WorkbenchTestScenes.SpinyStellate': N.WorkbenchTestScenes.SpinyStellate,
+          'N.WorkbenchTestScenes.FastSpiking': N.WorkbenchTestScenes.FastSpiking
         }).SetTargets(config.Targets);
 
     var scene = new N.UI.WorkbenchScene();
@@ -67,7 +67,7 @@ N.WorkbenchTest.prototype.CreateScenes = function() {
   }
 }
 
-N.WorkbenchTest.SpinyStellate = {
+N.WorkbenchTestScenes.SpinyStellate = {
   ClassName: 'N.Neuron',
   Name: 'SS',
   Compartments: [{
@@ -87,7 +87,7 @@ N.WorkbenchTest.SpinyStellate = {
   }
 }
 
-N.WorkbenchTest.FastSpiking = {
+N.WorkbenchTestScenes.FastSpiking = {
   ClassName: 'N.Neuron',
   Name: 'FS',
   Compartments: [{
@@ -104,7 +104,7 @@ N.WorkbenchTest.FastSpiking = {
   }
 }
 
-N.WorkbenchTest.TestConfigurations = [{
-  Targets : [ { Template: 'N.WorkbenchTest.FastSpiking', Name: 'IN[0]'} ]
+N.WorkbenchTestScenes.TestConfigurations = [{
+  Targets : [ { Template: 'N.WorkbenchTestScenes.FastSpiking', Name: 'IN[0]'} ]
  }
 ];
