@@ -56,6 +56,8 @@ ul::-webkit-scrollbar-thumb {
 
 body {
   background-color: #fffefd; }
+  body .placeholder {
+    color: #cccccc; }
 
 .n-component {
   background-color: #fefbf7;
@@ -80,6 +82,9 @@ body {
 .pi-body .modal-dialog .modal-footer {
   border-top: none;
   padding: 10px 12px; }
+
+.item-label {
+  text-align: right; }
 
 .header {
   padding: 0px 0px 7px 0px;
@@ -122,110 +127,6 @@ body {
 .main-tabs-container .nav-tabs > li div:hover {
   color: #294052;
   cursor: pointer; }
-
-.wave-container {
-  margin-top: 20px; }
-
-.waveform-search {
-  height: 600px; }
-
-.waveform-search .well {
-  height: 600px;
-  margin: 0px;
-  padding: 0px;
-  border-style: none;
-  border-width: 0px;
-  background-color: transparent;
-  -webkit-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05); }
-
-.wave-list-container {
-  background-color: #fffdfc;
-  padding: 5px 20px 0px 20px;
-  margin-top: 20px;
-  margin-left: 44px;
-  border-radius: 5px;
-  height: 532px; }
-
-.wave-list-header-name, .wave-list-header-date {
-  font-weight: bold; }
-
-.wave-list {
-  margin-left: 0px;
-  height: 485px;
-  overflow: hidden;
-  overflow-y: auto; }
-
-.wave-list-item, .wave-list-header {
-  list-style-type: none;
-  padding: 4px 0px 4px 0px;
-  border-bottom: solid 1px gainsboro;
-  white-space: nowrap;
-  overflow: hidden; }
-
-.wave-list-header {
-  border-bottom: 2px solid #fafafa; }
-
-.wave-list-item:hover {
-  background-color: #fefbf7;
-  cursor: pointer; }
-
-.wave-list-name, .wave-list-date, .wave-list-header-name, .wave-list-header-date {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; }
-
-.wave-list-name, .wave-list-header-name {
-  width: 430px; }
-
-.waveform-search-top-left {
-  margin-left: 50px; }
-
-.waveform-search-top-left div {
-  display: inline-block; }
-
-.waveform-search-top-left .n-med-title, .waveform-search-top-left .n-med-title-light {
-  vertical-align: middle; }
-
-.waveform-search-top-left .wave-search-box-container {
-  margin-left: 17px; }
-
-.waveform-search-box {
-  margin-left: 100px; }
-
-.waveform-search-refresh-container {
-  margin-left: 91px; }
-
-.wave-item-selected {
-  font-weight: bold;
-  background-color: #fbefe0; }
-
-.wave-item-selected:hover {
-  background-color: #fbefe0; }
-
-.waveform-viewer-container.span6 .container {
-  width: 800px; }
-
-.waveform-viewer-container .waveform-name-container div {
-  display: inline-block; }
-
-.waveform-viewer-container .action-container {
-  padding-top: 10px;
-  border-top: solid #8fbcdb 1px; }
-
-.waveform-viewer-container .action-container .btn-warning {
-  margin-left: 31px; }
-
-.waveform-viewer-container .action-container button {
-  margin-left: 6px; }
-
-.waveform-viewer-container .dl-horizontal dd {
-  margin-left: 102px; }
-
-.waveform-viewer-container dt {
-  width: 90px; }
 
 .test-top {
   line-height: normal;
@@ -353,13 +254,12 @@ body {
   .pi-workbench-test-panel .properties .name {
     font-size: 15px;
     font-weight: bold; }
-  .pi-workbench-test-panel .properties .description {
-    font-size: 15px;
-    font-weight: 100; }
   .pi-workbench-test-panel .properties .edit {
     float: right;
-    font-weight: 100;
-    font-size: 15px; }
+    font-size: 15px;
+    margin-right: 20px; }
+  .pi-workbench-test-panel .properties .duration {
+    margin-top: 5px; }
   .pi-workbench-test-panel .input-type-form {
     margin-top: 15px;
     border-top: 1px solid #eeeeee;
@@ -368,7 +268,7 @@ body {
     margin-top: 15px;
     border-top: 1px solid #eeeeee;
     padding-top: 15px;
-    margin-top: 20px;
+    margin-top: 12px;
     text-align: right; }
 
 .pi-connection-test .pi-network-panel .pi-canvas {

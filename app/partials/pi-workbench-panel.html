@@ -31,7 +31,7 @@
     </div>
     <div class="test-panels">
       <div ng-repeat="test in workbench.tests">
-        <pi-workbench-test-panel test="test"></pi-workbench-test-panel>
+        <pi-workbench-test-panel ng-show="test.id === selectedTestId" test="test"></pi-workbench-test-panel>
       </div>
     </div>
   </div>

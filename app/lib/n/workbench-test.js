@@ -29,6 +29,7 @@ N.WorkbenchTest = function(workbench) {
   this.id           = N.GenerateUUID();
   this.name         = '';
   this.description  = '';
+  this.duration     = 0.10; // duration of the test in seconds
   this.inputSignals = [];
 }
 

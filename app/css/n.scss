@@ -125,6 +125,10 @@ ul::-webkit-scrollbar-thumb {
 // Page
 body {
   background-color: $color-body;
+
+  .placeholder {
+    color: $text-color-light;
+  }
 }
 
 .n-component {
@@ -158,6 +162,10 @@ body {
       padding: 10px 12px;
     }
   }
+}
+
+.item-label {
+  text-align: right;
 }
 
 //*****************************
@@ -220,145 +228,6 @@ body {
 .main-tabs-container .nav-tabs>li div:hover {
   color: $color-dark;
   cursor: pointer;
-}
-
-//*****************************
-// Waveform editor
-
-.wave-container {
-  margin-top: $padding-med;
-}
-
-//*****************************
-// Waveform search
-
-.waveform-search {
-  height: 600px;
-}
-
-.waveform-search .well {
-  height: 600px;
-  margin: 0px;
-  padding: 0px;
-  border-style: none;
-  border-width: 0px;
-  background-color: transparent;
-  -webkit-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.05);
-}
-
-.wave-list-container {
-  background-color: lighten($color-space, 1.1%);
-  padding: 5px 20px 0px 20px;
-  margin-top: 20px;
-  margin-left: 44px;
-  border-radius: 5px;
-  height: 532px;
-}
-
-.wave-list-header-name, .wave-list-header-date {
-  font-weight: bold;
-}
-
-.wave-list {
-  margin-left: 0px;
-  height: 485px;
-  overflow: hidden;
-  overflow-y: auto;
-}
-
-.wave-list-item, .wave-list-header {
-  list-style-type: none;
-  padding: 4px 0px 4px 0px;
-  border-bottom: solid 1px $color-gray;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.wave-list-header {
-  border-bottom: 2px solid #fafafa;
-}
-
-.wave-list-item:hover {
-  background-color: lighten($color-space, 0.05%);
-  cursor: pointer;
-}
-
-.wave-list-name, .wave-list-date, .wave-list-header-name, .wave-list-header-date {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.wave-list-name, .wave-list-header-name {
-  width: 430px;
-}
-
-.waveform-search-top-left {
-  margin-left: 50px;
-}
-
-.waveform-search-top-left div {
-  display: inline-block;
-}
-
-.waveform-search-top-left .n-med-title {
-  vertical-align: middle;
-}
-
-.waveform-search-top-left .wave-search-box-container {
-  margin-left: 17px;
-}
-
-.waveform-search-box {
-  margin-left: 100px;
-}
-
-.waveform-search-refresh-container {
-  margin-left: 91px;
-}
-
-.wave-item-selected {
-  font-weight: bold;
-  background-color: darken($color-space, 5%);
-}
-
-.wave-item-selected:hover {
-  background-color: darken($color-space, 5%);
-}
-
-//*****************************
-// Waveform viewer
-
-.waveform-viewer-container.span6 .container {
-  width: 800px;
-}
-
-.waveform-viewer-container .waveform-name-container div {
-  display: inline-block;
-}
-
-.waveform-viewer-container .action-container {
-  padding-top: 10px;
-  border-top: solid $color-med 1px;
-}
-
-.waveform-viewer-container .action-container .btn-warning {
-  margin-left: 31px;
-}
-
-.waveform-viewer-container .action-container button {
-  margin-left: 6px;
-}
-
-.waveform-viewer-container .dl-horizontal dd {
-  margin-left: 102px;
-}
-
-.waveform-viewer-container dt {
-  width: 90px;
 }
 
 //*****************************
@@ -559,19 +428,20 @@ body {
   padding: 10px 10px;
 
   .properties {
+
     .name {
       font-size: 15px;
       font-weight: bold;
     }
-    .description {
-      font-size: 15px;
-      font-weight: 100;
-    }
 
     .edit {
       float: right;
-      font-weight: 100;
       font-size: 15px;
+      margin-right: 20px;
+    }
+
+    .duration {
+      margin-top:5px;
     }
   }
 
@@ -585,7 +455,7 @@ body {
 
   .add-input-signal {
     @include separator-border();
-    margin-top:20px;
+    margin-top:12px;
     text-align: right;
   }
 }

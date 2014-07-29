@@ -1,17 +1,23 @@
 <div class="pi-workbench-test-panel">
   <!-- Name and description display -->
   <div>
-    <div class="properties">
+    <div class="properties row">
       <div class="edit">
-        <a href="javascript:void(0)" ng-click="showPropertiesEdit()">edit</a>
+        <a href="javascript:void(0)" ng-click="showPropertiesEdit()">Edit</a>
       </div>
       <div>
-        <div ng-if="test.name.length" >{{test.name}}</div>
-        <div ng-if="test.name.length === 0">No name...</div>
+        <div class="item-label" ng-class="propertiesLabelWidth">Name:</div>
+        <div ng-class="propertiesWidth" ng-if="test.name.length" >{{test.name}}</div>
+        <div class="placeholder" ng-class="propertiesWidth" ng-if="test.name.length === 0">No name...</div>
       </div>
       <div>
-        <div class="description" ng-if="test.description.length">{{test.description}}</div>
-        <div class="description" ng-if="test.description.length === 0">No description...</div>
+        <div class="item-label" ng-class="propertiesLabelWidth">Description:</div>
+        <div class="description" ng-class="propertiesWidth" ng-if="test.description.length">{{test.description}}</div>
+        <div class="placeholder" class="description" ng-class="propertiesWidth" ng-if="test.description.length === 0">No description...</div>
+      </div>
+      <div class="duration">
+        <div class="item-label" ng-class="propertiesLabelWidth">Duration:</div>
+        <div ng-class="propertiesWidth">{{test.duration}} seconds</div>
       </div>
     </div>
   </div>
@@ -54,7 +60,7 @@
   </div>
 
   <!-- Name and description edit dialog -->
-  <div class="properties-edit modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+  <div class="properties-edit modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -62,11 +68,13 @@
           <h4 class="modal-title">Modal title</h4>
         </div>
         <div class="modal-body">
-          <form novalidate class="form-horizontal" role="form">
+          <form novalidate class="form-horizontal" role="form" name="testform">
             <div class="form-group">
               <label class="col-sm-4 control-label" for="test-name">Name:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="test-name" ng-model="propertiesCopy.name" placeholder="Test name">
+                <div ng-show="!testform.$valid">Invalid</div>
+                <div ng-show="test-props-form.propertiesCopy.name.$error.required">{{test-props-form.$valid}}</div>
+                <input type="text" ng-debounce="" class="form-control" required id="test-name" ng-model="propertiesCopy.name" placeholder="Test name">
               </div>
             </div>
             <div class="form-group">
@@ -75,10 +83,17 @@
                 <textarea class="form-control" rows="3" id="test-description" ng-model="propertiesCopy.description" placeholder="Description"></textarea>
               </div>
             </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="test-duration">Duration (s):</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="test-duration" ng-model="propertiesCopy.duration" placeholder="Duration (seconds)"/>
+              </div>
+            </div>
           </form>
         </div>
 
         <div class="modal-footer">
+          <div class="footer-message" ng-bind="formMessage"></div>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" ng-click="saveProperties()">Save changes</button>
         </div>
