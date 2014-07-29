@@ -57,7 +57,7 @@ $padding-med: 20px;
 @mixin separator-border {
   margin-top: 15px;
   border-top: 1px solid $separator-color-light;
-  padding-top: 5px;
+  padding-top: 15px;
 }
 
 @mixin border-radius($radius) {
@@ -530,9 +530,8 @@ body {
 
     .top-header {
       border-bottom: 1px solid lighten($text-color-light, 5%);
-      .show-test {
-        margin: 10px 10px 10px 20px;
-      }
+      padding: 10px 10px 10px 10px;
+      height: 54px;
 
       .btn {
         display: inline-block;
@@ -541,11 +540,16 @@ body {
           text-align: left;
         }
         &.new-test {
-          margin-left: 40px;
+          float: right;
         }
       }
       .dropdown {
         display: inline-block;
+      }
+      .no-tests {
+        display: inline-block;
+        color: $text-color-light;
+        margin-top: 6px;
       }
     }
   }
@@ -577,6 +581,12 @@ body {
 
   .input-type-form {
     @include separator-border();
+  }
+
+  .add-input-signal {
+    @include separator-border();
+    margin-top:20px;
+    text-align: right;
   }
 }
 

@@ -5,25 +5,29 @@
   </div>
   <div class="console col-lg-8 col-md-8">
     <div class="top-header">
-      <div class="dropdown show-test">
-        <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-menu-test-select" data-toggle="dropdown">
-          {{ testNameFromId(selectedTestId) }}
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-menu-test-select">
-          <li ng-repeat="test in tests"><a ng-click="onTestSelect(test.id)" tabindex="-1" href="#">{{test.name}}</a></li>
-        </ul>
-      </div>
-      <button type="button" class=" btn btn-default" ng-click="onPreviousTest()">
-        <span class="glyphicon glyphicon-step-backward"/>
-      </button>
-      <button type="button" class=" btn btn-default" ng-click="onNextTest()">
-        <span class="glyphicon glyphicon-step-forward"/>
-      </button>
-
       <button type="button" class=" btn btn-default new-test" ng-click="onNewTest()">
         New test
       </button>
+      <div ng-if="tests.length">
+        <div class="dropdown show-test">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-menu-test-select" data-toggle="dropdown">
+            {{ testNameFromId(selectedTestId) }}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-menu-test-select">
+            <li ng-repeat="test in tests"><a ng-click="onTestSelect(test.id)" tabindex="-1" href="#">{{test.name}}</a></li>
+          </ul>
+        </div>
+        <button type="button" class=" btn btn-default" ng-click="onPreviousTest()">
+          <span class="glyphicon glyphicon-step-backward"/>
+        </button>
+        <button type="button" class=" btn btn-default" ng-click="onNextTest()">
+          <span class="glyphicon glyphicon-step-forward"/>
+        </button>
+      </div>
+      <div class="no-tests" ng-if="!tests.length">
+        No tests added yet
+      </div>
     </div>
     <div class="test-panels">
       <div ng-repeat="test in workbench.tests">

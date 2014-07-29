@@ -29,7 +29,16 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
     controller: ['$scope', function ($scope) {
       $scope.propertiesCopy = {};
 
-      $scope.inputTypes = [ { name: 'Voltage', type: 'voltage' }, { name: 'Spiking', type: 'spiking' } ];
+      $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
+      $scope.signalTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
+
+      $scope.amplitudeUnits = function(input) {
+        return _.find($scope.inputTypes, function(inputType) { return (inputType.type = input); }).units;
+      }
+
+      $scope.targetInputSignalId = '';
+
+      $scope.labelWidth = 'col-sm-6';
 
     }],
     link: function($scope, $element, $attrs) {
@@ -37,6 +46,16 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       $scope.showPropertiesEdit = function() {
         $scope.propertiesCopy = { name: $scope.test.name, description: $scope.test.description };
         $element.find('.properties-edit').modal('show');
+      }
+
+      $scope.addInputSignal = function() {
+        var inputSignal = $scope.test.addInputSignal();
+        $scope.showInputSignalEdit(test.id);
+      }
+
+      $scope.showInputSignalEdit = function(test) {
+        $scope.targetInputSignalId = test.id;
+        $element.find('.input-signal-edit').modal('show');
       }
 
       $scope.saveProperties = function() {

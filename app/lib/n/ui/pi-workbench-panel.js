@@ -27,7 +27,9 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
     },
     templateUrl: 'partials/pi-workbench-panel.html',
     controller: ['$scope', function ($scope) {
+
       $scope.workbench = $scope.workbenchScene.workbench;
+
       $scope.$on('pi-canvas:event-broadcast-request', function(broadcastEvent, event, obj) {
         broadcastEvent.stopPropagation();
         $scope.$broadcast('pi-canvas:event', event, obj);
@@ -35,8 +37,8 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
 
       // *** Header: for test selection and creating new tests
       //
-      $scope.tests = [ { name: 'First', id: 'first' }, { name: 'Second', id: 'second' }];
-      $scope.selectedTestId = 'first';
+      $scope.tests = $scope.workbench.tests;
+      $scope.selectedTestId = ($scope.tests.length > 0 ? $scope.tests[0].id : '');
 
       $scope.onTestSelect = function(testId) {
         $scope.selectedTestId = testId;
@@ -60,7 +62,10 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
         $scope.selectedTestId = $scope.tests[i].id;
       }
 
-
+      $scope.onNewTest = function() {
+        var test = $scope.workbench.addTest();
+        $scope.selectedTestId = test.id;
+      }
 
     }],
     link: function(scope, element, attrs) {

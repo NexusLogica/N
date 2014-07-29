@@ -28,10 +28,6 @@ N.Workbench = function(parentNetwork) {
   this.Id                  = null;
   this.Name                = '';
   this.tests               = []; // N.WorkbenchTest array
-  var test = new N.WorkbenchTest(this);
-  test.name = 'Unnamed';
-  test.description = 'No description yet';
-  this.tests.push(test);
 }
 
 /**
@@ -42,6 +38,17 @@ N.Workbench = function(parentNetwork) {
 N.Workbench.prototype.AddTemplates = function(templates) {
   this.AdditionalTemplates = _.cloneDeep(templates);
   return this;
+}
+
+/**
+ * Adds a new blank test.
+ * @method addTest
+ * @returns {N.WorkbenchTest}
+ */
+N.Workbench.prototype.addTest = function() {
+  var test = new N.WorkbenchTest(this);
+  this.tests.push(test);
+  return test;
 }
 
 /**

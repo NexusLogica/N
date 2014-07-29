@@ -6,33 +6,44 @@
         <a href="javascript:void(0)" ng-click="showPropertiesEdit()">edit</a>
       </div>
       <div>
-        <div>{{test.name}}</div>
+        <div ng-if="test.name.length" >{{test.name}}</div>
+        <div ng-if="test.name.length === 0">No name...</div>
       </div>
       <div>
-        <div class="description">{{test.description}}<div>
+        <div class="description" ng-if="test.description.length">{{test.description}}</div>
+        <div class="description" ng-if="test.description.length === 0">No description...</div>
       </div>
     </div>
   </div>
 
   <!-- Input signals builder display -->
   <div class="signal-inputs">
+    <div class="add-input-signal" ng-show="test.inputSignals.length === 0">
+      <a href="javascript:void(0)" ng-click="addInputSignal()">Add input signal</a>
+    </div>
     <div ng-repeat="inputSignal in test.inputSignals">
       <form novalidate class="input-type-form form-horizontal" role="form">
         <div class="form-group">
-          <label class="col-sm-5 control-label" for="signal-type">Signal type:</label>
+          <label class="control-label" ng-class="labelWidth" for="signal-type">Signal type:</label>
           <div class="col-sm-10">
             <select class="form-control"  id="signal-type" ng-model="inputSignal.type" ng-options="inputType.type as inputType.name for inputType in inputTypes">
             </select>
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-5 control-label" for="start-time">Start time (sec):</label>
+          <label class="control-label" ng-class="labelWidth" for="start-time">Start time (sec):</label>
           <div class="col-sm-10">
             <input type="number" step="0.001" ng-model="inputSignal.start" class="form-control" id="start-time"/>
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-5 control-label" for="duration">Duration (sec):</label>
+          <label class="control-label" ng-class="labelWidth" for="duration">Duration (sec):</label>
+          <div class="col-sm-10">
+            <input type="number" step="0.001" ng-model="inputSignal.duration" class="form-control" id="duration"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label" ng-class="labelWidth" for="duration">Amplitude ({{ amplitudeUnits(inputSignal.type) }}):</label>
           <div class="col-sm-10">
             <input type="number" step="0.001" ng-model="inputSignal.duration" class="form-control" id="duration"/>
           </div>
@@ -52,6 +63,47 @@
         </div>
         <div class="modal-body">
           <form novalidate class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="test-name">Name:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="test-name" ng-model="propertiesCopy.name" placeholder="Test name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="test-description">Description:</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" rows="3" id="test-description" ng-model="propertiesCopy.description" placeholder="Description"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" ng-click="saveProperties()">Save changes</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+  </div>
+
+  <!-- Input signal edit dialog -->
+  <div class="input-signal-edit modal" tabindex="-1" role="dialog" aria-labelledby="inputSignalEdit" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title">Modal title</h4>
+        </div>
+        <div class="modal-body">
+          <form novalidate class="form-horizontal" role="form">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-type-select" data-toggle="dropdown">
+              {{ testNameFromId(selectedTestId) }}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-type-select">
+              <li ng-repeat="test in tests"><a ng-click="onTestSelect(test.id)" tabindex="-1" href="#">{{test.name}}</a></li>
+            </ul>
             <div class="form-group">
               <label class="col-sm-4 control-label" for="test-name">Name:</label>
               <div class="col-sm-10">

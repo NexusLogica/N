@@ -331,18 +331,22 @@ body {
   -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
   box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
   .pi-workbench-panel .console .top-header {
-    border-bottom: 1px solid #d9d9d9; }
-    .pi-workbench-panel .console .top-header .show-test {
-      margin: 10px 10px 10px 20px; }
+    border-bottom: 1px solid #d9d9d9;
+    padding: 10px 10px 10px 10px;
+    height: 54px; }
     .pi-workbench-panel .console .top-header .btn {
       display: inline-block; }
       .pi-workbench-panel .console .top-header .btn.dropdown-toggle {
         width: 150px;
         text-align: left; }
       .pi-workbench-panel .console .top-header .btn.new-test {
-        margin-left: 40px; }
+        float: right; }
     .pi-workbench-panel .console .top-header .dropdown {
       display: inline-block; }
+    .pi-workbench-panel .console .top-header .no-tests {
+      display: inline-block;
+      color: #cccccc;
+      margin-top: 6px; }
 
 .pi-workbench-test-panel {
   padding: 10px 10px; }
@@ -359,7 +363,13 @@ body {
   .pi-workbench-test-panel .input-type-form {
     margin-top: 15px;
     border-top: 1px solid #eeeeee;
-    padding-top: 5px; }
+    padding-top: 15px; }
+  .pi-workbench-test-panel .add-input-signal {
+    margin-top: 15px;
+    border-top: 1px solid #eeeeee;
+    padding-top: 15px;
+    margin-top: 20px;
+    text-align: right; }
 
 .pi-connection-test .pi-network-panel .pi-canvas {
   height: 500px;
