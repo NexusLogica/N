@@ -39,7 +39,8 @@ N.WorkbenchTest = function(workbench) {
  * @returns {N.WorkbenchTest}
  */
 N.WorkbenchTest.prototype.addInputSignal = function() {
-  var test = new N.SignalBuilder();
+  var test = { id: N.GenerateUUID(), connection: null, builder: new N.SignalBuilder() };
   this.inputSignals.push(test);
+  this.inputSignals[test.id] = test;
   return test;
 }

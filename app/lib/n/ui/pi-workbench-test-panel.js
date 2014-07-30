@@ -32,15 +32,19 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
       $scope.signalTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
 
-      $scope.amplitudeUnits = function(input) {
-        return _.find($scope.inputTypes, function(inputType) { return (inputType.type = input); }).units;
+      $scope.amplitudeUnits = function(inputSignal) {
+        return (inputSignal ? _.find($scope.inputTypes, function(inputType) { return (inputType.type === inputSignal.type); }).units : '');
       }
 
       $scope.targetInputSignalId = '';
+      $scope.targetInputSignal = null;
+      $scope.targetInputSignalCopy = null;
 
       $scope.labelWidth = 'col-sm-6';
       $scope.propertiesLabelWidth = 'col-sm-4';
       $scope.propertiesWidth = 'col-sm-10';
+
+      $scope.inputLayerSourceCompartments = [];
 
     }],
     link: function($scope, $element, $attrs) {
@@ -52,12 +56,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
 
       $scope.addInputSignal = function() {
         var inputSignal = $scope.test.addInputSignal();
-        $scope.showInputSignalEdit(test.id);
-      }
-
-      $scope.showInputSignalEdit = function(test) {
-        $scope.targetInputSignalId = test.id;
-        $element.find('.input-signal-edit').modal('show');
+        $scope.showInputSignalEdit(inputSignal);
       }
 
       $scope.saveProperties = function() {
@@ -76,11 +75,41 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         $element.find('.properties-edit').modal('hide');
       }
 
+      $scope.showInputSignalEdit = function(inputSignal) {
+        fillCompartmentLists();
+        debugger;
+        $scope.targetInputSignalId = inputSignal.id;
+        $scope.targetInputSignalCopy = _.cloneDeep(inputSignal);
+        $element.find('.input-signal-edit').modal('show');
+      }
+
+      $scope.setInputSignalPath = function(source) {
+        $scope.targetInputSignalCopy.connection = source.connection;
+      }
+
+      $scope.saveInputSignal = function() {
+        debugger;
+        _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
+        $element.find('.input-signal-edit').modal('hide');
+      }
+
       $scope.$on('pi-workbench-panel:show-properties', function(event, selectedTestId) {
         if($scope.test.id === selectedTestId) {
           $scope.showPropertiesEdit();
         }
       });
+
+      var fillCompartmentLists = function() {
+        $scope.inputLayerSourceCompartments = [];
+        var network = $scope.test.workbench.Network.GetNetworkByName('Inputs');
+        _.forEach(network.Neurons, function(neuron) {
+          _.forEach(neuron.Compartments, function(compartment) {
+            _.forEach(compartment.OutputConnections, function(connection) {
+              $scope.inputLayerSourceCompartments.push({ compartment: compartment, connection: connection});
+            });
+          });
+        });
+      }
     }
   };
 }]);
