@@ -20,7 +20,7 @@
 
   <div class="container" ng-controller="WorkbenchTestController">
     <div class="row test-top">
-      <div class="n-med-title col-lg-5 col-md-7">{{TestInfo.Name}}</div>
+      <div class="n-med-title col-lg-5 col-md-7" ng-bind="{{TestInfo.Name}}"></div>
     </div>
     <div ng-repeat="workbench in Workbenches">
       <pi-workbench-panel workbench-scene="workbench">
@@ -70,6 +70,7 @@
   <script src="lib/n/ui/pi-network-panel.js"></script>
   <script src="lib/n/ui/pi-workbench-panel.js"></script>
   <script src="lib/n/ui/pi-workbench-test-panel.js"></script>
+  <script src="lib/n/ui/pi-modal.js"></script>
   <script src="lib/n/ui/pi-hover-path.js"></script>
 
   <script src="lib/n/test/work-bench-test.js"></script>

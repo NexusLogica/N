@@ -61,14 +61,12 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       }
 
       $scope.saveProperties = function() {
-        debugger;
         if(!$scope.testform.$valid) {
           $scope.formMessage = 'There are errors. Please fix them.';
           return;
         }
 
         if(_.find($scope.test.workbench.tests, function(test) {
-          debugger;
           return (test.name === $scope.propertiesCopy.name && test.id !== $scope.test.id);
         })) {
           $scope.formMessage = 'The name '+$scope.propertiesCopy.name+' already exists';

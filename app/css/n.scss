@@ -8,6 +8,7 @@ $helv-font: "Raleway", sans-serif;
 $text-color: #000000;
 $text-color-med: #888888;
 $text-color-light: #cccccc;
+$text-color-error: #eb881e;
 
 $separator-color-light: #eeeeee;
 
@@ -168,8 +169,27 @@ body {
   text-align: right;
 }
 
-//*****************************
-// Header
+.footer-message {
+  width: 335px;
+  text-align: left;
+  margin-top:14px;
+  float: left;
+  color: $text-color-error;
+}
+
+.tooltip.top {
+  .tooltip-inner {
+    background-color: #ffa500;
+    color: white;
+  }
+
+  .tooltip-arrow {
+    border-top-color: #ffa500;
+  }
+}
+
+  //*****************************
+  // Header
 
 .header {
   padding: 0px 0px 7px 0px;
@@ -387,8 +407,8 @@ body {
   }
 }
 
-//*****************************
-// Workbench scene
+  //*****************************
+  // Workbench scene
 
 .pi-workbench-panel {
   .console {
@@ -424,87 +444,88 @@ body {
   }
 }
 
-.pi-workbench-test-panel {
-  padding: 10px 10px;
+  .pi-workbench-test-panel {
+    padding: 10px 10px;
 
-  .properties {
+    .properties {
 
-    .name {
-      font-size: 15px;
-      font-weight: bold;
-    }
+      .name {
+        font-size: 15px;
+        font-weight: bold;
+      }
 
-    .edit {
-      float: right;
-      font-size: 15px;
-      margin-right: 20px;
-    }
+      .edit {
+        float: right;
+        font-size: 15px;
+        margin-right: 20px;
+      }
 
-    .duration {
-      margin-top:5px;
-    }
-  }
-
-  .properties-edit {
-
-  }
-
-  .input-type-form {
-    @include separator-border();
-  }
-
-  .add-input-signal {
-    @include separator-border();
-    margin-top:12px;
-    text-align: right;
-  }
-}
-
-//*****************************
-// Network scene
-
-.pi-connection-test {
-  .pi-network-panel {
-    .pi-canvas {
-      height: 500px;
-      padding: 0px 0px;
-    }
-
-    .pi-canvas-column {
-      .path {
-        margin: 5px 5px 5px 10px;
-        color: gray;
-        height: 20px;
+      .duration {
+        margin-top:5px;
       }
     }
 
-    .pi-network-console {
-      height: 200px;
-      border: gray 1px solid;
-      margin-left:30px;
+    .properties-edit {
+
+    }
+
+    .input-type-form {
+      @include separator-border();
+    }
+
+    .add-input-signal {
+      @include separator-border();
+      margin-top:12px;
+      text-align: right;
     }
   }
 
-  button {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    z-index: 1000;
-  }
-}
+  //*****************************
+  // Network scene
 
-.pi-hover-path {
-  margin: 6px 0px;
-  span {
-    display: inline-block;
-    font: $helv-font;
-    color: $text-color-med;
-  }
-  .action {
-    min-width: 60px;
-    color: $text-color-light;
-  }
-  .path {
+  .pi-connection-test {
+    .pi-network-panel {
+      .pi-canvas {
+        height: 500px;
+        padding: 0px 0px;
+      }
 
+      .pi-canvas-column {
+        .path {
+          margin: 5px 5px 5px 10px;
+          color: gray;
+          height: 20px;
+        }
+      }
+
+      .pi-network-console {
+        height: 200px;
+        border: gray 1px solid;
+        margin-left:30px;
+      }
+    }
+
+    button {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      z-index: 1000;
+    }
   }
-}
+
+  .pi-hover-path {
+    margin: 6px 0px;
+    span {
+      display: inline-block;
+      font: $helv-font;
+      color: $text-color-med;
+    }
+    .action {
+      min-width: 60px;
+      color: $text-color-light;
+    }
+    .path {
+
+    }
+  }
+

@@ -65,7 +65,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
       $scope.onNewTest = function() {
         var test = $scope.workbench.addTest();
         $scope.selectedTestId = test.id;
-        $timeout(function() { $scope.$broadcast('pi-workbench-panel:show-properties', $scope.selectedTestId); }, 1);
+        test.name = 'Test '+$scope.workbench.tests.length;
       }
 
     }],

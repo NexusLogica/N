@@ -86,6 +86,19 @@ body {
 .item-label {
   text-align: right; }
 
+.footer-message {
+  width: 335px;
+  text-align: left;
+  margin-top: 14px;
+  float: left;
+  color: #eb881e; }
+
+.tooltip.top .tooltip-inner {
+  background-color: #ffa500;
+  color: white; }
+.tooltip.top .tooltip-arrow {
+  border-top-color: #ffa500; }
+
 .header {
   padding: 0px 0px 7px 0px;
   background-color: #294052; }
