@@ -95,6 +95,8 @@ N.UI.SignalTrace.prototype.Render = function(svgParent, pos, padding) {
     return;
   }
 
+  if(this.NoDataText) { this.NoDataText.hide(); }
+
   if(this.NeedsRecalc) {
     this.NeedsRecalc = false;
 
@@ -132,6 +134,8 @@ N.UI.SignalTrace.prototype.Update = function() {
     this.RenderNoData();
     return;
   }
+
+  if(this.NoDataText) { this.NoDataText.hide(); }
 
   var num = this.Signal.GetNumSamples();
   if(num > 1) {
@@ -291,7 +295,11 @@ N.UI.SignalTrace.prototype.CalculateHorizontalRange = function() {
 }
 
 N.UI.SignalTrace.prototype.RenderNoData = function() {
-  this.NoDataText = this.Group.text('no data').attr({ 'class': 'no-data' });
-  this.NoDataText.move(0.5*this.Pos.Width, 0.5*this.Pos.Height-this.NoDataText.bbox().cy);
+  if(!this.NoDataText) {
+    this.NoDataText = this.Group.text('no data').attr({ 'class': 'no-data' });
+    this.NoDataText.move(0.5*this.Pos.Width, 0.5*this.Pos.Height-this.NoDataText.bbox().cy);
+  } else {
+    this.NoDataText.show();
+  }
 }
 

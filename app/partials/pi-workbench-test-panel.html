@@ -5,17 +5,17 @@
       <div class="edit">
         <a href="javascript:void(0)" ng-click="showPropertiesEdit()">Edit</a>
       </div>
-      <div>
+      <div class="item-set">
         <div class="item-label" ng-class="propertiesLabelWidth">Name:</div>
         <div ng-class="propertiesWidth" ng-if="test.name.length" >{{test.name}}</div>
         <div class="placeholder" ng-class="propertiesWidth" ng-if="test.name.length === 0">No name...</div>
       </div>
-      <div>
+      <div class="item-set">
         <div class="item-label" ng-class="propertiesLabelWidth">Description:</div>
         <div class="description" ng-class="propertiesWidth" ng-if="test.description.length">{{test.description}}</div>
         <div class="placeholder" class="description" ng-class="propertiesWidth" ng-if="test.description.length === 0">No description...</div>
       </div>
-      <div class="duration">
+      <div class="duration item-set">
         <div class="item-label" ng-class="propertiesLabelWidth">Duration:</div>
         <div ng-class="propertiesWidth">{{test.duration}} seconds</div>
       </div>
@@ -76,7 +76,7 @@
                        required id="test-name"
                        data-toggle="tooltip"
                        data-placement="top"
-                       title="A unique name for the tool"
+                       title="A unique name for the test"
                        ng-model="propertiesCopy.name"
                        placeholder="Test name">
               </div>
@@ -132,12 +132,12 @@
         </div>
         <div class="modal-body">
 
-          <form novalidate class="form-horizontal" role="form">
+          <form novalidate class="form-horizontal" role="form" name="connectionForm">
             <div class="form-group">
               <label class="control-label" ng-class="labelWidth" for="duration">Input:</label>
               <div class="col-sm-10">
                 <div class="dropdown connection">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-connection-select" data-toggle="dropdown">
+                  <button class="btn btn-default dropdown-toggle" ng-class="{ 'pi-error': connectionFormStatus.$invalid }" type="button" id="dropdown-connection-select" data-toggle="dropdown">
                     <span ng-show="targetInputSignalCopy.connection.Path">{{ targetInputSignalCopy.connection.Path }}</span>
                     <span ng-hide="targetInputSignalCopy.connection.Path" class="placeholder">Select connection...</span>
                     <span class="caret"></span>
@@ -150,11 +150,12 @@
             </div>
           </form>
 
-          <pi-signal-builder signal-builder="targetInputSignalCopy.builder" total-time="test.duration">
+          <pi-signal-builder signal-builder="targetInputSignalCopy.builder" builder-form-status="builderFormStatus" total-time="test.duration">
           </pi-signal-builder>
         </div>
 
         <div class="modal-footer">
+          <div class="footer-message" ng-bind="inputFormMessage"></div>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" ng-click="saveInputSignal()">Save changes</button>
         </div>

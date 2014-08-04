@@ -24,7 +24,8 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
     restrict: 'E',
     scope: {
       signalBuilder: '=signalBuilder',
-      totalTime: '=totalTime'
+      totalTime: '=totalTime',
+      builderFormStatus: '=builderFormStatus'
     },
     templateUrl: 'partials/pi-signal-builder.html',
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
@@ -46,10 +47,11 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
 
     }],
     link: function($scope, $element, $attrs) {
-      $scope.$watch('[ signalBuilder.start, signalBuilder.duration, signalBuilder.amplitude ]', function(newVal) {
+      $scope.$watch('[ signalBuilder.start, signalBuilder.duration, signalBuilder.amplitude, signalBuilder.type ]', function(newVal) {
           if($scope.signalBuilder) {
             $scope.signalBuilder.buildSignal($scope.signal, $scope.totalTime);
             $scope.signalScene.TraceRenderer.Update();
+            _.assign($scope.builderFormStatus, _.pick($scope.builderForm, ['$valid', '$pristine', '$invalid', '$dirty']));
           }
         }, 10);
 

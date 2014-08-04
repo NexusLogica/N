@@ -150,6 +150,10 @@ body {
   box-shadow: $drop-shadow;
 }
 
+.pi-error {
+  border-color: $text-color-error;
+}
+
 .pi-body {
   .modal-dialog {
     .modal-header {
@@ -165,8 +169,12 @@ body {
   }
 }
 
-.item-label {
-  text-align: right;
+.item-set {
+  margin-bottom: 8px;
+  height: 20px;
+  .item-label {
+    text-align: right;
+  }
 }
 
 .footer-message {

@@ -39,15 +39,19 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       $scope.targetInputSignalId = '';
       $scope.targetInputSignal = null;
       $scope.targetInputSignalCopy = null;
+      $scope.builderFormStatus = {};
+      $scope.connectionFormStatus = {};
 
       $scope.labelWidth = 'col-sm-6';
       $scope.propertiesLabelWidth = 'col-sm-4';
       $scope.propertiesWidth = 'col-sm-10';
 
       $scope.inputLayerSourceCompartments = [];
+      $scope.formMessage = '';
+      $scope.inputFormMessage = '';
 
     }],
-    link: function($scope, $element, $attrs) {
+    link: function($scope, $element, $attrs, $ctrls) {
 
       $scope.showPropertiesEdit = function() {
         $scope.propertiesCopy = _.pick($scope.test, [ 'name', 'description', 'duration']);
@@ -88,6 +92,13 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       }
 
       $scope.saveInputSignal = function() {
+        if($scope.connectionFormStatus.$invalid || $scope.builderFormStatus.$invalid) {
+          if($scope.connectionFormStatus.$invalid) {
+            $scope.inputFormMessage = 'Please select an input';
+          }
+          return;
+        }
+        $scope.inputFormMessage = '';
         _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
         $element.find('.input-signal-edit').modal('hide');
       }
@@ -97,6 +108,12 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
           $scope.showPropertiesEdit();
         }
       });
+
+      $scope.$watch('targetInputSignalCopy.connection.Path', function(newVal) {
+        var valid = !_.isEmpty(newVal);
+        $scope.connectionFormStatus = { '$valid': valid, '$invalid': !valid }
+      });
+
       $scope.prettyPath = function(connection) {
         if(!connection) {
           return '';
