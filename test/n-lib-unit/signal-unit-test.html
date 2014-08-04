@@ -110,25 +110,25 @@
     equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");
 
     var signal2 = new N.DiscreteSignal;
-    //signal2.AppendDataArray
+    //signal2.appendDataArray
 
   });
 
   test("Analog signal statistics tests", function() {
     var signalZero = new N.AnalogSignal('SignalZero');
-    signalZero.AppendDataArray( [{ t:0.0, v:0.0 }, { t:0.2, v:0.0 }] );
+    signalZero.appendDataArray( [{ t:0.0, v:0.0 }, { t:0.2, v:0.0 }] );
     QUnit.assert.near(signalZero.Average(), 0.0, "Average of zero signal");
 
     var signalHalf = new N.AnalogSignal('SignalHalf');
-    signalHalf.AppendDataArray( [{ t:0.0, v:0.5 }, { t:0.2, v:0.5 }] );
+    signalHalf.appendDataArray( [{ t:0.0, v:0.5 }, { t:0.2, v:0.5 }] );
     QUnit.assert.near(signalHalf.Average(), 0.5, "Average of 0.5 signal");
 
     var signalRamp = new N.AnalogSignal('SignalRamp');
-    signalRamp.AppendDataArray( [{ t:0.0, v:0.0 }, { t:0.2, v:0.5 }] );
+    signalRamp.appendDataArray( [{ t:0.0, v:0.0 }, { t:0.2, v:0.5 }] );
     QUnit.assert.near(signalRamp.Average(), 0.25, "Average of ramping 0.0 t0 0.5 signal");
 
     var signalSaw = new N.AnalogSignal('SignalSaw');
-    signalSaw.AppendDataArray( [{ t:0.0, v:-1.0 }, { t:0.2, v:1.0 }, { t:0.4, v:-1.0 }, { t:0.6, v:1.0 }] );
+    signalSaw.appendDataArray( [{ t:0.0, v:-1.0 }, { t:0.2, v:1.0 }, { t:0.4, v:-1.0 }, { t:0.6, v:1.0 }] );
     QUnit.assert.near(signalSaw.Average(), 0.0, "Average of sawtooth -1.0 t0 1.0 signal");
 
     QUnit.assert.near(signalZero.AvgAbsDeviation(signalZero), 0.0, "Avg abs deviation of zero");
@@ -143,15 +143,15 @@
 
   test("Discrete signal statistics tests", function() {
     var signalZero = new N.DiscreteSignal('SignalZero');
-    signalZero.AppendDataArray( [{ t:0.0, v:0 }, { t:0.2, v:0 }] );
+    signalZero.appendDataArray( [{ t:0.0, v:0 }, { t:0.2, v:0 }] );
     QUnit.assert.near(signalZero.Average(), 0.0, "Average of zero signal");
 
     var signalHalf = new N.DiscreteSignal('SignalHalf');
-    signalHalf.AppendDataArray( [{ t:0.0, v:0 }, { t:0.1, v:1 }, { t:0.2, v:1 }] );
+    signalHalf.appendDataArray( [{ t:0.0, v:0 }, { t:0.1, v:1 }, { t:0.2, v:1 }] );
     QUnit.assert.near(signalHalf.Average(), 0.5, "Average of 0.5 signal");
 
     var signalSaw = new N.DiscreteSignal('SignalSaw');
-    signalSaw.AppendDataArray( [{ t:0.0, v:1 }, { t:0.025, v:0 }, { t:0.05, v:1 }, { t:0.075, v:0 }, { t:0.1, v:1 }, { t:0.125, v:0 }, { t:0.15, v:1 }, { t:0.175, v:0 }, { t:0.2, v:1 }] );
+    signalSaw.appendDataArray( [{ t:0.0, v:1 }, { t:0.025, v:0 }, { t:0.05, v:1 }, { t:0.075, v:0 }, { t:0.1, v:1 }, { t:0.125, v:0 }, { t:0.15, v:1 }, { t:0.175, v:0 }, { t:0.2, v:1 }] );
     QUnit.assert.near(signalSaw.Average(), 0.5, "Average of sawtooth 0.0 t0 1.0 signal");
 
     QUnit.assert.near(signalZero.AvgAbsDeviation(signalZero), 0.0, "Avg abs deviation of zero");

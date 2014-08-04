@@ -123,6 +123,40 @@ N.UI.SignalTrace.prototype.Render = function(svgParent, pos, padding) {
   }
 }
 
+N.UI.SignalTrace.prototype.Update = function() {
+  if(this.Source) {
+    this.Signal = this.Source.Source[this.Source.PropName];
+  }
+
+  if(!this.Signal) {
+    this.RenderNoData();
+    return;
+  }
+
+  var num = this.Signal.GetNumSamples();
+  if(num > 1) {
+    var range = this.Signal.GetTimeByIndex(num-1)-this.Signal.GetTimeByIndex(0);
+    this.Scale = this.Pos.Width/range;
+  }
+
+  this.CalculateVerticalRange();
+  this.CalculateHorizontalRange();
+
+
+  if(this.Signal.GetNumSamples() > 1) {
+    this.RenderXAxis();
+
+    if(this.Signal.Type === N.ANALOG) {
+      this.RenderAnalogTrace();
+    }
+    else {
+      this.RenderDiscreteTrace();
+    }
+  } else {
+    this.RenderNoData();
+  }
+}
+
 N.UI.SignalTrace.prototype.RenderAnalogTrace = function() {
   var t = this.Signal.GetTimeByIndex(this.StartIndex);
   var val = this.Signal.GetValueByIndex(this.StartIndex);
@@ -138,14 +172,16 @@ N.UI.SignalTrace.prototype.RenderAnalogTrace = function() {
     p += 'L'+tScaled+' '+valScaled;
   }
 
+  // TODO: get the correct value for extra. Should be equal half the stroke width.
+  var extra = 200;
   if(!this.Path) {
     this.Path = this.Group.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
-    var extra = 200;
     this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
     this.Path.clipWith(this.ClipRect);
   }
   else {
     this.Path.plot(p);
+    this.ClipRect.size(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
   }
 }
 
@@ -237,10 +273,12 @@ N.UI.SignalTrace.prototype.PixelToY = function(pixel) {
 }
 
 N.UI.SignalTrace.prototype.CalculateVerticalRange = function() {
-  var range = (this.Signal.MaxLimit-this.Signal.MinLimit);
+  // TODO: Need to have a flag for when to show MaxLimit or when to show the signal max.
+  //var range = (this.Signal.MaxLimit-this.Signal.MinLimit);
+  var range = (this.Signal.Max-this.Signal.Min)*1.1;
   this.YScale = this.Pos.Height/range;
-  this.YAtBottom = this.Signal.MinLimit;
-  this.YOriginPixels = -this.Pos.Height*this.Signal.MinLimit/range;
+  this.YAtBottom = this.Signal.Min+0.05*range;
+  this.YOriginPixels = -this.Pos.Height*this.Signal.Min/range;
 }
 
 N.UI.SignalTrace.prototype.CalculateHorizontalRange = function() {

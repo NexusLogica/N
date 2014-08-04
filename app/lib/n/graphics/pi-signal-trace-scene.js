@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : scenes.js
+File     : pi-signal-trace-scene.js
 Project  : N Simulator Library
 Purpose  : Source file for scenes.
 Revisions: Original definition by Lawrence Gunn.
@@ -38,20 +38,20 @@ N.UI.SignalTraceScene.prototype.SetSignal = function(signal) {
  * @param paddingHoriz
  * @param paddingVert
  */
-N.UI.SignalTraceScene.prototype.ScaleToFit = function(width, height, paddingHoriz, paddingVert) {
+N.UI.SignalTraceScene.prototype.ScaleToFit = function(width, height, padding) {
   this.Width = width;
   this.Height = height;
-  this.PaddingHoriz = paddingHoriz;
-  this.PaddingVert = paddingVert;
+  this.PaddingHoriz = padding.Horizontal();
+  this.PaddingVert = padding.Vertical();
   this.IdealContainerWidth = this.Width;
   this.IdealContainerHeight = this.Height;
 }
 
 N.UI.SignalTraceScene.prototype.Render = function(svgParent) {
-  this.TraceRenderer.Configure(svgParent, this.Signal);
-  this.Box = { X: this.PaddingHoriz, Y: this.PaddingVert, Width: (this.Width-2*this.PaddingHoriz), Height: (this.Height-2*this.PaddingVert) };
-  this.TraceRenderer.SetCanvasBoundary(this.Box);
+  this.TraceRenderer.SvgParent = svgParent;
+  this.TraceRenderer.SetSignal(this.Signal);
+  this.Box = { X: this.PaddingHoriz, Y: this.PaddingVert, Width: (this.Width-this.PaddingHoriz), Height: (this.Height-this.PaddingVert) };
 
   this.BackgroundRect = svgParent.rect(this.Box.Width, this.Box.Height).move(this.Box.X, this.Box.Y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
-  this.TraceRenderer.Render();
+  this.TraceRenderer.Render(svgParent, this.Box, new N.UI.Padding());
 }

@@ -39,8 +39,26 @@ N.WorkbenchTest = function(workbench) {
  * @returns {N.WorkbenchTest}
  */
 N.WorkbenchTest.prototype.addInputSignal = function() {
-  var test = { id: N.GenerateUUID(), connection: null, builder: new N.SignalBuilder() };
+  var test = new N.WorkbenchTestInput(this);
   this.inputSignals.push(test);
   this.inputSignals[test.id] = test;
   return test;
+}
+
+  //************************
+  //* N.WorkbenchTestInput *
+  //************************
+
+N.WorkbenchTestInput = function(test) {
+  this.workbenchTest = test;
+  this.id = N.GenerateUUID();
+  this.connection = null;
+  this.builder = new N.SignalBuilder();
+};
+
+N.WorkbenchTestInput.prototype.clone = function() {
+  var copy = new N.WorkbenchTestInput(this.workbenchTest);
+  _.assign(copy, _.pick(this, ['id', 'connection']));
+  copy.builder = this.builder.clone();
+  return copy;
 }

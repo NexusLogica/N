@@ -58,7 +58,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
 
         var size = GetSize();
 
-        var padding = new N.UI.Padding((_.isUndefined($attrs.piPadding) ? 20 : parseInt($attrs.piPadding)));
+        var padding = new N.UI.Padding((_.isUndefined($attrs.piPadding) ? 0 : parseInt($attrs.piPadding, 10)));
 
         if(!_.isUndefined($attrs.piFitWidth) && $scope.scene.ScaleToFitWidth) {
           $scope.scene.ScaleToFitWidth(size.Width, padding);

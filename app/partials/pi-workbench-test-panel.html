@@ -27,18 +27,20 @@
     <table class="table table-bordered table-striped">
       <thead>
        <tr>
-         <th style="width: 100px;">Input</th>
-         <th style="width: 100px;">Type</th>
-         <th style="width: 50px;">Start (s)</th>
-         <th style="width: 50px;">Duration (s)</th>
+         <th class="input">Input</th>
+         <th class="type">Type</th>
+         <th class="start">Start</th>
+         <th class="duration">Dur</th>
+         <th class="amplitude">Amp</th>
        </tr>
       </thead>
       <tbody>
        <tr ng-repeat="inputSignal in test.inputSignals">
-         <td>{{inputSignal.connection.Path}}</td>
+         <td>{{prettyPath(inputSignal.connection)}}</td>
          <td>{{inputSignal.builder.type}}</td>
          <td>{{inputSignal.builder.start}}</td>
          <td>{{inputSignal.builder.duration}}</td>
+         <td>{{inputSignal.builder.amplitude}}</td>
        </tr>
       </tbody>
     </table>
@@ -148,7 +150,7 @@
             </div>
           </form>
 
-          <pi-signal-builder signal-builder="targetInputSignalCopy.builder">
+          <pi-signal-builder signal-builder="targetInputSignalCopy.builder" total-time="test.duration">
           </pi-signal-builder>
         </div>
 

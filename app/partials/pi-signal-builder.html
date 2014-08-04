@@ -4,7 +4,7 @@
     <div class="form-group">
       <label class="control-label" ng-class="labelWidth" for="signal-type">Signal type:</label>
       <div class="col-sm-10">
-        <select class="form-control"  id="signal-type" ng-model="inputSignal.type" ng-options="inputType.type as inputType.name for inputType in inputTypes">
+        <select class="form-control"  id="signal-type" ng-model="signalBuilder.type" ng-options="inputType.type as inputType.name for inputType in inputTypes">
         </select>
       </div>
     </div>
@@ -27,4 +27,9 @@
       </div>
     </div>
   </form>
+  <div>
+    <div class="pi-scene pi-signal-trace-scene row">
+      <pi-canvas class="signal-trace-canvas" pi-scene="signalScene" pi-padding="0" pi-trace-view canvas-origin="upper-left"></pi-canvas>
+    </div>
+  </div>
 </div>

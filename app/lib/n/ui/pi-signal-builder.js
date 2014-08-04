@@ -23,10 +23,11 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
   return {
     restrict: 'E',
     scope: {
-      signalBuilder: '=signalBuilder'
+      signalBuilder: '=signalBuilder',
+      totalTime: '=totalTime'
     },
     templateUrl: 'partials/pi-signal-builder.html',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', '$timeout', function ($scope, $timeout) {
 
       $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
       $scope.signalTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
@@ -39,9 +40,22 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
       $scope.propertiesLabelWidth = 'col-sm-4';
       $scope.propertiesWidth = 'col-sm-10';
 
+      $scope.signal = new N.AnalogSignal();
+      $scope.signalScene = new N.UI.SignalTraceScene();
+      $scope.signalScene.SetSignal($scope.signal);
+
     }],
     link: function($scope, $element, $attrs) {
+      $scope.$watch('[ signalBuilder.start, signalBuilder.duration, signalBuilder.amplitude ]', function(newVal) {
+          if($scope.signalBuilder) {
+            $scope.signalBuilder.buildSignal($scope.signal, $scope.totalTime);
+            $scope.signalScene.TraceRenderer.Update();
+          }
+        }, 10);
 
+      // TODO: Fix this so that the canvas supplies the scene with its svgParent.
+      var svgParent = $element.find('g.pi-signal-trace').get(0).instance;
+      $scope.signalScene.Render(svgParent);
     }
   };
 }]);

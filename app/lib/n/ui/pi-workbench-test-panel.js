@@ -29,8 +29,8 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
     controller: ['$scope', function ($scope) {
       $scope.propertiesCopy = {};
 
-      $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
-      $scope.signalTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];
+      $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hz' } ];
+      $scope.signalTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hz' } ];
 
       $scope.amplitudeUnits = function(inputSignal) {
         return (inputSignal ? _.find($scope.inputTypes, function(inputType) { return (inputType.type === inputSignal.type); }).units : '');
@@ -77,9 +77,9 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
 
       $scope.showInputSignalEdit = function(inputSignal) {
         fillCompartmentLists();
-        debugger;
         $scope.targetInputSignalId = inputSignal.id;
-        $scope.targetInputSignalCopy = _.cloneDeep(inputSignal);
+        $scope.targetInputSignalCopy = inputSignal.clone();
+
         $element.find('.input-signal-edit').modal('show');
       }
 
@@ -88,7 +88,6 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       }
 
       $scope.saveInputSignal = function() {
-        debugger;
         _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
         $element.find('.input-signal-edit').modal('hide');
       }
@@ -98,6 +97,14 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
           $scope.showPropertiesEdit();
         }
       });
+      $scope.prettyPath = function(connection) {
+        if(!connection) {
+          return '';
+        }
+        var paths = N.FromConnectionPaths(connection.Network, connection.Path);
+        var sink = paths.Sink;
+        return sink.Neuron.Name+' > '+sink.Name;
+      }
 
       var fillCompartmentLists = function() {
         $scope.inputLayerSourceCompartments = [];

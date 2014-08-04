@@ -37,19 +37,14 @@ N.AnalogSignal = function(name) {
   this.ClassName  = 'N.AnalogSignal';
   this.Type       = N.ANALOG;
   this.Id         = N.GenerateUUID();
-  this.Times      = [];
-  this.TimeMin    = 0.0;
-  this.TimeMax    = 0.0;
-  this.Values     = [];
   this._finder    = new N.TableSearch();
-  this.Start      = 0.0;
   this.Name       = (typeof name === 'string' ? name : '');
   this.Category   = 'Default';
-  this.Min        = 0.0;
-  this.Max        = 0.0;
+  this.Unit       = 'Hz';
   this.MinLimit   = 0.0;
   this.MaxLimit   = 100.0;
-  this.Unit       = 'Hz';
+
+  this.clear();
 }
 
 /**
@@ -132,11 +127,27 @@ N.AnalogSignal.prototype.AppendData = function(time, value) {
   }
 }
 
-N.AnalogSignal.prototype.AppendDataArray = function(dataArray) {
+N.AnalogSignal.prototype.appendDataArray = function(dataArray) {
   for(var i=0; i<dataArray.length; i++) {
     var dataSet = dataArray[i];
     this.AppendData(dataSet.t, dataSet.v);
   }
+}
+
+/***
+ * Clears the array data and any derived numeric values (such as max and min).
+ * @method clear
+ * @return {N.AnalogSignal} this
+ */
+N.AnalogSignal.prototype.clear = function() {
+  this.Times      = [];
+  this.TimeMin    = 0.0;
+  this.TimeMax    = 0.0;
+  this.Values     = [];
+  this.Start      = 0.0;
+  this.Min        = 0.0;
+  this.Max        = 0.0;
+  return this;
 }
 
 N.AnalogSignal.prototype.GetIndexBeforeTime = function(t) {
@@ -329,7 +340,7 @@ N.DiscreteSignal.prototype.AppendData = function(time, newState) {
   }
 }
 
-N.DiscreteSignal.prototype.AppendDataArray = function(dataArray) {
+N.DiscreteSignal.prototype.appendDataArray = function(dataArray) {
   for(var i=0; i<dataArray.length; i++) {
     var dataSet = dataArray[i];
     this.AppendData(dataSet.t, dataSet.v);
@@ -404,7 +415,7 @@ N.DiscreteSignal.prototype.ToJSON = function() {
 N.DiscreteSignal.prototype.LoadFrom = function(json) {
   for(var i in json) {
     if(i === 'DataArray') {
-      this.AppendDataArray(json[i]);
+      this.appendDataArray(json[i]);
     }
     else {
       this[i] = json[i];

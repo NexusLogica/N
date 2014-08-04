@@ -37,7 +37,7 @@ N.SignalBuilder = function() {
   this.start      = 0.0;
   this.duration   = 0.010;
   this.shape      = 'square'
-  this.amplitude  = '0.02';
+  this.amplitude  = 0.02;
 }
 
 /**
@@ -45,7 +45,36 @@ N.SignalBuilder = function() {
  * @method SetType
  * @param {String} type
  */
-N.SignalBuilder.prototype.SetType = function(type) {
+N.SignalBuilder.prototype.setType = function(type) {
   this.type = type;
   return this;
+}
+
+/**
+ * Sets the type.
+ * @method clone
+ * @return {N.SignalBuilder} copy
+ */
+N.SignalBuilder.prototype.clone = function() {
+  var copy = new N.SignalBuilder();
+  _.assign(copy, _.pick(this, ['type', 'start', 'duration', 'shape', 'amplitude']));
+  return copy;
+}
+
+N.SignalBuilder.prototype.buildSignal = function(signal, totalTime) {
+  var data = [];
+  if(this.type === 'voltage') {
+    if(this.shape === 'square') {
+      data.push( { t: 0.0 , v: 0.0 } );
+      if(this.start > 0.0) {
+        data.push( { t: this.start , v: 0.0 } );
+      }
+      data.push( { t: this.start+N.TimeStep ,   v: this.amplitude } );
+      data.push( { t: this.start+this.duration, v: this.amplitude } );
+      data.push( { t: this.start+this.duration+ N.TimeStep, v: 0.0 } );
+      data.push( { t: totalTime, v: 0.0 } );
+    }
+  }
+  signal.clear();
+  signal.appendDataArray(data);
 }
