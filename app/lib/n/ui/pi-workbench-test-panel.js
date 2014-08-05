@@ -23,7 +23,8 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
   return {
     restrict: 'E',
     scope: {
-      test: '=test'
+      test: '=test',
+      testStatus: '=testStatus'
     },
     templateUrl: 'partials/pi-workbench-test-panel.html',
     controller: ['$scope', function ($scope) {
@@ -53,13 +54,20 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
     }],
     link: function($scope, $element, $attrs, $ctrls) {
 
+      var pathToTraceId = function(path) {
+        var paths = N.FromConnectionPaths($scope.test.workbench.Network, path);
+
+        // TODO: Need fix for default output 'Main'
+        return paths.Source.Neuron.Name+'//'+paths.Source.Name+'//'+'Main';
+      }
+
       $scope.showPropertiesEdit = function() {
         $scope.propertiesCopy = _.pick($scope.test, [ 'name', 'description', 'duration']);
         $element.find('.properties-edit').modal('show');
       }
 
       $scope.addInputSignal = function() {
-        var inputSignal = $scope.test.addInputSignal();
+        var inputSignal = new N.WorkbenchTestInput();
         $scope.showInputSignalEdit(inputSignal);
       }
 
@@ -87,8 +95,8 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         $element.find('.input-signal-edit').modal('show');
       }
 
-      $scope.setInputSignalPath = function(source) {
-        $scope.targetInputSignalCopy.connection = source.connection;
+      $scope.setInputSignalPath = function(path) {
+        $scope.targetInputSignalCopy.connection = path;
       }
 
       $scope.saveInputSignal = function() {
@@ -99,8 +107,19 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
           return;
         }
         $scope.inputFormMessage = '';
-        _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
+
+        $scope.targetInputSignalCopy.traceId = pathToTraceId($scope.targetInputSignalCopy.connection);
+
+        if(!$scope.targetInputSignalCopy.workbenchTest) {
+           $scope.test.insertInputSignal($scope.targetInputSignalCopy);
+        } else {
+          _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
+        }
+
+
         $element.find('.input-signal-edit').modal('hide');
+
+        $scope.testStatus.updateRequired = true;
       }
 
       $scope.$on('pi-workbench-panel:show-properties', function(event, selectedTestId) {
@@ -109,18 +128,18 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         }
       });
 
-      $scope.$watch('targetInputSignalCopy.connection.Path', function(newVal) {
+      $scope.$watch('targetInputSignalCopy.connection', function(newVal) {
         var valid = !_.isEmpty(newVal);
         $scope.connectionFormStatus = { '$valid': valid, '$invalid': !valid }
       });
 
-      $scope.prettyPath = function(connection) {
-        if(!connection) {
+      $scope.prettyPath = function(path) {
+        if(!path) {
           return '';
         }
-        var paths = N.FromConnectionPaths(connection.Network, connection.Path);
+        var paths = N.FromConnectionPaths($scope.test.workbench.Network, path);
         var sink = paths.Sink;
-        return sink.Neuron.Name+' > '+sink.Name;
+        return sink.Neuron.Name+' -> '+sink.Name;
       }
 
       var fillCompartmentLists = function() {

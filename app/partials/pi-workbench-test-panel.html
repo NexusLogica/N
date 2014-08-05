@@ -35,7 +35,7 @@
        </tr>
       </thead>
       <tbody>
-       <tr ng-repeat="inputSignal in test.inputSignals">
+       <tr ng-repeat="inputSignal in test.inputSignals" ng-click="showInputSignalEdit(inputSignal)">
          <td>{{prettyPath(inputSignal.connection)}}</td>
          <td>{{inputSignal.builder.type}}</td>
          <td>{{inputSignal.builder.start}}</td>
@@ -138,12 +138,12 @@
               <div class="col-sm-10">
                 <div class="dropdown connection">
                   <button class="btn btn-default dropdown-toggle" ng-class="{ 'pi-error': connectionFormStatus.$invalid }" type="button" id="dropdown-connection-select" data-toggle="dropdown">
-                    <span ng-show="targetInputSignalCopy.connection.Path">{{ targetInputSignalCopy.connection.Path }}</span>
-                    <span ng-hide="targetInputSignalCopy.connection.Path" class="placeholder">Select connection...</span>
+                    <span ng-show="targetInputSignalCopy.connection">{{ targetInputSignalCopy.connection }}</span>
+                    <span ng-hide="targetInputSignalCopy.connection" class="placeholder">Select connection...</span>
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-connection-select">
-                    <li ng-repeat="source in inputLayerSourceCompartments"><a ng-click="setInputSignalPath(source)" tabindex="-1" href="#">{{source.connection.Path}}</a></li>
+                    <li ng-repeat="source in inputLayerSourceCompartments"><a ng-click="setInputSignalPath(source.connection.Path)" tabindex="-1" href="#">{{source.connection.Path}}</a></li>
                   </ul>
                 </div>
               </div>

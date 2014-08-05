@@ -54,23 +54,36 @@ N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
 
   for(var i in workbench.Network.Networks) {
     var network = workbench.Network.Networks[i];
-    console.log('*** Network name '+network.Name);
     for(var j in network.Neurons) {
       var neuron = network.Neurons[j];
-      console.log('  *** Neuron '+neuron.Name);
       for(var k in neuron.Compartments) {
         var compartment = neuron.Compartments[k];
-        console.log('    *** Compartment '+compartment.Name+'/'+compartment.ClassName);
         for(var m in compartment.IoMetaData.Signals) {
           var signalData = compartment.IoMetaData.Signals[m];
-          console.log('      *** Prop = '+signalData.PropName);
-          this.SignalGraphScene.AddTraceFromSource(compartment, signalData.PropName);
+          var id = compartment.Neuron.Name+'//'+compartment.Name+'//'+signalData.Name;
+          this.SignalGraphScene.AddTraceFromSource(id, compartment, signalData.PropName);
+          console.log('*** Trace = '+id);
         }
       }
     }
   }
 }
 
+N.UI.WorkbenchScene.prototype.showTest = function(test) {
+  this.activeTest = test;
+  this.testUpdated();
+}
+
+N.UI.WorkbenchScene.prototype.testUpdated = function() {
+  var _this = this;
+  _.forEach(this.activeTest.inputSignals, function(inputSignal) {
+    //this.Network;
+    console.log(inputSignal.connection);
+    var signal = _this.SignalGraphScene.GetTraceFromId(inputSignal.traceId);
+    inputSignal.builder.buildSignal(signal.SignalGraphic.Signal, _this.activeTest.duration);
+    signal.SignalGraphic.Update();
+  });
+}
 /**
  * Calculates the scale that will fit the network to a given width.
  * @method ScaleToFitWidth

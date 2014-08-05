@@ -92,7 +92,7 @@ N.UI.SignalTrace.prototype.Render = function(svgParent, pos, padding) {
 
   if(!this.Signal) {
     this.RenderNoData();
-    return;
+    return this;
   }
 
   if(this.NoDataText) { this.NoDataText.hide(); }
@@ -123,6 +123,7 @@ N.UI.SignalTrace.prototype.Render = function(svgParent, pos, padding) {
   } else {
     this.RenderNoData();
   }
+  return this;
 }
 
 N.UI.SignalTrace.prototype.Update = function() {
@@ -132,7 +133,7 @@ N.UI.SignalTrace.prototype.Update = function() {
 
   if(!this.Signal) {
     this.RenderNoData();
-    return;
+    return this;
   }
 
   if(this.NoDataText) { this.NoDataText.hide(); }
@@ -159,6 +160,7 @@ N.UI.SignalTrace.prototype.Update = function() {
   } else {
     this.RenderNoData();
   }
+  return this;
 }
 
 N.UI.SignalTrace.prototype.RenderAnalogTrace = function() {

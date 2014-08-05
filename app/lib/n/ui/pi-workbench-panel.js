@@ -29,6 +29,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
 
       $scope.workbench = $scope.workbenchScene.workbench;
+      $scope.testStatus = { updateRequired: false };
 
       $scope.$on('pi-canvas:event-broadcast-request', function(broadcastEvent, event, obj) {
         broadcastEvent.stopPropagation();
@@ -46,6 +47,10 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
 
       $scope.testNameFromId = function(id) {
         return _.find($scope.tests, function(test) { return test.id === id; }).name;
+      }
+
+      $scope.testFromId = function(id) {
+        return _.find($scope.tests, function(test) { return test.id === id; });
       }
 
       $scope.onNextTest = function() {
@@ -68,6 +73,19 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
         test.name = 'Test '+$scope.workbench.tests.length;
       }
 
+      $scope.$watch('selectedTestId', function(testId) {
+        if(!_.isEmpty(testId)) {
+          var test = $scope.testFromId(testId);
+          $scope.workbenchScene.showTest(test);
+        }
+      });
+
+      $scope.$watch('testStatus.updateRequired', function(updated) {
+        if(updated) {
+          $scope.testStatus.updateRequired = false;
+          $scope.workbenchScene.testUpdated();
+        }
+      });
     }],
     link: function(scope, element, attrs) {
 

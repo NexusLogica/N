@@ -34,8 +34,12 @@ N.UI.SignalGraphScene = function() {
   this.Height = 100;
 }
 
-N.UI.SignalGraphScene.prototype.AddTraceFromSource = function(source, propName) {
-  this.SignalGraph.AddTraceFromSource(source, propName);
+N.UI.SignalGraphScene.prototype.AddTraceFromSource = function(id, source, propName) {
+  this.SignalGraph.AddTraceFromSource(id, source, propName);
+}
+
+N.UI.SignalGraphScene.prototype.GetTraceFromId = function(id) {
+  return this.SignalGraph.TracesById[id];
 }
 
 /**

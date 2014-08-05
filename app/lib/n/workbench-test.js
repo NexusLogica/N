@@ -35,30 +35,31 @@ N.WorkbenchTest = function(workbench) {
 
 /**
  * Adds an input sink to the input network.
- * @method AddInputSource
+ * @method AddInputSignal
  * @returns {N.WorkbenchTest}
  */
-N.WorkbenchTest.prototype.addInputSignal = function() {
-  var test = new N.WorkbenchTestInput(this);
-  this.inputSignals.push(test);
-  this.inputSignals[test.id] = test;
-  return test;
+N.WorkbenchTest.prototype.insertInputSignal = function(inputSignal) {
+  inputSignal.workbenchTest = this;
+  this.inputSignals.push(inputSignal);
+  this.inputSignals[inputSignal.id] = inputSignal;
+  return this;
 }
 
   //************************
   //* N.WorkbenchTestInput *
   //************************
 
-N.WorkbenchTestInput = function(test) {
-  this.workbenchTest = test;
+N.WorkbenchTestInput = function() {
+  this.workbenchTest = null;
   this.id = N.GenerateUUID();
-  this.connection = null;
+  this.connection = ''; // The path
   this.builder = new N.SignalBuilder();
+  this.traceId = '';
 };
 
 N.WorkbenchTestInput.prototype.clone = function() {
   var copy = new N.WorkbenchTestInput(this.workbenchTest);
-  _.assign(copy, _.pick(this, ['id', 'connection']));
+  _.assign(copy, _.pick(this, ['id', 'connection', 'workbenchTest', 'traceId']));
   copy.builder = this.builder.clone();
   return copy;
 }

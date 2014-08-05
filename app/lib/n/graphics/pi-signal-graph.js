@@ -29,10 +29,12 @@ N.UI.SignalGraph = function() {
   this.Height = 100;
 
   this.Traces = [];
+  this.TracesById = {};
 }
 
-N.UI.SignalGraph.prototype.AddTraceFromSource = function(source, propName, additionalClasses) {
-  this.Traces.push({ Source: source, PropName: propName, AdditionalClasses: additionalClasses });
+N.UI.SignalGraph.prototype.AddTraceFromSource = function(id, source, propName, additionalClasses) {
+  this.TracesById[id] = { id: id, Source: source, PropName: propName, AdditionalClasses: additionalClasses };
+  this.Traces.push(this.TracesById[id]);
 }
 
 N.UI.SignalGraph.prototype.AddTrace = function(signal) {
