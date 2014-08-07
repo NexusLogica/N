@@ -249,24 +249,78 @@ N.Network.prototype.Connect = function() {
   for(i=0; i<num; i++) {
     this.Neurons[i].ConnectCompartments();
   }
+
+  var numNetworks = this.Networks.length;
+  for(i=0; i<numNetworks; i++) {
+    this.Networks[i].Connect();
+  }
   return this;
 }
 
 /**
  * Update the output of all child networks, neurons, and connections.
- * @method Upate
+ * @method upate
  * @param {Real} time The time of the current simulation step.
  * @return {Network} Returns a reference to self.
  */
-N.Network.prototype.Update = function(time) {
+N.Network.prototype.update = function(time) {
+  this.updateConnections(time);
+  this.updateNeurons(time);
+}
+
+/**
+ * Update all connection outputs. This should only be called by a top level or parent network.
+ * @method updateConnections
+ * @param {Real} time The time of the current simulation step.
+ * @return {Network} Returns a reference to self.
+ */
+N.Network.prototype.updateConnections = function(time) {
   var numConnections = this.Connections.length;
   for(var i=0; i<numConnections; i++) {
-    this.Connections[i].Update(time);
+    this.Connections[i].update(time);
+  }
+
+  var numNetworks = this.Networks.length;
+  for(var j=0; j<numNetworks; j++) {
+    this.Networks[j].updateConnections(time);
+  }
+  return this;
+}
+
+/**
+ * Update all neuron outputs. This should only be called by a top level or parent network.
+ * @method updateNeurons
+ * @param {Real} time The time of the current simulation step.
+ * @return {Network} Returns a reference to self.
+ */
+N.Network.prototype.updateNeurons = function(time) {
+  var num = this.Neurons.length;
+  for(var i=0; i<num; i++) {
+    this.Neurons[i].update(time);
+  }
+
+  var numNetworks = this.Networks.length;
+  for(var j=0; j<numNetworks; j++) {
+    this.Networks[j].updateNeurons(time);
+  }
+  return this;
+}
+
+/**
+ * Returns the network and all neurons, compartments, and connections to the initial state. All output signal values will
+ * be cleared as part of this.
+ * @method clear
+ * @return {Network} Returns a reference to self.
+ */
+N.Network.prototype.clear = function() {
+  var numConnections = this.Connections.length;
+  for(var i=0; i<numConnections; i++) {
+    this.Connections[i].clear();
   }
 
   var num = this.Neurons.length;
   for(i=0; i<num; i++) {
-    this.Neurons[i].Update(time);
+    this.Neurons[i].clear();
   }
   return this;
 }

@@ -84,6 +84,11 @@ N.UI.WorkbenchScene.prototype.testUpdated = function() {
     signal.SignalGraphic.Update();
   });
 }
+
+N.UI.WorkbenchScene.prototype.runActiveTest = function() {
+  this.workbench.runTest(this.activeTest);
+}
+
 /**
  * Calculates the scale that will fit the network to a given width.
  * @method ScaleToFitWidth

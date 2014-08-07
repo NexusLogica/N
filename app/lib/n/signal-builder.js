@@ -38,6 +38,7 @@ N.SignalBuilder = function() {
   this.duration   = 0.010;
   this.shape      = 'square'
   this.amplitude  = 0.02;
+  this.offset     = 0.0;
 }
 
 /**
@@ -57,7 +58,7 @@ N.SignalBuilder.prototype.setType = function(type) {
  */
 N.SignalBuilder.prototype.clone = function() {
   var copy = new N.SignalBuilder();
-  _.assign(copy, _.pick(this, ['type', 'start', 'duration', 'shape', 'amplitude']));
+  _.assign(copy, _.pick(this, ['type', 'start', 'duration', 'shape', 'amplitude', 'offset']));
   return copy;
 }
 
@@ -65,14 +66,14 @@ N.SignalBuilder.prototype.buildSignal = function(signal, totalTime) {
   var data = [];
   if(this.type === 'voltage') {
     if(this.shape === 'square') {
-      data.push( { t: 0.0 , v: 0.0 } );
+      data.push( { t: 0.0 , v: this.offset } );
       if(this.start > 0.0) {
-        data.push( { t: this.start , v: 0.0 } );
+        data.push( { t: this.start , v: this.offset } );
       }
-      data.push( { t: this.start+N.TimeStep ,   v: this.amplitude } );
-      data.push( { t: this.start+this.duration, v: this.amplitude } );
-      data.push( { t: this.start+this.duration+ N.TimeStep, v: 0.0 } );
-      data.push( { t: totalTime, v: 0.0 } );
+      data.push( { t: this.start+N.TimeStep ,   v: this.amplitude+this.offset } );
+      data.push( { t: this.start+this.duration, v: this.amplitude+this.offset } );
+      data.push( { t: this.start+this.duration+ N.TimeStep, v: this.offset } );
+      data.push( { t: totalTime, v: this.offset } );
     }
   }
   signal.clear();

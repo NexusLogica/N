@@ -39,6 +39,7 @@ N.UI.SignalTrace = function() {
   this.TimeAtOrigin = 0.0;
   this.YAtOrigin = 0.0;
   this.Scale = 1.0; // Default
+  this.ShowOrigin = true;
 }
 
 N.UI.SignalTrace.prototype.SetSignal = function(signal) {
@@ -255,36 +256,49 @@ N.UI.SignalTrace.prototype.RenderXAxis = function() {
 // where scale is d(pixel)/d(time)
 //
 N.UI.SignalTrace.prototype.TimeToPixel = function(time) {
-  var pixel = this.Scale*(time-this.TimeAtOrigin)+this.Pos.X;
+  var pixel = this.Scale*(time-this.TimeAtOrigin);
   return pixel;
 }
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
 N.UI.SignalTrace.prototype.PixelToTime = function(pixel) {
-  var time = (pixel+this.TimeAtOrigin-this.Pos.X)/this.Scale;
+  var time = (pixel+this.TimeAtOrigin)/this.Scale;
   return time;
 }
 
 N.UI.SignalTrace.prototype.YToPixel = function(y) {
-  var pixelUp = this.YScale*y+this.YOriginPixels;
-  var pixelDown = this.Pos.Y+this.Pos.Height - pixelUp;
-  return pixelDown;
+  var pixel = this.Pos.Height-(this.YScale*y+this.YClearBelowMin);
+  //var pixelUp = this.YScale*y+this.YOriginPixels;
+  //var pixelDown = this.Pos.Height - pixelUp;
+  return pixel;
 }
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
 N.UI.SignalTrace.prototype.PixelToY = function(pixel) {
+  // TODO: Not implemented.
   return 0;
 }
 
 N.UI.SignalTrace.prototype.CalculateVerticalRange = function() {
   // TODO: Need to have a flag for when to show MaxLimit or when to show the signal max.
   //var range = (this.Signal.MaxLimit-this.Signal.MinLimit);
-  var range = (this.Signal.Max-this.Signal.Min)*1.1;
+  var min = this.Signal.Min;
+  var max = this.Signal.Max;
+  if((max*min) > 0.0 && this.ShowOrigin) {
+    if(max > 0) {
+      min = 0.0;
+    } else {
+      max = 0.0;
+    }
+  }
+
+  var range = (max-min)*1.1;
   this.YScale = this.Pos.Height/range;
-  this.YAtBottom = this.Signal.Min+0.05*range;
-  this.YOriginPixels = -this.Pos.Height*this.Signal.Min/range;
+  this.YClearBelowMin = this.YScale*0.05*range;
+//  this.YOriginPixels = -this.Pos.Height*min/range;
+//  this.YOriginPixels = this.Pos.Height-this.YScale*0.05*range;
 }
 
 N.UI.SignalTrace.prototype.CalculateHorizontalRange = function() {

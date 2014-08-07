@@ -111,10 +111,26 @@ N.Neuron.prototype.ConnectCompartments = function() {
   }
 }
 
-N.Neuron.prototype.Update = function(time) {
+/***
+ * Update the compartment values.
+ * @method update
+ * @param time
+ */
+N.Neuron.prototype.update = function(time) {
   var num = this.Compartments.length;
   for(var i=0; i<num; i++) {
-    this.Compartments[i].Update(time);
+    this.Compartments[i].update(time);
+  }
+}
+
+/***
+ * Clears any stored data from a previous simulation. Does not clear input data.
+ * @method clear
+ */
+N.Neuron.prototype.clear = function() {
+  var num = this.Compartments.length;
+  for(var i=0; i<num; i++) {
+    this.Compartments[i].clear();
   }
 }
 

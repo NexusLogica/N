@@ -92,7 +92,14 @@ N.WorkbenchTestScenes.FastSpiking = {
   Name: 'FS',
   Compartments: [{
     ClassName: 'N.Comp.Output',
-    Name: 'OP'
+    Name: 'OP',
+    InitialOutput: 0.0,
+    OutputLogic: {
+      OutputFunc: N.Comp.OutputFunc.LinearSum,
+      Sources: {
+        Main: { ComponentName: 'IP',  Gain: 0.5 }
+      }
+    }
   },{
     ClassName: 'N.Comp.LinearSummingInput',
     Name: 'IP'

@@ -29,7 +29,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
 
       $scope.workbench = $scope.workbenchScene.workbench;
-      $scope.testStatus = { updateRequired: false };
+      $scope.testStatus = { updateRequired: false, runTest: false };
 
       $scope.$on('pi-canvas:event-broadcast-request', function(broadcastEvent, event, obj) {
         broadcastEvent.stopPropagation();
@@ -84,6 +84,13 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
         if(updated) {
           $scope.testStatus.updateRequired = false;
           $scope.workbenchScene.testUpdated();
+        }
+      });
+
+      $scope.$watch('testStatus.runTest', function(run) {
+        if(run) {
+          $scope.testStatus.runTest = false;
+          $scope.workbenchScene.runActiveTest();
         }
       });
     }],

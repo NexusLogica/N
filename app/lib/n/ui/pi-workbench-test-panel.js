@@ -27,7 +27,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       testStatus: '=testStatus'
     },
     templateUrl: 'partials/pi-workbench-test-panel.html',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', '$timeout', function ($scope, $timeout) {
       $scope.propertiesCopy = {};
 
       $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hz' } ];
@@ -50,6 +50,13 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       $scope.inputLayerSourceCompartments = [];
       $scope.formMessage = '';
       $scope.inputFormMessage = '';
+
+      $scope.updateWorkbenchScene = function() {
+        $scope.testStatus.updateRequired = true;
+        $timeout(function() {
+          $scope.testStatus.runTest = true;
+        }, 1);
+      }
 
     }],
     link: function($scope, $element, $attrs, $ctrls) {
@@ -119,7 +126,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
 
         $element.find('.input-signal-edit').modal('hide');
 
-        $scope.testStatus.updateRequired = true;
+        $scope.updateWorkbenchScene();
       }
 
       $scope.$on('pi-workbench-panel:show-properties', function(event, selectedTestId) {

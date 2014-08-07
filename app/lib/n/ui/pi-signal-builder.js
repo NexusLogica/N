@@ -47,7 +47,7 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
 
     }],
     link: function($scope, $element, $attrs) {
-      $scope.$watch('[ signalBuilder.start, signalBuilder.duration, signalBuilder.amplitude, signalBuilder.type ]', function(newVal) {
+      $scope.$watch('[ signalBuilder.start, signalBuilder.duration, signalBuilder.amplitude, signalBuilder.type, signalBuilder.offset ]', function(newVal) {
           if($scope.signalBuilder) {
             $scope.signalBuilder.buildSignal($scope.signal, $scope.totalTime);
             $scope.signalScene.TraceRenderer.Update();

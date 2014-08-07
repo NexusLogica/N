@@ -73,10 +73,20 @@ N.Connection.prototype.Connect = function() {
  * @method Update
  * @param {Real} t The time of the update.
  */
-N.Connection.prototype.Update = function(t) {
+N.Connection.prototype.update = function(t) {
   this.Output = this.Gain*this.Source.GetOutputAt(t-this.Delay);
   this.OutputStore.AppendData(t, this.Output);
 }
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Connection.prototype.clear = function() {
+  this.Output = 0.0;
+  this.OutputStore.clear();
+}
+
 
 /**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.

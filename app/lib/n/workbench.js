@@ -52,6 +52,36 @@ N.Workbench.prototype.addTest = function() {
 }
 
 /**
+ * Runs a test.
+ * @method runTest
+ * @param test
+ * @returns {N.WorkbenchTest}
+ */
+N.Workbench.prototype.runTest = function(test) {
+  var network = this.Network;
+  network.clear();
+
+  var duration = test.duration;
+  var inc = N.TimeStep;
+  var t = 0.0;
+  var maxSteps = 100000;
+  var breakAfterStep = false;
+
+  for(var i=0; i<maxSteps; i++) {
+    network.update(t);
+    if(breakAfterStep) {
+      break;
+    }
+    t += inc;
+    if(t >= duration) {
+      t = duration;
+      breakAfterStep = true;
+    }
+  }
+  debugger;
+}
+
+/**
  * Returns the object type.
  * @method SetTargets
  * @returns {N.Workbench}

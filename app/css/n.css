@@ -287,6 +287,8 @@ body {
     width: 75px; }
   .pi-workbench-test-panel .signal-inputs table thead .amplitude {
     width: 75px; }
+  .pi-workbench-test-panel .signal-inputs table thead .offset {
+    width: 75px; }
   .pi-workbench-test-panel .properties .name {
     font-size: 15px;
     font-weight: bold; }

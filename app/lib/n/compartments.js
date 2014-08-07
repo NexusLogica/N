@@ -62,7 +62,7 @@ N.Comp.ConnectToCompartments = function() {
         this.Neuron.Network.GetRoot().LinkReport.Error(this.GetPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
       }
       if(!source.hasOwnProperty('Delay')) {
-        source.Delay = 1;
+        source.Delay = N.TimeStep;
       }
     }
   }
@@ -151,16 +151,24 @@ N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
 
 /**
  * Upates the output value of the compartment. The output value is from the signal object.
- * @method Update
+ * @method update
  * @param t
  * @returns {Real}
  */
-N.Comp.OutputFromSignal.prototype.Update = function(t) {
+N.Comp.OutputFromSignal.prototype.update = function(t) {
   if(this.Signal) {
     this.Output = this.Signal.GetValue(t);
   }
   this.OutputStore.AppendData(t, this.Output);
   return this.Output;
+}
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.OutputFromSignal.prototype.clear = function() {
+  this.OutputStore.clear();
 }
 
 N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
@@ -212,11 +220,20 @@ N.Comp.Output.prototype.AddInput = function(input) {
   this.Input = input;
 }
 
-N.Comp.Output.prototype.Update = function(t) {
+N.Comp.Output.prototype.update = function(t) {
+  debugger;
   var main = this.OutputLogic.Sources.Main;
   this.Output = main.Compartment.GetOutputAt(t-main.Delay);
   this.OutputStore.AppendData(t, this.Output);
   return this.Output;
+}
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.Output.prototype.clear = function() {
+  this.OutputStore.clear();
 }
 
 /**
@@ -275,7 +292,7 @@ N.Comp.InputSink.prototype.AddInput = function(input) {
   this.Input = input;
 }
 
-N.Comp.InputSink.prototype.Update = function(t) {
+N.Comp.InputSink.prototype.update = function(t) {
   var len = this.InputConnections.length;
   this.Output = 0.0;
   for(var i=0; i<len; i++) {
@@ -283,6 +300,14 @@ N.Comp.InputSink.prototype.Update = function(t) {
   }
   this.OutputStore.AppendData(t, this.Output);
   return this.Output;
+}
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.InputSink.prototype.clear = function() {
+  this.OutputStore.clear();
 }
 
 /**
@@ -323,12 +348,20 @@ N.Comp.InhibitoryOutput.prototype.AddInput = function(input) {
   this.Input = input;
 }
 
-N.Comp.InhibitoryOutput.prototype.Update = function(t) {
+N.Comp.InhibitoryOutput.prototype.update = function(t) {
   if(this.Input) {
-    this.Output = this.Input.UpdateInput(t);
+    this.Output = this.Input.updateInput(t);
   }
   this.OutputStore.AppendData(t, this.Output);
   return this.Output;
+}
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.InhibitoryOutput.prototype.clear = function() {
+  this.OutputStore.clear();
 }
 
 N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
@@ -383,13 +416,21 @@ N.Comp.LinearSummingInput.prototype.SumInputs = function() {
 }
 
 /**
- * Update the output of the compartment.
- * @method Update
+ * update the output of the compartment.
+ * @method update
  * @param {Real} t Time
  * @returns {Real}
  */
-N.Comp.LinearSummingInput.prototype.Update = function(t) {
+N.Comp.LinearSummingInput.prototype.update = function(t) {
   this.OutputStore.AppendData(t, this.SumInputs());
+}
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.LinearSummingInput.prototype.clear = function() {
+  this.OutputStore.clear();
 }
 
 /**
@@ -521,13 +562,21 @@ N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
 }
 
 /**
- * Update the output of the compartment.
- * @method Update
+ * Updates the output of the compartment.
+ * @method update
  * @param {Real} t Time
  * @returns {Real}
  */
-N.Comp.AcetylcholineInput.prototype.Update = function(t) {
+N.Comp.AcetylcholineInput.prototype.update = function(t) {
   this.OutputStore.AppendData(t, this.SumInputs());
+}
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.AcetylcholineInput.prototype.clear = function() {
+  this.OutputStore.clear();
 }
 
 /**
