@@ -62,6 +62,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
     link: function($scope, $element, $attrs, $ctrls) {
 
       var pathToTraceId = function(path) {
+        debugger;
         var paths = N.FromConnectionPaths($scope.test.workbench.Network, path);
 
         // TODO: Need fix for default output 'Main'
@@ -115,7 +116,11 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         }
         $scope.inputFormMessage = '';
 
-        $scope.targetInputSignalCopy.traceId = pathToTraceId($scope.targetInputSignalCopy.connection);
+        var paths = N.FromConnectionPaths($scope.test.workbench.Network, $scope.targetInputSignalCopy.connection);
+
+        // TODO: Need fix for default output 'Main'
+        $scope.targetInputSignalCopy.compartmentPath = paths.Source.GetPath();
+        $scope.targetInputSignalCopy.outputName = 'Main';
 
         if(!$scope.targetInputSignalCopy.workbenchTest) {
            $scope.test.insertInputSignal($scope.targetInputSignalCopy);
@@ -123,9 +128,9 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
           _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
         }
 
-
         $element.find('.input-signal-edit').modal('hide');
 
+        $scope.test.updateNetwork();
         $scope.updateWorkbenchScene();
       }
 
@@ -133,6 +138,10 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         if($scope.test.id === selectedTestId) {
           $scope.showPropertiesEdit();
         }
+      });
+
+      $scope.$watch('test.id', function() {
+        $scope.test.setAsActiveTest();
       });
 
       $scope.$watch('targetInputSignalCopy.connection', function(newVal) {

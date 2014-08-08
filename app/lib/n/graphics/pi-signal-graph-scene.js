@@ -27,7 +27,7 @@ N.UI = N.UI || {};
 
 N.UI.SignalGraphScene = function() {
   this.ClassName = 'N.UI.SignalGraphScene';
-  this.SignalGraph = new N.UI.SignalGraph();
+  this.signalGraph = new N.UI.SignalGraph();
   this.X = 0;
   this.Y = 0;
   this.Width = 100;
@@ -35,11 +35,11 @@ N.UI.SignalGraphScene = function() {
 }
 
 N.UI.SignalGraphScene.prototype.AddTraceFromSource = function(id, source, propName) {
-  this.SignalGraph.AddTraceFromSource(id, source, propName);
+  this.signalGraph.AddTraceFromSource(id, source, propName);
 }
 
 N.UI.SignalGraphScene.prototype.GetTraceFromId = function(id) {
-  return this.SignalGraph.TracesById[id];
+  return this.signalGraph.TracesById[id];
 }
 
 /**
@@ -52,10 +52,10 @@ N.UI.SignalGraphScene.prototype.GetTraceFromId = function(id) {
 N.UI.SignalGraphScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
   this.IdealContainerWidth = w;
-  var num = this.SignalGraph.Traces.length;
+  var num = this.signalGraph.Traces.length;
   this.IdealContainerHeight = (num > 0 ? num : 1)*w*0.2+padding.Vertical();
-  this.SignalGraph.X = padding.Left();
-  this.SignalGraph.Y = padding.Top();
+  this.signalGraph.X = padding.Left();
+  this.signalGraph.Y = padding.Top();
 }
 
 N.UI.SignalGraphScene.prototype.Render = function(svgParent, size, padding) {
@@ -64,7 +64,7 @@ N.UI.SignalGraphScene.prototype.Render = function(svgParent, size, padding) {
   this.Padding = padding;
 
   this.Group = svgParent.group().move(this.X, this.Y).size(this.Width, this.Height).attr({ 'class': 'pi-signal-graph-scene' });
-  this.SignalGraph.Render(this.Group, size, padding);
+  this.signalGraph.Render(this.Group, size, padding);
 }
 
 N.UI.SignalGraphScene.prototype.Fit = function(svgParent) {

@@ -31,6 +31,7 @@ N.WorkbenchTest = function(workbench) {
   this.description  = '';
   this.duration     = 0.10; // duration of the test in seconds
   this.inputSignals = [];
+  this.inputSignalsById = [];
 }
 
 /**
@@ -41,8 +42,48 @@ N.WorkbenchTest = function(workbench) {
 N.WorkbenchTest.prototype.insertInputSignal = function(inputSignal) {
   inputSignal.workbenchTest = this;
   this.inputSignals.push(inputSignal);
-  this.inputSignals[inputSignal.id] = inputSignal;
+  this.inputSignalsById[inputSignal.id] = inputSignal;
   return this;
+}
+
+/***
+ * Usually called when duration changes or a signal is added.
+ * @method setAsActiveTest
+ */
+N.WorkbenchTest.prototype.setAsActiveTest = function() {
+  this.updateNetwork();
+}
+
+/***
+ * Usually called when duration changes or a signal is added.
+ * @method updateNetwork
+ */
+N.WorkbenchTest.prototype.updateNetwork = function() {
+  var signal, compartment;
+  var unsetSources = _.clone(this.workbench.signalSources);
+  var removePath = '';
+  var remove = function(path) { return path === removePath; }
+
+  for(var i in this.inputSignals) {
+    var inputSignal = this.inputSignals[i];
+    inputSignal.duration = this.duration;
+
+    signal = new N.AnalogSignal();
+    inputSignal.builder.buildSignal(signal, this.duration);
+    compartment = N.FromPath(this.workbench.Network, inputSignal.compartmentPath);
+    compartment.SetSignal(inputSignal.outputName, signal);
+
+    removePath = inputSignal.compartmentPath;
+    _.remove(unsetSources, remove);
+  }
+
+  var flatSignalData = [ {t: 0, v: 0}, {t: this.duration, v: 0} ];
+  for(var j in unsetSources) {
+    compartment = N.FromPath(this.workbench.Network, unsetSources[j]);
+    signal = new N.AnalogSignal();
+    signal.appendDataArray(flatSignalData);
+    compartment.SetSignal('Main', signal);
+  }
 }
 
   //************************
@@ -54,12 +95,14 @@ N.WorkbenchTestInput = function() {
   this.id = N.GenerateUUID();
   this.connection = ''; // The path
   this.builder = new N.SignalBuilder();
-  this.traceId = '';
+  this.compartmentPath = '';
+  this.outputName = ''; // The output name, usually 'Main'.
 };
 
 N.WorkbenchTestInput.prototype.clone = function() {
   var copy = new N.WorkbenchTestInput(this.workbenchTest);
-  _.assign(copy, _.pick(this, ['id', 'connection', 'workbenchTest', 'traceId']));
+  _.assign(copy, _.pick(this, ['id', 'connection', 'workbenchTest', 'compartmentPath', 'outputName']));
   copy.builder = this.builder.clone();
   return copy;
 }
+

@@ -107,9 +107,9 @@ N.Comp.InitializeCompartment = function(compartment) {
   compartment.PreSignalOutput = 0.0;
 }
 
-  //***************************
-  //* N.Comp.OutputFromSignal *
-  //***************************
+  //***********************
+  //* N.Comp.SignalSource *
+  //***********************
 
 /**
  * An output compartment that has a signal object as the value for the output. This is typically used as an external input
@@ -117,13 +117,13 @@ N.Comp.InitializeCompartment = function(compartment) {
  *
  * The signal can be analog, discrete, or a custom signal object.
  *
- * @class Comp.OutputFromSignal
+ * @class Comp.SignalSource
  * @param neuron
  * @param name
  * @constructor
  */
-N.Comp.OutputFromSignal = function(neuron, name) {
-  this.ClassName  = 'N.Comp.OutputFromSignal';
+N.Comp.SignalSource = function(neuron, name) {
+  this.ClassName  = 'N.Comp.SignalSource';
   this.Name  = name;
   this.Category   = 'Output';
 
@@ -143,9 +143,9 @@ N.Comp.OutputFromSignal = function(neuron, name) {
   N.Comp.InitializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.OutputFromSignal);
+N.Comp.Extend(N.Comp.SignalSource);
 
-N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
+N.Comp.SignalSource.prototype.SetSignal = function(outputName, signal) {
   this.Signal = signal;
 }
 
@@ -155,7 +155,7 @@ N.Comp.OutputFromSignal.prototype.SetSignal = function(signal) {
  * @param t
  * @returns {Real}
  */
-N.Comp.OutputFromSignal.prototype.update = function(t) {
+N.Comp.SignalSource.prototype.update = function(t) {
   if(this.Signal) {
     this.Output = this.Signal.GetValue(t);
   }
@@ -167,21 +167,22 @@ N.Comp.OutputFromSignal.prototype.update = function(t) {
  * Clears stored data from previous simulations. Does not clear input data.
  * @method clear
  */
-N.Comp.OutputFromSignal.prototype.clear = function() {
+N.Comp.SignalSource.prototype.clear = function() {
   this.OutputStore.clear();
 }
 
-N.Comp.OutputFromSignal.prototype.LoadFrom = function(json) {
+N.Comp.SignalSource.prototype.LoadFrom = function(json) {
   for(var i in json) {
     if(i === 'Signal') {
-      this.SetSignal(N.NewN(json[i].ClassName).LoadFrom(json[i]));
+      // TODO: figure out how to incorporate name
+      this.SetSignal('Main', N.NewN(json[i].ClassName).LoadFrom(json[i]));
     }
     else { this[i] = json[i]; }
   }
   return this;
 }
 
-N.Comp.OutputFromSignal.prototype.Validate = function(report) {
+N.Comp.SignalSource.prototype.Validate = function(report) {
   if(!this.Signal) { report.Warning(this.GetPath(), 'Signal object is not set.'); }
   if(this.GetNumInputConnections() !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
   if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
@@ -221,7 +222,6 @@ N.Comp.Output.prototype.AddInput = function(input) {
 }
 
 N.Comp.Output.prototype.update = function(t) {
-  debugger;
   var main = this.OutputLogic.Sources.Main;
   this.Output = main.Compartment.GetOutputAt(t-main.Delay);
   this.OutputStore.AppendData(t, this.Output);
@@ -487,7 +487,7 @@ N.Comp.Extend(N.Comp.SignalInput);
  * @param {N.Signal} signal
  * @constructor
  */
-N.Comp.SignalInput.prototype.SetSignal = function(signal) {
+N.Comp.SignalInput.prototype.SetSignal = function(outputName, signal) {
   this.SignalInput = signal;
 }
 

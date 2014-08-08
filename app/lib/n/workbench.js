@@ -28,6 +28,8 @@ N.Workbench = function(parentNetwork) {
   this.Id                  = null;
   this.Name                = '';
   this.tests               = []; // N.WorkbenchTest array
+  this.signalSources       = [];
+  this.outputSinks         = [];
 }
 
 /**
@@ -109,12 +111,12 @@ N.Workbench.prototype.SetTargets = function(targets) {
 
       for(var k in meta.Inputs) {
         var inputMeta = meta.Inputs[k];
-        this.AddInputSource(compartment, inputMeta, inputNetwork);
+        this.addInputSource(compartment, inputMeta, inputNetwork);
       }
 
       for(var m in meta.Outputs) {
         var outputMeta = meta.Outputs[m];
-        this.AddOutputSource(compartment, outputMeta, outputNetwork);
+        this.addOutputSink(compartment, outputMeta, outputNetwork);
       }
     }
   }
@@ -125,10 +127,10 @@ N.Workbench.prototype.SetTargets = function(targets) {
 
 /**
  * Adds an input sink to the input network.
- * @method AddInputSource
+ * @method addInputSource
  * @returns {N.Workbench}
  */
-N.Workbench.prototype.AddInputSource = function(compartment, inputMeta, inputNetwork) {
+N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNetwork) {
   var cleanName = N.CleanName(compartment.Neuron.Name);
   var cleanCompartmentName = N.CleanName(compartment.Name+(inputMeta.Name !== 'Main' ? '['+inputMeta.Name+']' : ''));
   var fullCleanName = 'SRC['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
@@ -140,8 +142,10 @@ N.Workbench.prototype.AddInputSource = function(compartment, inputMeta, inputNet
     CompartmentMap : { 'Body': 'OP'  }
   }
 
-  var sourceCompartment = new N.Comp.OutputFromSignal(source, 'OP');
+  var sourceCompartment = new N.Comp.SignalSource(source, 'OP');
   source.AddCompartment(sourceCompartment);
+
+  this.signalSources.push(sourceCompartment.GetPath());
 
   inputNetwork.AddNeuron(source);
 
@@ -153,10 +157,10 @@ N.Workbench.prototype.AddInputSource = function(compartment, inputMeta, inputNet
 
 /**
  * Adds an output sink to the output network.
- * @method AddOutputSource
+ * @method addOutputSink
  * @returns {N.Workbench}
  */
-N.Workbench.prototype.AddOutputSource = function(compartment, outputMeta, outputNetwork) {
+N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNetwork) {
   var cleanName = N.CleanName(compartment.Neuron.Name);
   var cleanCompartmentName = N.CleanName(compartment.Name+(outputMeta.Name !== 'Main' ? '['+outputMeta.Name+']' : ''));
   var fullCleanName = 'SNK['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
@@ -170,6 +174,9 @@ N.Workbench.prototype.AddOutputSource = function(compartment, outputMeta, output
 
   var sinkCompartment = new N.Comp.InputSink(sink, 'IP');
   sink.AddCompartment(sinkCompartment);
+
+
+  this.outputSinks.push(sinkCompartment.GetPath());
 
   outputNetwork.AddNeuron(sink);
 

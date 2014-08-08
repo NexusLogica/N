@@ -48,7 +48,7 @@ N.UI.WorkbenchScene = function() {
 N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
   this.workbench = workbench;
   this.NetworkScene = (new N.UI.NetworkScene()).Layout(workbench.Network, renderMappings);
-  this.SignalGraphScene = (new N.UI.SignalGraphScene());
+  this.signalGraphScene = (new N.UI.SignalGraphScene());
 
   var traceStyle = { Inputs: 'workbench-inputs', Targets: 'workbench-targets', Outputs: 'workbench-outputs' };
 
@@ -59,9 +59,12 @@ N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
       for(var k in neuron.Compartments) {
         var compartment = neuron.Compartments[k];
         for(var m in compartment.IoMetaData.Signals) {
+
           var signalData = compartment.IoMetaData.Signals[m];
+          var sourcePropName =( compartment.hasOwnProperty('Signal') ? 'Signal' : 'OutputStore');
           var id = compartment.Neuron.Name+'//'+compartment.Name+'//'+signalData.Name;
-          this.SignalGraphScene.AddTraceFromSource(id, compartment, signalData.PropName);
+
+          this.signalGraphScene.AddTraceFromSource(id, compartment, sourcePropName);
           console.log('*** Trace = '+id);
         }
       }
@@ -75,14 +78,33 @@ N.UI.WorkbenchScene.prototype.showTest = function(test) {
 }
 
 N.UI.WorkbenchScene.prototype.testUpdated = function() {
-  var _this = this;
-  _.forEach(this.activeTest.inputSignals, function(inputSignal) {
+  this.signalGraphScene.signalGraph.updateAll();
+/*
+  var unusedTraceIds = _.pluck(this.signalGraphScene.signalGraph.Traces, 'id');
+  var removeId = '';
+  var remove = function(id) { return id === removeId; }
+
+  for(var i in this.activeTest.inputSignals) {
+    var inputSignal = this.activeTest.inputSignals[i];
     //this.Network;
     console.log(inputSignal.connection);
-    var signal = _this.SignalGraphScene.GetTraceFromId(inputSignal.traceId);
-    inputSignal.builder.buildSignal(signal.SignalGraphic.Signal, _this.activeTest.duration);
-    signal.SignalGraphic.Update();
-  });
+    removeId = inputSignal.traceId;
+    var other = _.remove(unusedTraceIds, remove);
+    var signal = this.signalGraphScene.GetTraceFromId(inputSignal.traceId);
+    inputSignal.builder.buildSignal(signal.signalGraphic.Signal, this.activeTest.duration);
+    signal.signalGraphic.Update();
+  }
+
+  var zeroData = [ {t: 0, v: 0}, {t: this.activeTest.duration, v: 0} ];
+  for(var j in unusedTraceIds) {
+    var unusedId = unusedTraceIds[j];
+    if(unusedId.indexOf('SRC') === 0) {
+      var unusedSignal = this.signalGraphScene.GetTraceFromId(unusedId);
+      unusedSignal.SignalGraphic.Signal.appendDataArray(zeroData);
+      unusedSignal.SignalGraphic.Update();
+    }
+  }
+*/
 }
 
 N.UI.WorkbenchScene.prototype.runActiveTest = function() {
@@ -116,13 +138,12 @@ N.UI.WorkbenchScene.prototype.Render = function(svgParent, size, padding) {
 
   var networkWidth = this.NetworkScene.Network.Width+this.NetworkPadding.Horizontal();
   var graphWidth = this.Width-this.Padding.Horizontal()-networkWidth-this.GraphPadding.Horizontal();
-  this.SignalGraphScene.X = networkWidth+this.GraphPadding.Left()+this.Padding.Left();
-  this.SignalGraphScene.Y = this.Padding.Top();
-  this.SignalGraphScene.Render(this.Group, { Width: graphWidth, Height: this.Height-this.Padding.Vertical() }, this.GraphPadding);
+  this.signalGraphScene.X = networkWidth+this.GraphPadding.Left()+this.Padding.Left();
+  this.signalGraphScene.Y = this.Padding.Top();
+  this.signalGraphScene.Render(this.Group, { Width: graphWidth, Height: this.Height-this.Padding.Vertical() }, this.GraphPadding);
 }
 
 N.UI.WorkbenchScene.prototype.Fit = function(svgParent) {
-  debugger;
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;

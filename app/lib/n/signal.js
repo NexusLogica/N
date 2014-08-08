@@ -85,6 +85,9 @@ N.AnalogSignal.prototype.GetValue = function(time) {
   var y0 = this.Values[i];
   var y1 = this.Values[i+1];
   var value = y0+(y1-y0)*(t-x0)/(x1-x0);
+  if(_.isNaN(value)) {
+    debugger;
+  }
   return value;
 }
 
@@ -103,6 +106,9 @@ N.AnalogSignal.prototype.GetValueByIndex = function(index) {
 }
 
 N.AnalogSignal.prototype.AppendData = function(time, value) {
+  if(_.isNaN(value)) {
+    debugger;
+  }
   this.Times.push(time);
   this.Values.push(value);
   if(this.Times.length === 0) {

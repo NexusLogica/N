@@ -74,3 +74,9 @@ N.UI.SignalGraph.prototype.Render = function(svgParent, size, padding) {
   }
 }
 
+N.UI.SignalGraph.prototype.updateAll = function() {
+  for(var i in this.Traces) {
+    var trace = this.Traces[i];
+    trace.SignalGraphic.Update();
+  }
+}

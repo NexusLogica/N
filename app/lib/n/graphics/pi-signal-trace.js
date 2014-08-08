@@ -286,6 +286,9 @@ N.UI.SignalTrace.prototype.CalculateVerticalRange = function() {
   //var range = (this.Signal.MaxLimit-this.Signal.MinLimit);
   var min = this.Signal.Min;
   var max = this.Signal.Max;
+  if(min === max) {
+    max = min+1.0;
+  }
   if((max*min) > 0.0 && this.ShowOrigin) {
     if(max > 0) {
       min = 0.0;

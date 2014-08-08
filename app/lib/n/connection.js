@@ -32,6 +32,7 @@ N.Connection = function(network) {
   this.Sink           = null;
   this.Output         = 0.0;
   this.OutputStore    = new N.AnalogSignal('OutputStore', 'OS');
+  this.Gain           = 1.0;
   this.Delay          = 1;
   this.Category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
   this.ValidationMessages = [];
