@@ -52,9 +52,9 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
       $scope.inputFormMessage = '';
 
       $scope.updateWorkbenchScene = function() {
-        $scope.testStatus.updateRequired = true;
+        $scope.testStatus.runTest = true;
         $timeout(function() {
-          $scope.testStatus.runTest = true;
+          $scope.testStatus.updateRequired = true;
         }, 1);
       }
 
@@ -107,6 +107,11 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         $scope.targetInputSignalCopy.connection = path;
       }
 
+      $scope.runTest = function() {
+        $scope.test.updateNetwork();
+        $scope.updateWorkbenchScene();
+      }
+
       $scope.saveInputSignal = function() {
         if($scope.connectionFormStatus.$invalid || $scope.builderFormStatus.$invalid) {
           if($scope.connectionFormStatus.$invalid) {
@@ -125,7 +130,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         if(!$scope.targetInputSignalCopy.workbenchTest) {
            $scope.test.insertInputSignal($scope.targetInputSignalCopy);
         } else {
-          _.assign($scope.test.inputSignals[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
+          _.assign($scope.test.inputSignalsById[$scope.targetInputSignalId], $scope.targetInputSignalCopy);
         }
 
         $element.find('.input-signal-edit').modal('hide');

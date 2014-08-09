@@ -78,6 +78,7 @@ N.UI.WorkbenchScene.prototype.showTest = function(test) {
 }
 
 N.UI.WorkbenchScene.prototype.testUpdated = function() {
+console.log("GRAPHS UPDATING");
   this.signalGraphScene.signalGraph.updateAll();
 /*
   var unusedTraceIds = _.pluck(this.signalGraphScene.signalGraph.Traces, 'id');
@@ -109,6 +110,10 @@ N.UI.WorkbenchScene.prototype.testUpdated = function() {
 
 N.UI.WorkbenchScene.prototype.runActiveTest = function() {
   this.workbench.runTest(this.activeTest);
+}
+
+N.UI.WorkbenchScene.prototype.runTest = function(test) {
+  this.workbench.runTest(test);
 }
 
 /**

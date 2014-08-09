@@ -180,15 +180,15 @@ N.UI.SignalTrace.prototype.RenderAnalogTrace = function() {
   }
 
   // TODO: get the correct value for extra. Should be equal half the stroke width.
-  var extra = 200;
+  var extra = 2;
   if(!this.Path) {
     this.Path = this.Group.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
-    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
-    this.Path.clipWith(this.ClipRect);
+//    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
+//    this.Path.clipWith(this.ClipRect);
   }
   else {
     this.Path.plot(p);
-    this.ClipRect.size(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
+//    this.ClipRect.size(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
   }
 }
 
@@ -218,9 +218,9 @@ N.UI.SignalTrace.prototype.RenderDiscreteTrace = function() {
 
   if(!this.Path) {
     this.Path = this.Group.path(p).attr({ stroke:N.UI.Categories[this.Signal.Category].TraceColor, fill: 'none' });
-    var extra = 200;
-    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
-    this.Path.clipWith(this.ClipRect);
+    var extra = 2;
+//    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
+//    this.Path.clipWith(this.ClipRect);
   }
   else {
     this.Path.plot(p);
@@ -241,9 +241,9 @@ N.UI.SignalTrace.prototype.RenderXAxis = function() {
 
   if(!this.XAxis) {
     this.XAxis = this.Group.path(p).attr({ class: 'axis', 'stroke-dasharray': '6, 6', fill: 'none' });
-    var extra = 200;
-    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
-    this.XAxis.clipWith(this.ClipRect);
+    var extra = 2;
+//    this.ClipRect = this.Group.rect(this.Pos.Width, this.Pos.Height+2*extra).move(this.Pos.X, this.Pos.Y-extra);
+//    this.XAxis.clipWith(this.ClipRect);
   }
   else {
     this.XAxis.plot(p);

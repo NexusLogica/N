@@ -60,6 +60,7 @@ N.Workbench.prototype.addTest = function() {
  * @returns {N.WorkbenchTest}
  */
 N.Workbench.prototype.runTest = function(test) {
+console.log("RUN TEST");
   var network = this.Network;
   network.clear();
 
@@ -80,7 +81,6 @@ N.Workbench.prototype.runTest = function(test) {
       breakAfterStep = true;
     }
   }
-  debugger;
 }
 
 /**

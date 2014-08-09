@@ -262,7 +262,7 @@ body {
     .pi-workbench-panel .console .top-header .btn {
       display: inline-block; }
       .pi-workbench-panel .console .top-header .btn.dropdown-toggle {
-        width: 150px;
+        width: 260px;
         text-align: left; }
       .pi-workbench-panel .console .top-header .btn.new-test {
         float: right; }
@@ -278,17 +278,17 @@ body {
   .pi-workbench-test-panel .signal-inputs table thead tr th {
     text-align: center; }
   .pi-workbench-test-panel .signal-inputs table thead .input {
-    width: 75px; }
+    width: 150px; }
   .pi-workbench-test-panel .signal-inputs table thead .type {
-    width: 75px; }
+    width: 65px; }
   .pi-workbench-test-panel .signal-inputs table thead .start {
-    width: 75px; }
+    width: 60px; }
   .pi-workbench-test-panel .signal-inputs table thead .duration {
-    width: 75px; }
+    width: 60px; }
   .pi-workbench-test-panel .signal-inputs table thead .amplitude {
     width: 75px; }
   .pi-workbench-test-panel .signal-inputs table thead .offset {
-    width: 75px; }
+    width: 65px; }
   .pi-workbench-test-panel .properties .name {
     font-size: 15px;
     font-weight: bold; }
@@ -302,12 +302,14 @@ body {
     margin-top: 15px;
     border-top: 1px solid #eeeeee;
     padding-top: 15px; }
-  .pi-workbench-test-panel .add-input-signal {
+  .pi-workbench-test-panel .run-test {
     margin-top: 15px;
     border-top: 1px solid #eeeeee;
     padding-top: 15px;
     margin-top: 12px;
-    text-align: right; }
+    padding-left: 3px; }
+  .pi-workbench-test-panel .add-input-signal {
+    float: right; }
 
 .pi-connection-test .pi-network-panel .pi-canvas {
   height: 500px;

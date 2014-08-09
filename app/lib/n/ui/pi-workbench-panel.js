@@ -76,7 +76,11 @@ angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
       $scope.$watch('selectedTestId', function(testId) {
         if(!_.isEmpty(testId)) {
           var test = $scope.testFromId(testId);
-          $scope.workbenchScene.showTest(test);
+          if(test) {
+            test.updateNetwork();
+            $scope.workbenchScene.runTest(test);
+            $scope.workbenchScene.showTest(test);
+          }
         }
       });
 

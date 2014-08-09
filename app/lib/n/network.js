@@ -322,6 +322,11 @@ N.Network.prototype.clear = function() {
   for(i=0; i<num; i++) {
     this.Neurons[i].clear();
   }
+
+  var numNetworks = this.Networks.length;
+  for(i=0; i<numNetworks; i++) {
+    this.Networks[i].clear();
+  }
   return this;
 }
 

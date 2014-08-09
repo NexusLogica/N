@@ -441,7 +441,7 @@ body {
       .btn {
         display: inline-block;
         &.dropdown-toggle {
-          width: 150px;
+          width: 260px;
           text-align: left;
         }
         &.new-test {
@@ -471,12 +471,12 @@ body {
             text-align: center;
           }
         }
-        .input     { width: 75px; }
-        .type      { width: 75px; }
-        .start     { width: 75px; }
-        .duration  { width: 75px; }
+        .input     { width: 150px; }
+        .type      { width: 65px; }
+        .start     { width: 60px; }
+        .duration  { width: 60px; }
         .amplitude { width: 75px; }
-        .offset    { width: 75px; }
+        .offset    { width: 65px; }
       }
     }
   }
@@ -506,10 +506,14 @@ body {
       @include separator-border();
     }
 
-    .add-input-signal {
+    .run-test {
       @include separator-border();
       margin-top:12px;
-      text-align: right;
+      padding-left: 3px;
+    }
+
+    .add-input-signal {
+      float: right;
     }
   }
 

@@ -59,6 +59,7 @@ N.WorkbenchTest.prototype.setAsActiveTest = function() {
  * @method updateNetwork
  */
 N.WorkbenchTest.prototype.updateNetwork = function() {
+console.log("UPDATE NETWORK");
   var signal, compartment;
   var unsetSources = _.clone(this.workbench.signalSources);
   var removePath = '';
