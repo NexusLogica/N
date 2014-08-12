@@ -1,8 +1,9 @@
 <div class="header">
   <div class="container" ng-controller="HeaderController">
     <div class="row">
-      <div class="n-med-title-light col-lg-3 col-md-5">Nexus Logica</div>
-      <div class="col-lg-5 col-md-5">
+      <div class="col-lg-16 col-md-16">
+        <div class="n-med-title-light title">Nexus Logica</div>
+        <div class="current" ng-bind="currentPage"></div>
         <ul class="nav nav-pills">
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -10,8 +11,8 @@
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-              <li><a tabindex="-1" href="#" ng-click="toMain()">Welcome</a></li>
-              <li><a tabindex="-1" href="#" ng-click="toWorkbench()">Workbench</a></li>
+              <li><a tabindex="-1" href="#" ng-click="navigateTo('n')">Home</a></li>
+              <li><a tabindex="-1" href="#" ng-click="navigateTo('workbench')">Workbench</a></li>
               <li class="divider"></li>
               <li><a tabindex="-1" href="#" ng-click="toAdministration()">Administration</a></li>
             </ul>

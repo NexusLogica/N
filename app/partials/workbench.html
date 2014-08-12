@@ -1,0 +1,11 @@
+<header current-page="Workbench"></header>
+
+<div class="container" ng-controller="WorkbenchTestController">
+  <div class="row test-top">
+    <div class="n-med-title col-lg-5 col-md-7" ng-bind="TestInfo.Name"></div>
+  </div>
+  <div ng-repeat="workbench in Workbenches">
+    <pi-workbench-panel workbench-scene="workbench">
+    </pi-workbench-panel>
+  </div>
+</div>

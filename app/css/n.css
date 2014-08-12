@@ -106,14 +106,32 @@ body {
   border-top-color: #ffa500; }
 
 .header {
-  padding: 0px 0px 7px 0px;
+  padding: 0px 0px 0px 0px;
   background-color: #294052; }
-  .header .n-med-title-light {
-    margin-top: 4px; }
+  .header .title {
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 23px; }
+  .header .current {
+    color: #8fbcdb;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 4px;
+    margin-right: 20px;
+    font-size: 30px; }
   .header .dropdown-toggle {
-    color: #8fbcdb; }
-  .header .nav {
-    margin: 7px 0px 0px 0px; }
+    color: black;
+    background-color: #E0E0E0;
+    height: 33px;
+    padding: 7px 15px; }
+    .header .dropdown-toggle:hover {
+      color: black;
+      background-color: #E0E0E0; }
+  .header ul.nav.nav-pills {
+    float: right;
+    margin: 7px 0px 0px 0px;
+    display: inline-block; }
 
 .main-tabs-container {
   margin-top: 10px; }
@@ -146,6 +164,9 @@ body {
 .main-tabs-container .nav-tabs > li div:hover {
   color: #294052;
   cursor: pointer; }
+
+.n {
+  margin-top: 100px; }
 
 .test-top {
   line-height: normal;

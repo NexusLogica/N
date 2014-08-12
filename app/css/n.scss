@@ -200,19 +200,41 @@ body {
   // Header
 
 .header {
-  padding: 0px 0px 7px 0px;
+  padding: 0px 0px 0px 0px;
   background-color: $color-dark;
 
-  .n-med-title-light {
+  .title {
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: top;
+    margin-top:23px;
+  }
+
+  .current {
+    color: $color-med;
+    display: inline-block;
+    vertical-align: top;
     margin-top: 4px;
+    margin-right: 20px;
+    font-size:30px;
   }
 
   .dropdown-toggle {
-    color: $color-med;
+    color: $text-color;
+    background-color: #E0E0E0;
+    height: 33px;
+    padding: 7px 15px;
+    &:hover {
+      color: $text-color;
+      background-color: #E0E0E0;
+    }
   }
 
-  .nav {
+  ul.nav.nav-pills {
+    float: right;
     margin: 7px 0px 0px 0px;
+    display: inline-block;
+
   }
 }
 
@@ -256,6 +278,12 @@ body {
 .main-tabs-container .nav-tabs>li div:hover {
   color: $color-dark;
   cursor: pointer;
+}
+
+//*****************************
+// Main page
+.n {
+ margin-top:100px;
 }
 
 //*****************************
