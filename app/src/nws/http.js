@@ -35,13 +35,31 @@ N.Http = function() {
 }
 
 /**
+ * Perform an HTTP GET.
+ * @method get
+ * @returns { Promise }
+ */
+N.Http.prototype.get = function(url, data) {
+  return this.call('GET', url, data);
+}
+
+/**
+ * Perform an HTTP PUT.
+ * @method put
+ * @returns { Promise }
+ */
+N.Http.prototype.put = function(url, data) {
+  return this.call('PUT', url, data);
+}
+
+/**
  * Returns the minimum and maximum values in the signal.
  * @method GetRange
  * @returns {{Min: Real, Max: Real}}
  */
-N.Http.prototype.get = function(url, data) {
+N.Http.prototype.call = function(type, url, data) {
   var ajaxData = {
-    type: 'GET',
+    type: type,
     url: url,
     dataType: 'json'
   };
@@ -53,10 +71,10 @@ N.Http.prototype.get = function(url, data) {
   var deferred = Q.defer();
   $.ajax(ajaxData).then(
     function(data, textStatus, jqXHR) {
-      deferred.resolve(data);
+      deferred.resolve(data, textStatus);
     },
-    function(jqXHR, textStatus, errorThrown) {
-      deferred.reject(textStatus);
+    function(jqXHR, textStatus, httpStatusCodeDescription) {
+      deferred.reject( { textStatus: textStatus, httpStatus: jqXHR.status, responseJSON: jqXHR.responseJSON, httpStatusCodeDescription: httpStatusCodeDescription } );
     }
   );
 

@@ -37,11 +37,31 @@ N.NWS.Database = function() {
 
 /**
  * Returns the minimum and maximum values in the signal.
- * @method GetRange
+ * @method createDatabase
  * @returns {{Min: Real, Max: Real}}
  */
-N.NWS.Database.prototype.getDatabases = function(dbUrl) {
+N.NWS.Database.prototype.createDatabase = function(url, name, description) {
+  var http =  new N.Http();
+  var dbUrl = url;
+  if(url.lastIndexOf('/') !== url.length-1) {
+    dbUrl += '/';
+  }
+  dbUrl += name;
 
+  var deferred = Q.defer();
+  http.put(dbUrl).then(
+    function(data) {
+      if(data.ok === true) {
+        deferred.resolve( { status: true, errMsg: '' } );
+      } else {
+        deferred.reject( { status: false, errMsg: '' } );
+      }
+    },
+    function(error) {
+      deferred.reject( { status: false, errMsg: error.responseJSON.reason } );
+    }
+  );
+  return deferred.promise;
 }
 
 /**
