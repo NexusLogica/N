@@ -1,0 +1,77 @@
+<div>
+  <administration>
+    <header current-page="Administration"></header>
+
+    <div class="container administration">
+      <div class="row welcome">
+        <div class="n-med-title col-lg-5 col-md-7">Welcome <span ng-bind="userInfo.firstName"></span></div>
+      </div>
+      <div class="row">
+        <div class="database-admin-links col-lg-5 col-md-7">
+          <div class="n-med-title">Database administration</div>
+          <div class="links">
+            <a href="javascript:void(0)" ng-click="createDatabase()">Create a database</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create a database -->
+      <div class="create-database modal fade" pi-modal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title">Create a database</h4>
+            </div>
+            <div class="modal-body">
+              <form novalidate class="form-horizontal" role="form" name="createDbForm">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label" for="databaseurl">Database URL:</label>
+                  <div class="col-sm-10">
+                    <input type="text"
+                           name="databaseurl"
+                           tabindex="1"
+                           ng-class="{ 'pi-error': createDbForm.databaseurl.$invalid }"
+                           class="form-control default-focus"
+                           required
+                           id="databaseurl"
+                           data-toggle="tooltip"
+                           data-placement="top"
+                           title="The url of the couchDb, for example: http://127.0.0.1:5984"
+                           ng-model="database.url"
+                           placeholder="Database URL">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-4 control-label" for="database-name">Name:</label>
+                  <div class="col-sm-10">
+                    <textarea class="form-control"
+                              tabindex="2"
+                              rows="3"
+                              id="database-name"
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title="The name of the database, lower case a-z, 0-9, or _$()+-/ and must start with a letter."
+                              ng-model="propertiesCopy.description"
+                              placeholder="Database name"></textarea>
+                  </div>
+                </div>
+              </form>
+              <div class="well">
+                A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <div class="footer-message" ng-bind="formMessage"></div>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" ng-click="saveProperties()">Save changes</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </administration>
+</div>

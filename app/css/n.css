@@ -59,6 +59,45 @@ body {
   body .placeholder {
     color: #cccccc; }
 
+.fadex {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%; }
+
+.fadex.ng-enter,
+.fadex.ng-leave {
+  -webkit-transition: all 2s ease;
+  -moz-transition: all 2s ease;
+  -o-transition: all 2s ease;
+  transition: all 2s ease; }
+
+.fadex.ng-enter {
+  opacity: 0; }
+
+.fadex.ng-enter {
+  top: 100%; }
+
+.fadex.ng-enter-active {
+  top: 0; }
+
+.fadex.ng-leave {
+  top: 0; }
+
+.fadex.ng-leave-active {
+  top: -100%; }
+
+ /*.fadex.ng-enter-active {
+    opacity: 1;
+}
+.fadex.ng-leave {
+    opacity: 1;
+}
+.fadex.ng-leave-active {
+    opacity: 0;
+}
+*/
 .n-component {
   background-color: #fefbf7;
   border: #f4d6bc 1px solid;
@@ -164,6 +203,17 @@ body {
 .main-tabs-container .nav-tabs > li div:hover {
   color: #294052;
   cursor: pointer; }
+
+.administration a {
+  font-family: "Raleway", sans-serif;
+  font-weight: 300;
+  font-size: 18px; }
+.administration .welcome {
+  margin-top: 20px; }
+.administration .database-admin-links {
+  margin-top: 40px; }
+  .administration .database-admin-links .links {
+    margin-left: 20px; }
 
 .n {
   margin-top: 100px; }

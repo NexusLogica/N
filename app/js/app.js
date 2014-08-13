@@ -5,7 +5,7 @@
 angular.module('nSimApp', ['nSimApp.filters', 'nSimApp.services', 'nSimApp.directives', 'nSimApp.controllers', 'ngRoute']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/workbench', { templateUrl: 'partials/workbench.html' });
-    $routeProvider.when('/administration', {templateUrl: 'partials/adminstration.html' });
+    $routeProvider.when('/administration', { templateUrl: 'pages/administration/administration.html' });
     $routeProvider.when('/n', {templateUrl: 'partials/n.html' });
     $routeProvider.otherwise({redirectTo: '/n'});
 
