@@ -17,10 +17,39 @@ angular.module('nSimApp.directives').directive('administration', [function() {
     restrict: 'E',
     //scope: {
     //},
-    controller: ['$scope', '$timeout', function ($scope, $timeout) {
+    controller: ['$scope', '$timeout', 'localStorageService', function ($scope, $timeout, localStorageService) {
       $scope.userInfo = { firstName: 'Lawrence', lastName: 'Gunn' };
       $scope.database = { url: '' };
       $scope.databaseList = [];
+
+      var readDatabaseList = function() {
+        var list = localStorageService.get('accessedDatabases');
+        if(list) {
+          $scope.databaseList = list;
+        } else {
+          $scope.databaseList = [];
+        }
+      }
+      readDatabaseList();
+
+      var writeDatabaseList = function() {
+        var currentListData = [];
+        var list = localStorageService.get('accessedDatabases');
+        if(list) {
+          currentListData = list;
+        }
+        $scope.databaseList = _.uniq(_.union($scope.databaseList, currentListData), function(db) {
+          debugger;
+          return db.url+db.name;
+        });
+        localStorageService.set('accessedDatabases', $scope.databaseList);
+      }
+      readDatabaseList();
+
+      $scope.addDatabase = function(url, name, description) {
+        $scope.databaseList.push({ url: url, name: name, description: description, accessible: true });
+        writeDatabaseList();
+      }
 
       /***
        * Watch the database url field and auto-check the url for validity.
@@ -53,10 +82,6 @@ angular.module('nSimApp.directives').directive('administration', [function() {
     }],
     link: function($scope, $element, $attrs, $ctrl) {
 
-      var addDatabase = function(url, name, description) {
-        $scope.databaseList.push({ url: url, name: name, description: description });
-      }
-
       /***
        * Open the create database dialog.
        * @method showCreateDatabase
@@ -76,7 +101,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
         db.createDatabase($scope.database.url, $scope.database.name, $scope.database.description, $scope.userInfo).then(
           function(status) { // success
             $scope.$apply(function() {
-              addDatabase($scope.database.url, $scope.database.name, $scope.database.description);
+              $scope.addDatabase($scope.database.url, $scope.database.name, $scope.database.description);
               $element.find('.create-database').modal('hide');
               $scope.database = { url: '', name: '', description: '' };
             });

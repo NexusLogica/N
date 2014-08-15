@@ -338,6 +338,23 @@ body {
       margin-left:20px;
     }
   }
+
+  .database-current {
+    margin-top: 40px;
+    table {
+      thead {
+        tr {
+          th {
+            text-align: center;
+          }
+        }
+        .description { width: 250px; }
+        .host        { width: 150px; }
+        .name        { width: 150px; }
+        .accessible  { width: 50px; }
+      }
+    }
+  }
 }
 
 //*****************************

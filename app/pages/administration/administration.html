@@ -17,6 +17,31 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="database-current col-lg-5 col-md-7">
+          <div class="n-med-title">Current databases</div>
+          <div>
+            <table class="table table-bordered table-striped">
+              <thead>
+               <tr>
+                 <th class="description">Description</th>
+                 <th class="host">Host</th>
+                 <th class="name">Name</th>
+                 <th class="accessible">Accessible</th>
+               </tr>
+              </thead>
+              <tbody>
+               <tr ng-repeat="database in databaseList">
+                 <td>{{database.description}}</td>
+                 <td>{{database.url}}</td>
+                 <td>{{database.name}}</td>
+                 <td>{{database.accessible}}</td>
+               </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
       <!-- Create a database -->
       <div class="create-database modal fade" pi-modal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >

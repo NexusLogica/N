@@ -52,7 +52,6 @@ N.NWS.Database.prototype.createDatabase = function(url, name, description, userI
   http.put(dbUrl).then(
     function(data) {
       if(data.ok === true) {
-debugger;
         var doc = {
 //          _id: 'pi_neural_simulator',
           revision: 'v1.0.0',

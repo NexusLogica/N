@@ -214,6 +214,18 @@ body {
   margin-top: 40px; }
   .administration .database-admin-links .links {
     margin-left: 20px; }
+.administration .database-current {
+  margin-top: 40px; }
+  .administration .database-current table thead tr th {
+    text-align: center; }
+  .administration .database-current table thead .description {
+    width: 250px; }
+  .administration .database-current table thead .host {
+    width: 150px; }
+  .administration .database-current table thead .name {
+    width: 150px; }
+  .administration .database-current table thead .accessible {
+    width: 50px; }
 
 .n {
   margin-top: 100px; }
