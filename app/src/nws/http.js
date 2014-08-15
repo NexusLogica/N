@@ -65,7 +65,8 @@ N.Http.prototype.call = function(type, url, data) {
   };
 
   if(data) {
-    ajaxData.data = data;
+    ajaxData.data        = JSON.stringify(data);
+    ajaxData.contentType = 'application/json; charset=utf-8';
   }
 
   var deferred = Q.defer();

@@ -73,11 +73,12 @@ angular.module('nSimApp.directives').directive('administration', [function() {
         }
         $scope.formMessage = '';
         var db = new N.NWS.Database();
-        db.createDatabase($scope.database.url, $scope.database.name).then(
+        db.createDatabase($scope.database.url, $scope.database.name, $scope.database.description, $scope.userInfo).then(
           function(status) { // success
             $scope.$apply(function() {
-              addDatabase($scope.database.url, $scope.database.name);
+              addDatabase($scope.database.url, $scope.database.name, $scope.database.description);
               $element.find('.create-database').modal('hide');
+              $scope.database = { url: '', name: '', description: '' };
             });
           },
           function(status) { // failure

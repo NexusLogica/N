@@ -40,7 +40,7 @@ N.NWS.Database = function() {
  * @method createDatabase
  * @returns {{Min: Real, Max: Real}}
  */
-N.NWS.Database.prototype.createDatabase = function(url, name, description) {
+N.NWS.Database.prototype.createDatabase = function(url, name, description, userInfo) {
   var http =  new N.Http();
   var dbUrl = url;
   if(url.lastIndexOf('/') !== url.length-1) {
@@ -52,7 +52,24 @@ N.NWS.Database.prototype.createDatabase = function(url, name, description) {
   http.put(dbUrl).then(
     function(data) {
       if(data.ok === true) {
-        deferred.resolve( { status: true, errMsg: '' } );
+debugger;
+        var doc = {
+//          _id: 'pi_neural_simulator',
+          revision: 'v1.0.0',
+          creator: userInfo.firstName+' '+userInfo.lastName,
+          name: name,
+          description: description
+        };
+
+        var httpDoc = new N.Http();
+        httpDoc.put(dbUrl+'/pi_neural_simulator', doc).then(
+          function() {
+            deferred.resolve( { status: true, errMsg: '' } );
+          },
+          function(error) {
+            deferred.reject( { status: false, errMsg: 'Unable to write indentifier doc: '+error.responseJSON.reason } );
+          }
+        );
       } else {
         deferred.reject( { status: false, errMsg: '' } );
       }
