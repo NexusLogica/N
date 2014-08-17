@@ -53,6 +53,15 @@ N.Http.prototype.put = function(url, data) {
 }
 
 /**
+ * Perform an HTTP DELETE.
+ * @method delete
+ * @returns { Promise }
+ */
+N.Http.prototype.delete = function(url, data) {
+  return this.call('DELETE', url, data);
+}
+
+/**
  * Returns the minimum and maximum values in the signal.
  * @method GetRange
  * @returns {{Min: Real, Max: Real}}

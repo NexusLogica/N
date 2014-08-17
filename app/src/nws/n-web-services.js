@@ -38,7 +38,7 @@ N.NWS.Database = function() {
 /**
  * Returns the minimum and maximum values in the signal.
  * @method createDatabase
- * @returns {{Min: Real, Max: Real}}
+ * @returns {{status: boolean, errMsg: string}}
  */
 N.NWS.Database.prototype.createDatabase = function(url, name, description, userInfo) {
   var http =  new N.Http();
@@ -71,6 +71,35 @@ N.NWS.Database.prototype.createDatabase = function(url, name, description, userI
         );
       } else {
         deferred.reject( { status: false, errMsg: '' } );
+      }
+    },
+    function(error) {
+      deferred.reject( { status: false, errMsg: error.responseJSON.reason } );
+    }
+  );
+  return deferred.promise;
+}
+
+/**
+ * Returns the minimum and maximum values in the signal.
+ * @method deleteDatabase
+ * @returns {{status: boolean, errMsg: string}}
+ */
+N.NWS.Database.prototype.deleteDatabase = function(url, name) {
+  var http =  new N.Http();
+  var dbUrl = url;
+  if(url.lastIndexOf('/') !== url.length-1) {
+    dbUrl += '/';
+  }
+  dbUrl += name;
+
+  var deferred = Q.defer();
+  http.delete(dbUrl).then(
+    function(data) {
+      if(data.ok === true) {
+        deferred.resolve( { status: true, errMsg: '' } );
+      } else {
+        deferred.reject( { status: false, errMsg: error.responseJSON.reason } );
       }
     },
     function(error) {

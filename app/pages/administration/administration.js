@@ -39,7 +39,6 @@ angular.module('nSimApp.directives').directive('administration', [function() {
           currentListData = list;
         }
         $scope.databaseList = _.uniq(_.union($scope.databaseList, currentListData), function(db) {
-          debugger;
           return db.url+db.name;
         });
         localStorageService.set('accessedDatabases', $scope.databaseList);
@@ -49,6 +48,12 @@ angular.module('nSimApp.directives').directive('administration', [function() {
       $scope.addDatabase = function(url, name, description) {
         $scope.databaseList.push({ url: url, name: name, description: description, accessible: true });
         writeDatabaseList();
+      }
+
+      $scope.removeDatabase = function(url, name) {
+        readDatabaseList();
+        _.remove($scope.databaseList, function(item) { if(item.url === url && item.name === name) { return true; } return false; });
+        localStorageService.set('accessedDatabases', $scope.databaseList);
       }
 
       /***
@@ -90,7 +95,6 @@ angular.module('nSimApp.directives').directive('administration', [function() {
         $element.find('.create-database').modal('show');
       }
 
-
       $scope.createDatabase = function() {
         if(!$scope.createDbForm.$valid) {
           $scope.formMessage = 'Please fix the errors';
@@ -112,6 +116,36 @@ angular.module('nSimApp.directives').directive('administration', [function() {
             });
           }
         );
+      }
+
+      $scope.showDeleteDatabase = function() {
+        $element.find('.delete-database').modal('show');
+      }
+
+      $scope.selectedDeleteDatabase = function(database) {
+        $scope.databaseToDelete = database;
+      }
+
+      $scope.deleteDatabase = function() {
+        bootbox.confirm('Are you certain you want to delete this database?', function(result) {
+          if(result === true) {
+            var db = new N.NWS.Database();
+            db.deleteDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name).then(
+              function() {
+                $scope.$apply(function() {
+                  $element.find('.delete-database').modal('hide');
+                  $scope.removeDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name);
+                  $scope.databaseToDelete = null;
+                });
+              },
+              function(status) {
+                $scope.$apply(function() {
+                  $scope.formMessage = 'Database could not be created: '+status.errMsg;
+                });
+              }
+            );
+          }
+        });
       }
     }
   };

@@ -226,6 +226,22 @@ body {
     width: 150px; }
   .administration .database-current table thead .accessible {
     width: 50px; }
+.administration .delete-database .dropdown .btn {
+  text-align: left;
+  width: 560px; }
+.administration .delete-database .item-set {
+  margin-top: 10px; }
+  .administration .delete-database .item-set .item-label {
+    display: inline-block;
+    width: 60px; }
+  .administration .delete-database .item-set .item-value {
+    margin-left: 10px;
+    display: inline-block;
+    width: 450px; }
+.administration .delete-database .well {
+  margin-top: 10px; }
+.administration .delete-database .footer-message {
+  width: 310px; }
 
 .n {
   margin-top: 100px; }

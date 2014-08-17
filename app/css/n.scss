@@ -355,6 +355,32 @@ body {
       }
     }
   }
+
+  .delete-database {
+    .dropdown .btn {
+      text-align: left;
+      width: 560px;
+    }
+    .item-set {
+      margin-top:10px;
+
+      .item-label {
+        display: inline-block;
+        width: 60px;
+      }
+      .item-value {
+        margin-left: 10px;
+        display: inline-block;
+        width: 450px;
+      }
+    }
+    .well {
+      margin-top: 10px;
+    }
+    .footer-message {
+      width: 310px;
+    }
+  }
 }
 
 //*****************************
