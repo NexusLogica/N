@@ -20,7 +20,7 @@ N.UI = N.UI || {};
   //******************
 
 N.UI.PiNetwork = function(parentNetwork) {
-  this.ParentNetwork = parentNetwork;
+  this.parentNetwork = parentNetwork;
   this.X = 0;
   this.Y = 0;
   this._set = null;
@@ -31,7 +31,7 @@ N.UI.PiNetwork = function(parentNetwork) {
   this.Group = null;
   this.NetworkJSON = {};
   this.Networks = [];
-  this.NetworksByName = {};
+  this.networksByName = {};
   this.DrawBorder = true;
 }
 
@@ -54,7 +54,7 @@ N.UI.PiNetwork.prototype.SetNetwork = function(network) {
  * @returns {N.UI.PiNetwork}
  */
 N.UI.PiNetwork.prototype.GetNetworkByName = function(name) {
-  return this.NetworksByName[name];
+  return this.networksByName[name];
 }
 
 /**
@@ -113,7 +113,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
   this.Scale = scale;
 
   // If no
-  if(!this.ParentNetwork) {
+  if(!this.parentNetwork) {
     this.Width = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
   }
   this.Height = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
@@ -161,7 +161,7 @@ N.UI.PiNetwork.prototype.Render = function(svgParent, scale, renderMappings) {
       if(col.Name) {
         var neuron = this.Network.GetNeuronByName(col.Name);
         if(neuron) {
-          var template = this.GetTemplate(renderMappings, col.GroupName);
+          var template = this.getTemplate(renderMappings, col.GroupName);
           var radius = this.Scale*(neuron.Display && neuron.Display.Radius ? neuron.Display.Radius : template.Radius);
           var graphic = N.UI.PiNeuronFactory.CreatePiNeuron(template.Template, radius);
           graphic.Network = this;
@@ -207,7 +207,7 @@ N.UI.PiNetwork.prototype.GetGroup = function() {
   return this.Group;
 }
 
-N.UI.PiNetwork.prototype.GetTemplate = function(renderMappings, groupName) {
+N.UI.PiNetwork.prototype.getTemplate = function(renderMappings, groupName) {
   var template = renderMappings[groupName];
   if(!template) {
     var gn = groupName;
@@ -226,7 +226,7 @@ N.UI.PiNetwork.prototype.GetTemplate = function(renderMappings, groupName) {
   return template;
 }
 
-N.UI.PiNetwork.prototype.LoadFrom = function(json) {
+N.UI.PiNetwork.prototype.loadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }
@@ -260,7 +260,7 @@ N.UI.PiNetwork.prototype.AppendNetworkToStackedLayout = function(network, render
     var childNetwork = (new N.UI.PiNetwork(this)).SetNetwork(network.Networks[i]);
     childNetwork.Layout(renderMappings);
     this.Networks.push(childNetwork);
-    this.NetworksByName[childNetwork.Network.Name] = childNetwork;
+    this.networksByName[childNetwork.Network.Name] = childNetwork;
   }
 
   var neurons = network.Neurons;
@@ -303,7 +303,7 @@ N.UI.PiNetwork.prototype.CalculateRowDimensions = function(row, renderMappings) 
   var height = 0;
   for(var i = 0; i<row.length; i++) {
     var neuron = row[i];
-    var data = this.GetTemplate(renderMappings, neuron.GroupName);
+    var data = this.getTemplate(renderMappings, neuron.GroupName);
     if(!data) {
       data = renderMappings.Default;
     }

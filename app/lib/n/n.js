@@ -40,7 +40,7 @@ N.Type = {
 };
 
 /**
- * Create an instance of a object from the json, where json.ClassName is the name of the object and all properties
+ * Create an instance of a object from the json, where json.className is the name of the object and all properties
  * of the json object will be copied into the new object.
  *
  * @method N.CreateInstance
@@ -48,7 +48,7 @@ N.Type = {
  * @returns {DeferredObject}
  */
 N.CreateInstance = function(json) {
-  var obj = N.NewN(json.ClassName);
+  var obj = N.NewN(json.className);
   for(var key in json) {
     obj[key] = json[key];
   }

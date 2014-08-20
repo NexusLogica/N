@@ -101,7 +101,7 @@ N.Connection.prototype.Validate = function(report) {
  */
 N.Connection.prototype.LoadFrom = function(json) {
   if(json.Template) {
-    var template = this.Network.GetTemplate(json.Template);
+    var template = this.Network.getTemplate(json.Template);
     if(template === null) {
       this.ValidationMessages.push('ERROR: Unable to find template "'+json.Template+'"');
       N.L(this.ValidationMessages[this.ValidationMessages.length-1]);

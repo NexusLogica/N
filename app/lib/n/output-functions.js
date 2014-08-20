@@ -47,8 +47,8 @@ N.Comp.OutputFunc.LinearSum = function(comp, t) {
   comp.Output = main.Gain*main.Comp.GetOutputAt(t-main.Delay);
 }
 
-N.Comp.OutputFunc.LinearSum.Validate = function(comp, report) {
-  if(!_.isObject(comp.OutputLogic.Sources.Main.Compartment)) { report.Error(comp.GetPath()+'[func:=OutputLogic.OutputFunc]', 'The source compartment is null'); }
+N.Comp.OutputFunc.LinearSum.validate = function(comp, report) {
+  if(!_.isObject(comp.OutputLogic.Sources.Main.Compartment)) { report.Error(comp.getPath()+'[func:=OutputLogic.OutputFunc]', 'The source compartment is null'); }
 }
 
 /**

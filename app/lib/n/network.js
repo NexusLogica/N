@@ -25,117 +25,127 @@ var N = N || {};
  * @param {Object} parentNetwork The parent network, if one exists.
  */
 N.Network = function(parentNetwork) {
-  this.ClassName           = 'N.Network';
-  this.Id                  = null;
+  this.className           = 'N.Network';
+  this.id                  = null;
   this.LongName            = '';
-  this.Name                = '';
-  this.Category            = 'Default';
-  this.Neurons             = [];
-  this.NeuronsByName       = {};
-  this.Connections         = [];
-  this.ConnectionsByPath   = {};
-  this.ParentNetwork       = parentNetwork;
-  this.Networks            = [];
-  this.NetworksByName      = {};
-  this.Templates           = {};
-  this.ValidationMessages  = [];
-  this.Random              = (parentNetwork ? parentNetwork.Random : new N.Rand.RandomGenerator());
+  this.name                = '';
+  this.category            = 'Default';
+  this.neurons             = [];
+  this.neuronsByName       = {};
+  this.connections         = [];
+  this.connectionsByPath   = {};
+  this.parentNetwork       = parentNetwork;
+  this.networks            = [];
+  this.networksByName      = {};
+  this.templates           = {};
+  this.validationMessages  = [];
+  this.random              = (parentNetwork ? parentNetwork.random : new N.Rand.RandomGenerator());
+  this.display             = {};
 }
 
 /**
  * Returns the object type.
- * @method GetType
+ * @method getType
  * @returns {N.Type.Network}
  */
-N.Network.prototype.GetType = function() {
+N.Network.prototype.getType = function() {
   return N.Type.Network;
 }
 
 /**
  * Get the full path of the network.
- * @method GetPath
+ * @method getPath
  * @returns {string}
  */
-N.Network.prototype.GetPath = function() {
-  return (this.ParentNetwork ? this.ParentNetwork.GetPath() : '/')+this.Name;
+N.Network.prototype.getPath = function() {
+  return (this.parentNetwork ? this.parentNetwork.getPath() : '/')+this.name;
 }
 
 /**
  * Sets the parent network.
- * @method SetParentNetwork
+ * @method setParentNetwork
  * @param {N.Network} the parent network
  * @returns {N.Network} Returns a reference to this network.
  */
-N.Network.prototype.SetParentNetwork = function(parentNetwork) {
-  this.ParentNetwork = parentNetwork;
+N.Network.prototype.setParentNetwork = function(parentNetwork) {
+  this.parentNetwork = parentNetwork;
+  return this;
+}
+
+/**
+ * Set the name.
+ * @method setName
+ * @returns {this}
+ */
+N.Network.prototype.setName = function(name) {
+  this.name = name;
   return this;
 }
 
 /**
  * Get the parent network. This call is implemented by all network, neuron, and compartment objects.
- * @method GetParent
+ * @method getParent
  * @returns {Object} The parent network object or null if there is none.
  */
-N.Network.prototype.GetParent = function() {
-  return this.ParentNetwork;
+N.Network.prototype.getParent = function() {
+  return this.parentNetwork;
 }
 
 /**
  * Get the the root/top level network.
- * @method GetRoot
+ * @method getRoot
  * @returns {N.Network} The root network object or self if this is the root.
  */
-N.Network.prototype.GetRoot = function() {
-  return this.ParentNetwork ? this.ParentNetwork.GetRoot() : this;
+N.Network.prototype.getRoot = function() {
+  return this.parentNetwork ? this.parentNetwork.getRoot() : this;
 }
 
 /**
  * Adds a child network to the network.
- * @method AddNetwork
+ * @method addNetwork
  * @param network
  * @returns {N.Network}
  */
-N.Network.prototype.AddNetwork = function(network) {
-  if(network.Name.length === 0) {
-    throw N.L('ERROR: N.Network.AddNetwork: No name for network.');
+N.Network.prototype.addNetwork = function(network) {
+  if(network.name.length === 0) {
+    throw N.L('ERROR: N.Network.addNetwork: No name for network.');
   }
-  if(this.NetworksByName[network.Name]) {
-    throw N.L('ERROR: N.Network.AddNetwork: The network '+network.Name+' already exists in '+this.Name+'.');
+  if(this.networksByName[network.name]) {
+    throw N.L('ERROR: N.Network.addNetwork: The network '+network.name+' already exists in '+this.name+'.');
   }
-  this.Networks.push(network);
-  this.NetworksByName[network.Name] = network;
-  network.SetParentNetwork(this);
+  this.networks.push(network);
+  this.networksByName[network.name] = network;
+  network.setParentNetwork(this);
   return network;
 }
 
 /**
  * Get number of networks directly owned by this network.
- * @method GetNumNetworks
+ * @method getNumNetworks
  * @returns {Integer}
  */
-N.Network.prototype.GetNumNetworks = function() {
-  return this.Networks.length;
+N.Network.prototype.getNumNetworks = function() {
+  return this.networks.length;
 }
 
 /**
  * Get a network owned by this network by index.
- * @method
- * workByIndex
+ * @method getNetworkByIndex
  * @param {Integer} index
  * @returns {N.Network}
  */
-N.Network.prototype.GetNetworkByIndex = function(index) {
-  return this.Networks[index];
+N.Network.prototype.getNetworkByIndex = function(index) {
+  return this.networks[index];
 }
 
 /**
  * Get a network owned by this network given the network short string.
- * @method GetNetworkByName
+ * @method getNetworkByName
  * @param {String} shortName
  * @returns {N.Network}
  */
-N.Network.prototype.GetNetworkByName = function(name) {
-  return this.NetworksByName[name];
+N.Network.prototype.getNetworkByName = function(name) {
+  return this.networksByName[name];
 }
 
 /**
@@ -144,115 +154,115 @@ N.Network.prototype.GetNetworkByName = function(name) {
  * @param neuron
  * @returns {N.Neuron}
  */
-N.Network.prototype.AddNeuron = function(neuron) {
-  if(neuron.Name.length === 0) {
+N.Network.prototype.addNeuron = function(neuron) {
+  if(neuron.name.length === 0) {
     N.L('ERROR: N.Network.AddNeuron: No short name for neuron.');
     throw 'ERROR: N.Network.AddNeuron: No short name for neuron.';
   }
-  this.Neurons.push(neuron);
-  this.NeuronsByName[neuron.Name] = neuron;
-  neuron.SetNetwork(this);
+  this.neurons.push(neuron);
+  this.neuronsByName[neuron.name] = neuron;
+  neuron.setNetwork(this);
   return neuron;
 }
 
 /**
  * Get number of neurons directly owned by this network.
- * @method GetNumNeurons
+ * @method getNumNeurons
  * @returns {Integer}
  */
-N.Network.prototype.GetNumNeurons = function() {
-  return this.Neurons.length;
+N.Network.prototype.getNumNeurons = function() {
+  return this.neurons.length;
 }
 
 /**
  * Get a neuron owned by this network by index.
- * @method GetNeuronByIndex
+ * @method getNeuronByIndex
  * @param {Integer} index
  * @returns {N.Neuron}
  */
-N.Network.prototype.GetNeuronByIndex = function(index) {
-  return this.Neurons[index];
+N.Network.prototype.getNeuronByIndex = function(index) {
+  return this.neurons[index];
 }
 
 /**
  * Get a neuron owned by this network given the neuron short string.
- * @method GetNeuronByName
+ * @method getNeuronByName
  * @param {String} shortName
  * @returns {N.Neuron}
  */
-N.Network.prototype.GetNeuronByName = function(name) {
-  return this.NeuronsByName[name];
+N.Network.prototype.getNeuronByName = function(name) {
+  return this.neuronsByName[name];
 }
 
 /**
  * Add a connection and connect it immmediately.
- * @method AddConnection
+ * @method addConnection
  * @param {N.Connection} connection
  */
-N.Network.prototype.AddConnection = function(connection) {
-  this.Connections.push(connection);
-  this.ConnectionsByPath[connection.GetPath()] = connection;
+N.Network.prototype.addConnection = function(connection) {
+  this.connections.push(connection);
+  this.connectionsByPath[connection.getPath()] = connection;
   return connection;
 }
 
 /**
  * Get the number of connections owned by this network.
- * @method GetNumConnections
+ * @method getNumConnections
  * @returns {Number}
  */
-N.Network.prototype.GetNumConnections = function() {
-  return this.Connections.length;
+N.Network.prototype.getNumConnections = function() {
+  return this.connections.length;
 }
 
 /**
  * Get a connection by index
- * @method GetConnectionsByIndex
+ * @method getConnectionsByIndex
  * @param {Integer} index
  * @returns {N.Connection}
  */
-N.Network.prototype.GetConnectionsByIndex = function(index) {
-  return this.Connections[index];
+N.Network.prototype.getConnectionsByIndex = function(index) {
+  return this.connections[index];
 }
 
 /**
  * Get a connection given the connection path string.
- * @method GetConnectionsByPath
+ * @method getConnectionsByPath
  * @param {String} path
  * @returns {N.Connection}
  */
 N.Network.prototype.GetConnectionsByPath = function(path) {
-  return this.ConnectionsByPath[path];
+  return this.connectionsByPath[path];
 }
 
 /**
  * Returns the full path from the top level network to this network.
- * @method GetFullPath
+ * @method getFullPath
  * @returns {String} The concatinated short names of this network and its parents, separated by '/'.
  */
-N.Network.prototype.GetFullPath = function() {
-  return (this.ParentNetwork ? this.ParentNetwork.GetFullPath() : '/') + this.Name;
+N.Network.prototype.getFullPath = function() {
+  return (this.parentNetwork ? this.parentNetwork.getFullPath() : '/') + this.name;
 }
 
-N.Network.prototype.Link = function() {
-  this.LinkReport = new N.ConfigurationReport();
-  this.Connect();
-  return this.LinkReport;
+N.Network.prototype.link = function() {
+  this.linkReport = new N.ConfigurationReport();
+  this.connect();
+  return this.linkReport;
 }
 
-N.Network.prototype.Connect = function() {
-  var numConnections = this.Connections.length;
+N.Network.prototype.connect = function() {
+  var numConnections = this.connections.length;
   for(var i=0; i<numConnections; i++) {
-    this.Connections[i].Connect();
+    this.connections[i].connect();
   }
 
-  var num = this.Neurons.length;
+  var num = this.neurons.length;
   for(i=0; i<num; i++) {
-    this.Neurons[i].ConnectCompartments();
+    this.neurons[i].ConnectCompartments();
   }
 
-  var numNetworks = this.Networks.length;
+  var numNetworks = this.networks.length;
   for(i=0; i<numNetworks; i++) {
-    this.Networks[i].Connect();
+    this.networks[i].Connect();
   }
   return this;
 }
@@ -275,14 +285,14 @@ N.Network.prototype.update = function(time) {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.updateConnections = function(time) {
-  var numConnections = this.Connections.length;
+  var numConnections = this.connections.length;
   for(var i=0; i<numConnections; i++) {
-    this.Connections[i].update(time);
+    this.connections[i].update(time);
   }
 
-  var numNetworks = this.Networks.length;
+  var numNetworks = this.networks.length;
   for(var j=0; j<numNetworks; j++) {
-    this.Networks[j].updateConnections(time);
+    this.networks[j].updateConnections(time);
   }
   return this;
 }
@@ -294,14 +304,14 @@ N.Network.prototype.updateConnections = function(time) {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.updateNeurons = function(time) {
-  var num = this.Neurons.length;
+  var num = this.neurons.length;
   for(var i=0; i<num; i++) {
-    this.Neurons[i].update(time);
+    this.neurons[i].update(time);
   }
 
-  var numNetworks = this.Networks.length;
+  var numNetworks = this.networks.length;
   for(var j=0; j<numNetworks; j++) {
-    this.Networks[j].updateNeurons(time);
+    this.networks[j].updateNeurons(time);
   }
   return this;
 }
@@ -313,19 +323,19 @@ N.Network.prototype.updateNeurons = function(time) {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.clear = function() {
-  var numConnections = this.Connections.length;
+  var numConnections = this.connections.length;
   for(var i=0; i<numConnections; i++) {
-    this.Connections[i].clear();
+    this.connections[i].clear();
   }
 
-  var num = this.Neurons.length;
+  var num = this.neurons.length;
   for(i=0; i<num; i++) {
-    this.Neurons[i].clear();
+    this.neurons[i].clear();
   }
 
-  var numNetworks = this.Networks.length;
+  var numNetworks = this.networks.length;
   for(i=0; i<numNetworks; i++) {
-    this.Networks[i].clear();
+    this.networks[i].clear();
   }
   return this;
 }
@@ -338,23 +348,23 @@ N.Network.prototype.clear = function() {
  * @return {N.ConfigurationReport} Returns the configuration report object.
  */
 N.Network.prototype.Validate = function(report) {
-  if(this.Networks.length === 0 && this.Neurons.length === 0) {
-    report.Warning(this.GetPath(), 'The network has no neurons or child networks.');
-    if(this.Connections.length) { report.Error(this.GetPath(), 'The network has connections but no child networks or neurons, so the connections will fail.'); }
+  if(this.networks.length === 0 && this.neurons.length === 0) {
+    report.Warning(this.getPath(), 'The network has no neurons or child networks.');
+    if(this.connections.length) { report.Error(this.getPath(), 'The network has connections but no child networks or neurons, so the connections will fail.'); }
   }
 
   for(var j in this.ValidationMessages) {
-    report.Error(this.GetPath(), this.ValidationMessages[j]);
+    report.Error(this.getPath(), this.ValidationMessages[j]);
   }
 
-  for(var i=0; i<this.Networks.length; i++) { this.Networks[i].Validate(report); }
-  for(i=0; i<this.Neurons.length; i++)           { this.Neurons[i].Validate(report); }
-  for(i=0; i<this.Connections.length; i++) {
+  for(var i=0; i<this.networks.length; i++) { this.networks[i].Validate(report); }
+  for(i=0; i<this.neurons.length; i++)           { this.neurons[i].Validate(report); }
+  for(i=0; i<this.connections.length; i++) {
     try {
-      this.Connections[i].Validate(report);
+      this.connections[i].Validate(report);
     }
     catch (err) {
-      report.Error(this.Connections[i].GetPath(), 'The connection of type '+this.Connections[i].ClassName+' threw an exception when validating.');
+      report.error(this.connections[i].getPath(), 'The connection of type '+this.connections[i].className+' threw an exception when validating.');
     }
   }
   return report;
@@ -362,97 +372,166 @@ N.Network.prototype.Validate = function(report) {
 
 /**
  * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
- * @method LoadFrom
+ * @method loadFrom
  * @param {JSON} json The JSON object containing the configuration.
  * @returns {Network} Returns a reference to self
  */
-N.Network.prototype.LoadFrom = function(json, recursive) {
-  if(json.Templates) {
-    this.Templates = _.clone(json.Templates);
-  }
+N.Network.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
+  var _this = this;
+  var neuron;
 
-  if(json.Template) {
-    var template = this.GetTemplate(json.Template);
-    if(template === null) {
-      this.ValidationMessages.push('ERROR: Unable to find template "'+json.Template+'"');
-      N.L(this.ValidationMessages[this.ValidationMessages.length-1]);
-      return;
+  var jsonToFill = _.cloneDeep(json);
+
+  this.loadTemplate(jsonToFill).then(
+    function() {
+      _.merge(_this, _.omit(jsonToFill, ['networks', 'neurons', 'connections', 'template', 'randSeed']));
+
+      if(json.hasOwnProperty('randSeed')) {
+        _this.random.SetSeed(Math.parseInt(json.RandSeed));
+      }
+
+      _this.loadNetworks(json.networks || []).then(
+        function() {
+          _this.loadNeurons(json.neurons || []).then(
+            function() {
+              _this.loadConnections(json.connections || []).then(
+                function() {
+
+                  // Hook up the connections
+                  for(var n in _this.connections) {
+                    _this.connections[n].Connect();
+                  }
+                  if(!_this.parentNetwork) {
+                    _this.initialize();
+                  }
+                  deferred.resolve();
+
+                }, function(status) {
+                  deferred.reject(status);
+                }
+              );
+
+            }, function(status) {
+              deferred.reject(status);
+            }
+          );
+
+        }, function(status) {
+          deferred.reject(status);
+        }
+      );
+    }, function(status) {
+      deferred.reject(status);
     }
-    this.LoadFrom(template, true);
-  }
+  );
 
+  return deferred.promise;
+}
+
+N.Network.prototype.loadTemplate = function(json) {
+  var deferred = Q.defer();
+  var _this = this;
+
+  if(json.hasOwnProperty('template')) {
+    if(json.template.hasOwnProperty('local')) {
+      var localTemplate = this.getTemplate(json.template.local);
+      if(localTemplate === null) {
+        deferred.reject({ success: false, errMsg: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
+        return deferred.promise;
+      }
+      if(localTemplate.template) {
+        this.loadTemplate(localTemplate).then(
+          function(template) {
+            _.merge(json, localTemplate);
+            deferred.resolve();
+          }, function(status) {
+            deferred.reject(status);
+          }
+        );
+      }
+    } else {
+      this.getRemoteTemplate(json.template).then(
+        function(remoteTemplate) {
+          _.merge(json, localTemplate);
+          deferred.resolve();
+        }, function(status) {
+          deferred.reject(status);
+        }
+      );
+    }
+  } else {
+    deferred.resolve();
+  }
+  return deferred.promise;
+}
+
+N.Network.prototype.loadNetworks = function(json) {
+  var deferred = Q.defer();
+  var _this = this;
+
+  var promises = [];
   for(var i in json) {
-    if(i === 'Neurons') {
-      for(var j=0; j<json.Neurons.length; j++) {
-        var neuronJson = json.Neurons[j];
-        var neuron = N.NewN(neuronJson.ClassName || 'N.Neuron', this).LoadFrom(neuronJson);
-        this.Neurons.push(neuron);
-        this.NeuronsByName[neuron.Name] = neuron;
-      }
-    }
-    else if(i === 'Networks') {
-      for(var k=0; k<json.Networks.length; k++) {
-        var networkJson = json.Networks[k];
-        var network = N.NewN(networkJson.ClassName || 'N.Network', this).LoadFrom(networkJson);
-        this.AddNetwork(network);
-      }
-    }
-    else if(i === 'RandSeed') {
-      if(!this.ParentNetwork) {
-        this.Random.SetSeed(json[i]);
-      }
-    }
-    else if(i === 'Display') {
-      this.Display = {};
-      _.merge(this.Display, json[i]);
-    }
-    else if(i !== 'Templates' && i !== 'Template' && i !== 'Connections') {
-      this[i] = json[i];
-    }
+    var networkJson = json[i];
+    var network = N.NewN(networkJson.className || 'N.Network', this).setName(networkJson.name);
+    this.addNetwork(network);
+    promises.push(network.loadFrom(networkJson));
   }
 
-  if(json.Connections) {
-    for(var m in json.Connections) {
-      var connectionJson = json.Connections[m];
-      var connection = N.NewN(connectionJson.ClassName || 'N.Connection', this).LoadFrom(connectionJson);
-      this.AddConnection(connection);
-    }
-  }
-
-  if(!recursive) {
-    for(var n in this.Connections) {
-      this.Connections[n].Connect();
-    }
-
-    if(!this.ParentNetwork) {
-      this.Initialize();
-    }
-  }
-
-  return this;
+  return deferred.promise.all(promises);
 }
 
-N.Network.prototype.Initialize = function(templateName) {
-  for(var i in this.Networks) {
-    this.Networks[i].Initialize();
+N.Network.prototype.loadNeurons = function(json) {
+  var deferred = Q.defer();
+  var _this = this;
+
+  var promises = [];
+  for(var i in json) {
+    var neuronJson = json[i];
+    var neuron = N.NewN(neuronJson.className || 'N.Neuron', this).setName(neuronJson.name);
+    this.addNeuron(neuron);
+    promises.push(neuron.loadFrom(neuronJson));
   }
-  for(var j in this.Neurons) {
-    this.Neurons[j].Initialize();
+
+  return deferred.promise.all(promises);
+}
+
+N.Network.prototype.loadConnections = function(json) {
+  var deferred = Q.defer();
+  var _this = this;
+
+  var promises = [];
+  for(var i in json) {
+    var connectionJson = json[i];
+    var connection = N.NewN(connectionJson.className || 'N.Connection', this);
+    this.addConnection(connection);
+    promises.push(connection.loadFrom(connectionJson));
   }
-  for(var k in this.Connections) {
-    var connection = this.Connections[k];
-    if(connection.Initialize) {
-      connection.Initialize();
+
+  return deferred.promise.all(promises);
+}
+
+N.Network.prototype.initialize = function(templateName) {
+  for(var i in this.networks) {
+    this.networks[i].initialize();
+  }
+  for(var j in this.neurons) {
+    this.neurons[j].initialize();
+  }
+  for(var k in this.connections) {
+    var connection = this.connections[k];
+    if(connection.initialize) {
+      connection.initialize();
     }
   }
 }
 
-N.Network.prototype.GetTemplate = function(templateName) {
-  if(this.Templates[templateName]) {
-    return this.Templates[templateName];
+N.Network.prototype.getTemplate = function(templateName) {
+  if(this.templates[templateName]) {
+    return this.templates[templateName];
   }
-  if(this.ParentNetwork) {
-    return this.ParentNetwork.GetTemplate(templateName);
+  if(this.parentNetwork) {
+    return this.parentNetwork.getTemplate(templateName);
   }
   return null;
 }
@@ -460,7 +539,13 @@ N.Network.prototype.GetTemplate = function(templateName) {
 N.Network.prototype.AddTemplates = function(templates) {
   for(var i in templates) {
     var template = templates[i];
-    this.Templates[i] = _.clone(template);
+    this.templates[i] = _.clone(template);
   }
   return this;
+}
+
+N.Network.prototype.routeErrorMsg = function(errMsg) {
+  this.ValidationMessages.push(errMsg);
+  N.L(errMsg);
+  return errMsg;
 }

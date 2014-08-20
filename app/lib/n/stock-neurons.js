@@ -21,14 +21,14 @@ N.NeuronTemplate = N.NeuronTemplate || {};
 
 N.NeuronFactory.StateOutput = {
   Compartments : [{
-      ClassName: 'N.Comp.StateOutput',
+      className: 'N.Comp.StateOutput',
       Input: 'N.Comp.Input'
     }
   ]
 }
 
 N.Neuron = function() {
-  this.ClassName    = 'N.Neuron';
+  this.className    = 'N.Neuron';
   this.Id           = N.GenerateUUID();
   this.Name         = '';
   this.Category     = 'Default';
@@ -53,5 +53,5 @@ N.Neuron.prototype.ToJSON = function() {
   //***********************
 
 N.OutputCompartment = function() {
-  this.ClassName  = 'N.OutputCompartment';
+  this.className  = 'N.OutputCompartment';
 }

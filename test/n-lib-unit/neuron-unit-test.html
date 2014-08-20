@@ -37,9 +37,9 @@
     equal(neuron.GetNumCompartments(), 1, "One compartment");
     equal(neuron.Compartments[0].Name, 'SO', 'Compartment short name');
 
-    var signal = (new N.DiscreteSignal()).LoadFrom( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
+    var signal = (new N.DiscreteSignal()).loadFrom( { t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 });
     outputCompartment.SetSignal(signal);
-    equal(neuron.Compartments[0].Signal.ClassName, 'N.DiscreteSignal', 'Signal class name');
+    equal(neuron.Compartments[0].Signal.className, 'N.DiscreteSignal', 'Signal class name');
 
     var outputSignal = new N.AnalogSignal();
     var t = 0.0;
@@ -81,7 +81,7 @@
 
     var jsonString = signal.ToJSON();
     var jsonObj = JSON.parse(jsonString);
-    var className = jsonObj.ClassName;
+    var className = jsonObj.className;
     equal(className, "N.DiscreteSignal");
     var signal2 = N.CreateInstance(jsonObj);
     equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");

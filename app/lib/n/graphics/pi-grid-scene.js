@@ -40,7 +40,7 @@ N.UI.GridScene = function() {
  * @param position
  */
 N.UI.GridScene.prototype.Layout = function(config) {
-  this.Grid = (new N.UI.PiGrid()).LoadFrom(config);
+  this.Grid = (new N.UI.PiGrid()).loadFrom(config);
   this.Grid.Layout(this.RenderMappings);
 }
 

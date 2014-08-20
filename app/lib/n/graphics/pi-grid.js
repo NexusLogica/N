@@ -44,7 +44,7 @@ N.UI.PiGrid.prototype.Render = function(svgParent, scale) {
   this.Scale = scale;
 
   // If no
-  if(!this.ParentNetwork) {
+  if(!this.parentNetwork) {
     this.ScaledWidth = this.Scale*(_.isUndefined(this.Width) ? this.UnscaledWidth : this.Width);
   }
   this.ScaledHeight = this.Scale*(_.isUndefined(this.Height) ? this.UnscaledHeight : this.Height);
@@ -245,7 +245,7 @@ N.UI.PiGrid.prototype.CreateStringPath = function(start, end) {
   return '';
 }
 
-N.UI.PiGrid.prototype.LoadFrom = function(json) {
+N.UI.PiGrid.prototype.loadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }

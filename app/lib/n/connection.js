@@ -49,10 +49,10 @@ N.Connection.prototype.GetType = function() {
 
 /**
  * Returns the object type.
- * @method GetPath
+ * @method getPath
  * @returns {N.Type.Connection}
  */
-N.Connection.prototype.GetPath = function() {
+N.Connection.prototype.getPath = function() {
   return this.Path;
 }
 
@@ -94,30 +94,30 @@ N.Connection.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Connection.prototype.Validate = function(report) {
-  for(var j in this.ValidationMessages) {
-    report.Error(this.GetPath(), this.ValidationMessages[j]);
+N.Connection.prototype.validate = function(report) {
+  for(var j in this.validationMessages) {
+    report.Error(this.getPath(), this.validationMessages[j]);
   }
 
-  if(!this.Source) { report.Warning(this.GetPath(), 'The connection has no source.'); }
-  if(!this.Sink)   { report.Warning(this.GetPath(), 'The connection has no sink.'); }
+  if(!this.Source) { report.Warning(this.getPath(), 'The connection has no source.'); }
+  if(!this.Sink)   { report.Warning(this.getPath(), 'The connection has no sink.'); }
 }
 
 /**
  * Load a connection from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.
- * @method LoadFrom
+ * @method loadFrom
  * @param {JSON} json
  * @returns {Connection}
  */
-N.Connection.prototype.LoadFrom = function(json) {
+N.Connection.prototype.loadFrom = function(json) {
   if(json.Template) {
-    var template = this.Network.GetTemplate(json.Template);
+    var template = this.Network.getTemplate(json.Template);
     if(template === null) {
       this.ValidationMessages.push('ERROR: Unable to find template "'+json.Template+'"');
       N.L(this.ValidationMessages[this.ValidationMessages.length-1]);
       return;
     }
-    this.LoadFrom(template);
+    this.loadFrom(template);
   }
 
   for(var i in json) {

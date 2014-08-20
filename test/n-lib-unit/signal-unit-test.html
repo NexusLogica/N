@@ -67,7 +67,7 @@
     QUnit.assert.near(signal.GetValue(4.1), 0.1, "Value past the end");
     var jsonString = signal.ToJSON();
     var jsonObj = JSON.parse(jsonString);
-    var className = jsonObj.ClassName;
+    var className = jsonObj.className;
     equal(className, "N.AnalogSignal");
     var signal2 = N.CreateInstance(jsonObj);
     equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");
@@ -104,7 +104,7 @@
 
     var jsonString = signal.ToJSON();
     var jsonObj = JSON.parse(jsonString);
-    var className = jsonObj.ClassName;
+    var className = jsonObj.className;
     equal(className, "N.DiscreteSignal");
     var signal2 = N.CreateInstance(jsonObj);
     equal(signal2.GetNumSamples(), sequence.length, "New object from JSON has "+sequence.length+" samples");

@@ -21,25 +21,25 @@
   <script>
 
   var SimpleNeuronTemplate = {
-    ClassName: 'N.Neuron',
+    className: 'N.Neuron',
     Name: 'SN',
     Compartments: [{
-      ClassName: 'N.Comp.Output',
+      className: 'N.Comp.Output',
       Name: 'OP'
     },{
-      ClassName: 'N.Comp.LinearSummingInput',
+      className: 'N.Comp.LinearSummingInput',
       Name: 'IP'
     },{
-      ClassName: 'N.Comp.AcetylcholineInput',
+      className: 'N.Comp.AcetylcholineInput',
       Name: 'AIP'
     }]
   }
 
   var SourceTemplate = {
-    ClassName: 'N.Neuron',
+    className: 'N.Neuron',
     Name: 'SRC',
     Compartments: [{
-      ClassName: 'N.Comp.OutputFromSignal',
+      className: 'N.Comp.OutputFromSignal',
       Name: 'OP'
     }]
   }
@@ -90,13 +90,13 @@
     for(var i=0; i<numLayerNetworks; i++) {
       childNetwork = new N.Network();
       childNetwork.Name = 'L'+[3, 4, 6][i];
-      network.AddNetwork(childNetwork);
+      network.addNetwork(childNetwork);
     }
     equal(network.GetNumNetworks(), numLayerNetworks, 'Three networks');
 
     var childL4 = network.GetNetworkByName('L4');
     equal(network.Networks[1], childL4, 'Get L4 by name');
-    equal(childL4.ParentNetwork, network, 'Get parent network');
+    equal(childL4.parentNetwork, network, 'Get parent network');
     equal(N.FromPath(network, 'L4'), childL4, 'Get L4 by path');
 
     var childL6 = network.GetNetworkByName('L6');
@@ -104,7 +104,7 @@
     for(i=0; i<numLayer6Networks; i++) {
       childNetwork = new N.Network();
       childNetwork.Name = ['a', 'b'][i];
-      childL6.AddNetwork(childNetwork);
+      childL6.addNetwork(childNetwork);
     }
 
     var NetworkConfig = {
@@ -112,9 +112,9 @@
       RandSeed: 42,
       Templates: {
         NOutput: {
-          ClassName: 'N.Neuron',
+          className: 'N.Neuron',
           Compartments: [{
-            ClassName: 'N.Comp.OutputFromSignal',
+            className: 'N.Comp.OutputFromSignal',
             Name: 'OP',
             Initialize: function() { console.log('*** Hi - '+this.Neuron.Name); }
           }]
@@ -122,14 +122,14 @@
         NEx: {
           Template: 'NOutput',
           Compartments: [{
-            ClassName: 'N.Comp.LinearSummingInput',
+            className: 'N.Comp.LinearSummingInput',
             Name: 'IP'
           }]
         },
         NFS: {
           Template: 'NOutput',
           Compartments: [{
-            ClassName: 'N.Comp.LinearSummingInput',
+            className: 'N.Comp.LinearSummingInput',
             Name: 'IP'
           }]
         },
@@ -179,7 +179,7 @@
     };
 
     var layeredNetwork = new N.Network();
-    layeredNetwork.LoadFrom(NetworkConfig);
+    layeredNetwork.loadFrom(NetworkConfig);
 
     var first = N.FromPath(layeredNetwork, 'L6/b:IPYR1');
     ok(first, 'First exists');
@@ -203,13 +203,13 @@
     var json = {
       Name: 'L1',
       Neurons: [{
-        ClassName: 'N.Neuron', Name: 'CR1'
+        className: 'N.Neuron', Name: 'CR1'
       },{
-        ClassName: 'N.Neuron', Name: 'INB1'
+        className: 'N.Neuron', Name: 'INB1'
       }]
     }
 
-    network.LoadFrom(json);
+    network.loadFrom(json);
     equal(network.GetNumNeurons(), 2, 'Two neurons');
     equal(network.GetNeuronByIndex(0).Name, 'CR1', "Neuron 1 name");
     equal(network.GetNeuronByName('CR1').Name, 'CR1', 'Neuron 1 long name');
@@ -222,43 +222,43 @@
       var templateCopy = _.cloneDeep(template);
       for(var i in templateCopy.Compartments) { templateCopy.Compartments[i].Name += appendToCompartments; }
       this.AddTemplates({ TemplateToUse: templateCopy });
-      var n = this.AddNeuron((new N.Neuron(this)).LoadFrom({ Name: name, Template: 'TemplateToUse' }));
+      var n = this.AddNeuron((new N.Neuron(this)).loadFrom({ Name: name, Template: 'TemplateToUse' }));
       return this;
     }
 
-    var parentNetwork = (new N.Network()).LoadFrom({Name: "L1"}).CreateTestNeuron("L1N1", SimpleNeuronTemplate, 1);
-    equal(parentNetwork.GetNeuronByName('L1N1').GetCompartmentByName('AIP1').ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    var parentNetwork = (new N.Network()).loadFrom({Name: "L1"}).CreateTestNeuron("L1N1", SimpleNeuronTemplate, 1);
+    equal(parentNetwork.GetNeuronByName('L1N1').GetCompartmentByName('AIP1').className, 'N.Comp.AcetylcholineInput', 'Compartment name');
 
-    parentNetwork.AddNetwork((new N.Network())
-        .LoadFrom({ Name: 'L2-1'})
+    parentNetwork.addNetwork((new N.Network())
+        .loadFrom({ Name: 'L2-1'})
         .CreateTestNeuron("L2N1", SimpleNeuronTemplate, 2)
         .CreateTestNeuron("L2N2", SimpleNeuronTemplate, 3));
 
-    parentNetwork.AddNetwork((new N.Network())
-        .LoadFrom({ Name: 'L2-2'})
+    parentNetwork.addNetwork((new N.Network())
+        .loadFrom({ Name: 'L2-2'})
         .CreateTestNeuron("L3N1", SimpleNeuronTemplate, 4)
         .CreateTestNeuron("L3N2", SimpleNeuronTemplate, 5));
 
-    parentNetwork.GetNetworkByName('L2-2').AddNetwork((new N.Network())
-        .LoadFrom({ Name: 'L3-1'})
+    parentNetwork.GetNetworkByName('L2-2').addNetwork((new N.Network())
+        .loadFrom({ Name: 'L3-1'})
         .CreateTestNeuron("L4N1", SimpleNeuronTemplate, 6)
         .CreateTestNeuron("L4N2", SimpleNeuronTemplate, 7));
 
     var target = N.FromPath(parentNetwork, ':L1N1>AIP1');
-    equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    equal(target.className, 'N.Comp.AcetylcholineInput', 'Compartment name');
     equal(target.Neuron.Name, 'L1N1', 'Compartment\'s neuron name');
 
     var net = N.FromPath(parentNetwork, './L2-1');
     var target = N.FromPath(net, ':L2N1>AIP2');
-    equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    equal(target.className, 'N.Comp.AcetylcholineInput', 'Compartment name');
     equal(target.Neuron.Name, 'L2N1', 'Compartment\'s neuron name');
 
     var target = N.FromPath(parentNetwork, 'L2-2:L3N2>AIP5');
-    equal(target.ClassName, 'N.Comp.AcetylcholineInput', 'Compartment name');
+    equal(target.className, 'N.Comp.AcetylcholineInput', 'Compartment name');
     equal(target.Name, 'AIP5', 'Compartment\'s name');
 
     var target = N.FromPath(parentNetwork.GetNetworkByName('L2-1'), '../L2-2/L3-1:L4N1>OP6');
-    equal(target.ClassName, 'N.Comp.Output', 'Compartment name');
+    equal(target.className, 'N.Comp.Output', 'Compartment name');
     equal(target.Name, 'OP6', 'Compartment\'s name');
 
   });

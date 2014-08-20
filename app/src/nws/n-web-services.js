@@ -32,7 +32,7 @@ N.NWS = N.NWS || {};
  */
 
 N.NWS.Database = function() {
-  this.ClassName  = 'N.NWS.Database';
+  this.className  = 'N.NWS.Database';
 }
 
 /**

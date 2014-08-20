@@ -40,8 +40,8 @@ N.Comp.GetNumOutputConnections = function() {
   return this.OutputConnections.length;
 }
 
-N.Comp.GetPath = function() {
-  return this.Neuron.GetPath()+'>'+this.Name;
+N.Comp.getPath = function() {
+  return this.Neuron.getPath()+'>'+this.Name;
 }
 
 N.Comp.AddComparmentSink = function(compartment) {
@@ -59,7 +59,7 @@ N.Comp.ConnectToCompartments = function() {
       source.Compartment = this.Neuron.GetCompartmentByName(source.ComponentName);
       source.Compartment.AddComparmentSink(this);
       if(!source.Compartment) {
-        this.Neuron.Network.GetRoot().LinkReport.Error(this.GetPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
+        this.Neuron.Network.GetRoot().LinkReport.Error(this.getPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
       }
       if(!source.hasOwnProperty('Delay')) {
         source.Delay = N.TimeStep;
@@ -75,10 +75,10 @@ N.Comp.GetOutputAt = function(t) {
   return this.OutputStore.GetValue(t);
 }
 
-N.Comp.LoadFrom = function(json) {
+N.Comp.loadFrom = function(json) {
   for(var i in json) {
     if(i === 'OutputStore') {
-      this.OutputStore.LoadFrom(json[i]);
+      this.OutputStore.loadFrom(json[i]);
     }
     this[i] = json[i];
   }
@@ -91,15 +91,15 @@ N.Comp.Extend = function(constructorFunction) {
   constructorFunction.prototype.ConnectInput = N.Comp.ConnectInput;
   constructorFunction.prototype.GetNumInputConnections = N.Comp.GetNumInputConnections;
   constructorFunction.prototype.GetNumOutputConnections = N.Comp.GetNumOutputConnections;
-  constructorFunction.prototype.GetPath = N.Comp.GetPath;
+  constructorFunction.prototype.getPath = N.Comp.getPath;
   constructorFunction.prototype.AddComparmentSink = N.Comp.AddComparmentSink;
   constructorFunction.prototype.GetNumComparmentSinks = N.Comp.GetNumComparmentSinks;
   constructorFunction.prototype.ConnectToCompartments = N.Comp.ConnectToCompartments;
   constructorFunction.prototype.GetOutputAt = N.Comp.GetOutputAt;
-  constructorFunction.prototype.LoadFrom = N.Comp.LoadFrom;
+  constructorFunction.prototype.loadFrom = N.Comp.loadFrom;
 }
 
-N.Comp.InitializeCompartment = function(compartment) {
+N.Comp.initializeCompartment = function(compartment) {
   compartment.OutputStore = new N.AnalogSignal('OutputStore', 'OS');
   compartment.InputConnections = [];
   compartment.OutputConnections = [];
@@ -123,7 +123,7 @@ N.Comp.InitializeCompartment = function(compartment) {
  * @constructor
  */
 N.Comp.SignalSource = function(neuron, name) {
-  this.ClassName  = 'N.Comp.SignalSource';
+  this.className  = 'N.Comp.SignalSource';
   this.Name  = name;
   this.Category   = 'Output';
 
@@ -140,7 +140,7 @@ N.Comp.SignalSource = function(neuron, name) {
       Name: 'Main', PropName: 'OutputStore'
     }]
   }
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.SignalSource);
@@ -171,11 +171,11 @@ N.Comp.SignalSource.prototype.clear = function() {
   this.OutputStore.clear();
 }
 
-N.Comp.SignalSource.prototype.LoadFrom = function(json) {
+N.Comp.SignalSource.prototype.loadFrom = function(json) {
   for(var i in json) {
     if(i === 'Signal') {
       // TODO: figure out how to incorporate name
-      this.SetSignal('Main', N.NewN(json[i].ClassName).LoadFrom(json[i]));
+      this.SetSignal('Main', N.NewN(json[i].className).loadFrom(json[i]));
     }
     else { this[i] = json[i]; }
   }
@@ -183,9 +183,9 @@ N.Comp.SignalSource.prototype.LoadFrom = function(json) {
 }
 
 N.Comp.SignalSource.prototype.Validate = function(report) {
-  if(!this.Signal) { report.Warning(this.GetPath(), 'Signal object is not set.'); }
-  if(this.GetNumInputConnections() !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
-  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
+  if(!this.Signal) { report.Warning(this.getPath(), 'Signal object is not set.'); }
+  if(this.GetNumInputConnections() !== 0) { report.Warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.getPath(), 'The output component has no output connections.'); }
 }
 
   //*****************
@@ -193,7 +193,7 @@ N.Comp.SignalSource.prototype.Validate = function(report) {
   //*****************
 
 N.Comp.Output = function(neuron, name) {
-  this.ClassName   = 'N.Comp.Output';
+  this.className   = 'N.Comp.Output';
   this.Name        = name;
   this.Category    = 'Output';
 
@@ -212,7 +212,7 @@ N.Comp.Output = function(neuron, name) {
       Name: 'Main', PropName: 'OutputStore'
     }]
   }
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.Output);
@@ -243,16 +243,16 @@ N.Comp.Output.prototype.clear = function() {
  */
 N.Comp.Output.prototype.Validate = function(report) {
   if(!this.OutputLogic) {
-    report.Error(this.GetPath(), 'The OutputLogic object is not set.');
+    report.Error(this.getPath(), 'The OutputLogic object is not set.');
   } else if(!this.OutputLogic.OutputFunc) {
-    report.Error(this.GetPath(), 'The OutputLogic\'s OutputFunc is not set.');
+    report.Error(this.getPath(), 'The OutputLogic\'s OutputFunc is not set.');
   }
   else {
     this.OutputLogic.OutputFunc.Validate(this, report);
   }
 
-  if(this.GetNumInputConnections()  !== 0) { report.Warning(this.GetPath(), 'Input connections to the output signal are ignored.'); }
-  if(this.GetNumOutputConnections() === 0) { report.Warning(this.GetPath(), 'The output component has no output connections.'); }
+  if(this.GetNumInputConnections()  !== 0) { report.Warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.GetNumOutputConnections() === 0) { report.Warning(this.getPath(), 'The output component has no output connections.'); }
 }
 
   //********************
@@ -266,7 +266,7 @@ N.Comp.Output.prototype.Validate = function(report) {
  * @constructor
  */
 N.Comp.InputSink = function(neuron, name) {
-  this.ClassName   = 'N.Comp.InputSink';
+  this.className   = 'N.Comp.InputSink';
   this.Name        = name;
   this.Category    = 'Output';
 
@@ -283,7 +283,7 @@ N.Comp.InputSink = function(neuron, name) {
       Name: 'Main', PropName: 'OutputStore'
     }]
   }
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.InputSink);
@@ -316,11 +316,11 @@ N.Comp.InputSink.prototype.clear = function() {
  * @param report
  */
 N.Comp.InputSink.prototype.Validate = function(report) {
-  if(this.GetNumInputConnections()  === 0) { report.Warning(this.GetPath(), 'The input sink has no input connections.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The input only component has output connections.'); }
+  if(this.GetNumInputConnections()  === 0) { report.Warning(this.getPath(), 'The input sink has no input connections.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The input only component has output connections.'); }
 }
 
-N.Comp.InputSink.prototype.LoadFrom = function(json) {
+N.Comp.InputSink.prototype.loadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }
@@ -332,14 +332,14 @@ N.Comp.InputSink.prototype.LoadFrom = function(json) {
   //***************************
 
 N.Comp.InhibitoryOutput = function(neuron, name) {
-  this.ClassName  = 'N.Comp.InhibitoryOutput';
+  this.className  = 'N.Comp.InhibitoryOutput';
   this.Name       = name;
   this.Category   = 'InhibitoryOutput';
 
   this.Neuron     = neuron;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.InhibitoryOutput);
@@ -364,7 +364,7 @@ N.Comp.InhibitoryOutput.prototype.clear = function() {
   this.OutputStore.clear();
 }
 
-N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
+N.Comp.InhibitoryOutput.prototype.loadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }
@@ -376,7 +376,7 @@ N.Comp.InhibitoryOutput.prototype.LoadFrom = function(json) {
   //*****************************
 
 N.Comp.LinearSummingInput = function(neuron, name) {
-  this.ClassName   = 'N.Comp.LinearSummingInput';
+  this.className   = 'N.Comp.LinearSummingInput';
   this.Name       = name;
   this.Category   = 'Input';
 
@@ -392,7 +392,7 @@ N.Comp.LinearSummingInput = function(neuron, name) {
       Name: 'Main', PropName: 'OutputStore'
     }]
   }
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.LinearSummingInput);
@@ -439,12 +439,12 @@ N.Comp.LinearSummingInput.prototype.clear = function() {
  * @param report
  */
 N.Comp.LinearSummingInput.prototype.Validate = function(report) {
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The input component has output connections.'); }
-  if(this.GetNumInputConnections() === 0) { report.Warning(this.GetPath(), 'The input component has no input connections.'); }
-  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.GetPath(), 'The input component has no compartmental listeners.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The input component has output connections.'); }
+  if(this.GetNumInputConnections() === 0) { report.Warning(this.getPath(), 'The input component has no input connections.'); }
+  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.getPath(), 'The input component has no compartmental listeners.'); }
 }
 
-N.Comp.LinearSummingInput.prototype.LoadFrom = function(json) {
+N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }
@@ -469,14 +469,14 @@ N.Comp.LinearSummingInput.prototype.ToJSON = function() {
  * @constructor
  */
 N.Comp.SignalInput = function(neuron, name) {
-  this.ClassName   = 'N.Comp.SignalInput';
+  this.className   = 'N.Comp.SignalInput';
   this.Name       = name;
   this.Category   = 'Input';
 
   this.Neuron     = neuron;
   this.SignalInput = null;
   this.Sum         = 0.0;
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.SignalInput);
@@ -504,15 +504,15 @@ N.Comp.SignalInput.prototype.UpdateInput = function(t) {
  * @param report
  */
 N.Comp.SignalInput.prototype.Validate = function(report) {
-  if(this.GetNumInputConnections() !== 0)  { report.Warning(this.GetPath(), 'The component does not use input connections.'); }
-  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.GetPath(), 'The component has no compartmental listeners.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
+  if(this.GetNumInputConnections() !== 0)  { report.Warning(this.getPath(), 'The component does not use input connections.'); }
+  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.getPath(), 'The component has no compartmental listeners.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
 }
 
-N.Comp.SignalInput.prototype.LoadFrom = function(json) {
+N.Comp.SignalInput.prototype.loadFrom = function(json) {
   for(var i in json) {
     if(i === 'SignalInput') {
-      this.SignalInput = N.NewN(json[i].ClassName).LoadFrom(json[i]);
+      this.SignalInput = N.NewN(json[i].className).loadFrom(json[i]);
     }
     else { this[i] = json[i]; }
   }
@@ -536,14 +536,14 @@ N.Comp.SignalInput.prototype.ToJSON = function() {
  * @constructor
  */
 N.Comp.AcetylcholineInput = function(neuron, name) {
-  this.ClassName   = 'N.Comp.LinearSummingInput';
+  this.className   = 'N.Comp.LinearSummingInput';
   this.Name       = name;
   this.Category   = 'Input';
 
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
-  N.Comp.InitializeCompartment(this);
+  N.Comp.initializeCompartment(this);
 }
 
 N.Comp.Extend(N.Comp.AcetylcholineInput);
@@ -585,12 +585,12 @@ N.Comp.AcetylcholineInput.prototype.clear = function() {
  * @param report
  */
 N.Comp.AcetylcholineInput.prototype.Validate = function(report) {
-  if(this.GetNumInputConnections() === 0) { report.Warning(this.GetPath(), 'The input component has no input connections.'); }
-  if(this.GetNumComparmentSinks() === 0) { report.Warning(this.GetPath(), 'The input component has no compartmental listeners.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.GetPath(), 'The input component has output connections.'); }
+  if(this.GetNumInputConnections() === 0) { report.Warning(this.getPath(), 'The input component has no input connections.'); }
+  if(this.GetNumComparmentSinks() === 0) { report.Warning(this.getPath(), 'The input component has no compartmental listeners.'); }
+  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The input component has output connections.'); }
 }
 
-N.Comp.AcetylcholineInput.prototype.LoadFrom = function(json) {
+N.Comp.AcetylcholineInput.prototype.loadFrom = function(json) {
   for(var i in json) {
     this[i] = json[i];
   }

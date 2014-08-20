@@ -34,7 +34,7 @@ N.DISCRETE = 2;
  */
 
 N.AnalogSignal = function(name) {
-  this.ClassName  = 'N.AnalogSignal';
+  this.className  = 'N.AnalogSignal';
   this.Type       = N.ANALOG;
   this.Id         = N.GenerateUUID();
   this._finder    = new N.TableSearch();
@@ -249,7 +249,7 @@ N.AnalogSignal.prototype.ToJSON = function() {
  * @constructor
  */
 N.DiscreteSignal = function(name) {
-  this.ClassName  = 'N.DiscreteSignal';
+  this.className  = 'N.DiscreteSignal';
   this.Type       = N.DISCRETE;
   this.Id         = N.GenerateUUID();
   this.StateType  = N.DiscreteSignal.BISTATE;
@@ -414,11 +414,11 @@ N.DiscreteSignal.prototype.ToJSON = function() {
 
 /**
  * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
- * @method LoadFrom
+ * @method loadFrom
  * @param {JSON} json The JSON object containing the configuration.
  * @returns {Network} Returns a reference to self
  */
-N.DiscreteSignal.prototype.LoadFrom = function(json) {
+N.DiscreteSignal.prototype.loadFrom = function(json) {
   for(var i in json) {
     if(i === 'DataArray') {
       this.appendDataArray(json[i]);
@@ -518,7 +518,7 @@ N.SignalCompare.prototype.Compare = function(expected, actual) {
  * @constructor
  */
 N.TableSearch = function() {
-  this.ClassName  = 'N.TableSearch';
+  this.className  = 'N.TableSearch';
   this.indexLow = 0;
   this.indexHigh = 0;
   this.ascending = true;

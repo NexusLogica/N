@@ -31,7 +31,7 @@ var N = N || {};
  */
 
 N.Http = function() {
-  this.ClassName  = 'N.Http';
+  this.className  = 'N.Http';
 }
 
 /**

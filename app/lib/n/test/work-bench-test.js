@@ -53,17 +53,23 @@ N.WorkbenchTestScenes.prototype.CreateScenes = function() {
     'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
   };
 
+  var _this = this;
   for(var i=0; i<N.WorkbenchTestScenes.TestConfigurations.length; i++) {
     var config = N.WorkbenchTestScenes.TestConfigurations[i];
 
     var workbench = (new N.Workbench()).AddTemplates(
-        { 'N.WorkbenchTestScenes.SpinyStellate': N.WorkbenchTestScenes.SpinyStellate,
-          'N.WorkbenchTestScenes.FastSpiking': N.WorkbenchTestScenes.FastSpiking
-        }).SetTargets(config.Targets);
-
-    var scene = new N.UI.WorkbenchScene();
-    scene.Layout(workbench, renderMappings);
-    this.Workbenches.push(scene);
+      { 'N.WorkbenchTestScenes.SpinyStellate': N.WorkbenchTestScenes.SpinyStellate,
+        'N.WorkbenchTestScenes.FastSpiking': N.WorkbenchTestScenes.FastSpiking
+      }
+    );
+    workbench.SetTargets(config.targets).then(
+      function() {
+        var scene = new N.UI.WorkbenchScene();
+        scene.Layout(workbench, renderMappings);
+        _this.Workbenches.push(scene);
+      }, function(status) {
+      }
+    );
   }
 }
 
@@ -112,6 +118,6 @@ N.WorkbenchTestScenes.FastSpiking = {
 }
 
 N.WorkbenchTestScenes.TestConfigurations = [{
-  Targets : [ { Template: 'N.WorkbenchTestScenes.FastSpiking', Name: 'IN[0]'} ]
+  targets : [ { template: { local: 'N.WorkbenchTestScenes.FastSpiking' }, name: 'IN[0]'} ]
  }
 ];

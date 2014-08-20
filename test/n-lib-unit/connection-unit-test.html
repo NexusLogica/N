@@ -32,19 +32,19 @@
   };
 
   var SourceTemplate = {
-    ClassName: 'N.Neuron',
+    className: 'N.Neuron',
     Name: 'SRC',
     Compartments: [{
-      ClassName: 'N.Comp.OutputFromSignal',
+      className: 'N.Comp.OutputFromSignal',
       Name: 'OP'
     }]
   }
 
   var SpinyNeuronTemplate = {
-    ClassName: 'N.Neuron',
+    className: 'N.Neuron',
     Name: 'SN',
     Compartments: [{
-      ClassName: 'N.Comp.Output',
+      className: 'N.Comp.Output',
       Name: 'OP',
       InitialOutput: 0.0,
       OutputLogic: {
@@ -54,16 +54,16 @@
         }
       }
     },{
-      ClassName: 'N.Comp.LinearSummingInput',
+      className: 'N.Comp.LinearSummingInput',
       Name: 'IP'
     }]
   }
 
   var SinkTemplate = {
-    ClassName: 'N.Neuron',
+    className: 'N.Neuron',
     Name: 'SNK',
     Compartments: [{
-      ClassName: 'N.Comp.InputSink',
+      className: 'N.Comp.InputSink',
       Name: 'IS'
     }]
   }
@@ -77,20 +77,20 @@
     var cycles = 100;
 
     var newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SourceTemplate', Name: 'N1' }));
+    network.AddNeuron(newNeuron.loadFrom({ Template: 'SourceTemplate', Name: 'N1' }));
     newNeuron.GetCompartmentByName('OP').SetSignal(N.Signal.CreatePulseSignal({ durationOff: 10, durationOn: 10, signalLength: cycles, offset: 0.0, amplitude: 0.50, lowValue: 0.1}));
 
     newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SpinyNeuronTemplate', Name: 'N2' }));
+    network.AddNeuron(newNeuron.loadFrom({ Template: 'SpinyNeuronTemplate', Name: 'N2' }));
     newNeuron = new N.Neuron(network);
-    network.AddNeuron(newNeuron.LoadFrom({ Template: 'SinkTemplate', Name: 'N3' }));
+    network.AddNeuron(newNeuron.loadFrom({ Template: 'SinkTemplate', Name: 'N3' }));
 
     var connectionSource = new N.Connection(network);
-    connectionSource.LoadFrom({ Path: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 5 });
+    connectionSource.loadFrom({ Path: ':N1>OP->:N2>IP', Gain: 2.0, Delay: 5 });
     network.AddConnection(connectionSource);
 
     var connectionSink = new N.Connection(network);
-    connectionSink.LoadFrom({ Path: ':N2>OP->:N3>IS', Gain: 1.5, Delay: 2 });
+    connectionSink.loadFrom({ Path: ':N2>OP->:N3>IS', Gain: 1.5, Delay: 2 });
     network.AddConnection(connectionSink);
 
     var linkReport = network.Link();
@@ -136,14 +136,14 @@
       }]
     }
 
-    network.LoadFrom(json);
+    network.loadFrom(json);
     equal(network.GetNumNeurons(), 2, 'Two neurons');
     equal(network.GetNeuronByIndex(0).Name, 'SRC1', 'Neuron 1 name');
     equal(network.GetNeuronByName('SRC1').Name, 'SRC1', 'Neuron 1 long name');
     equal(network.GetNeuronByIndex(1).Name, 'SS1', "Neuron 2 name");
     equal(network.GetNeuronByName('SS1').Name, 'SS1', 'Neuron 2 long name');
 
-    var connection = (new N.Connection(network)).LoadFrom({ Path: ':SRC1>OP->:SS1>IP', Delay: 0.005 });
+    var connection = (new N.Connection(network)).loadFrom({ Path: ':SRC1>OP->:SS1>IP', Delay: 0.005 });
     network.AddConnection(connection).Connect();
 
     equal(network.GetNumConnections(), 1, 'Num connections in network');

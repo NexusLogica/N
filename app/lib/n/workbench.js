@@ -2,9 +2,9 @@
  
 File     : workbench.js
 Project  : N Simulator Library
-Purpose  : Source file for neuron relate objects.
+Purpose  : Source file for a workbench object.
 Revisions: Original definition by Lawrence Gunn.
-           2014/02/19
+           2014/07/19
 
 Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
@@ -23,8 +23,8 @@ var N = N || {};
  * @class Workbench
  * @constructor
  */
-N.Workbench = function(parentNetwork) {
-  this.ClassName           = 'N.Workbench';
+N.Workbench = function() {
+  this.className           = 'N.Workbench';
   this.Id                  = null;
   this.Name                = '';
   this.tests               = []; // N.WorkbenchTest array
@@ -89,40 +89,47 @@ console.log("RUN TEST");
  * @returns {N.Workbench}
  */
 N.Workbench.prototype.SetTargets = function(targets) {
+  var deferred = Q.defer();
+  var _this = this;
+
   this.Targets = _.cloneDeep(targets);
   var config = this.CreateNetwork();
 
 /////////  console.log(JSON.stringify(config, undefined, 2));
 
-  this.Network = (new N.Network()).AddTemplates(this.AdditionalTemplates).LoadFrom(config);
+  this.Network = (new N.Network()).AddTemplates(this.AdditionalTemplates).loadFrom(config).then(
+    function() {
+      var inputNetwork = _this.Network.GetNetworkByName('Inputs');
+      var targetNetwork = _this.Network.GetNetworkByName('Targets');
+      var outputNetwork = _this.Network.GetNetworkByName('Outputs');
+      for(var i in targetNetwork.Neurons) {
+
+        var neuron = targetNetwork.Neurons[i];
+
+        for(var j in neuron.Compartments) {
+          var compartment = neuron.Compartments[j];
+          var meta = compartment.IoMetaData;
+
+          for(var k in meta.Inputs) {
+            var inputMeta = meta.Inputs[k];
+            _this.addInputSource(compartment, inputMeta, inputNetwork);
+          }
+
+          for(var m in meta.Outputs) {
+            var outputMeta = meta.Outputs[m];
+            _this.addOutputSink(compartment, outputMeta, outputNetwork);
+          }
+        }
+      }
+
+      _this.Network.Connect();
+    }, function(status) {
+
+    }
+  );
 
   // Add inputs
-  var inputNetwork = this.Network.GetNetworkByName('Inputs');
-  var targetNetwork = this.Network.GetNetworkByName('Targets');
-  var outputNetwork = this.Network.GetNetworkByName('Outputs');
-  for(var i in targetNetwork.Neurons) {
-
-    var neuron = targetNetwork.Neurons[i];
-
-    for(var j in neuron.Compartments) {
-      var compartment = neuron.Compartments[j];
-///////////      console.log('Compartment name = ' + compartment.Name);
-      var meta = compartment.IoMetaData;
-
-      for(var k in meta.Inputs) {
-        var inputMeta = meta.Inputs[k];
-        this.addInputSource(compartment, inputMeta, inputNetwork);
-      }
-
-      for(var m in meta.Outputs) {
-        var outputMeta = meta.Outputs[m];
-        this.addOutputSink(compartment, outputMeta, outputNetwork);
-      }
-    }
-  }
-
-  this.Network.Connect();
-  return this;
+  return deferred.promise;
 }
 
 /**
@@ -131,11 +138,11 @@ N.Workbench.prototype.SetTargets = function(targets) {
  * @returns {N.Workbench}
  */
 N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNetwork) {
-  var cleanName = N.CleanName(compartment.Neuron.Name);
+  var cleanName = N.CleanName(compartment.Neuron.name);
   var cleanCompartmentName = N.CleanName(compartment.Name+(inputMeta.Name !== 'Main' ? '['+inputMeta.Name+']' : ''));
   var fullCleanName = 'SRC['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
 
-  var source = (new N.Neuron(inputNetwork)).SetName(fullCleanName);
+  var source = (new N.Neuron(inputNetwork)).setName(fullCleanName);
   source.Display = {
     Template: 'N.UI.StandardNeuronTemplates.InputSource',
     Radius: 0.1,
@@ -145,7 +152,7 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
   var sourceCompartment = new N.Comp.SignalSource(source, 'OP');
   source.AddCompartment(sourceCompartment);
 
-  this.signalSources.push(sourceCompartment.GetPath());
+  this.signalSources.push(sourceCompartment.getPath());
 
   inputNetwork.AddNeuron(source);
 
@@ -176,7 +183,7 @@ N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNe
   sink.AddCompartment(sinkCompartment);
 
 
-  this.outputSinks.push(sinkCompartment.GetPath());
+  this.outputSinks.push(sinkCompartment.getPath());
 
   outputNetwork.AddNeuron(sink);
 
@@ -192,12 +199,12 @@ N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNe
  * @returns {Object}
  */
 N.Workbench.prototype.CreateNetwork = function() {
-  var config = { Networks: [], Connections: [] };
-  var inputNetwork = { Name: 'Inputs', Neurons: [] };
-  var targetNetwork = { Name: 'Targets', Neurons: this.Targets };
-  var outputNetwork = { Name: 'Outputs', Neurons: [] };
-  config.Networks.push(inputNetwork);
-  config.Networks.push(targetNetwork);
-  config.Networks.push(outputNetwork);
+  var config = { networks: [], connections: [] };
+  var inputNetwork = { name: 'Inputs', neurons: [] };
+  var targetNetwork = { name: 'Targets', neurons: this.targets };
+  var outputNetwork = { name: 'Outputs', neurons: [] };
+  config.networks.push(inputNetwork);
+  config.networks.push(targetNetwork);
+  config.networks.push(outputNetwork);
   return config;
 }

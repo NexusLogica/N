@@ -142,13 +142,13 @@ N.UI.PiCompartment.prototype.ShowConnections = function() {
       if (connection.Network === net.Network) {
         return new N.UI.PiConnection(net, connection);
       }
-    } while((net = net.ParentNetwork));
+    } while((net = net.parentNetwork));
     return null;
   }
 
   var findTop = function(network) {
     var net = network;
-    while(!_.isUndefined(net.ParentNetwork)) { net = net.ParentNetwork; }
+    while(!_.isUndefined(net.parentNetwork)) { net = net.parentNetwork; }
     return net;
   };
 
@@ -188,7 +188,7 @@ N.UI.PiNeuronFactory = (function() {
 
     var factory = (factories[templateName] ? factories[templateName][decaRadius] : null);
     if(!factory) {
-      var template = GetTemplate(templateName);
+      var template = getTemplate(templateName);
       if(!template) {
         N.L('N.PiGraphicsFactory::createGraphic Unable to find template '+templateName);
         throw 'N.PiGraphicsFactory::createGraphic Unable to find template '+templateName;
@@ -202,7 +202,7 @@ N.UI.PiNeuronFactory = (function() {
     return factory.CreateNewGraphic();
   }
 
-  function GetTemplate(templateName) {
+  function getTemplate(templateName) {
     var parts = templateName.split('.');
     if(parts.length > 0 && parts[0] === 'N') {
       var obj = N;
