@@ -382,7 +382,6 @@ N.Network.prototype.loadFrom = function(json) {
   var neuron;
 
   var jsonToFill = _.cloneDeep(json);
-
   this.loadTemplate(jsonToFill).then(
     function() {
       _.merge(_this, _.omit(jsonToFill, ['networks', 'neurons', 'connections', 'template', 'randSeed']));
@@ -395,6 +394,8 @@ N.Network.prototype.loadFrom = function(json) {
         function() {
           _this.loadNeurons(json.neurons || []).then(
             function() {
+              deferred.resolve();
+
               _this.loadConnections(json.connections || []).then(
                 function() {
 
@@ -411,12 +412,10 @@ N.Network.prototype.loadFrom = function(json) {
                   deferred.reject(status);
                 }
               );
-
             }, function(status) {
               deferred.reject(status);
             }
           );
-
         }, function(status) {
           deferred.reject(status);
         }
@@ -425,7 +424,6 @@ N.Network.prototype.loadFrom = function(json) {
       deferred.reject(status);
     }
   );
-
   return deferred.promise;
 }
 
@@ -467,9 +465,6 @@ N.Network.prototype.loadTemplate = function(json) {
 }
 
 N.Network.prototype.loadNetworks = function(json) {
-  var deferred = Q.defer();
-  var _this = this;
-
   var promises = [];
   for(var i in json) {
     var networkJson = json[i];
@@ -478,13 +473,10 @@ N.Network.prototype.loadNetworks = function(json) {
     promises.push(network.loadFrom(networkJson));
   }
 
-  return deferred.promise.all(promises);
+  return Q.all(promises);
 }
 
 N.Network.prototype.loadNeurons = function(json) {
-  var deferred = Q.defer();
-  var _this = this;
-
   var promises = [];
   for(var i in json) {
     var neuronJson = json[i];
@@ -493,13 +485,10 @@ N.Network.prototype.loadNeurons = function(json) {
     promises.push(neuron.loadFrom(neuronJson));
   }
 
-  return deferred.promise.all(promises);
+  return Q.all(promises);
 }
 
 N.Network.prototype.loadConnections = function(json) {
-  var deferred = Q.defer();
-  var _this = this;
-
   var promises = [];
   for(var i in json) {
     var connectionJson = json[i];
@@ -508,7 +497,7 @@ N.Network.prototype.loadConnections = function(json) {
     promises.push(connection.loadFrom(connectionJson));
   }
 
-  return deferred.promise.all(promises);
+  return Q.all(promises);
 }
 
 N.Network.prototype.initialize = function(templateName) {
@@ -536,7 +525,7 @@ N.Network.prototype.getTemplate = function(templateName) {
   return null;
 }
 
-N.Network.prototype.AddTemplates = function(templates) {
+N.Network.prototype.addTemplates = function(templates) {
   for(var i in templates) {
     var template = templates[i];
     this.templates[i] = _.clone(template);
@@ -545,7 +534,7 @@ N.Network.prototype.AddTemplates = function(templates) {
 }
 
 N.Network.prototype.routeErrorMsg = function(errMsg) {
-  this.ValidationMessages.push(errMsg);
+  this.validationMessages.push(errMsg);
   N.L(errMsg);
   return errMsg;
 }

@@ -27,14 +27,14 @@ N.UI = N.UI || {};
 
 N.UI.WorkbenchScene = function() {
   this.ClassName = 'N.UI.WorkbenchScene';
-  this.Network = null;
-  this.Neurons = {};
+  this.network = null;
+  this.neurons = {};
   this.Origin = 'center';
   this.Scale = 100;
   this.CentralPadding = 20;
   this.X = 0;
   this.Y = 0;
-  this.NetworkPadding = new N.UI.Padding(0, Math.ceil(0.5*this.CentralPadding), 0, 0);
+  this.networkPadding = new N.UI.Padding(0, Math.ceil(0.5*this.CentralPadding), 0, 0);
   this.GraphPadding = new N.UI.Padding(0, 0, 0, Math.floor(0.5*this.CentralPadding));
 }
 
@@ -47,22 +47,22 @@ N.UI.WorkbenchScene = function() {
  */
 N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
   this.workbench = workbench;
-  this.NetworkScene = (new N.UI.NetworkScene()).Layout(workbench.Network, renderMappings);
+  this.networkScene = (new N.UI.networkScene()).Layout(workbench.network, renderMappings);
   this.signalGraphScene = (new N.UI.SignalGraphScene());
 
-  var traceStyle = { Inputs: 'workbench-inputs', Targets: 'workbench-targets', Outputs: 'workbench-outputs' };
+  var traceStyle = { inputs: 'workbench-inputs', targets: 'workbench-targets', outputs: 'workbench-outputs' };
 
-  for(var i in workbench.Network.Networks) {
-    var network = workbench.Network.Networks[i];
-    for(var j in network.Neurons) {
-      var neuron = network.Neurons[j];
-      for(var k in neuron.Compartments) {
-        var compartment = neuron.Compartments[k];
+  for(var i in workbench.network.networks) {
+    var network = workbench.network.networks[i];
+    for(var j in network.neurons) {
+      var neuron = network.neurons[j];
+      for(var k in neuron.compartments) {
+        var compartment = neuron.compartments[k];
         for(var m in compartment.IoMetaData.Signals) {
 
           var signalData = compartment.IoMetaData.Signals[m];
           var sourcePropName =( compartment.hasOwnProperty('Signal') ? 'Signal' : 'OutputStore');
-          var id = compartment.Neuron.Name+'//'+compartment.Name+'//'+signalData.Name;
+          var id = compartment.neuron.Name+'//'+compartment.Name+'//'+signalData.Name;
 
           this.signalGraphScene.AddTraceFromSource(id, compartment, sourcePropName);
           console.log('*** Trace = '+id);
@@ -87,7 +87,7 @@ console.log("GRAPHS UPDATING");
 
   for(var i in this.activeTest.inputSignals) {
     var inputSignal = this.activeTest.inputSignals[i];
-    //this.Network;
+    //this.network;
     console.log(inputSignal.connection);
     removeId = inputSignal.traceId;
     var other = _.remove(unusedTraceIds, remove);
@@ -125,11 +125,11 @@ N.UI.WorkbenchScene.prototype.runTest = function(test) {
  */
 N.UI.WorkbenchScene.prototype.ScaleToFitWidth = function(width, padding) {
   var w = width-padding.Horizontal();
-  this.NetworkScene.ScaleToFitWidth(0.5*(w-this.CentralPadding), this.NetworkPadding);
+  this.networkScene.ScaleToFitWidth(0.5*(w-this.CentralPadding), this.networkPadding);
   this.IdealContainerWidth = w;
-  this.IdealContainerHeight = Math.ceil(this.NetworkScene.IdealContainerHeight+padding.Vertical());
-  this.NetworkScene.Network.X = padding.Left();
-  this.NetworkScene.Network.Y = padding.Top();
+  this.IdealContainerHeight = Math.ceil(this.networkScene.IdealContainerHeight+padding.Vertical());
+  this.networkScene.network.X = padding.Left();
+  this.networkScene.network.Y = padding.Top();
 
 }
 
@@ -139,9 +139,9 @@ N.UI.WorkbenchScene.prototype.Render = function(svgParent, size, padding) {
   this.Padding = padding;
 
   this.Group = svgParent.group().move(this.X, this.Y).attr({ 'class': 'pi-workbench-scene' });
-  this.NetworkScene.Render(this.Group);
+  this.networkScene.Render(this.Group);
 
-  var networkWidth = this.NetworkScene.Network.Width+this.NetworkPadding.Horizontal();
+  var networkWidth = this.networkScene.network.Width+this.networkPadding.Horizontal();
   var graphWidth = this.Width-this.Padding.Horizontal()-networkWidth-this.GraphPadding.Horizontal();
   this.signalGraphScene.X = networkWidth+this.GraphPadding.Left()+this.Padding.Left();
   this.signalGraphScene.Y = this.Padding.Top();
@@ -152,11 +152,11 @@ N.UI.WorkbenchScene.prototype.Fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.Network.Width/this.Network.Height;
+  var aspectRatioNetwork = this.network.Width/this.network.Height;
   if(aspectRatioNetwork > aspectRatioSvg) {
-    return 0.9*svgWidth/this.Network.Width;
+    return 0.9*svgWidth/this.network.Width;
   }
   else {
-    return 0.9*svgHeight/this.Network.Height;
+    return 0.9*svgHeight/this.network.Height;
   }
 }

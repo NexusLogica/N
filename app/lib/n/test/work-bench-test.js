@@ -57,17 +57,18 @@ N.WorkbenchTestScenes.prototype.CreateScenes = function() {
   for(var i=0; i<N.WorkbenchTestScenes.TestConfigurations.length; i++) {
     var config = N.WorkbenchTestScenes.TestConfigurations[i];
 
-    var workbench = (new N.Workbench()).AddTemplates(
+    var workbench = (new N.Workbench()).addTemplates(
       { 'N.WorkbenchTestScenes.SpinyStellate': N.WorkbenchTestScenes.SpinyStellate,
         'N.WorkbenchTestScenes.FastSpiking': N.WorkbenchTestScenes.FastSpiking
       }
     );
-    workbench.SetTargets(config.targets).then(
+    workbench.setTargets(config.targets).then(
       function() {
         var scene = new N.UI.WorkbenchScene();
         scene.Layout(workbench, renderMappings);
         _this.Workbenches.push(scene);
       }, function(status) {
+        console.log('ERROR: N.WorkbenchTestScenes.CreateScenes: '+status.errMsg);
       }
     );
   }
@@ -94,26 +95,26 @@ N.WorkbenchTestScenes.SpinyStellate = {
 }
 
 N.WorkbenchTestScenes.FastSpiking = {
-  ClassName: 'N.Neuron',
-  Name: 'FS',
-  Compartments: [{
-    ClassName: 'N.Comp.Output',
-    Name: 'OP',
-    InitialOutput: 0.0,
-    OutputLogic: {
-      OutputFunc: N.Comp.OutputFunc.LinearSum,
-      Sources: {
-        Main: { ComponentName: 'IP',  Gain: 0.5 }
+  className: 'N.Neuron',
+  name: 'FS',
+  compartments: [{
+    className: 'N.Comp.Output',
+    name: 'OP',
+    initialOutput: 0.0,
+    outputLogic: {
+      outputFunc: N.Comp.OutputFunc.LinearSum,
+      sources: {
+        main: { componentName: 'IP',  gain: 0.5 }
       }
     }
   },{
-    ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'IP'
+    className: 'N.Comp.LinearSummingInput',
+    name: 'IP'
   }],
-  Display: {
-    Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
-    Radius: 0.2,
-    CompartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
+  display: {
+    template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
+    radius: 0.2,
+    compartmentMap : { 'dendrites': 'IP', 'body': 'OP'  }
   }
 }
 

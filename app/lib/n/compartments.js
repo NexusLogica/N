@@ -131,13 +131,13 @@ N.Comp.SignalSource = function(neuron, name) {
   this.Signal     = null;
   this.Output     = 0.0;
   this.IsOutputComponent = true;
-  this.IoMetaData = {
-    Inputs:[],
-    Outputs:[{
-      Name: 'Main', PropName: 'OutputConnections'
+  this.ioMetaData = {
+    inputs:[],
+    outputs:[{
+      name: 'Main', propName: 'OutputConnections'
     }],
     Signals:[{
-      Name: 'Main', PropName: 'OutputStore'
+      name: 'Main', propName: 'OutputStore'
     }]
   }
   N.Comp.initializeCompartment(this);
@@ -201,7 +201,7 @@ N.Comp.Output = function(neuron, name) {
   this.Output      = 0.0;
   this.IsOutputComponent = true;
   this.OutputLogic = null;
-  this.IoMetaData = {
+  this.ioMetaData = {
     Inputs:[{
       Name: 'Main', PropName: 'InputConnections'
     }],
@@ -274,7 +274,7 @@ N.Comp.InputSink = function(neuron, name) {
   this.Output      = 0.0;
   this.IsOutputComponent = true;
   this.OutputLogic = null;
-  this.IoMetaData = {
+  this.ioMetaData = {
     Inputs:[{
       Name: 'Main', PropName: 'InputConnections'
     }],
@@ -383,7 +383,7 @@ N.Comp.LinearSummingInput = function(neuron, name) {
   this.Neuron     = neuron;
   this.Sum         = 0.0;
   this.Connections = [];
-  this.IoMetaData = {
+  this.ioMetaData = {
     Inputs:[
       { Name: 'Main', PropName: 'InputConnections' }
     ],

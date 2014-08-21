@@ -170,15 +170,18 @@ N.Neuron.prototype.loadFrom = function(json) {
     function() {
 
       _.merge(_this, _.omit(jsonToFill, ['compartments', 'display', 'template']));
-
-      this.loadCompartments(jsonToFill).then(
+      deferred.resolve();
+      _this.loadCompartments(jsonToFill).then(
         function() {
+          console.log('RESOLVE: N.Neuron.loadFrom[0]: '+_this.name);
           deferred.resolve();
         }, function(status) {
+          console.log('REJECT: N.Neuron.loadFrom[0]: '+status.errMsg);
           deferred.reject(status);
         }
       );
     }, function(status) {
+      console.log('REJECT: N.Neuron.loadFrom[1]: '+status.errMsg);
       deferred.reject(status);
     }
   );
@@ -192,29 +195,40 @@ N.Neuron.prototype.loadTemplate = function(json) {
   if(json.template.hasOwnProperty('local')) {
     var localTemplate = this.network.getTemplate(json.template.local);
     if(localTemplate === null) {
+      debugger;
       deferred.reject({ success: false, errMsg: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
       return deferred.promise;
     }
+
     if(localTemplate.template) {
       this.loadTemplate(localTemplate).then(
-        function(template) {
-          var merged = _.merge(json, localTemplate);
+        function(childMerged) {
+          var merged = _.merge(childMerged, json);
           deferred.resolve(merged);
         }, function(status) {
           deferred.reject(status);
         }
       );
+    } else {
+      var merged = _.merge(localTemplate, json);
+      deferred.resolve(merged);
     }
-  } else {
+  } else if(json.template) {
+    debugger;
     this.network.getRemoteTemplate(json.template).then(
       function(remoteTemplate) {
-        var merged = _.merge(json, localTemplate);
+        debugger;
+        var merged = _.merge(json, remoteTemplate);
         deferred.resolve(merged);
       }, function(status) {
+        debugger;
         deferred.reject(status);
       }
     );
+  } else {
+    deferred.resolve(json);
   }
+
   return deferred.promise;
 }
 
@@ -226,9 +240,6 @@ N.Neuron.prototype.loadTemplate = function(json) {
  * @returns { Q.promise}
  */
 N.Neuron.prototype.loadCompartments = function(json) {
-  var deferred = Q.defer();
-  var _this = this;
-
   var promises = [];
   for(var i=0; i<json.compartments.length; i++) {
     var compartmentJson = json.compartments[i];
@@ -236,7 +247,7 @@ N.Neuron.prototype.loadCompartments = function(json) {
     promises.push(promise);
   }
 
-  return deferred.promise.all(promises);
+  return Q.all(promises);
 }
 
 /**
