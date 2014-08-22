@@ -101,7 +101,7 @@ N.Neuron.prototype.getNumCompartments = function() {
 
 /**
  * Calls each child compartment telling it to connect to any other compartment it requires communication with.
- * @method ConnectCompartments
+ * @method connectCompartments
  */
 N.Neuron.prototype.connectCompartments = function() {
   var num = this.compartments.length;
@@ -179,12 +179,12 @@ N.Neuron.prototype.loadFrom = function(json) {
           console.log('REJECT: N.Neuron.loadFrom[0]: '+status.errMsg);
           deferred.reject(status);
         }
-      );
+      ).catch(N.reportQError);
     }, function(status) {
       console.log('REJECT: N.Neuron.loadFrom[1]: '+status.errMsg);
       deferred.reject(status);
     }
-  );
+  ).catch(N.reportQError);
   return deferred.promise;
 }
 
@@ -208,7 +208,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
         }, function(status) {
           deferred.reject(status);
         }
-      );
+      ).catch(N.reportQError);
     } else {
       var merged = _.merge(localTemplate, json);
       deferred.resolve(merged);
@@ -224,7 +224,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
         debugger;
         deferred.reject(status);
       }
-    );
+    ).catch(N.reportQError);
   } else {
     deferred.resolve(json);
   }
@@ -241,7 +241,8 @@ N.Neuron.prototype.loadTemplate = function(json) {
  */
 N.Neuron.prototype.loadCompartments = function(json) {
   var promises = [];
-  for(var i=0; i<json.compartments.length; i++) {
+  var num = json.compartments ? json.compartments.length : 0;
+  for(var i=0; i<num; i++) {
     var compartmentJson = json.compartments[i];
     var promise = this.createCompartment(compartmentJson);
     promises.push(promise);
@@ -273,7 +274,7 @@ N.Neuron.prototype.createCompartment = function(json) {
     function(status) {
       deferred.reject(status);
     }
-  );
+  ).catch(N.reportQError);
   return deferred.promise;
 }
 
@@ -296,7 +297,7 @@ N.Neuron.prototype.fromData = function(json) {
 }
 
 N.Neuron.prototype.routeErrorMsg = function(errMsg) {
-  this.ValidationMessages.push(errMsg);
+  this.validationMessages.push(errMsg);
   N.L(errMsg);
   return errMsg;
 }

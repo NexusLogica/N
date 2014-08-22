@@ -25,25 +25,25 @@ var N = N || {};
  * @constructor
  */
 N.Connection = function(network) {
-  this.Network        = network;
-  this.Id             = N.GenerateUUID();
-  this.Path           = null;
-  this.Source         = null;
-  this.Sink           = null;
-  this.Output         = 0.0;
-  this.OutputStore    = new N.AnalogSignal('OutputStore', 'OS');
-  this.Gain           = 1.0;
-  this.Delay          = N.TimeStep;
-  this.Category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
-  this.ValidationMessages = [];
+  this.network        = network;
+  this.id             = N.generateUUID();
+  this.path           = null;
+  this.source         = null;
+  this.sink           = null;
+  this.output         = 0.0;
+  this.outputStore    = new N.AnalogSignal('OutputStore', 'OS');
+  this.gain           = 1.0;
+  this.delay          = N.TimeStep;
+  this.category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
+  this.validationMessages = [];
 }
 
 /**
  * Returns the object type.
- * @method GetType
+ * @method getType
  * @returns {N.Type.Connection}
  */
-N.Connection.prototype.GetType = function() {
+N.Connection.prototype.getType = function() {
   return N.Type.Connection;
 }
 
@@ -58,25 +58,25 @@ N.Connection.prototype.getPath = function() {
 
 /**
  * Attach to the source and sink compartments.
- * @method Connect
+ * @method connect
  */
-N.Connection.prototype.Connect = function() {
-  var endPoints = N.FromConnectionPaths(this.Network, this.Path);
+N.Connection.prototype.connect = function() {
+  var endPoints = N.fromConnectionPaths(this.network, this.path);
   if(!endPoints.error) {
-    this.Source = endPoints.Source.ConnectOutput(this);
-    this.Sink = endPoints.Sink.ConnectInput(this);
+    this.source = endPoints.source.connectOutput(this);
+    this.sink = endPoints.sink.connectInput(this);
   }
   return this;
 }
 
 /**
  * Updates the connection output.
- * @method Update
+ * @method update
  * @param {Real} t The time of the update.
  */
 N.Connection.prototype.update = function(t) {
-  this.Output = this.Gain*this.Source.GetOutputAt(t-this.Delay);
-  this.OutputStore.AppendData(t, this.Output);
+  this.output = this.gain*this.source.getOutputAt(t-this.delay);
+  this.outputStore.appendData(t, this.output);
 }
 
 /***
@@ -84,23 +84,23 @@ N.Connection.prototype.update = function(t) {
  * @method clear
  */
 N.Connection.prototype.clear = function() {
-  this.Output = 0.0;
-  this.OutputStore.clear();
+  this.output = 0.0;
+  this.outputStore.clear();
 }
 
 
 /**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
- * @method Validate
+ * @method validate
  * @param report
  */
 N.Connection.prototype.validate = function(report) {
   for(var j in this.validationMessages) {
-    report.Error(this.getPath(), this.validationMessages[j]);
+    report.error(this.getPath(), this.validationMessages[j]);
   }
 
-  if(!this.Source) { report.Warning(this.getPath(), 'The connection has no source.'); }
-  if(!this.Sink)   { report.Warning(this.getPath(), 'The connection has no sink.'); }
+  if(!this.source) { report.warning(this.getPath(), 'The connection has no source.'); }
+  if(!this.sink)   { report.warning(this.getPath(), 'The connection has no sink.'); }
 }
 
 /**
@@ -110,22 +110,22 @@ N.Connection.prototype.validate = function(report) {
  * @returns {Connection}
  */
 N.Connection.prototype.loadFrom = function(json) {
-  if(json.Template) {
-    var template = this.Network.getTemplate(json.Template);
+  if(json.template) {
+    var template = this.network.getTemplate(json.Template);
     if(template === null) {
-      this.ValidationMessages.push('ERROR: Unable to find template "'+json.Template+'"');
-      N.L(this.ValidationMessages[this.ValidationMessages.length-1]);
+      this.validationMessages.push('ERROR: Unable to find template "'+json.template+'"');
+      N.L(this.validationMessages[this.validationMessages.length-1]);
       return;
     }
     this.loadFrom(template);
   }
 
   for(var i in json) {
-    if(i === 'Display') {
-      this.Display = this.Display || {};
-      _.merge(this.Display, json.Display);
+    if(i === 'display') {
+      this.display = this.display || {};
+      _.merge(this.display, json.display);
     }
-    else if(i !== 'Template') {
+    else if(i !== 'template') {
       this[i] = json[i];
     }
   }

@@ -230,7 +230,7 @@ N.Network.prototype.getConnectionsByIndex = function(index) {
  * @param {String} path
  * @returns {N.Connection}
  */
-N.Network.prototype.GetConnectionsByPath = function(path) {
+N.Network.prototype.getConnectionsByPath = function(path) {
   return this.connectionsByPath[path];
 }
 
@@ -249,6 +249,11 @@ N.Network.prototype.link = function() {
   return this.linkReport;
 }
 
+/***
+ * Link up connections and compartments.
+ * @method connect
+ * @returns {N.Network}
+ */
 N.Network.prototype.connect = function() {
   var numConnections = this.connections.length;
   for(var i=0; i<numConnections; i++) {
@@ -257,12 +262,12 @@ N.Network.prototype.connect = function() {
 
   var num = this.neurons.length;
   for(i=0; i<num; i++) {
-    this.neurons[i].ConnectCompartments();
+    this.neurons[i].connectCompartments();
   }
 
   var numNetworks = this.networks.length;
   for(i=0; i<numNetworks; i++) {
-    this.networks[i].Connect();
+    this.networks[i].connect();
   }
   return this;
 }
@@ -274,7 +279,7 @@ N.Network.prototype.connect = function() {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.update = function(time) {
-  this.updateConnections(time);
+  this.updateConnetions(time);
   this.updateNeurons(time);
 }
 
@@ -343,18 +348,18 @@ N.Network.prototype.clear = function() {
 /**
  * Validates the network. Warns if there are no child networks or neurons. It will report an error if there are no networks
  * or neurons but there are connections.
- * @method Validate
+ * @method validate
  * @param report
  * @return {N.ConfigurationReport} Returns the configuration report object.
  */
-N.Network.prototype.Validate = function(report) {
+N.Network.prototype.validate = function(report) {
   if(this.networks.length === 0 && this.neurons.length === 0) {
     report.Warning(this.getPath(), 'The network has no neurons or child networks.');
-    if(this.connections.length) { report.Error(this.getPath(), 'The network has connections but no child networks or neurons, so the connections will fail.'); }
+    if(this.connections.length) { report.error(this.getPath(), 'The network has connections but no child networks or neurons, so the connections will fail.'); }
   }
 
-  for(var j in this.ValidationMessages) {
-    report.Error(this.getPath(), this.ValidationMessages[j]);
+  for(var j in this.validationMessages) {
+    report.error(this.getPath(), this.validationMessages[j]);
   }
 
   for(var i=0; i<this.networks.length; i++) { this.networks[i].Validate(report); }
@@ -411,19 +416,19 @@ N.Network.prototype.loadFrom = function(json) {
                 }, function(status) {
                   deferred.reject(status);
                 }
-              );
+              ).catch(N.reportQError);
             }, function(status) {
               deferred.reject(status);
             }
-          );
+          ).catch(N.reportQError);
         }, function(status) {
           deferred.reject(status);
         }
-      );
+      ).catch(N.reportQError);
     }, function(status) {
       deferred.reject(status);
     }
-  );
+  ).catch(N.reportQError);
   return deferred.promise;
 }
 
@@ -446,7 +451,7 @@ N.Network.prototype.loadTemplate = function(json) {
           }, function(status) {
             deferred.reject(status);
           }
-        );
+        ).catch(N.reportQError);
       }
     } else {
       this.getRemoteTemplate(json.template).then(
@@ -456,7 +461,7 @@ N.Network.prototype.loadTemplate = function(json) {
         }, function(status) {
           deferred.reject(status);
         }
-      );
+      ).catch(N.reportQError);
     }
   } else {
     deferred.resolve();

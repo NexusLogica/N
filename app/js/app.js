@@ -11,6 +11,8 @@ angular.module('nSimApp', ['nSimApp.filters', 'nSimApp.services', 'nSimApp.direc
 
     // use the HTML5 History API
     $locationProvider.html5Mode(true);
+
+    Q.longStackSupport = true;
    }]);
 
 angular.module('nSimApp.controllers', []);

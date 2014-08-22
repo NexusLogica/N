@@ -47,7 +47,7 @@ N.UI.WorkbenchScene = function() {
  */
 N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
   this.workbench = workbench;
-  this.networkScene = (new N.UI.networkScene()).Layout(workbench.network, renderMappings);
+  this.networkScene = (new N.UI.NetworkScene()).Layout(workbench.network, renderMappings);
   this.signalGraphScene = (new N.UI.SignalGraphScene());
 
   var traceStyle = { inputs: 'workbench-inputs', targets: 'workbench-targets', outputs: 'workbench-outputs' };

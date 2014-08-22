@@ -26,59 +26,59 @@ N.UI = N.UI || {};
  */
 
 N.UI.NetworkScene = function() {
-  this.ClassName = 'N.UI.NetworkScene';
-  this.Network = null;
-  this.Neurons = {};
-  this.Origin = 'center';
-  this.Scale = 100;
-  this.X = 0;
-  this.Y = 0;
+  this.className = 'N.UI.NetworkScene';
+  this.network = null;
+  this.neurons = {};
+  this.origin = 'center';
+  this.scale = 100;
+  this.x = 0;
+  this.y = 0;
 }
 
 /**
  *
- * @method Layout
+ * @method layout
  * @param network {Object} The N.Network object to be displayed in the scene.
  * @param scalePixelsPerUnit {
  * @param position
  */
-N.UI.NetworkScene.prototype.Layout = function(network, renderMappings) {
-  this.Network = (new N.UI.PiNetwork()).loadFrom(network.Display).SetNetwork(network);
-  this.RenderMappings = renderMappings;
-  this.Network.Layout(this.RenderMappings);
+N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
+  this.network = (new N.UI.PiNetwork()).loadFrom(network.Display).setNetwork(network);
+  this.renderMappings = renderMappings;
+  this.network.layout(this.renderMappings);
   return this;
 }
 
 /**
  * Calculates the scale that will fit the network to a given width.
- * @method ScaleToFitWidth
+ * @method scaleToFitWidth
  * @param width
  * @param paddingHoriz
  * @param paddingVert
  */
-N.UI.NetworkScene.prototype.ScaleToFitWidth = function(width, padding) {
-  var w = width-padding.Horizontal();
-  this.Scale = w/this.Network.UnscaledWidth;
-  this.IdealContainerWidth = w;
-  this.IdealContainerHeight = this.Network.UnscaledHeight*this.Scale+padding.Vertical();
-  this.Network.X = padding.Left();
-  this.Network.Y = padding.Top();
+N.UI.NetworkScene.prototype.scaleToFitWidth = function(width, padding) {
+  var w = width-padding.horizontal();
+  this.scale = w/this.network.unscaledWidth;
+  this.idealContainerWidth = w;
+  this.idealContainerHeight = this.network.unscaledHeight*this.scale+padding.vertical();
+  this.network.x = padding.left();
+  this.network.y = padding.top();
 }
 
-N.UI.NetworkScene.prototype.Render = function(svgParent) {
-  this.Group = svgParent.group().move(this.X, this.Y);
-  this.Network.Render(this.Group, this.Scale, this.RenderMappings);
+N.UI.NetworkScene.prototype.render = function(svgParent) {
+  this.group = svgParent.group().move(this.x, this.y);
+  this.network.render(this.group, this.scale, this.renderMappings);
 }
 
-N.UI.NetworkScene.prototype.Fit = function(svgParent) {
+N.UI.NetworkScene.prototype.fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.Network.Width/this.Network.Height;
+  var aspectRatioNetwork = this.network.width/this.network.height;
   if(aspectRatioNetwork > aspectRatioSvg) {
-    return 0.9*svgWidth/this.Network.Width;
+    return 0.9*svgWidth/this.network.width;
   }
   else {
-    return 0.9*svgHeight/this.Network.Height;
+    return 0.9*svgHeight/this.network.height;
   }
 }

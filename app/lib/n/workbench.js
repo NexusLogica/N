@@ -95,11 +95,10 @@ N.Workbench.prototype.setTargets = function(targets) {
   this.targets = _.cloneDeep(targets);
   var config = this.createNetwork();
 
-/////////  console.log(JSON.stringify(config, undefined, 2));
+  this.network = (new N.Network()).addTemplates(this.additionalTemplates);
 
-  this.network = (new N.Network()).addTemplates(this.additionalTemplates).loadFrom(config).then(
+  this.network.loadFrom(config).then(
     function() {
-      debugger;
       var inputNetwork = _this.network.getNetworkByName('Inputs');
       var targetNetwork = _this.network.getNetworkByName('Targets');
       var outputNetwork = _this.network.getNetworkByName('Outputs');
@@ -123,13 +122,13 @@ N.Workbench.prototype.setTargets = function(targets) {
         }
       }
 
-      _this.network.Connect();
+      _this.network.connect();
 
       deferred.resolve();
     }, function(status) {
       deferred.reject(status);
     }
-  );
+  ).catch(N.reportQError);
 
   // Add inputs
   return deferred.promise;
@@ -141,28 +140,28 @@ N.Workbench.prototype.setTargets = function(targets) {
  * @returns {N.Workbench}
  */
 N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNetwork) {
-  var cleanName = N.CleanName(compartment.neuron.name);
-  var cleanCompartmentName = N.CleanName(compartment.name+(inputMeta.name !== 'Main' ? '['+inputMeta.name+']' : ''));
+  var cleanName = N.cleanName(compartment.neuron.name);
+  var cleanCompartmentName = N.cleanName(compartment.name+(inputMeta.name !== 'Main' ? '['+inputMeta.name+']' : ''));
   var fullCleanName = 'SRC['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
 
   var source = (new N.Neuron(inputNetwork)).setName(fullCleanName);
-  source.Display = {
-    Template: 'N.UI.StandardNeuronTemplates.InputSource',
-    Radius: 0.1,
-    CompartmentMap : { 'Body': 'OP'  }
+  source.display = {
+    template: 'N.UI.StandardNeuronTemplates.InputSource',
+    radius: 0.1,
+    compartmentMap : { 'body': 'OP'  }
   }
 
   var sourceCompartment = new N.Comp.SignalSource(source, 'OP');
-  source.AddCompartment(sourceCompartment);
+  source.addCompartment(sourceCompartment);
 
   this.signalSources.push(sourceCompartment.getPath());
 
-  inputNetwork.AddNeuron(source);
+  inputNetwork.addNeuron(source);
 
   var connection = new N.Connection(this.network);
-  connection.Path = 'Inputs:'+fullCleanName+'>OP->Targets:'+compartment.Neuron.name+'>'+compartment.name+(inputMeta.name !== 'Main' ? '['+inputMeta.name+']': '');
+  connection.path = 'Inputs:'+fullCleanName+'>OP->Targets:'+compartment.neuron.name+'>'+compartment.name+(inputMeta.name !== 'Main' ? '['+inputMeta.name+']': '');
 
-  this.network.AddConnection(connection);
+  this.network.addConnection(connection);
 }
 
 /**
@@ -171,11 +170,11 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
  * @returns {N.Workbench}
  */
 N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNetwork) {
-  var cleanName = N.CleanName(compartment.Neuron.name);
-  var cleanCompartmentName = N.CleanName(compartment.name+(outputMeta.name !== 'Main' ? '['+outputMeta.name+']' : ''));
+  var cleanName = N.cleanName(compartment.Neuron.name);
+  var cleanCompartmentName = N.cleanName(compartment.name+(outputMeta.name !== 'Main' ? '['+outputMeta.name+']' : ''));
   var fullCleanName = 'SNK['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
 
-  var sink = (new N.Neuron(outputNetwork)).SetName(fullCleanName);
+  var sink = (new N.Neuron(outputNetwork)).setName(fullCleanName);
   sink.display = {
     template: 'N.UI.StandardNeuronTemplates.OutputSink',
     radius: 0.125,

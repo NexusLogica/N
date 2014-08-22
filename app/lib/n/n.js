@@ -43,28 +43,37 @@ N.Type = {
  * Create an instance of a object from the json, where json.className is the name of the object and all properties
  * of the json object will be copied into the new object.
  *
- * @method N.CreateInstance
+ * @method N.createInstance
  * @param {JSON} json
  * @returns {DeferredObject}
  */
-N.CreateInstance = function(json) {
-  var obj = N.NewN(json.className);
+N.createInstance = function(json) {
+  var obj = N.newN(json.className);
   for(var key in json) {
     obj[key] = json[key];
   }
   return obj;
 }
 
+/***
+ * Write a stack
+ * @method N.reportQError
+ * @param error
+ */
+N.reportQError = function(error) {
+  console.log(error.stack);
+}
+
 /**
  * Create a new 'N' object. The object must be in the 'N' namespace.
  *
  * @public
- * @method N.NewN
+ * @method N.newN
  * @param {string} className (Mandatory)  - A classname in the form 'N.First.Second.Class', hence N.Neuron, N.UI.PiNeuron...
  * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
  * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
  */
-N.NewN = function(className) {
+N.newN = function(className) {
   var parts = className.split('.');
   if(parts.length > 0 && parts[0] === 'N') {
     var objConstructor = N;
@@ -105,12 +114,12 @@ N.NewN = function(className) {
 
 /**
  * Returns an existing object from a path.
- * @method N.GetN
+ * @method N.getN
  * @param {string} className (Mandatory)  - A path string in the form 'N.First.Second.SomeJson'.
  * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
  * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
  */
-N.GetN = function(className) {
+N.getN = function(className) {
   var parts = className.split('.');
   if(parts.length > 0 && parts[0] === 'N') {
     var obj = null;
@@ -128,23 +137,23 @@ N.GetN = function(className) {
 
 /**
  * Returns the object pointed to by the path relative to
- * @method N.FromPath
+ * @method N.fromPath
  * @param {N.Network} network
  * @param {String} path
  * @return {N.Network|N.Neuron|N.Compartment} Returns a network, neuron, or compartment. On error returns an object with an error element which contains a message, the path, and the path part that caused the problem.
  */
-N.FromPath = function(network, path) {
+N.fromPath = function(network, path) {
   // Break the path into
   var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.\[\]]+)|(\:[a-zA-Z0-9\-\_\.\[\]]+)|(\>[a-zA-Z0-9\-\_\.\[\]]+)|([a-zA-Z0-9\-\_\.\[\]]+)/g;
   var parts = path.match(regex);
   ////// N.L('Path='+parts.join('^'));
   if (parts.length === 0) {
-    return N.FromPathError(network, path, path, 'Error in path');
+    return N.fromPathError(network, path, path, 'Error in path');
   }
 
   var currentObj = network;
   if (parts[0].charAt(0) === '/') {
-    currentObj = network.GetRoot();
+    currentObj = network.getRoot();
   }
 
   for(var i in parts) {
@@ -157,9 +166,9 @@ N.FromPath = function(network, path) {
         switch(part) {
 
           case '..': {
-            currentObj = currentObj.GetParent();
+            currentObj = currentObj.getParent();
             if (!currentObj) {
-              return N.FromPathError(network, path, part, 'Network has no parent');
+              return N.fromPathError(network, path, part, 'Network has no parent');
             }
           } break;
 
@@ -168,7 +177,7 @@ N.FromPath = function(network, path) {
           break;
 
           default : {
-            return N.FromPathError(network, path, part, 'Invalid path component');
+            return N.fromPathError(network, path, part, 'Invalid path component');
           }
         }
       } break;
@@ -176,34 +185,34 @@ N.FromPath = function(network, path) {
       // A neuron
       case ':': {
         var shortName = part.substring(1);
-        currentObj = currentObj.GetNeuronByName(shortName);
+        currentObj = currentObj.getNeuronByName(shortName);
         if (!currentObj) {
-          return N.FromPathError(network, path, part, 'The network has no neuron \''+shortName+'\'');
+          return N.fromPathError(network, path, part, 'The network has no neuron \''+shortName+'\'');
         }
       } break;
 
       // A compartment
       case '>': {
         var compShortName = part.substring(1);
-        currentObj = currentObj.GetCompartmentByName(compShortName);
+        currentObj = currentObj.getCompartmentByName(compShortName);
         if (!currentObj) {
-          return N.FromPathError(network, path, part, 'The neuron has no compartment \''+compShortName+'\'');
+          return N.fromPathError(network, path, part, 'The neuron has no compartment \''+compShortName+'\'');
         }
       } break;
 
       // A network
       case '/': {
         var netShortName = part.substring(1);
-        currentObj = currentObj.GetNetworkByName(netShortName);
+        currentObj = currentObj.getNetworkByName(netShortName);
         if (!currentObj) {
-          return N.FromPathError(network, path, part, 'The network has no child network \''+netShortName+'\'');
+          return N.fromPathError(network, path, part, 'The network has no child network \''+netShortName+'\'');
         }
       } break;
 
       default: {
-        currentObj = currentObj.GetNetworkByName(part);
+        currentObj = currentObj.getNetworkByName(part);
         if (!currentObj) {
-          return N.FromPathError(network, path, part, 'The network has no child network \''+part+'\'');
+          return N.fromPathError(network, path, part, 'The network has no child network \''+part+'\'');
         }
       }
     }
@@ -213,11 +222,11 @@ N.FromPath = function(network, path) {
 
 /**
  * Returns the compartment from a path.
- * @method N.CompFromPath
+ * @method N.compFromPath
  * @param {String} path
  * @return {String} Returns the id of the compartment or null if nothing found.
  */
-N.CompFromPath = function(path) {
+N.compFromPath = function(path) {
   var parts =  path.split('>');
   if(parts.length === 2) {
     return parts[1];
@@ -227,22 +236,22 @@ N.CompFromPath = function(path) {
 
 /**
  * Returns the object pointed to by the path relative to
- * @method N.FromConnectionPaths
+ * @method N.fromConnectionPaths
  * @param {N.Network} network
  * @param {String} path
  * @return {Object} Returns a two components in the form { Source: .
  */
-N.FromConnectionPaths = function(network, paths) {
+N.fromConnectionPaths = function(network, paths) {
   var parts = paths.split(/->/);
   ////// N.L('Connection parts: '+parts.join('  ->  '));
   if(parts.length !== 2) {
-    return N.FromPathError(network, paths, '', 'Invalid connection path format \''+paths+'\'');
+    return N.fromPathError(network, paths, '', 'Invalid connection path format \''+paths+'\'');
   }
 
   var obj = {};
-  obj.Source = N.FromPath(network, parts[0]);
-  obj.Sink = N.FromPath(network, parts[1]);
-  if(obj.Source.error || obj.Sink.error) {
+  obj.source = N.fromPath(network, parts[0]);
+  obj.sink = N.fromPath(network, parts[1]);
+  if(obj.source.error || obj.Sink.error) {
     return { error: obj };
   }
   return obj;
@@ -250,11 +259,11 @@ N.FromConnectionPaths = function(network, paths) {
 
 /**
  * Returns the connection source from a path.
- * @method N.SourceFromConnectionPath
+ * @method N.sourceFromConnectionPath
  * @param {String} path
  * @return {String} Returns the id of the source connection.
  */
-N.SourceFromConnectionPath = function(path) {
+N.sourceFromConnectionPath = function(path) {
   var i = path.indexOf('->');
   var src = path.substring((path[0] === ':' ? 1 : 0), i);
   return src;
@@ -262,22 +271,22 @@ N.SourceFromConnectionPath = function(path) {
 
 /**
  * Returns the connection sink from a path.
- * @method N.SinkFromConnectionPath
+ * @method N.sinkFromConnectionPath
  * @param {String} path
  * @return {String} Returns the id of the sink connection.
  */
-N.SinkFromConnectionPath = function(path) {
+N.sinkFromConnectionPath = function(path) {
   var i = path.indexOf('->');
   var sink = path.substring((path[i+2] === ':' ? i+3 : i+2));
   return sink;
 }
 
-N.FromPathError = function(network, path, part, message) {
+N.fromPathError = function(network, path, part, message) {
   N.L('Path Error: '+message);
   return { error: { message: message, network: network, path: path, part: part } };
 }
 
-N.ToFixed = function(value, precision) {
+N.toFixed = function(value, precision) {
   var stringValue = '0.';
   var i=0;
   if(value === 0.0) {
@@ -297,11 +306,11 @@ N.ToFixed = function(value, precision) {
 
 /**
  * Take capitals of camel case identifier and make an abbreviation, AsAnExample123 -> AAE123.
- * @method ShortenName
+ * @method shortenName
  * @param longName
  * @returns {string}
  */
-N.ShortenName = function(longName) {
+N.shortenName = function(longName) {
   if(!longName) { return ''; }
   var reg = /[A-Z0-9]*/g;
   var matches = longName.match(reg);
@@ -310,21 +319,21 @@ N.ShortenName = function(longName) {
 
 /**
  * Remove [ and ] and replace with . separators.
- * @method CleanName
+ * @method cleanName
  * @param name
  * @returns {string}
  */
-N.CleanName = function(name) {
+N.cleanName = function(name) {
   return name.replace(/\]\[/g, '-').replace(/\[/g, '-').replace(/\]/g, '');
 }
 
 /**
  * Returns the index of the array entry with the smallest value. If the array passed in is null, undefined, or zero length the return value is -1.
- * @method N.IndexOfMin
+ * @method N.indexOfMin
  * @param {Array} array
  * @returns {Integer}
  */
-N.IndexOfMin = function(array) {
+N.indexOfMin = function(array) {
   if(!array || array.length === 0) { return -1; }
 
   var min = array[0];
@@ -358,33 +367,33 @@ N.TimeStep = 0.001;
 /**
  * Converts an angle in degrees to radians.
  *
- * @method N.Rad
+ * @method N.rad
  * @param {Real} angle Angle in degrees
  * @return {Real} Angle in radians
  *
  */
-N.Rad = function(angleDegrees) {
+N.rad = function(angleDegrees) {
   return Math.PI*angleDegrees/180;
 }
 
 /**
  * Converts an angle in radians to degrees.
  *
- * @method N.Deg
+ * @method N.deg
  * @param {Real} angle Angle in radians
  * @return {Real} Angle in degrees
  *
  */
-N.Deg = function(angleRadians) {
+N.deg = function(angleRadians) {
   return angleRadians*180/Math.PI;
 }
 
 /**
  * Create a globally unique ID and return it as a string.
- * @method N.GenerateUUID
+ * @method N.generateUUID
  * @return {String} Unique Identifier string
  */
-N.GenerateUUID = function() {
+N.generateUUID = function() {
   var d = new Date().getTime();
   var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = (d + Math.random()*16)%16 | 0;
@@ -402,86 +411,86 @@ N.GenerateUUID = function() {
  * @class ConfigurationReport
  */
 N.ConfigurationReport = function() {
-  this.Errors = [];
-  this.Warnings = [];
+  this.errors = [];
+  this.warnings = [];
 }
 
 /**
  * Add an error message and the path for the source of the object.
- * @method Error
+ * @method error
  * @param path
  * @param message
  * @return {N.ConfigurationReport} Returns a pointer to the report object.
  */
-N.ConfigurationReport.prototype.Error = function(path, message) {
-  this.Errors.push({ Path: path, Message: message });
+N.ConfigurationReport.prototype.error = function(path, message) {
+  this.errors.push({ path: path, message: message });
   return this;
 }
 
 /**
  * Add a warning message and the path for the source of the object.
- * @method Warning
+ * @method warning
  * @param path
  * @param message
  * @return {N.ConfigurationReport} Returns a pointer to the report object.
  */
-N.ConfigurationReport.prototype.Warning = function(path, message) {
-  this.Warnings.push({ Path: path, Message: message });
+N.ConfigurationReport.prototype.warning = function(path, message) {
+  this.warnings.push({ path: path, message: message });
 }
 
 /**
  * Write the report to the system log via N.L(), which is usually the console.log().
- * @method WriteToLog
+ * @method writeToLog
  */
-N.ConfigurationReport.prototype.WriteToLog = function(title) {
-  if(this.Warnings.length === 0 && this.Errors.length === 0) {
+N.ConfigurationReport.prototype.writeToLog = function(title) {
+  if(this.warnings.length === 0 && this.errors.length === 0) {
     N.L(title+': No errors or warnings');
   } else {
-    var numErr = this.Errors.length;
-    var numWarn = this.Warnings.length;
-    N.L(title+': '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.Warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
-    for(var i=0; i<numErr; i++) { N.L('    Error['+this.Errors[i].Path+']: '+this.Errors[i].Message); }
-    for(i=0; i<numWarn; i++)   { N.L('    Warning['+this.Warnings[i].Path+']: '+this.Warnings[i].Message); }
+    var numErr = this.errors.length;
+    var numWarn = this.warnings.length;
+    N.L(title+': '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
+    for(var i=0; i<numErr; i++) { N.L('    Error['+this.errors[i].path+']: '+this.errors[i].message); }
+    for(i=0; i<numWarn; i++)   { N.L('    Warning['+this.warnings[i].path+']: '+this.warnings[i].message); }
   }
 }
 
 /**
  * Dictionary for holding globally accessible objects.
  *
- * @class Objects
+ * @class objects
  */
-N.Objects = (function() {
+N.objects = (function() {
   var objects = {};
 
   /**
    * Add an object to the Objects dictionary
    *
-   * @method {Object} Add
+   * @method {Object} add
    * @param obj
    */
-  function Add(obj) {
-    objects[obj.Id] = obj;
+  function add(obj) {
+    objects[obj.id] = obj;
   }
 
   /**
    * Get an object to the Objects dictionary
    *
-   * @method {Object} Get
+   * @method {Object} get
    * @param {String} uid A unique identifier string for an object
    * @return {Object} An object or null.
    */
-  function Get(uid) {
+  function get(uid) {
     return objects[uid] || null;
   }
 
   /**
    * Remove the reference to the object to the Objects dictionary
    *
-   * @method {Object} Remove
+   * @method {Object} remove
    * @param {String} uid A unique identifier string for an object
    * @return {Object} Returns true if the object exists, false otherwise.
    */
-  function Remove(uid) {
+  function remove(uid) {
     if(objects[uid]) {
       return delete objects[uid];
     }
@@ -489,8 +498,8 @@ N.Objects = (function() {
   }
 
   return {
-    Add: Add,
-    Get: Get,
-    Remove: Remove
+    add: add,
+    get: get,
+    remove: remove
   }
 })();

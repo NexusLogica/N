@@ -70,7 +70,7 @@ N.WorkbenchTestScenes.prototype.CreateScenes = function() {
       }, function(status) {
         console.log('ERROR: N.WorkbenchTestScenes.CreateScenes: '+status.errMsg);
       }
-    );
+    ).catch(N.reportQError);
   }
 }
 
