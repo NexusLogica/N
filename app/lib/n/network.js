@@ -278,7 +278,7 @@ N.Network.prototype.connect = function() {
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.update = function(time) {
-  this.updateConnetions(time);
+  this.updateConnections(time);
   this.updateNeurons(time);
 }
 

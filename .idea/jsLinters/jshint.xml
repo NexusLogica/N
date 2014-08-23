@@ -7,7 +7,7 @@
     <option eqeqeq="true" />
     <option es3="false" />
     <option forin="false" />
-    <option freeze="false" />
+    <option freeze="true" />
     <option immed="false" />
     <option newcap="true" />
     <option noarg="true" />
@@ -36,7 +36,7 @@
     <option loopfunc="false" />
     <option moz="false" />
     <option multistr="false" />
-    <option notypeof="false" />
+    <option notypeof="true" />
     <option proto="false" />
     <option scripturl="false" />
     <option smarttabs="false" />
@@ -63,7 +63,7 @@
     <option passfail="false" />
     <option white="false" />
     <option maxerr="50" />
-    <option predef="_" />
+    <option predef="_,Q,angular,console" />
   </component>
 </project>
 

@@ -83,7 +83,7 @@ console.log("UPDATE NETWORK");
     compartment = N.fromPath(this.workbench.network, unsetSources[j]);
     signal = new N.AnalogSignal();
     signal.appendDataArray(flatSignalData);
-    compartment.setSignal('Main', signal);
+    compartment.setSignal('main', signal);
   }
 }
 
@@ -97,7 +97,7 @@ N.WorkbenchTestInput = function() {
   this.connection = ''; // The path
   this.builder = new N.SignalBuilder();
   this.compartmentPath = '';
-  this.outputName = ''; // The output name, usually 'Main'.
+  this.outputName = ''; // The output name, usually 'main'.
 };
 
 N.WorkbenchTestInput.prototype.clone = function() {

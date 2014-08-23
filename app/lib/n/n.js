@@ -350,10 +350,10 @@ N.indexOfMin = function(array) {
 
 /**
  * Write to the system console (or some log, if overridden).
- * @method N.L
+ * @method N.log
  * @param logText
  */
-N.L = function(logText) {
+N.log = function(logText) {
   window.console.log(logText);
   return logText;
 }

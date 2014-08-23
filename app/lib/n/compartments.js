@@ -76,13 +76,15 @@ N.Comp.getOutputAt = function(t) {
 }
 
 N.Comp.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     if(i === 'outputStore') {
       this.outputStore.loadFrom(json[i]);
     }
     this[i] = json[i];
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
 N.Comp.extend = function(constructorFunction) {
@@ -172,14 +174,16 @@ N.Comp.SignalSource.prototype.clear = function() {
 }
 
 N.Comp.SignalSource.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     if(i === 'Signal') {
       // TODO: figure out how to incorporate name
-      this.SetSignal('Main', N.newN(json[i].className).loadFrom(json[i]));
+      this.SetSignal('main', N.newN(json[i].className).loadFrom(json[i]));
     }
     else { this[i] = json[i]; }
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
 N.Comp.SignalSource.prototype.validate = function(report) {
@@ -189,11 +193,11 @@ N.Comp.SignalSource.prototype.validate = function(report) {
 }
 
   //*****************
-  //* N.Comp.output *
+  //* N.Comp.Output *
   //*****************
 
-N.Comp.output = function(neuron, name) {
-  this.className   = 'N.Comp.output';
+N.Comp.Output = function(neuron, name) {
+  this.className   = 'N.Comp.Output';
   this.name        = name;
   this.category    = 'Output';
 
@@ -203,25 +207,25 @@ N.Comp.output = function(neuron, name) {
   this.outputLogic = null;
   this.ioMetaData = {
     inputs:[{
-      name: 'Main', propName: 'inputConnections'
+      name: 'main', propName: 'inputConnections'
     }],
     outputs:[{
-      name: 'Main', propName: 'outputConnections'
+      name: 'main', propName: 'outputConnections'
     }],
     signals:[{
-      name: 'Main', propName: 'outputStore'
+      name: 'main', propName: 'outputStore'
     }]
   }
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.extend(N.Comp.output);
+N.Comp.extend(N.Comp.Output);
 
-N.Comp.output.prototype.addInput = function(input) {
+N.Comp.Output.prototype.addInput = function(input) {
   this.input = input;
 }
 
-N.Comp.output.prototype.update = function(t) {
+N.Comp.Output.prototype.update = function(t) {
   var main = this.outputLogic.sources.main;
   this.output = main.compartment.getOutputAt(t-main.delay);
   this.outputStore.appendData(t, this.output);
@@ -232,7 +236,7 @@ N.Comp.output.prototype.update = function(t) {
  * Clears stored data from previous simulations. Does not clear input data.
  * @method clear
  */
-N.Comp.output.prototype.clear = function() {
+N.Comp.Output.prototype.clear = function() {
   this.outputStore.clear();
 }
 
@@ -241,7 +245,7 @@ N.Comp.output.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Comp.output.prototype.validate = function(report) {
+N.Comp.Output.prototype.validate = function(report) {
   if(!this.outputLogic) {
     report.error(this.getPath(), 'The OutputLogic object is not set.');
   } else if(!this.outputLogic.outputFunc) {
@@ -321,10 +325,12 @@ N.Comp.InputSink.prototype.validate = function(report) {
 }
 
 N.Comp.InputSink.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     this[i] = json[i];
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
   //***************************
@@ -365,10 +371,12 @@ N.Comp.InhibitoryOutput.prototype.clear = function() {
 }
 
 N.Comp.InhibitoryOutput.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     this[i] = json[i];
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
   //*****************************
@@ -445,10 +453,12 @@ N.Comp.LinearSummingInput.prototype.validate = function(report) {
 }
 
 N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     this[i] = json[i];
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
 N.Comp.LinearSummingInput.prototype.toJSON = function() {
@@ -510,13 +520,15 @@ N.Comp.SignalInput.prototype.validate = function(report) {
 }
 
 N.Comp.SignalInput.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     if(i === 'signalInput') {
       this.signalInput = N.newN(json[i].className).loadFrom(json[i]);
     }
     else { this[i] = json[i]; }
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
 N.Comp.SignalInput.prototype.toJSON = function() {
@@ -591,10 +603,12 @@ N.Comp.AcetylcholineInput.prototype.validate = function(report) {
 }
 
 N.Comp.AcetylcholineInput.prototype.loadFrom = function(json) {
+  var deferred = Q.defer();
   for(var i in json) {
     this[i] = json[i];
   }
-  return this;
+  deferred.resolve();
+  return deferred.promise;
 }
 
 N.Comp.AcetylcholineInput.prototype.toJSON = function() {

@@ -29,7 +29,7 @@ var N = N || {};
  */
 N.Neuron = function(network) {
   this.className  = 'N.Neuron';
-  this.id         = N.GenerateUUID();
+  this.id         = N.generateUUID();
   this.category   = 'default';
   this.compartments = [];
   this.compartmentsByName = {};
@@ -167,11 +167,11 @@ N.Neuron.prototype.loadFrom = function(json) {
   var jsonToFill = _.cloneDeep(json);
 
   this.loadTemplate(jsonToFill).then(
-    function() {
+    function(mergedJson) {
 
-      _.merge(_this, _.omit(jsonToFill, ['compartments', 'display', 'template']));
-      deferred.resolve();
-      _this.loadCompartments(jsonToFill).then(
+      _.merge(_this, _.omit(mergedJson, ['compartments', 'template']));
+
+      _this.loadCompartments(mergedJson).then(
         function() {
           console.log('RESOLVE: N.Neuron.loadFrom[0]: '+_this.name);
           deferred.resolve();
@@ -261,9 +261,9 @@ N.Neuron.prototype.loadCompartments = function(json) {
 N.Neuron.prototype.createCompartment = function(json) {
   var deferred = Q.defer();
   var _this = this;
-  var compartment = N.NewN(json.className, this);
+  var compartment = N.newN(json.className, this);
   if(!compartment) {
-    deferred.reject({ errMsg: this.routeErrorMsg('ERROR: Unable to create compartment "'+json.template+'"') });
+    deferred.reject({ errMsg: this.routeErrorMsg('ERROR: Unable to create compartment "'+json+'"') });
     return deferred.promise;
   }
   compartment.loadFrom(json).then(

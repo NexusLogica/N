@@ -31,9 +31,9 @@ N.Comp.OutputFunc.tanh = function(x) {
  * This is the simplest output function, taking only one input, multiplying it by a gain and using that value for the output.
  * @example
  *     var template = {
- *         Main: {
- *             ComponentName: 'IP',
- *             Gain: 0.5
+ *         main: {
+ *             componentName: 'IP',
+ *             gain: 0.5
  *         },
  *     }
  *

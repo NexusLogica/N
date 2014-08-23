@@ -219,7 +219,7 @@ N.UI.PiNeuronFactory = (function() {
     return factory;
   }
 
-  function PiCircularCompartmentToPath(segment, outerRadius) {
+  function piCircularCompartmentToPath(segment, outerRadius) {
     var rOut = segment.outerRadius*outerRadius;
     var p = 'M-'+rOut+' 0a'+rOut+' '+rOut+' 0 1 0 '+(2*rOut)+' 0a'+rOut+' '+rOut+' 0 1 0 '+(-2*rOut)+' 0';
     if(segment.innerRadius) {

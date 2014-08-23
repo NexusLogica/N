@@ -182,7 +182,7 @@ N.UI.SignalTrace.prototype.renderAnalogTrace = function() {
   // TODO: get the correct value for extra. Should be equal half the stroke width.
   var extra = 2;
   if(!this.path) {
-    this.path = this.group.path(p).attr({ stroke:N.UI.categories[this.signal.category].traceColor, fill: 'none' });
+    this.path = this.group.path(p).attr({ stroke:N.UI.Categories[this.signal.category].traceColor, fill: 'none' });
 //    this.clipRect = this.group.rect(this.pos.width, this.pos.height+2*extra).move(this.pos.x, this.pos.y-extra);
 //    this.path.clipWith(this.clipRect);
   }
@@ -217,7 +217,7 @@ N.UI.SignalTrace.prototype.renderDiscreteTrace = function() {
   }
 
   if(!this.path) {
-    this.path = this.group.path(p).attr({ stroke:N.UI.categories[this.signal.category].traceColor, fill: 'none' });
+    this.path = this.group.path(p).attr({ stroke:N.UI.Categories[this.signal.category].traceColor, fill: 'none' });
     var extra = 2;
 //    this.clipRect = this.group.rect(this.pos.width, this.pos.height+2*extra).move(this.pos.x, this.pos.y-extra);
 //    this.path.clipWith(this.clipRect);

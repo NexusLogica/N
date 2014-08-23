@@ -34,7 +34,7 @@ N.UI = N.UI || {};
  * @param {N.UI.PiNetwork} network
  * @constructor
  */
-N.UI.routeInfo = function(network) {
+N.UI.RouteInfo = function(network) {
   this.network = network;
   this.thruways = [];
   this.laneRows = [];
@@ -44,9 +44,9 @@ N.UI.routeInfo = function(network) {
 /**
  * Build the thruway and lane information from the network and neuron layouts. This must be called prior to doing any actual routing of connectors.
  * @method buildPassageInformation
- * @return {N.UI.routeInfo} Returns a reference to self.
+ * @return {N.UI.RouteInfo} Returns a reference to self.
  */
-N.UI.routeInfo.prototype.buildPassageInformation = function() {
+N.UI.RouteInfo.prototype.buildPassageInformation = function() {
   if(this.network.networks.length > 0) {
     this.copyChildNetworks();
   }
@@ -100,7 +100,7 @@ N.UI.routeInfo.prototype.buildPassageInformation = function() {
   return this;
 }
 
-N.UI.routeInfo.prototype.copyChildNetworks = function() {
+N.UI.RouteInfo.prototype.copyChildNetworks = function() {
   var childNetwork, yOffset, routeInfo;
   for(var i in this.network.networks) {
     childNetwork = this.network.networks[i];
@@ -154,13 +154,13 @@ N.UI.routeInfo.prototype.copyChildNetworks = function() {
   //console.log("**** "+JSON.stringify(this.laneRows, undefined, 2));
 }
 
-N.UI.routeInfo.prototype.getNeuron = function(network, neuronName) {
+N.UI.RouteInfo.prototype.getNeuron = function(network, neuronName) {
   var parts = neuronName.split('>');
   var  n = N.fromPath(network, parts[0]);
   return n;
 }
 
-N.UI.routeInfo.prototype.getNeuronOutputPosition = function(network, neuronName) {
+N.UI.RouteInfo.prototype.getNeuronOutputPosition = function(network, neuronName) {
   var n = this.getNeuron(network, neuronName);
   var x = n.x+ n.network.x;
   var y = n.y+ n.network.y+n.radius;
@@ -169,14 +169,14 @@ N.UI.routeInfo.prototype.getNeuronOutputPosition = function(network, neuronName)
   return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.thruPos.mid+n.network.y) ];
 }
 
-N.UI.routeInfo.prototype.getLaneCenter = function(rowIndex, laneIndex) {
+N.UI.RouteInfo.prototype.getLaneCenter = function(rowIndex, laneIndex) {
   var lanes = this.laneRows[rowIndex];
   var lane = lanes[laneIndex];
 
   return new N.UI.Vector(lane.mid, lane.yMid);
 }
 
-N.UI.routeInfo.prototype.getPoint = function(rc) {
+N.UI.RouteInfo.prototype.getPoint = function(rc) {
   var pos = [];
   var name, x, y, rx, ry, drop, n;
   if(rc.hasOwnProperty('src')) {
@@ -226,7 +226,7 @@ N.UI.routeInfo.prototype.getPoint = function(rc) {
  * @param {Array} pos An array of segment positions.
  * @param {Object} rc An object containing row, column, and offset components that define the desired segment end.
  */
-N.UI.routeInfo.prototype.processOffset = function(pos, rc) {
+N.UI.RouteInfo.prototype.processOffset = function(pos, rc) {
   if(pos.length && rc.hasOwnProperty('offset')) {
     var offsetSize = 5.0;
     var offsets = rc.offset.split(' ');
@@ -252,7 +252,7 @@ N.UI.routeInfo.prototype.processOffset = function(pos, rc) {
  * @return {Real} Returns the y value of the row maximum
  * @protected
  */
-N.UI.routeInfo.prototype.maximumNeuronRowY = function(index) {
+N.UI.RouteInfo.prototype.maximumNeuronRowY = function(index) {
   var row = this.network.rows[index];
   for(var i=0; i<row.cols.length; i++) {
     var name = row.cols[i].name;
@@ -271,7 +271,7 @@ N.UI.routeInfo.prototype.maximumNeuronRowY = function(index) {
  * @return {Real} Returns the y value of the row minimum
  * @protected
  */
-N.UI.routeInfo.prototype.minimumNeuronRowY = function(index) {
+N.UI.RouteInfo.prototype.minimumNeuronRowY = function(index) {
   var row = this.network.rows[index];
   for(var i=0; i<row.cols.length; i++) {
     var name = row.cols[i].name;

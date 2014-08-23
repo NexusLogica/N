@@ -35,9 +35,9 @@ N.DISCRETE = 2;
 
 N.AnalogSignal = function(name) {
   this.className  = 'N.AnalogSignal';
-  this.Type       = N.ANALOG;
-  this.Id         = N.GenerateUUID();
-  this.finder    = new N.TableSearch();
+  this.type       = N.ANALOG;
+  this.id         = N.generateUUID();
+  this.finder     = new N.TableSearch();
   this.name       = (typeof name === 'string' ? name : '');
   this.category   = 'Default';
   this.unit       = 'Hz';

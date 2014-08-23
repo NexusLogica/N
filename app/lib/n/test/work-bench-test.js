@@ -23,11 +23,11 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('WorkbenchTestController', ['$scope',
   function WorkbenchTestController($scope) {
-    $scope.Test = new N.WorkbenchTestScenes();
-    $scope.Test.CreateScenes();
-    $scope.Workbenches = $scope.Test.Workbenches;
-    $scope.TestInfo = { Name: 'Workbench Tests' };
-    document.title = $scope.TestInfo.Name+': Nexus Logica';
+    $scope.test = new N.WorkbenchTestScenes();
+    $scope.test.createScenes();
+    $scope.workbenches = $scope.test.workbenches;
+    $scope.testInfo = { name: 'Workbench Tests' };
+    document.title = $scope.testInfo.name+': Nexus Logica';
   }
 ]);
 
@@ -68,7 +68,7 @@ N.WorkbenchTestScenes.prototype.createScenes = function() {
         scene.layout(workbench, renderMappings);
         _this.workbenches.push(scene);
       }, function(status) {
-        console.log('ERROR: N.WorkbenchTestScenes.CreateScenes: '+status.errMsg);
+        console.log('ERROR: N.WorkbenchTestScenes.createScenes: '+status.errMsg);
       }
     ).catch(N.reportQError);
   }

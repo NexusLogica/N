@@ -66,7 +66,7 @@ N.UI.SignalGraph.prototype.render = function(svgParent, size, padding) {
     trace.signalGraphic = (new N.UI.SignalTrace()).
         addClasses([ (i % 2 ? 'even' : 'odd') ]).
         setSignal({ source: trace.source, propName: trace.propName }).
-        render(this.group, { x: 0, y: yOffset, width: w, height: h }, new N.UI.padding(0, 0));
+        render(this.group, { x: 0, y: yOffset, width: w, height: h }, new N.UI.Padding(0, 0));
     if(trace.additionalClasses) {
       trace.signalGraphic.addClasses(trace.additionalClasses);
     }

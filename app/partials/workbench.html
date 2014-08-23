@@ -2,9 +2,9 @@
 
 <div class="container" ng-controller="WorkbenchTestController">
   <div class="row test-top">
-    <div class="n-med-title col-lg-5 col-md-7" ng-bind="TestInfo.Name"></div>
+    <div class="n-med-title col-lg-5 col-md-7" ng-bind="testInfo.name"></div>
   </div>
-  <div ng-repeat="workbench in Workbenches">
+  <div ng-repeat="workbench in workbenches">
     <pi-workbench-panel workbench-scene="workbench">
     </pi-workbench-panel>
   </div>

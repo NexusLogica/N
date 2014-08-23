@@ -141,7 +141,7 @@ N.Workbench.prototype.setTargets = function(targets) {
  */
 N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNetwork) {
   var cleanName = N.cleanName(compartment.neuron.name);
-  var cleanCompartmentName = N.cleanName(compartment.name+(inputMeta.name !== 'Main' ? '['+inputMeta.name+']' : ''));
+  var cleanCompartmentName = N.cleanName(compartment.name+(inputMeta.name !== 'main' ? '['+inputMeta.name+']' : ''));
   var fullCleanName = 'SRC['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
 
   var source = (new N.Neuron(inputNetwork)).setName(fullCleanName);
@@ -159,7 +159,7 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
   inputNetwork.addNeuron(source);
 
   var connection = new N.Connection(this.network);
-  connection.path = 'Inputs:'+fullCleanName+'>OP->Targets:'+compartment.neuron.name+'>'+compartment.name+(inputMeta.name !== 'Main' ? '['+inputMeta.name+']': '');
+  connection.path = 'Inputs:'+fullCleanName+'>OP->Targets:'+compartment.neuron.name+'>'+compartment.name+(inputMeta.name !== 'main' ? '['+inputMeta.name+']': '');
 
   this.network.addConnection(connection);
 }
@@ -170,8 +170,8 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
  * @returns {N.Workbench}
  */
 N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNetwork) {
-  var cleanName = N.cleanName(compartment.Neuron.name);
-  var cleanCompartmentName = N.cleanName(compartment.name+(outputMeta.name !== 'Main' ? '['+outputMeta.name+']' : ''));
+  var cleanName = N.cleanName(compartment.neuron.name);
+  var cleanCompartmentName = N.cleanName(compartment.name+(outputMeta.name !== 'main' ? '['+outputMeta.name+']' : ''));
   var fullCleanName = 'SNK['+cleanName+(!_.isEmpty(cleanCompartmentName) ? '-'+cleanCompartmentName : '')+']';
 
   var sink = (new N.Neuron(outputNetwork)).setName(fullCleanName);
@@ -190,7 +190,7 @@ N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNe
   outputNetwork.addNeuron(sink);
 
   var connection = new N.Connection(this.network);
-  connection.path = 'Targets:'+compartment.neuron.name+'>'+compartment.name+(outputMeta.name !== 'Main' ? '['+outputMeta.name+']': '')+'->Outputs:'+fullCleanName+'>IP';
+  connection.path = 'Targets:'+compartment.neuron.name+'>'+compartment.name+(outputMeta.name !== 'main' ? '['+outputMeta.name+']': '')+'->Outputs:'+fullCleanName+'>IP';
 
   this.network.addConnection(connection);
 }

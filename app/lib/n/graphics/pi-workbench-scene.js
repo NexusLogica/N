@@ -34,18 +34,18 @@ N.UI.WorkbenchScene = function() {
   this.centralPadding = 20;
   this.x = 0;
   this.y = 0;
-  this.networkPadding = new N.UI.padding(0, Math.ceil(0.5*this.centralPadding), 0, 0);
-  this.graphPadding = new N.UI.padding(0, 0, 0, Math.floor(0.5*this.centralPadding));
+  this.networkPadding = new N.UI.Padding(0, Math.ceil(0.5*this.centralPadding), 0, 0);
+  this.graphPadding = new N.UI.Padding(0, 0, 0, Math.floor(0.5*this.centralPadding));
 }
 
 /**
  *
- * @method Layout
+ * @method layout
  * @param network {Object} The N.Network object to be displayed in the scene.
  * @param scalePixelsPerUnit {
  * @param position
  */
-N.UI.WorkbenchScene.prototype.Layout = function(workbench, renderMappings) {
+N.UI.WorkbenchScene.prototype.layout = function(workbench, renderMappings) {
   this.workbench = workbench;
   this.networkScene = (new N.UI.NetworkScene()).layout(workbench.network, renderMappings);
   this.signalGraphScene = (new N.UI.SignalGraphScene());

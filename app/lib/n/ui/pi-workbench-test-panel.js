@@ -65,8 +65,8 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         debugger;
         var paths = N.FromConnectionPaths($scope.test.workbench.network, path);
 
-        // TODO: Need fix for default output 'Main'
-        return paths.source.neuron.name+'//'+paths.source.name+'//'+'Main';
+        // TODO: Need fix for default output 'main'
+        return paths.source.neuron.name+'//'+paths.source.name+'//'+'main';
       }
 
       $scope.showPropertiesEdit = function() {
@@ -123,9 +123,9 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
 
         var paths = N.fromConnectionPaths($scope.test.workbench.network, $scope.targetInputSignalCopy.connection);
 
-        // TODO: Need fix for default output 'Main'
+        // TODO: Need fix for default output 'main'
         $scope.targetInputSignalCopy.compartmentPath = paths.source.getPath();
-        $scope.targetInputSignalCopy.outputName = 'Main';
+        $scope.targetInputSignalCopy.outputName = 'main';
 
         if(!$scope.targetInputSignalCopy.workbenchTest) {
            $scope.test.insertInputSignal($scope.targetInputSignalCopy);

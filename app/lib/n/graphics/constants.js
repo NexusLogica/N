@@ -49,7 +49,7 @@ N.UI.svgRemoveClass = function(svg, className) {
   }
 }
 
-N.UI.padding = function() {
+N.UI.Padding = function() {
   var p0 = arguments[0];
   var p1 = arguments[1];
   if(arguments.length === 0) {

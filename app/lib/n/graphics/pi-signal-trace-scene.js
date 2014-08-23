@@ -53,5 +53,5 @@ N.UI.SignalTraceScene.prototype.render = function(svgParent) {
   this.box = { x: this.paddingHoriz, y: this.paddingVert, width: (this.width-this.paddingHoriz), height: (this.height-this.paddingVert) };
 
   this.backgroundRect = svgParent.rect(this.box.width, this.box.height).move(this.box.x, this.box.y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
-  this.traceRenderer.render(svgParent, this.box, new N.UI.padding());
+  this.traceRenderer.render(svgParent, this.box, new N.UI.Padding());
 }
