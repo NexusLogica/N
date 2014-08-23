@@ -23,16 +23,18 @@ N.UI = N.UI || {};
  * The network scene controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNetworkPanelController"&gt;...<br/>
  * @class PiNetworkPanelController
  */
-angular.module('nSimApp.directives').directive('piHoverPath', [ function() {
+angular.module('nSimApp.directives').directive('piHoverPath', [ '$timeout', function($timeout) {
   return {
     restrict: 'E',
-    template: '<div class="pi-hover-path"><span class="action">Neuron:</span> <span class="path" ng-bind="current.hoverPath"></span></div>',
+    template: '<div class="pi-hover-path"><span class="action">Neuron:</span> <span class="path" ng-class="{ blank: !hovering, showing: hovering }" ng-bind="current.hoverPath"></span></div>',
     controller: function($scope) {
       $scope.current = {};
       $scope.current.hoverPath = '';
       $scope.current.selected = '';
       $scope.current.compartment = null;
       $scope.current.selectedCompartment = null;
+      $scope.current.newHoverPath = '';
+      $scope.hovering = false;
 
       $scope.$on('pi-canvas:event', function(broadcastEvent, event, obj) {
         if(obj.getType() === N.Type.PiCompartment) {
@@ -54,12 +56,15 @@ angular.module('nSimApp.directives').directive('piHoverPath', [ function() {
         var compObj = piCompartment.compartmentObj;
         $scope.current.hoverPath = getCompartmentPath(compObj);
         piCompartment.neuron.highlight();
+        $scope.hovering = true;
         $scope.$digest();
       }
 
       var onCompartmentMouseLeave = function(event, piCompartment) {
         piCompartment.neuron.removeHighlight();
-        $scope.current.hoverPath = '';
+        $scope.newHoverPath = '';
+        $scope.hovering = false;
+        $timeout(function() { if(!$scope.hovering) { $scope.current.hoverPath = $scope.newHoverPath; } }, 500);
         $scope.$digest();
       }
 

@@ -693,7 +693,16 @@ body {
       color: $text-color-light;
     }
     .path {
-
+      &.showing {
+        opacity:1;
+        transition: all 0.5s ease;
+         -webkit-transition: all 0.5s ease;
+      }
+      &.blank {
+        opacity:0;
+        transition: all 0.5s ease;
+         -webkit-transition: all 0.5s ease;
+      }
     }
   }
 

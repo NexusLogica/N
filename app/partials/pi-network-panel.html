@@ -1,12 +1,12 @@
 <div class="pi-scene pi-network-panel row">
   <div class="pi-canvas-column col-lg-8 col-md-8">
     <div class="pi-canvas" pi-canvas pi-scene="{{scene}}"></div>
-    <div class="path" ng-bind="Current.HoverPath"></div>
+    <div class="path" ng-bind="current.hoverPath"></div>
   </div>
   <div class="col-lg-5 col-md-5 pi-network-console">
 
     <div class="pi-neuron-info-panel" ng-controller="PiNeuronInfoPanelController">
-      <div class="item"><span>Compartment: </span><span>{{Current.Selected}}</span></div>
+      <div class="item"><span>Compartment: </span><span>{{current.selected}}</span></div>
     </div>
 
   </div>

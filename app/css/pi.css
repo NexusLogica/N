@@ -82,7 +82,9 @@ All Rights Reserved.
 .pi-neuron .compartment {
   stroke: #999999;
   stroke-width: 1.75px;
-  stroke-linejoin: round; }
+  stroke-linejoin: round;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
   .pi-neuron .compartment.selected {
     stroke-width: 2.25px;
     stroke: #333333;
@@ -122,6 +124,11 @@ All Rights Reserved.
   fill: #666;
   fill-opacity: 0;
   stroke-opacity: 0; }
+.pi-neuron.highlight .compartment {
+  stroke-width: 2.5px;
+  stroke: #1a1a1a;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
 .pi-neuron.highlight .callout-label {
   display: inline;
   fill-opacity: 1;

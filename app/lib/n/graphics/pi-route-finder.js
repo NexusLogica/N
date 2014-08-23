@@ -51,7 +51,7 @@ N.UI.PiRouteFinder.prototype.findRoute = function(manager) {
 
   // Draw a line from start to end
   var startPoints = this.routeInfo.getNeuronOutputPosition(this.piConnection.network, startNeuron);
-  this.start = { Base: startPoints[0], End: startPoints[1] };
+  this.start = { base: startPoints[0], end: startPoints[1] };
 
   var nStart = this.routeInfo.getNeuron(this.piConnection.network, startNeuron);
   var nEnd   = this.routeInfo.getNeuron(this.piConnection.network, endNeuron);
@@ -222,7 +222,7 @@ N.UI.PiRouteFinder.prototype.updateThruwayInfo = function(thruwayRouteInfo) {
  * @method findEndAngle
  * @param {N.UI.PiNeuron} endNeuron
  * @param {N.UI.Vector} directionVector
- * @returns {{RequiresVert: *, VertDirection: *, VertSide: string, Last: N.UI.Vector, NextToLast: N.UI.Vector, EndNeuronCenter: N.UI.Vector}}
+ * @returns {{requiresVert: *, vertDirection: *, vertSide: string, last: N.UI.Vector, nextToLast: N.UI.Vector, endNeuronCenter: N.UI.Vector}}
  */
 N.UI.PiRouteFinder.prototype.findEndAngle = function(endNeuron, directionVector) {
   var n = this.routeInfo.getNeuron(this.piConnection.network, endNeuron);

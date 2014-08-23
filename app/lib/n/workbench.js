@@ -148,7 +148,7 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
   source.display = {
     template: 'N.UI.StandardNeuronTemplates.InputSource',
     radius: 0.1,
-    compartmentMap : { 'body': 'OP'  }
+    compartmentMap : { 'Body': 'OP'  }
   }
 
   var sourceCompartment = new N.Comp.SignalSource(source, 'OP');

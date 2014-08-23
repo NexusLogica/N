@@ -436,3 +436,11 @@ body {
   .pi-hover-path .action {
     min-width: 60px;
     color: #cccccc; }
+  .pi-hover-path .path.showing {
+    opacity: 1;
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease; }
+  .pi-hover-path .path.blank {
+    opacity: 0;
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease; }

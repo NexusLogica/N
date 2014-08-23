@@ -53,7 +53,7 @@ N.Connection.prototype.getType = function() {
  * @returns {N.Type.Connection}
  */
 N.Connection.prototype.getPath = function() {
-  return this.Path;
+  return this.path;
 }
 
 /**
@@ -61,10 +61,12 @@ N.Connection.prototype.getPath = function() {
  * @method connect
  */
 N.Connection.prototype.connect = function() {
-  var endPoints = N.fromConnectionPaths(this.network, this.path);
-  if(!endPoints.error) {
-    this.source = endPoints.source.connectOutput(this);
-    this.sink = endPoints.sink.connectInput(this);
+  if(!this.source && !this.sink) {
+    var endPoints = N.fromConnectionPaths(this.network, this.path);
+    if(!endPoints.error) {
+      this.source = endPoints.source.connectOutput(this);
+      this.sink = endPoints.sink.connectInput(this);
+    }
   }
   return this;
 }
