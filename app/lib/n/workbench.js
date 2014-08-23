@@ -178,7 +178,7 @@ N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNe
   sink.display = {
     template: 'N.UI.StandardNeuronTemplates.OutputSink',
     radius: 0.125,
-    compartmentMap : { 'input': 'IP'  }
+    compartmentMap : { 'Input': 'IP'  }
   }
 
   var sinkCompartment = new N.Comp.InputSink(sink, 'IP');

@@ -114,7 +114,7 @@ N.WorkbenchTestScenes.FastSpiking = {
   display: {
     template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
     radius: 0.2,
-    compartmentMap : { 'dendrites': 'IP', 'body': 'OP'  }
+    compartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
   }
 }
 
