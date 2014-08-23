@@ -27,7 +27,6 @@ var N = N || {};
 N.Network = function(parentNetwork) {
   this.className           = 'N.Network';
   this.id                  = null;
-  this.LongName            = '';
   this.name                = '';
   this.category            = 'Default';
   this.neurons             = [];
@@ -108,10 +107,10 @@ N.Network.prototype.getRoot = function() {
  */
 N.Network.prototype.addNetwork = function(network) {
   if(network.name.length === 0) {
-    throw N.L('ERROR: N.Network.addNetwork: No name for network.');
+    throw N.log('ERROR: N.Network.addNetwork: No name for network.');
   }
   if(this.networksByName[network.name]) {
-    throw N.L('ERROR: N.Network.addNetwork: The network '+network.name+' already exists in '+this.name+'.');
+    throw N.log('ERROR: N.Network.addNetwork: The network '+network.name+' already exists in '+this.name+'.');
   }
   this.networks.push(network);
   this.networksByName[network.name] = network;
@@ -156,8 +155,8 @@ N.Network.prototype.getNetworkByName = function(name) {
  */
 N.Network.prototype.addNeuron = function(neuron) {
   if(neuron.name.length === 0) {
-    N.L('ERROR: N.Network.AddNeuron: No short name for neuron.');
-    throw 'ERROR: N.Network.AddNeuron: No short name for neuron.';
+    N.log('ERROR: N.Network.addNeuron: No short name for neuron.');
+    throw 'ERROR: N.Network.addNeuron: No short name for neuron.';
   }
   this.neurons.push(neuron);
   this.neuronsByName[neuron.name] = neuron;
@@ -354,7 +353,7 @@ N.Network.prototype.clear = function() {
  */
 N.Network.prototype.validate = function(report) {
   if(this.networks.length === 0 && this.neurons.length === 0) {
-    report.Warning(this.getPath(), 'The network has no neurons or child networks.');
+    report.warning(this.getPath(), 'The network has no neurons or child networks.');
     if(this.connections.length) { report.error(this.getPath(), 'The network has connections but no child networks or neurons, so the connections will fail.'); }
   }
 
@@ -362,11 +361,11 @@ N.Network.prototype.validate = function(report) {
     report.error(this.getPath(), this.validationMessages[j]);
   }
 
-  for(var i=0; i<this.networks.length; i++) { this.networks[i].Validate(report); }
-  for(i=0; i<this.neurons.length; i++)           { this.neurons[i].Validate(report); }
+  for(var i=0; i<this.networks.length; i++) { this.networks[i].validate(report); }
+  for(i=0; i<this.neurons.length; i++)           { this.neurons[i].validate(report); }
   for(i=0; i<this.connections.length; i++) {
     try {
-      this.connections[i].Validate(report);
+      this.connections[i].validate(report);
     }
     catch (err) {
       report.error(this.connections[i].getPath(), 'The connection of type '+this.connections[i].className+' threw an exception when validating.');
@@ -392,7 +391,7 @@ N.Network.prototype.loadFrom = function(json) {
       _.merge(_this, _.omit(jsonToFill, ['networks', 'neurons', 'connections', 'template', 'randSeed']));
 
       if(json.hasOwnProperty('randSeed')) {
-        _this.random.SetSeed(Math.parseInt(json.RandSeed));
+        _this.random.setSeed(Math.parseInt(json.randSeed));
       }
 
       _this.loadNetworks(json.networks || []).then(
@@ -406,7 +405,7 @@ N.Network.prototype.loadFrom = function(json) {
 
                   // Hook up the connections
                   for(var n in _this.connections) {
-                    _this.connections[n].Connect();
+                    _this.connections[n].connect();
                   }
                   if(!_this.parentNetwork) {
                     _this.initialize();
@@ -473,7 +472,7 @@ N.Network.prototype.loadNetworks = function(json) {
   var promises = [];
   for(var i in json) {
     var networkJson = json[i];
-    var network = N.NewN(networkJson.className || 'N.Network', this).setName(networkJson.name);
+    var network = N.newN(networkJson.className || 'N.Network', this).setName(networkJson.name);
     this.addNetwork(network);
     promises.push(network.loadFrom(networkJson));
   }
@@ -485,7 +484,7 @@ N.Network.prototype.loadNeurons = function(json) {
   var promises = [];
   for(var i in json) {
     var neuronJson = json[i];
-    var neuron = N.NewN(neuronJson.className || 'N.Neuron', this).setName(neuronJson.name);
+    var neuron = N.newN(neuronJson.className || 'N.Neuron', this).setName(neuronJson.name);
     this.addNeuron(neuron);
     promises.push(neuron.loadFrom(neuronJson));
   }
@@ -497,7 +496,7 @@ N.Network.prototype.loadConnections = function(json) {
   var promises = [];
   for(var i in json) {
     var connectionJson = json[i];
-    var connection = N.NewN(connectionJson.className || 'N.Connection', this);
+    var connection = N.newN(connectionJson.className || 'N.Connection', this);
     this.addConnection(connection);
     promises.push(connection.loadFrom(connectionJson));
   }
@@ -540,6 +539,6 @@ N.Network.prototype.addTemplates = function(templates) {
 
 N.Network.prototype.routeErrorMsg = function(errMsg) {
   this.validationMessages.push(errMsg);
-  N.L(errMsg);
+  N.log(errMsg);
   return errMsg;
 }

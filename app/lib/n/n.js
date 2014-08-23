@@ -80,7 +80,7 @@ N.newN = function(className) {
     for(var i=1; i<parts.length; i++) {
       objConstructor = objConstructor[parts[i]];
       if(!objConstructor) {
-        N.L('ERROR: Unable to find constructor for '+className);
+        N.log('ERROR: Unable to find constructor for '+className);
         return null;
       }
     }
@@ -106,7 +106,7 @@ N.newN = function(className) {
       return Object(ret) === ret ? ret : inst;
     }
     catch(err) {
-      N.L('ERROR: Unable to create object of class '+className);
+      N.log('ERROR: Unable to create object of class '+className);
     }
   }
   return null;
@@ -146,7 +146,7 @@ N.fromPath = function(network, path) {
   // Break the path into
   var regex = /(^[\.]+)|(\.)|(\/[a-zA-Z0-9\-\_\.\[\]]+)|(\:[a-zA-Z0-9\-\_\.\[\]]+)|(\>[a-zA-Z0-9\-\_\.\[\]]+)|([a-zA-Z0-9\-\_\.\[\]]+)/g;
   var parts = path.match(regex);
-  ////// N.L('Path='+parts.join('^'));
+  ////// N.log('Path='+parts.join('^'));
   if (parts.length === 0) {
     return N.fromPathError(network, path, path, 'Error in path');
   }
@@ -243,7 +243,7 @@ N.compFromPath = function(path) {
  */
 N.fromConnectionPaths = function(network, paths) {
   var parts = paths.split(/->/);
-  ////// N.L('Connection parts: '+parts.join('  ->  '));
+  ////// N.log('Connection parts: '+parts.join('  ->  '));
   if(parts.length !== 2) {
     return N.fromPathError(network, paths, '', 'Invalid connection path format \''+paths+'\'');
   }
@@ -251,7 +251,7 @@ N.fromConnectionPaths = function(network, paths) {
   var obj = {};
   obj.source = N.fromPath(network, parts[0]);
   obj.sink = N.fromPath(network, parts[1]);
-  if(obj.source.error || obj.Sink.error) {
+  if(obj.source.error || obj.sink.error) {
     return { error: obj };
   }
   return obj;
@@ -282,7 +282,7 @@ N.sinkFromConnectionPath = function(path) {
 }
 
 N.fromPathError = function(network, path, part, message) {
-  N.L('Path Error: '+message);
+  N.log('Path Error: '+message);
   return { error: { message: message, network: network, path: path, part: part } };
 }
 
@@ -362,7 +362,7 @@ N.L = function(logText) {
  * The standard timestep for simulations - 1 millisecond
  * @type {number} Timestep
  */
-N.TimeStep = 0.001;
+N.timeStep = 0.001;
 
 /**
  * Converts an angle in degrees to radians.
@@ -439,18 +439,18 @@ N.ConfigurationReport.prototype.warning = function(path, message) {
 }
 
 /**
- * Write the report to the system log via N.L(), which is usually the console.log().
+ * Write the report to the system log via N.log(), which is usually the console.log().
  * @method writeToLog
  */
 N.ConfigurationReport.prototype.writeToLog = function(title) {
   if(this.warnings.length === 0 && this.errors.length === 0) {
-    N.L(title+': No errors or warnings');
+    N.log(title+': No errors or warnings');
   } else {
     var numErr = this.errors.length;
     var numWarn = this.warnings.length;
-    N.L(title+': '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
-    for(var i=0; i<numErr; i++) { N.L('    Error['+this.errors[i].path+']: '+this.errors[i].message); }
-    for(i=0; i<numWarn; i++)   { N.L('    Warning['+this.warnings[i].path+']: '+this.warnings[i].message); }
+    N.log(title+': '+numErr+' error'+(numErr === 1 ? '' : 's') +' and '+this.warnings.length+' warning'+(numWarn === 1 ? '' : 's'));
+    for(var i=0; i<numErr; i++) { N.log('    Error['+this.errors[i].path+']: '+this.errors[i].message); }
+    for(i=0; i<numWarn; i++)   { N.log('    Warning['+this.warnings[i].path+']: '+this.warnings[i].message); }
   }
 }
 

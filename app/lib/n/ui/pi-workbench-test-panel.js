@@ -63,10 +63,10 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
 
       var pathToTraceId = function(path) {
         debugger;
-        var paths = N.FromConnectionPaths($scope.test.workbench.Network, path);
+        var paths = N.FromConnectionPaths($scope.test.workbench.network, path);
 
         // TODO: Need fix for default output 'Main'
-        return paths.Source.Neuron.Name+'//'+paths.Source.Name+'//'+'Main';
+        return paths.source.neuron.name+'//'+paths.source.name+'//'+'Main';
       }
 
       $scope.showPropertiesEdit = function() {
@@ -121,10 +121,10 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         }
         $scope.inputFormMessage = '';
 
-        var paths = N.FromConnectionPaths($scope.test.workbench.Network, $scope.targetInputSignalCopy.connection);
+        var paths = N.fromConnectionPaths($scope.test.workbench.network, $scope.targetInputSignalCopy.connection);
 
         // TODO: Need fix for default output 'Main'
-        $scope.targetInputSignalCopy.compartmentPath = paths.Source.GetPath();
+        $scope.targetInputSignalCopy.compartmentPath = paths.source.getPath();
         $scope.targetInputSignalCopy.outputName = 'Main';
 
         if(!$scope.targetInputSignalCopy.workbenchTest) {
@@ -158,17 +158,17 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
         if(!path) {
           return '';
         }
-        var paths = N.FromConnectionPaths($scope.test.workbench.Network, path);
-        var sink = paths.Sink;
-        return sink.Neuron.Name+' -> '+sink.Name;
+        var paths = N.fromConnectionPaths($scope.test.workbench.network, path);
+        var sink = paths.sink;
+        return sink.neuron.name+' -> '+sink.name;
       }
 
       var fillCompartmentLists = function() {
         $scope.inputLayerSourceCompartments = [];
-        var network = $scope.test.workbench.Network.GetNetworkByName('Inputs');
-        _.forEach(network.Neurons, function(neuron) {
-          _.forEach(neuron.Compartments, function(compartment) {
-            _.forEach(compartment.OutputConnections, function(connection) {
+        var network = $scope.test.workbench.network.getNetworkByName('Inputs');
+        _.forEach(network.neurons, function(neuron) {
+          _.forEach(neuron.compartments, function(compartment) {
+            _.forEach(compartment.outputConnections, function(connection) {
               $scope.inputLayerSourceCompartments.push({ compartment: compartment, connection: connection});
             });
           });

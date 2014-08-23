@@ -33,7 +33,7 @@ N.Connection = function(network) {
   this.output         = 0.0;
   this.outputStore    = new N.AnalogSignal('OutputStore', 'OS');
   this.gain           = 1.0;
-  this.delay          = N.TimeStep;
+  this.delay          = N.timeStep;
   this.category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
   this.validationMessages = [];
 }
@@ -114,7 +114,7 @@ N.Connection.prototype.loadFrom = function(json) {
     var template = this.network.getTemplate(json.Template);
     if(template === null) {
       this.validationMessages.push('ERROR: Unable to find template "'+json.template+'"');
-      N.L(this.validationMessages[this.validationMessages.length-1]);
+      N.log(this.validationMessages[this.validationMessages.length-1]);
       return;
     }
     this.loadFrom(template);

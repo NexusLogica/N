@@ -298,6 +298,6 @@ N.Neuron.prototype.fromData = function(json) {
 
 N.Neuron.prototype.routeErrorMsg = function(errMsg) {
   this.validationMessages.push(errMsg);
-  N.L(errMsg);
+  N.log(errMsg);
   return errMsg;
 }

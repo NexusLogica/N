@@ -70,9 +70,9 @@ N.SignalBuilder.prototype.buildSignal = function(signal, totalTime) {
       if(this.start > 0.0) {
         data.push( { t: this.start , v: this.offset } );
       }
-      data.push( { t: this.start+N.TimeStep ,   v: this.amplitude+this.offset } );
+      data.push( { t: this.start+N.timeStep ,   v: this.amplitude+this.offset } );
       data.push( { t: this.start+this.duration, v: this.amplitude+this.offset } );
-      data.push( { t: this.start+this.duration+ N.TimeStep, v: this.offset } );
+      data.push( { t: this.start+this.duration+ N.timeStep, v: this.offset } );
       data.push( { t: totalTime, v: this.offset } );
     }
   }

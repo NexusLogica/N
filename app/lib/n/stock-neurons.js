@@ -22,28 +22,28 @@ N.NeuronTemplate = N.NeuronTemplate || {};
 N.NeuronFactory.StateOutput = {
   Compartments : [{
       className: 'N.Comp.StateOutput',
-      Input: 'N.Comp.Input'
+      input: 'N.Comp.Input'
     }
   ]
 }
 
 N.Neuron = function() {
   this.className    = 'N.Neuron';
-  this.Id           = N.GenerateUUID();
-  this.Name         = '';
-  this.Category     = 'Default';
-  this.Compartments = [];
+  this.id           = N.generateUUID();
+  this.name         = '';
+  this.category     = 'Default';
+  this.compartments = [];
 }
 
-N.Neuron.prototype.AddCompartment = function(compartment) {
-  this.Compartments.push(compartment);
+N.Neuron.prototype.addCompartment = function(compartment) {
+  this.compartments.push(compartment);
 }
 
-N.Neuron.prototype.GetNumCompartments = function() {
-  return this.Compartments.length;
+N.Neuron.prototype.getNumCompartments = function() {
+  return this.compartments.length;
 }
 
-N.Neuron.prototype.ToJSON = function() {
+N.Neuron.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }

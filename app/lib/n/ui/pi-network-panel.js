@@ -28,18 +28,18 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
   function PiNetworkPanelController($scope) {
 
-    $scope.Current = {};
-    $scope.Current.HoverPath = '';
-    $scope.Current.Selected = '';
-    $scope.Current.Compartment = null;
-    $scope.Current.SelectedCompartment = null;
+    $scope.current = {};
+    $scope.current.hoverPath = '';
+    $scope.current.selected = '';
+    $scope.current.compartment = null;
+    $scope.current.selectedCompartment = null;
 
     $scope.$on('pi-canvas:event', function(broadcastEvent, event, obj) {
       if(obj.GetType() === N.Type.PiCompartment) {
         switch(event.type) {
-          case 'mouseenter' : OnCompartmentMouseEnter(event, obj); break;
-          case 'mouseleave' : OnCompartmentMouseLeave(event, obj); break;
-          case 'click'      : OnCompartmentClick(event, obj);      break;
+          case 'mouseenter' : onCompartmentMouseEnter(event, obj); break;
+          case 'mouseleave' : onCompartmentMouseLeave(event, obj); break;
+          case 'click'      : onCompartmentClick(event, obj);      break;
         }
       }
     });
@@ -50,40 +50,40 @@ nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
      * @param event
      * @param compartment
      */
-    var OnCompartmentMouseEnter = function(event, piCompartment) {
-      var compObj = piCompartment.CompartmentObj;
-      $scope.Current.HoverPath = GetCompartmentPath(compObj);
-      piCompartment.Neuron.Highlight();
+    var onCompartmentMouseEnter = function(event, piCompartment) {
+      var compObj = piCompartment.compartmentObj;
+      $scope.current.hoverPath = getCompartmentPath(compObj);
+      piCompartment.neuron.highlight();
       $scope.$digest();
     }
 
-    var OnCompartmentMouseLeave = function(event, piCompartment) {
-      piCompartment.Neuron.RemoveHighlight();
-      $scope.Current.HoverPath = '';
+    var onCompartmentMouseLeave = function(event, piCompartment) {
+      piCompartment.neuron.removeHighlight();
+      $scope.current.hoverPath = '';
       $scope.$digest();
     }
 
-    var OnCompartmentClick = function(event, piCompartment) {
+    var onCompartmentClick = function(event, piCompartment) {
       var classes, str;
-      if($scope.Current.SelectedCompartment) {
-        $scope.Current.SelectedCompartment.HideConnections();
-        var path = $scope.Current.SelectedCompartment.path;
+      if($scope.current.selectedCompartment) {
+        $scope.current.selectedCompartment.hideConnections();
+        var path = $scope.current.selectedCompartment.path;
         classes = path.attr('class').split(' ');
         str = _.without(classes, 'selected').join(' ');
         path.attr( { 'class': str });
       }
 
-      $scope.Current.Selected = GetCompartmentPath(piCompartment.CompartmentObj);
-      $scope.Current.SelectedCompartment = piCompartment;
+      $scope.current.selected = getCompartmentPath(piCompartment.compartmentObj);
+      $scope.current.selectedCompartment = piCompartment;
       classes = piCompartment.path.attr('class').split(' ');
-      piCompartment.ShowConnections();
+      piCompartment.showConnections();
       str = _.union(classes, ['selected']).join(' ');
       piCompartment.path.attr( { 'class': str });
       $scope.$digest();
     }
 
-    var GetCompartmentPath = function(compartment) {
-      return compartment.Neuron.Network.GetFullPath()+':'+compartment.Neuron.Name+'>'+compartment.Name;
+    var getCompartmentPath = function(compartment) {
+      return compartment.neuron.network.getFullPath()+':'+compartment.neuron.name+'>'+compartment.name;
     }
   }
 ]);

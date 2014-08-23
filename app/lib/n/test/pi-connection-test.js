@@ -23,16 +23,16 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('PiConnectionTestController', ['$scope', '$timeout',
   function PiConnectionTestController($scope, $timeout) {
-    $scope.Test = new N.Test.PiConnectionTest();
-    $scope.Test.CreateScene();
-    $scope.Scenes = [ $scope.Test.Scene ];
+    $scope.test = new N.Test.PiConnectionTest();
+    $scope.test.createScene();
+    $scope.scenes = [ $scope.test.scene ];
 
     $scope.$on('PiConnectionTest:OnInitialRender', function() {
       $scope.next();
     });
 
     $scope.next = function() {
-      $scope.Test.Next();
+      $scope.test.next();
     }
 
   }
@@ -62,7 +62,7 @@ nSimAppDirectives.directive('piConnectionTest', [function() {
 N.Test.PiConnectionTest = function() {
   this.nextRouteIndex = 0;
   var _this = this;
-  this.StateMachine = StateMachine.create({
+  this.stateMachine = StateMachine.create({
     initial: 'None',
     events: [
       { name: 'next',  from: '*', to: 'NextRouteTest' },
@@ -70,16 +70,16 @@ N.Test.PiConnectionTest = function() {
     ],
     callbacks: {
       onenterNextRouteTest: function() {
-        _this.ShowNextRoute();
+        _this.showNextRoute();
       },
       onafternext: function() {
-        _this.StateMachine.wait();
+        _this.stateMachine.wait();
       }
     }
   });
 
-  this.NextConnectionSetIndex = 0;
-  this.ConnectionSetArrays = [
+  this.nextConnectionSetIndex = 0;
+  this.connectionSetArrays = [
     ['SS[4][1]>OP->SS[1][5]>IP' ],
     ['SS[1][1]>OP->SS[2][4]>IP', 'SS[1][1]>OP->SS[1][5]>IP', 'SS[1][1]>OP->SS[5][5]>IP' ],
     ['SS[5][2]>OP->SS[3][2]>OP', 'SS[5][2]>OP->SS[3][3]>OP', 'SS[5][2]>OP->SS[2][2]>OP', 'SS[5][2]>OP->SS[1][3]>OP' ],
@@ -91,27 +91,27 @@ N.Test.PiConnectionTest = function() {
   ];
 }
 
-N.Test.PiConnectionTest.prototype.CreateScene = function() {
-  this.Scene = this.Matrix();
-  N.Objects.Add(this.Scene);
+N.Test.PiConnectionTest.prototype.createScene = function() {
+  this.scene = this.matrix();
+  N.Objects.add(this.scene);
 }
 
-N.Test.PiConnectionTest.prototype.Next = function() {
-  this.StateMachine.next();
+N.Test.PiConnectionTest.prototype.next = function() {
+  this.stateMachine.next();
 }
 
 N.Test.PiConnectionTest.prototype.Matrix = function() {
   var renderMappings = {
     'ColumnSpacing': 0.3,
     'RowSpacing': 0.3,
-    'SS[2]' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
-    'SS[4]' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.5 },
-    'SS' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.4 },
-    'IN' : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
-    'IP' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
-    'OP' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
-    'RN' : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 },
-    'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
+    'SS[2]' : { template: 'N.UI.StandardNeuronTemplates.Stellate',              radius: 0.3 },
+    'SS[4]' : { template: 'N.UI.StandardNeuronTemplates.Stellate',              radius: 0.5 },
+    'SS' : { template: 'N.UI.StandardNeuronTemplates.Stellate',              radius: 0.4 },
+    'IN' : { template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', radius: 0.3 },
+    'IP' : { template: 'N.UI.StandardNeuronTemplates.InputSource',           radius: 0.2 },
+    'OP' : { template: 'N.UI.StandardNeuronTemplates.OutputSink',            radius: 0.2 },
+    'RN' : { template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', radius: 0.2 },
+    'Default' :  { template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', radius: 0.2 }
   };
 
   var numRows = 5,
@@ -131,68 +131,68 @@ N.Test.PiConnectionTest.prototype.Matrix = function() {
   var spacings   = [ 2.2, 3.0, 2.2, 3.5, 2.2 ];
   //var numColumns = [ 4, 4, 4, 4 ];
   //var spacings   = [ 2.2, 2.2, 2.2, 2.2 ];
-  var config = { Name: 'M', Neurons: [], Display: { Rows: [] } };
+  var config = { name: 'M', neurons: [], display: { rows: [] } };
   for(var i=0; i<numColumns.length; i++) {
-    var rowDisplay = { RowId: 'Row'+i, NumCol: numCols,  Spacing: spacings[i], Y: rowY, Cols: [] };
+    var rowDisplay = { rowId: 'row'+i, numCol: numCols,  spacing: spacings[i], y: rowY, cols: [] };
     for(var j=0; j<numColumns[i]; j++) {
       var name = 'SS['+(i+1)+']['+(j+1)+']';
-      config.Neurons.push({ Template: 'N.Test.PiConnectionTest.SpinyStellate', Name: name });
-      rowDisplay.Cols.push({ Name: name });
+      config.neurons.push({ template: 'N.Test.PiConnectionTest.SpinyStellate', name: name });
+      rowDisplay.cols.push({ name: name });
     }
-    config.Display.Rows.push(rowDisplay);
+    config.display.rows.push(rowDisplay);
     rowY += vertSpacing;
   }
 
   console.log(JSON.stringify(config, undefined, 2));
 
   var network = new N.Network();
-  network.AddTemplates({ 'N.Test.PiConnectionTest.SpinyStellate' : N.Test.PiConnectionTest.SpinyStellate });
-  network.LoadFrom(config);
+  network.addTemplates({ 'N.Test.PiConnectionTest.SpinyStellate' : N.Test.PiConnectionTest.SpinyStellate });
+  network.loadFrom(config);
 
   var scene = new N.UI.NetworkScene();
-  scene.Layout(network, renderMappings);
+  scene.layout(network, renderMappings);
   return scene;
 }
 
-N.Test.PiConnectionTest.prototype.ShowNextRoute = function() {
+N.Test.PiConnectionTest.prototype.showNextRoute = function() {
 
-  this.RouteManager = new N.UI.PiRouteManager(this.Scene.Network);
-  this.RouteManager.AddConnections(this.ToConnectionStubs(this.ConnectionSetArrays[this.NextConnectionSetIndex]));
-  this.RouteManager.Render();
+  this.routeManager = new N.UI.PiRouteManager(this.scene.network);
+  this.routeManager.addConnections(this.toConnectionStubs(this.connectionSetArrays[this.nextConnectionSetIndex]));
+  this.routeManager.render();
 
-  this.NextConnectionSetIndex++;
-  if(this.NextConnectionSetIndex === this.ConnectionSetArrays.length) {
-    this.NextConnectionSetIndex = 0;
+  this.nextConnectionSetIndex++;
+  if(this.nextConnectionSetIndex === this.connectionSetArrays.length) {
+    this.nextConnectionSetIndex = 0;
   }
 }
 
-N.Test.PiConnectionTest.Next = -1;
-N.Test.PiConnectionTest.Categories = [ 'Excitatory', 'Inhibitory', 'Spine', 'GapJunction', 'Electrode' ];
+N.Test.PiConnectionTest.next = -1;
+N.Test.PiConnectionTest.categories = [ 'Excitatory', 'Inhibitory', 'Spine', 'GapJunction', 'Electrode' ];
 
-N.Test.PiConnectionTest.prototype.ToConnectionStubs = function(pathArray) {
+N.Test.PiConnectionTest.prototype.toConnectionStubs = function(pathArray) {
   var stubs = _.map(pathArray, function(path) {
-    N.Test.PiConnectionTest.Next = (N.Test.PiConnectionTest.Next === 4 ? 0 : N.Test.PiConnectionTest.Next + 1);
-    return { GetPath: function() { return path; }, Category: N.Test.PiConnectionTest.Categories[N.Test.PiConnectionTest.Next] };
+    N.Test.PiConnectionTest.next = (N.Test.PiConnectionTest.next === 4 ? 0 : N.Test.PiConnectionTest.next + 1);
+    return { getPath: function() { return path; }, category: N.Test.PiConnectionTest.categories[N.Test.PiConnectionTest.next] };
   });
   return stubs;
 }
 
 N.Test.PiConnectionTest.SpinyStellate = {
-  ClassName: 'N.Neuron',
-  Name: 'SS',
-  Compartments: [{
-    ClassName: 'N.Comp.Output',
-    Name: 'OP'
+  classname: 'N.Neuron',
+  name: 'SS',
+  compartments: [{
+    classname: 'N.Comp.Output',
+    name: 'OP'
   },{
-    ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'IP'
+    classname: 'N.Comp.LinearSummingInput',
+    name: 'IP'
   },{
-    ClassName: 'N.Comp.AcetylcholineInput',
-    Name: 'AIP'
+    classname: 'N.Comp.AcetylcholineInput',
+    name: 'AIP'
   }],
-  Display: {
-    Template: 'N.UI.StandardNeuronTemplates.Stellate',
-    Radius: 0.8,
-    CompartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
+  display: {
+    template: 'N.UI.StandardNeuronTemplates.Stellate',
+    radius: 0.8,
+    compartmentMap: { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
   }
 }

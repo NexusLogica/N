@@ -20,38 +20,38 @@ N.UI = N.UI || {};
   //*************************
 
 N.UI.SignalTraceScene = function() {
-  this.ClassName = 'N.UI.SignalTraceScene';
-  this.Signal = {};
-  this.Id = N.GenerateUUID();
+  this.className = 'N.UI.SignalTraceScene';
+  this.signal = {};
+  this.id = N.generateUUID();
 }
 
-N.UI.SignalTraceScene.prototype.SetSignal = function(signal) {
-  this.Signal = signal;
-  this.TraceRenderer = new N.UI.SignalTrace();
+N.UI.SignalTraceScene.prototype.setSignal = function(signal) {
+  this.signal = signal;
+  this.traceRenderer = new N.UI.SignalTrace();
 }
 
 /**
  * Calculates the scale that will fit the network to a given width and height
- * @method ScaleToFit
+ * @method scaleToFit
  * @param width
  * @param height
  * @param paddingHoriz
  * @param paddingVert
  */
-N.UI.SignalTraceScene.prototype.ScaleToFit = function(width, height, padding) {
-  this.Width = width;
-  this.Height = height;
-  this.PaddingHoriz = padding.Horizontal();
-  this.PaddingVert = padding.Vertical();
-  this.IdealContainerWidth = this.Width;
-  this.IdealContainerHeight = this.Height;
+N.UI.SignalTraceScene.prototype.scaleToFit = function(width, height, padding) {
+  this.width = width;
+  this.height = height;
+  this.paddingHoriz = padding.horizontal();
+  this.paddingVert = padding.vertical();
+  this.idealContainerWidth = this.width;
+  this.idealContainerHeight = this.height;
 }
 
-N.UI.SignalTraceScene.prototype.Render = function(svgParent) {
-  this.TraceRenderer.SvgParent = svgParent;
-  this.TraceRenderer.SetSignal(this.Signal);
-  this.Box = { X: this.PaddingHoriz, Y: this.PaddingVert, Width: (this.Width-this.PaddingHoriz), Height: (this.Height-this.PaddingVert) };
+N.UI.SignalTraceScene.prototype.render = function(svgParent) {
+  this.traceRenderer.svgParent = svgParent;
+  this.traceRenderer.setSignal(this.signal);
+  this.box = { x: this.paddingHoriz, y: this.paddingVert, width: (this.width-this.paddingHoriz), height: (this.height-this.paddingVert) };
 
-  this.BackgroundRect = svgParent.rect(this.Box.Width, this.Box.Height).move(this.Box.X, this.Box.Y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
-  this.TraceRenderer.Render(svgParent, this.Box, new N.UI.Padding());
+  this.backgroundRect = svgParent.rect(this.box.width, this.box.height).move(this.box.x, this.box.y).attr({ 'fill': '#FCF8F2', 'stroke-width': 0});
+  this.traceRenderer.render(svgParent, this.box, new N.UI.padding());
 }

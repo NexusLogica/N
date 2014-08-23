@@ -36,26 +36,26 @@ nSimAppControllers.controller('WorkbenchTestController', ['$scope',
   //*************************
 
 N.WorkbenchTestScenes = function() {
-  this.Workbenches  = [];
+  this.workbenches = [];
 }
 
-N.WorkbenchTestScenes.prototype.CreateScenes = function() {
+N.WorkbenchTestScenes.prototype.createScenes = function() {
   var renderMappings = {
-    'ColumnSpacing': 0.3,
-    'RowSpacing': 0.3,
-    'SS'  : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
-    'IN'  : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
-    'IP'  : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
-    'OP'  : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
-    'RN'  : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
-    'SRC' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.3 },
-    'SNK' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.3 },
-    'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
+    'columnSpacing': 0.3,
+    'rowSpacing': 0.3,
+    'SS'  : { template: 'N.UI.StandardNeuronTemplates.Stellate',              radius: 0.3 },
+    'IN'  : { template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', radius: 0.3 },
+    'IP'  : { template: 'N.UI.StandardNeuronTemplates.InputSource',           radius: 0.2 },
+    'OP'  : { template: 'N.UI.StandardNeuronTemplates.OutputSink',            radius: 0.2 },
+    'RN'  : { template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', radius: 0.3 },
+    'SRC' : { template: 'N.UI.StandardNeuronTemplates.InputSource',           radius: 0.3 },
+    'SNK' : { template: 'N.UI.StandardNeuronTemplates.OutputSink',            radius: 0.3 },
+    'Default' :  { template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', radius: 0.2 }
   };
 
   var _this = this;
-  for(var i=0; i<N.WorkbenchTestScenes.TestConfigurations.length; i++) {
-    var config = N.WorkbenchTestScenes.TestConfigurations[i];
+  for(var i=0; i<N.WorkbenchTestScenes.testConfigurations.length; i++) {
+    var config = N.WorkbenchTestScenes.testConfigurations[i];
 
     var workbench = (new N.Workbench()).addTemplates(
       { 'N.WorkbenchTestScenes.SpinyStellate': N.WorkbenchTestScenes.SpinyStellate,
@@ -65,8 +65,8 @@ N.WorkbenchTestScenes.prototype.CreateScenes = function() {
     workbench.setTargets(config.targets).then(
       function() {
         var scene = new N.UI.WorkbenchScene();
-        scene.Layout(workbench, renderMappings);
-        _this.Workbenches.push(scene);
+        scene.layout(workbench, renderMappings);
+        _this.workbenches.push(scene);
       }, function(status) {
         console.log('ERROR: N.WorkbenchTestScenes.CreateScenes: '+status.errMsg);
       }
@@ -75,22 +75,22 @@ N.WorkbenchTestScenes.prototype.CreateScenes = function() {
 }
 
 N.WorkbenchTestScenes.SpinyStellate = {
-  ClassName: 'N.Neuron',
-  Name: 'SS',
-  Compartments: [{
-    ClassName: 'N.Comp.Output',
-    Name: 'OP'
+  className: 'N.Neuron',
+  name: 'SS',
+  compartments: [{
+    className: 'N.Comp.Output',
+    name: 'OP'
   },{
-    ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'IP'
+    className: 'N.Comp.LinearSummingInput',
+    name: 'IP'
   },{
-    ClassName: 'N.Comp.AcetylcholineInput',
-    Name: 'AIP'
+    className: 'N.Comp.AcetylcholineInput',
+    name: 'AIP'
   }],
-  Display: {
-    Template: 'N.UI.StandardNeuronTemplates.Stellate',
-    Radius: 0.3,
-    CompartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
+  display: {
+    template: 'N.UI.StandardNeuronTemplates.Stellate',
+    radius: 0.3,
+    compartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
   }
 }
 
@@ -118,7 +118,7 @@ N.WorkbenchTestScenes.FastSpiking = {
   }
 }
 
-N.WorkbenchTestScenes.TestConfigurations = [{
+N.WorkbenchTestScenes.testConfigurations = [{
   targets : [ { template: { local: 'N.WorkbenchTestScenes.FastSpiking' }, name: 'IN[0]'} ]
  }
 ];

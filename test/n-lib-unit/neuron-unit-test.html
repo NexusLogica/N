@@ -46,7 +46,7 @@
     while(t <= 0.25+0.0001) {
       neuron.Update(t);
       outputSignal.AppendData(t, outputCompartment.Output);
-      t += N.TimeStep;
+      t += N.timeStep;
     }
 
     QUnit.assert.near(signal.AvgAbsDeviation(outputSignal), 0.0, "Deviation of output from input signal");

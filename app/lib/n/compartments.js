@@ -20,91 +20,91 @@ var N = N || {};
 N.Comp = N.Comp || {};
 N.Comp.UpdateFunc = N.Comp.UpdateFunc || {};
 
-N.Comp.GetTypeFunc = function() { return N.Type.Compartment; }
+N.Comp.getTypeFunc = function() { return N.Type.compartment; }
 
-N.Comp.ConnectOutput = function(connection) {
-  this.OutputConnections.push(connection);
+N.Comp.connectOutput = function(connection) {
+  this.outputConnections.push(connection);
   return this;
 }
 
-N.Comp.ConnectInput = function(connection) {
-  this.InputConnections.push(connection);
+N.Comp.connectInput = function(connection) {
+  this.inputConnections.push(connection);
   return this;
 }
 
-N.Comp.GetNumInputConnections = function() {
-  return this.InputConnections.length;
+N.Comp.getNumInputConnections = function() {
+  return this.inputConnections.length;
 }
 
-N.Comp.GetNumOutputConnections = function() {
-  return this.OutputConnections.length;
+N.Comp.getNumOutputConnections = function() {
+  return this.outputConnections.length;
 }
 
 N.Comp.getPath = function() {
-  return this.Neuron.getPath()+'>'+this.Name;
+  return this.neuron.getPath()+'>'+this.name;
 }
 
-N.Comp.AddComparmentSink = function(compartment) {
-  this.CompartmentSinks.push(compartment);
+N.Comp.addComparmentSink = function(compartment) {
+  this.compartmentSinks.push(compartment);
 }
 
-N.Comp.GetNumComparmentSinks = function() {
-  return this.CompartmentSinks.length;
+N.Comp.getNumComparmentSinks = function() {
+  return this.compartmentSinks.length;
 }
 
-N.Comp.ConnectToCompartments = function() {
-  if(this.OutputLogic) {
-    for(var i in this.OutputLogic.Sources) {
-      var source = this.OutputLogic.Sources[i];
-      source.Compartment = this.Neuron.GetCompartmentByName(source.ComponentName);
-      source.Compartment.AddComparmentSink(this);
-      if(!source.Compartment) {
-        this.Neuron.Network.GetRoot().LinkReport.Error(this.getPath(), 'N.Comp.ConnectToCompartments: Unable to find component '+source.ComponentName);
+N.Comp.connectToCompartments = function() {
+  if(this.outputLogic) {
+    for(var i in this.outputLogic.sources) {
+      var source = this.outputLogic.sources[i];
+      source.compartment = this.neuron.getCompartmentByName(source.componentName);
+      source.compartment.addComparmentSink(this);
+      if(!source.compartment) {
+        this.neuron.network.getRoot().linkReport.error(this.getPath(), 'N.Comp.connectToCompartments: Unable to find component '+source.componentName);
       }
       if(!source.hasOwnProperty('Delay')) {
-        source.Delay = N.TimeStep;
+        source.delay = N.timeStep;
       }
     }
   }
 }
 
-N.Comp.GetOutputAt = function(t) {
-  if(t < this.OutputStore.TimeMin) {
-    return this.PreSignalOutput;
+N.Comp.getOutputAt = function(t) {
+  if(t < this.outputStore.timeMin) {
+    return this.preSignalOutput;
   }
-  return this.OutputStore.GetValue(t);
+  return this.outputStore.getValue(t);
 }
 
 N.Comp.loadFrom = function(json) {
   for(var i in json) {
-    if(i === 'OutputStore') {
-      this.OutputStore.loadFrom(json[i]);
+    if(i === 'outputStore') {
+      this.outputStore.loadFrom(json[i]);
     }
     this[i] = json[i];
   }
   return this;
 }
 
-N.Comp.Extend = function(constructorFunction) {
-  constructorFunction.prototype.GetType = N.Comp.GetTypeFunc;
-  constructorFunction.prototype.ConnectOutput = N.Comp.ConnectOutput;
-  constructorFunction.prototype.ConnectInput = N.Comp.ConnectInput;
-  constructorFunction.prototype.GetNumInputConnections = N.Comp.GetNumInputConnections;
-  constructorFunction.prototype.GetNumOutputConnections = N.Comp.GetNumOutputConnections;
+N.Comp.extend = function(constructorFunction) {
+  constructorFunction.prototype.getType = N.Comp.getTypeFunc;
+  constructorFunction.prototype.connectOutput = N.Comp.connectOutput;
+  constructorFunction.prototype.connectInput = N.Comp.connectInput;
+  constructorFunction.prototype.getNumInputConnections = N.Comp.getNumInputConnections;
+  constructorFunction.prototype.getNumOutputConnections = N.Comp.getNumOutputConnections;
   constructorFunction.prototype.getPath = N.Comp.getPath;
-  constructorFunction.prototype.AddComparmentSink = N.Comp.AddComparmentSink;
-  constructorFunction.prototype.GetNumComparmentSinks = N.Comp.GetNumComparmentSinks;
-  constructorFunction.prototype.ConnectToCompartments = N.Comp.ConnectToCompartments;
-  constructorFunction.prototype.GetOutputAt = N.Comp.GetOutputAt;
+  constructorFunction.prototype.addComparmentSink = N.Comp.addComparmentSink;
+  constructorFunction.prototype.getNumComparmentSinks = N.Comp.getNumComparmentSinks;
+  constructorFunction.prototype.connectToCompartments = N.Comp.connectToCompartments;
+  constructorFunction.prototype.getOutputAt = N.Comp.getOutputAt;
   constructorFunction.prototype.loadFrom = N.Comp.loadFrom;
 }
 
 N.Comp.initializeCompartment = function(compartment) {
-  compartment.OutputStore = new N.AnalogSignal('OutputStore', 'OS');
-  compartment.InputConnections = [];
-  compartment.OutputConnections = [];
-  compartment.CompartmentSinks = [];
-  compartment.PreSignalOutput = 0.0;
+  compartment.outputStore = new N.AnalogSignal('outputStore', 'OS');
+  compartment.inputConnections = [];
+  compartment.outputConnections = [];
+  compartment.compartmentSinks = [];
+  compartment.preSignalOutput = 0.0;
 }
 
   //***********************
@@ -124,29 +124,29 @@ N.Comp.initializeCompartment = function(compartment) {
  */
 N.Comp.SignalSource = function(neuron, name) {
   this.className  = 'N.Comp.SignalSource';
-  this.Name  = name;
-  this.Category   = 'Output';
+  this.name  = name;
+  this.category   = 'Output';
 
-  this.Neuron     = neuron;
-  this.Signal     = null;
-  this.Output     = 0.0;
+  this.neuron     = neuron;
+  this.signal     = null;
+  this.output     = 0.0;
   this.IsOutputComponent = true;
   this.ioMetaData = {
     inputs:[],
     outputs:[{
-      name: 'Main', propName: 'OutputConnections'
+      name: 'main', propName: 'outputConnections'
     }],
-    Signals:[{
-      name: 'Main', propName: 'OutputStore'
+    signals:[{
+      name: 'main', propName: 'outputStore'
     }]
   }
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.SignalSource);
+N.Comp.extend(N.Comp.SignalSource);
 
-N.Comp.SignalSource.prototype.SetSignal = function(outputName, signal) {
-  this.Signal = signal;
+N.Comp.SignalSource.prototype.setSignal = function(outputName, signal) {
+  this.signal = signal;
 }
 
 /**
@@ -156,11 +156,11 @@ N.Comp.SignalSource.prototype.SetSignal = function(outputName, signal) {
  * @returns {Real}
  */
 N.Comp.SignalSource.prototype.update = function(t) {
-  if(this.Signal) {
-    this.Output = this.Signal.GetValue(t);
+  if(this.signal) {
+    this.output = this.signal.getValue(t);
   }
-  this.OutputStore.AppendData(t, this.Output);
-  return this.Output;
+  this.outputStore.appendData(t, this.output);
+  return this.output;
 }
 
 /***
@@ -168,72 +168,72 @@ N.Comp.SignalSource.prototype.update = function(t) {
  * @method clear
  */
 N.Comp.SignalSource.prototype.clear = function() {
-  this.OutputStore.clear();
+  this.outputStore.clear();
 }
 
 N.Comp.SignalSource.prototype.loadFrom = function(json) {
   for(var i in json) {
     if(i === 'Signal') {
       // TODO: figure out how to incorporate name
-      this.SetSignal('Main', N.NewN(json[i].className).loadFrom(json[i]));
+      this.SetSignal('Main', N.newN(json[i].className).loadFrom(json[i]));
     }
     else { this[i] = json[i]; }
   }
   return this;
 }
 
-N.Comp.SignalSource.prototype.Validate = function(report) {
-  if(!this.Signal) { report.Warning(this.getPath(), 'Signal object is not set.'); }
-  if(this.GetNumInputConnections() !== 0) { report.Warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
-  if(this.GetNumOutputConnections() === 0) { report.Warning(this.getPath(), 'The output component has no output connections.'); }
+N.Comp.SignalSource.prototype.validate = function(report) {
+  if(!this.signal) { report.warning(this.getPath(), 'Signal object is not set.'); }
+  if(this.getNumInputConnections() !== 0) { report.warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
 }
 
   //*****************
-  //* N.Comp.Output *
+  //* N.Comp.output *
   //*****************
 
-N.Comp.Output = function(neuron, name) {
-  this.className   = 'N.Comp.Output';
-  this.Name        = name;
-  this.Category    = 'Output';
+N.Comp.output = function(neuron, name) {
+  this.className   = 'N.Comp.output';
+  this.name        = name;
+  this.category    = 'Output';
 
-  this.Neuron      = neuron;
-  this.Output      = 0.0;
+  this.neuron      = neuron;
+  this.output      = 0.0;
   this.IsOutputComponent = true;
-  this.OutputLogic = null;
+  this.outputLogic = null;
   this.ioMetaData = {
-    Inputs:[{
-      Name: 'Main', PropName: 'InputConnections'
+    inputs:[{
+      name: 'Main', propName: 'inputConnections'
     }],
-    Outputs:[{
-      Name: 'Main', PropName: 'OutputConnections'
+    outputs:[{
+      name: 'Main', propName: 'outputConnections'
     }],
-    Signals:[{
-      Name: 'Main', PropName: 'OutputStore'
+    signals:[{
+      name: 'Main', propName: 'outputStore'
     }]
   }
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.Output);
+N.Comp.extend(N.Comp.output);
 
-N.Comp.Output.prototype.AddInput = function(input) {
-  this.Input = input;
+N.Comp.output.prototype.addInput = function(input) {
+  this.input = input;
 }
 
-N.Comp.Output.prototype.update = function(t) {
-  var main = this.OutputLogic.Sources.Main;
-  this.Output = main.Compartment.GetOutputAt(t-main.Delay);
-  this.OutputStore.AppendData(t, this.Output);
-  return this.Output;
+N.Comp.output.prototype.update = function(t) {
+  var main = this.outputLogic.sources.main;
+  this.output = main.compartment.getOutputAt(t-main.delay);
+  this.outputStore.appendData(t, this.output);
+  return this.output;
 }
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
  * @method clear
  */
-N.Comp.Output.prototype.clear = function() {
-  this.OutputStore.clear();
+N.Comp.output.prototype.clear = function() {
+  this.outputStore.clear();
 }
 
 /**
@@ -241,18 +241,18 @@ N.Comp.Output.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Comp.Output.prototype.Validate = function(report) {
-  if(!this.OutputLogic) {
-    report.Error(this.getPath(), 'The OutputLogic object is not set.');
-  } else if(!this.OutputLogic.OutputFunc) {
-    report.Error(this.getPath(), 'The OutputLogic\'s OutputFunc is not set.');
+N.Comp.output.prototype.validate = function(report) {
+  if(!this.outputLogic) {
+    report.error(this.getPath(), 'The OutputLogic object is not set.');
+  } else if(!this.outputLogic.outputFunc) {
+    report.error(this.getPath(), 'The OutputLogic\'s outputFunc is not set.');
   }
   else {
-    this.OutputLogic.OutputFunc.Validate(this, report);
+    this.outputLogic.outputFunc.validate(this, report);
   }
 
-  if(this.GetNumInputConnections()  !== 0) { report.Warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
-  if(this.GetNumOutputConnections() === 0) { report.Warning(this.getPath(), 'The output component has no output connections.'); }
+  if(this.getNumInputConnections()  !== 0) { report.warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
 }
 
   //********************
@@ -267,39 +267,39 @@ N.Comp.Output.prototype.Validate = function(report) {
  */
 N.Comp.InputSink = function(neuron, name) {
   this.className   = 'N.Comp.InputSink';
-  this.Name        = name;
-  this.Category    = 'Output';
+  this.name        = name;
+  this.category    = 'Output';
 
-  this.Neuron      = neuron;
-  this.Output      = 0.0;
-  this.IsOutputComponent = true;
-  this.OutputLogic = null;
+  this.neuron      = neuron;
+  this.output      = 0.0;
+  this.isOutputComponent = true;
+  this.outputLogic = null;
   this.ioMetaData = {
-    Inputs:[{
-      Name: 'Main', PropName: 'InputConnections'
+    inputs:[{
+      name: 'main', propName: 'inputConnections'
     }],
-    Outputs:[],
-    Signals:[{
-      Name: 'Main', PropName: 'OutputStore'
+    outputs:[],
+    signals:[{
+      name: 'main', propName: 'outputStore'
     }]
   }
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.InputSink);
+N.Comp.extend(N.Comp.InputSink);
 
-N.Comp.InputSink.prototype.AddInput = function(input) {
-  this.Input = input;
+N.Comp.InputSink.prototype.addInput = function(input) {
+  this.input = input;
 }
 
 N.Comp.InputSink.prototype.update = function(t) {
-  var len = this.InputConnections.length;
-  this.Output = 0.0;
+  var len = this.inputConnections.length;
+  this.output = 0.0;
   for(var i=0; i<len; i++) {
-    this.Output += this.InputConnections[i].Output;
+    this.output += this.inputConnections[i].output;
   }
-  this.OutputStore.AppendData(t, this.Output);
-  return this.Output;
+  this.outputStore.appendData(t, this.output);
+  return this.output;
 }
 
 /***
@@ -307,7 +307,7 @@ N.Comp.InputSink.prototype.update = function(t) {
  * @method clear
  */
 N.Comp.InputSink.prototype.clear = function() {
-  this.OutputStore.clear();
+  this.outputStore.clear();
 }
 
 /**
@@ -315,9 +315,9 @@ N.Comp.InputSink.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Comp.InputSink.prototype.Validate = function(report) {
-  if(this.GetNumInputConnections()  === 0) { report.Warning(this.getPath(), 'The input sink has no input connections.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The input only component has output connections.'); }
+N.Comp.InputSink.prototype.validate = function(report) {
+  if(this.getNumInputConnections()  === 0) { report.warning(this.getPath(), 'The input sink has no input connections.'); }
+  if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input only component has output connections.'); }
 }
 
 N.Comp.InputSink.prototype.loadFrom = function(json) {
@@ -333,27 +333,27 @@ N.Comp.InputSink.prototype.loadFrom = function(json) {
 
 N.Comp.InhibitoryOutput = function(neuron, name) {
   this.className  = 'N.Comp.InhibitoryOutput';
-  this.Name       = name;
-  this.Category   = 'InhibitoryOutput';
+  this.name       = name;
+  this.category   = 'InhibitoryOutput';
 
-  this.Neuron     = neuron;
-  this.Output     = 0.0;
-  this.IsOutputComponent = true;
+  this.neuron     = neuron;
+  this.output     = 0.0;
+  this.isOutputComponent = true;
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.InhibitoryOutput);
+N.Comp.extend(N.Comp.InhibitoryOutput);
 
-N.Comp.InhibitoryOutput.prototype.AddInput = function(input) {
-  this.Input = input;
+N.Comp.InhibitoryOutput.prototype.addInput = function(input) {
+  this.input = input;
 }
 
 N.Comp.InhibitoryOutput.prototype.update = function(t) {
-  if(this.Input) {
-    this.Output = this.Input.updateInput(t);
+  if(this.input) {
+    this.output = this.input.updateInput(t);
   }
-  this.OutputStore.AppendData(t, this.Output);
-  return this.Output;
+  this.outputStore.appendData(t, this.output);
+  return this.output;
 }
 
 /***
@@ -361,7 +361,7 @@ N.Comp.InhibitoryOutput.prototype.update = function(t) {
  * @method clear
  */
 N.Comp.InhibitoryOutput.prototype.clear = function() {
-  this.OutputStore.clear();
+  this.outputStore.clear();
 }
 
 N.Comp.InhibitoryOutput.prototype.loadFrom = function(json) {
@@ -377,42 +377,42 @@ N.Comp.InhibitoryOutput.prototype.loadFrom = function(json) {
 
 N.Comp.LinearSummingInput = function(neuron, name) {
   this.className   = 'N.Comp.LinearSummingInput';
-  this.Name       = name;
-  this.Category   = 'Input';
+  this.name       = name;
+  this.category   = 'Input';
 
-  this.Neuron     = neuron;
-  this.Sum         = 0.0;
-  this.Connections = [];
+  this.neuron     = neuron;
+  this.sum         = 0.0;
+  this.connections = [];
   this.ioMetaData = {
-    Inputs:[
-      { Name: 'Main', PropName: 'InputConnections' }
+    inputs:[
+      { name: 'main', propName: 'inputConnections' }
     ],
-    Outputs:[],
-    Signals:[{
-      Name: 'Main', PropName: 'OutputStore'
+    outputs:[],
+    signals:[{
+      name: 'main', propName: 'outputStore'
     }]
   }
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.LinearSummingInput);
+N.Comp.extend(N.Comp.LinearSummingInput);
 
-N.Comp.LinearSummingInput.prototype.Connect = function(connection) {
-  this.Connections.push(connection);
+N.Comp.LinearSummingInput.prototype.connect = function(connection) {
+  this.connections.push(connection);
 }
 
 /**
  * Sum the inputs.
- * @method SumInputs
+ * @method sumInputs
  * @returns {Real}
  */
-N.Comp.LinearSummingInput.prototype.SumInputs = function() {
-  var len = this.InputConnections.length;
-  this.Sum = 0.0;
+N.Comp.LinearSummingInput.prototype.sumInputs = function() {
+  var len = this.inputConnections.length;
+  this.sum = 0.0;
   for(var i=0; i<len; i++) {
-    this.Sum += this.InputConnections[i].Output;
+    this.sum += this.inputConnections[i].output;
   }
-  return this.Sum;
+  return this.sum;
 }
 
 /**
@@ -422,7 +422,7 @@ N.Comp.LinearSummingInput.prototype.SumInputs = function() {
  * @returns {Real}
  */
 N.Comp.LinearSummingInput.prototype.update = function(t) {
-  this.OutputStore.AppendData(t, this.SumInputs());
+  this.outputStore.appendData(t, this.sumInputs());
 }
 
 /***
@@ -430,7 +430,7 @@ N.Comp.LinearSummingInput.prototype.update = function(t) {
  * @method clear
  */
 N.Comp.LinearSummingInput.prototype.clear = function() {
-  this.OutputStore.clear();
+  this.outputStore.clear();
 }
 
 /**
@@ -438,10 +438,10 @@ N.Comp.LinearSummingInput.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Comp.LinearSummingInput.prototype.Validate = function(report) {
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The input component has output connections.'); }
-  if(this.GetNumInputConnections() === 0) { report.Warning(this.getPath(), 'The input component has no input connections.'); }
-  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.getPath(), 'The input component has no compartmental listeners.'); }
+N.Comp.LinearSummingInput.prototype.validate = function(report) {
+  if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input component has output connections.'); }
+  if(this.getNumInputConnections() === 0) { report.warning(this.getPath(), 'The input component has no input connections.'); }
+  if(this.getNumComparmentSinks() === 0)   { report.warning(this.getPath(), 'The input component has no compartmental listeners.'); }
 }
 
 N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
@@ -451,7 +451,7 @@ N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
   return this;
 }
 
-N.Comp.LinearSummingInput.prototype.ToJSON = function() {
+N.Comp.LinearSummingInput.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }
@@ -470,16 +470,16 @@ N.Comp.LinearSummingInput.prototype.ToJSON = function() {
  */
 N.Comp.SignalInput = function(neuron, name) {
   this.className   = 'N.Comp.SignalInput';
-  this.Name       = name;
-  this.Category   = 'Input';
+  this.name       = name;
+  this.category   = 'Input';
 
-  this.Neuron     = neuron;
-  this.SignalInput = null;
-  this.Sum         = 0.0;
+  this.neuron     = neuron;
+  this.signalInput = null;
+  this.sum         = 0.0;
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.SignalInput);
+N.Comp.extend(N.Comp.SignalInput);
 
 /**
  * Sets the signal.
@@ -487,15 +487,15 @@ N.Comp.Extend(N.Comp.SignalInput);
  * @param {N.Signal} signal
  * @constructor
  */
-N.Comp.SignalInput.prototype.SetSignal = function(outputName, signal) {
-  this.SignalInput = signal;
+N.Comp.SignalInput.prototype.setSignal = function(outputName, signal) {
+  this.signalInput = signal;
 }
 
-N.Comp.SignalInput.prototype.UpdateInput = function(t) {
-  if(this.SignalInput) {
-    this.Sum = this.SignalInput.GetValue(t);
+N.Comp.SignalInput.prototype.updateInput = function(t) {
+  if(this.signalInput) {
+    this.sum = this.signalInput.getValue(t);
   }
-  return this.Sum;
+  return this.sum;
 }
 
 /**
@@ -503,23 +503,23 @@ N.Comp.SignalInput.prototype.UpdateInput = function(t) {
  * @method Validate
  * @param report
  */
-N.Comp.SignalInput.prototype.Validate = function(report) {
-  if(this.GetNumInputConnections() !== 0)  { report.Warning(this.getPath(), 'The component does not use input connections.'); }
-  if(this.GetNumComparmentSinks() === 0)   { report.Warning(this.getPath(), 'The component has no compartmental listeners.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
+N.Comp.SignalInput.prototype.validate = function(report) {
+  if(this.getNumInputConnections() !== 0)  { report.warning(this.getPath(), 'The component does not use input connections.'); }
+  if(this.getNumComparmentSinks() === 0)   { report.warning(this.getPath(), 'The component has no compartmental listeners.'); }
+  if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
 }
 
 N.Comp.SignalInput.prototype.loadFrom = function(json) {
   for(var i in json) {
-    if(i === 'SignalInput') {
-      this.SignalInput = N.NewN(json[i].className).loadFrom(json[i]);
+    if(i === 'signalInput') {
+      this.signalInput = N.newN(json[i].className).loadFrom(json[i]);
     }
     else { this[i] = json[i]; }
   }
   return this;
 }
 
-N.Comp.SignalInput.prototype.ToJSON = function() {
+N.Comp.SignalInput.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }
@@ -537,28 +537,28 @@ N.Comp.SignalInput.prototype.ToJSON = function() {
  */
 N.Comp.AcetylcholineInput = function(neuron, name) {
   this.className   = 'N.Comp.LinearSummingInput';
-  this.Name       = name;
-  this.Category   = 'Input';
+  this.name       = name;
+  this.category   = 'Input';
 
-  this.Neuron     = neuron;
-  this.Sum         = 0.0;
-  this.Connections = [];
+  this.neuron     = neuron;
+  this.sum         = 0.0;
+  this.connections = [];
   N.Comp.initializeCompartment(this);
 }
 
-N.Comp.Extend(N.Comp.AcetylcholineInput);
+N.Comp.extend(N.Comp.AcetylcholineInput);
 
-N.Comp.AcetylcholineInput.prototype.Connect = function(connection) {
-  this.Connections.push(connection);
+N.Comp.AcetylcholineInput.prototype.connect = function(connection) {
+  this.connections.push(connection);
 }
 
-N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
-  var len = this.Connections.length;
-  this.Sum = 0.0;
+N.Comp.AcetylcholineInput.prototype.sumInputs = function(t) {
+  var len = this.connections.length;
+  this.sum = 0.0;
   for(var i=0; i<len; i++) {
-    this.Sum += this.Connections[i].GetOutput();
+    this.sum += this.connections[i].getOutput();
   }
-  return this.Sum;
+  return this.sum;
 }
 
 /**
@@ -568,7 +568,7 @@ N.Comp.AcetylcholineInput.prototype.SumInputs = function(t) {
  * @returns {Real}
  */
 N.Comp.AcetylcholineInput.prototype.update = function(t) {
-  this.OutputStore.AppendData(t, this.SumInputs());
+  this.outputStore.appendData(t, this.sumInputs());
 }
 
 /***
@@ -576,7 +576,7 @@ N.Comp.AcetylcholineInput.prototype.update = function(t) {
  * @method clear
  */
 N.Comp.AcetylcholineInput.prototype.clear = function() {
-  this.OutputStore.clear();
+  this.outputStore.clear();
 }
 
 /**
@@ -584,10 +584,10 @@ N.Comp.AcetylcholineInput.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Comp.AcetylcholineInput.prototype.Validate = function(report) {
-  if(this.GetNumInputConnections() === 0) { report.Warning(this.getPath(), 'The input component has no input connections.'); }
-  if(this.GetNumComparmentSinks() === 0) { report.Warning(this.getPath(), 'The input component has no compartmental listeners.'); }
-  if(this.GetNumOutputConnections() !== 0) { report.Warning(this.getPath(), 'The input component has output connections.'); }
+N.Comp.AcetylcholineInput.prototype.validate = function(report) {
+  if(this.getNumInputConnections() === 0) { report.warning(this.getPath(), 'The input component has no input connections.'); }
+  if(this.getNumComparmentSinks() === 0) { report.warning(this.getPath(), 'The input component has no compartmental listeners.'); }
+  if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input component has output connections.'); }
 }
 
 N.Comp.AcetylcholineInput.prototype.loadFrom = function(json) {
@@ -597,7 +597,7 @@ N.Comp.AcetylcholineInput.prototype.loadFrom = function(json) {
   return this;
 }
 
-N.Comp.AcetylcholineInput.prototype.ToJSON = function() {
+N.Comp.AcetylcholineInput.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 }

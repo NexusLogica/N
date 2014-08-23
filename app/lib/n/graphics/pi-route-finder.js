@@ -25,13 +25,13 @@ N.UI = N.UI || {};
   //**********************
 
 N.UI.PiRouteFinder = function(piConnection) {
-  this.PiConnection = piConnection;
-  this.Connection = this.PiConnection.Connection;
-  this.ChamferSize = 5.0;
-  this.MinSegmentLength = 10.0;
-  this.Chamfer = true;
-  this.ThruwayOffsets = [];
-  this.Debug = true;
+  this.piConnection = piConnection;
+  this.connection = this.piConnection.connection;
+  this.chamferSize = 5.0;
+  this.minSegmentLength = 10.0;
+  this.chamfer = true;
+  this.thruwayOffsets = [];
+  this.debug = true;
 }
 
 /**
@@ -43,192 +43,191 @@ N.UI.PiRouteFinder = function(piConnection) {
  * @param manager
  * @constructor
  */
-N.UI.PiRouteFinder.prototype.FindRoute = function(manager) {
-  var connectionPath = this.PiConnection.Connection.GetPath();
-  this.RouteInfo = this.PiConnection.Network.RouteInfo;
-  var startNeuron = N.SourceFromConnectionPath(connectionPath);
-  var endNeuron = N.SinkFromConnectionPath(connectionPath);
+N.UI.PiRouteFinder.prototype.findRoute = function(manager) {
+  var connectionPath = this.piConnection.connection.getPath();
+  this.routeInfo = this.piConnection.network.routeInfo;
+  var startNeuron = N.sourceFromConnectionPath(connectionPath);
+  var endNeuron = N.sinkFromConnectionPath(connectionPath);
 
   // Draw a line from start to end
-  var startPoints = this.RouteInfo.GetNeuronOutputPosition(this.PiConnection.Network, startNeuron);
-  this.Start = { Base: startPoints[0], End: startPoints[1] };
+  var startPoints = this.routeInfo.getNeuronOutputPosition(this.piConnection.network, startNeuron);
+  this.start = { Base: startPoints[0], End: startPoints[1] };
 
-  var nStart = this.RouteInfo.GetNeuron(this.PiConnection.Network, startNeuron);
-  var nEnd   = this.RouteInfo.GetNeuron(this.PiConnection.Network, endNeuron);
-  this.StartRow = this.GetRow(nStart);
-  this.EndRow   = this.GetRow(nEnd);
+  var nStart = this.routeInfo.getNeuron(this.piConnection.network, startNeuron);
+  var nEnd   = this.routeInfo.getNeuron(this.piConnection.network, endNeuron);
+  this.startRow = this.getRow(nStart);
+  this.endRow   = this.getRow(nEnd);
 
-  this.NeuronEnd = this.FindEndAngle(endNeuron, new N.UI.Vector(-(this.Start.End.X-(nEnd.X+nEnd.Network.X)), -(this.Start.End.Y-(nEnd.Y+nEnd.Network.Y))));
+  this.neuronEnd = this.findEndAngle(endNeuron, new N.UI.Vector(-(this.start.end.x-(nEnd.x+nEnd.network.x)), -(this.start.end.y-(nEnd.y+nEnd.network.y))));
 
   // Determine the end point.
   // First, are traveling down on the screen or up?
-  var startAboveEnd = (this.StartRow < this.EndRow ? true : false);
-  var fromX = this.RouteInfo.GetNeuronOutputPosition(this.PiConnection.Network, startNeuron)[0].X;
-  var toX   = this.NeuronEnd.NextToLast.X;
-  var laneRows = this.RouteInfo.LaneRows[this.EndRow];
-  var lane = laneRows[(nEnd.X > toX ? nEnd.Col : nEnd.Col+1)];
-  this.End = new N.UI.Vector(lane.Mid, (startAboveEnd ? lane.ThruNeg.Mid : lane.ThruPos.Mid));
+  var startAboveEnd = (this.startRow < this.endRow ? true : false);
+  var fromX = this.routeInfo.getNeuronOutputPosition(this.piConnection.network, startNeuron)[0].x;
+  var toX   = this.neuronEnd.nextToLast.x;
+  var laneRows = this.routeInfo.laneRows[this.endRow];
+  var lane = laneRows[(nEnd.x > toX ? nEnd.col : nEnd.col+1)];
+  this.end = new N.UI.Vector(lane.mid, (startAboveEnd ? lane.thruNeg.mid : lane.thruPos.mid));
 
   // Which direction do we go?
-  this.IncVert = (this.StartRow < this.EndRow ? 1 : -1);
+  this.incVert = (this.startRow < this.endRow ? 1 : -1);
 
   // The last vertex on the past found.
-  var currentVertex = this.Start.End;
+  var currentVertex = this.start.end;
 
   // For each thruway...
-  this.VerticalPassages = [];
-  var startRow = (this.IncVert > 0 ? this.StartRow+1 : this.StartRow);
-  this.StartNeuronRow = this.StartRow+1;
-  var thruwayIndex = this.StartNeuronRow;
-  manager.AddThruwaySegment(this, thruwayIndex, -1, 0, this.IncVert);
+  this.verticalPassages = [];
+  var startRow = (this.incVert > 0 ? this.startRow+1 : this.startRow);
+  this.startNeuronRow = this.startRow+1;
+  var thruwayIndex = this.startNeuronRow;
+  manager.addThruwaySegment(this, thruwayIndex, -1, 0, this.incVert);
 
   var previousLaneSegment = null;
-  for(var i = startRow; i !== this.EndRow; i += this.IncVert) {
+  for(var i = startRow; i !== this.endRow; i += this.incVert) {
     // Start by drawing a line from the last vertex exit to the end point.
-    var targetVec = (new N.UI.Vector(this.End, currentVertex)).Normalize();
-    var slope = targetVec.Y/targetVec.X;
-    thruwayIndex += this.IncVert;
+    var targetVec = (new N.UI.Vector(this.end, currentVertex)).normalize();
+    var slope = targetVec.y/targetVec.x;
+    thruwayIndex += this.incVert;
 
-    var lanes = this.RouteInfo.LaneRows[i];
+    var lanes = this.routeInfo.laneRows[i];
     var diffs = [];
     for(var j=0; j<lanes.length; j++) {
       lane = lanes[j];
-      var dTarget = (lane.Mid-currentVertex.X)*slope+currentVertex.Y;
-      var dLane = lane.YMid;
+      var dTarget = (lane.mid-currentVertex.x)*slope+currentVertex.y;
+      var dLane = lane.yMid;
       var diff = dTarget-dLane;
       diffs.push(Math.abs(diff));
     }
 
-    var laneIndex = N.IndexOfMin(diffs);
+    var laneIndex = N.indexOfMin(diffs);
 
-
-    this.VerticalPassages.push( { LaneRowIndex: i, LaneIndex: laneIndex, Offset: 0.0, VertOffset: 0.0 } );
+    this.verticalPassages.push( { laneRowIndex: i, laneIndex: laneIndex, offset: 0.0, vertOffset: 0.0 } );
 
     // Add information to the manager related to segment passage. Used for offsets on crowded thruways and lanes.
 
     if(previousLaneSegment !== null) {
-      manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, laneIndex, previousLaneSegment.VerticalPassageIndex);
+      manager.addLaneSegment(this, previousLaneSegment.neuronRow, previousLaneSegment.laneIndex, laneIndex, previousLaneSegment.verticalPassageIndex);
     }
-    manager.AddThruwaySegment(this, thruwayIndex, this.VerticalPassages.length-2, this.VerticalPassages.length-1, this.IncVert);
+    manager.addThruwaySegment(this, thruwayIndex, this.verticalPassages.length-2, this.verticalPassages.length-1, this.incVert);
 
-    previousLaneSegment = { NeuronRow: i, LaneIndex: laneIndex, VerticalPassageIndex: this.VerticalPassages.length-1 };
+    previousLaneSegment = { neuronRow: i, laneIndex: laneIndex, verticalPassageIndex: this.verticalPassages.length-1 };
   }
 
   if(previousLaneSegment !== null) {
-    var lastLaneIndex = nEnd.Col+0.5;
-    manager.AddLaneSegment(this, previousLaneSegment.NeuronRow, previousLaneSegment.LaneIndex, lastLaneIndex, previousLaneSegment.VerticalPassageIndex);
+    var lastLaneIndex = nEnd.col+0.5;
+    manager.addLaneSegment(this, previousLaneSegment.neuronRow, previousLaneSegment.laneIndex, lastLaneIndex, previousLaneSegment.verticalPassageIndex);
   }
-//  manager.AddThruwaySegment(this, i+1, this.VerticalPassages.length-1, this.VerticalPassages.length, this.IncVert);
+//  manager.addThruwaySegment(this, i+1, this.verticalPassages.length-1, this.verticalPassages.length, this.incVert);
 
   // Finally, get to the correct lateral position in the thruway.
-  var endLanes = this.RouteInfo.LaneRows[this.EndRow];
+  var endLanes = this.routeInfo.laneRows[this.endRow];
   var endDiffs = [];
   for(var k=0; k<endLanes.length; k++) {
     lane = endLanes[k];
-    var endDiff = lane.Mid-toX;
+    var endDiff = lane.mid-toX;
     endDiffs.push(Math.abs(endDiff));
   }
-  this.LastPassageLane = N.IndexOfMin(endDiffs);
-  this.LastPassageX = this.RouteInfo.LaneRows[this.EndRow][this.LastPassageLane].Mid;
+  this.lastPassageLane = N.indexOfMin(endDiffs);
+  this.lastPassageX = this.routeInfo.laneRows[this.endRow][this.lastPassageLane].mid;
 
-  if(this.Debug) {
-    console.log('**** Route Found for '+this.Connection.Path);
-    console.log('**** Vertical Passages:\n'+JSON.stringify(this.VerticalPassages, undefined, 2));
-    console.log('**** Neuron End:\n'+JSON.stringify(this.NeuronEnd, undefined, 2));
-    console.log('**** End:\n'+JSON.stringify(this.End, undefined, 2));
+  if(this.debug) {
+    console.log('**** Route Found for '+this.connection.path);
+    console.log('**** Vertical Passages:\n'+JSON.stringify(this.verticalPassages, undefined, 2));
+    console.log('**** Neuron End:\n'+JSON.stringify(this.neuronEnd, undefined, 2));
+    console.log('**** End:\n'+JSON.stringify(this.end, undefined, 2));
   }
 }
 
-N.UI.PiRouteFinder.prototype.BuildPath = function() {
+N.UI.PiRouteFinder.prototype.buildPath = function() {
 
-  var simpleVertices = this.CreateSimpleVertices(this.RouteInfo);
-  this.CalculateLengths(simpleVertices);
+  var simpleVertices = this.createSimpleVertices(this.routeInfo);
+  this.calculateLengths(simpleVertices);
 
   // Add chamfers.
-  this.Vertices = [];
-  this.Vertices.push(simpleVertices[0]);
+  this.vertices = [];
+  this.vertices.push(simpleVertices[0]);
 
   for(var i=1; i<simpleVertices.length; i++) {
     // Remove a segment.
-    if(simpleVertices[i].Join && i < simpleVertices.length-2) {
+    if(simpleVertices[i].join && i < simpleVertices.length-2) {
       // From the points, construct
       var v0 = simpleVertices[i-1];
       var v1 = simpleVertices[i];
       var v2 = simpleVertices[i+1];
       var v3 = simpleVertices[i+2];
-      var half = Math.abs(0.5*(v1.X-v2.X));
-      v1.Y += half*(v0.Y > v1.Y ? 1.0 : -1.0);
-      v2.Y += half*(v2.Y < v3.Y ? 1.0 : -1.0);
-      this.Vertices.push(v1);
-      this.Vertices.push(v2);
+      var half = Math.abs(0.5*(v1.x-v2.x));
+      v1.y += half*(v0.y > v1.y ? 1.0 : -1.0);
+      v2.y += half*(v2.y < v3.y ? 1.0 : -1.0);
+      this.vertices.push(v1);
+      this.vertices.push(v2);
       i++;
     }
     // Add a segment...
-    else if(this.Chamfer && i<simpleVertices.length-1) {
-      var angle = this.AngleBetween(simpleVertices[i-1], simpleVertices[i], simpleVertices[i+1]);
-      var chamfer = this.ChamferSize;
+    else if(this.chamfer && i<simpleVertices.length-1) {
+      var angle = this.angleBetween(simpleVertices[i-1], simpleVertices[i], simpleVertices[i+1]);
+      var chamfer = this.chamferSize;
       if(angle < 75) {
-        chamfer = 0.5*this.ChamferSize;
+        chamfer = 0.5*this.chamferSize;
       }
-      var corner1 = simpleVertices[i].Shorten(simpleVertices[i-1], chamfer);
-      var corner2 = simpleVertices[i].Shorten(simpleVertices[i+1], chamfer);
-      this.Vertices.push(corner1);
-      this.Vertices.push(corner2);
+      var corner1 = simpleVertices[i].shorten(simpleVertices[i-1], chamfer);
+      var corner2 = simpleVertices[i].shorten(simpleVertices[i+1], chamfer);
+      this.vertices.push(corner1);
+      this.vertices.push(corner2);
     }
     else {
-      this.Vertices.push(simpleVertices[i]);
+      this.vertices.push(simpleVertices[i]);
     }
   }
 }
 
-N.UI.PiRouteFinder.prototype.GetEndInfo = function() {
-  return { EndNeuronCenter: this.NeuronEnd.EndNeuronCenter, EndNeuronOuter: this.NeuronEnd.Last };
+N.UI.PiRouteFinder.prototype.getEndInfo = function() {
+  return { endNeuronCenter: this.neuronEnd.endNeuronCenter, endNeuronOuter: this.neuronEnd.last };
 }
 
-N.UI.PiRouteFinder.prototype.SetVerticalPassageOffset = function(verticalPassageIndex, offset) {
-  this.VerticalPassages[verticalPassageIndex].Offset = offset;
+N.UI.PiRouteFinder.prototype.setVerticalPassageOffset = function(verticalPassageIndex, offset) {
+  this.verticalPassages[verticalPassageIndex].offset = offset;
 }
 
-N.UI.PiRouteFinder.prototype.SetHorizontalPassageOffset = function(routeData, offset) {
-  routeData.Offset = offset;
-  this.ThruwayOffsets[routeData.ThruwayIndex] = routeData;
+N.UI.PiRouteFinder.prototype.setHorizontalPassageOffset = function(routeData, offset) {
+  routeData.offset = offset;
+  this.thruwayOffsets[routeData.thruwayIndex] = routeData;
 }
 
-N.UI.PiRouteFinder.prototype.UpdateThruwayInfo = function(thruwayRouteInfo) {
-  var iStart = thruwayRouteInfo.StartSegIndex;
-  var iEnd = thruwayRouteInfo.EndSegIndex;
+N.UI.PiRouteFinder.prototype.updateThruwayInfo = function(thruwayRouteInfo) {
+  var iStart = thruwayRouteInfo.startSegIndex;
+  var iEnd = thruwayRouteInfo.endSegIndex;
   var x1, x2;
   if(iStart === -1) {
-    x1 = this.Start.Base.X;
+    x1 = this.start.base.x;
   } else {
-    x1 = this.RouteInfo.LaneRows[this.VerticalPassages[iStart].LaneRowIndex][this.VerticalPassages[iStart].LaneIndex].Mid;
+    x1 = this.routeInfo.laneRows[this.verticalPassages[iStart].laneRowIndex][this.verticalPassages[iStart].laneIndex].mid;
   }
-  if(iEnd >= this.VerticalPassages.length) {
-    x2 = this.End.X;
+  if(iEnd >= this.verticalPassages.length) {
+    x2 = this.end.x;
   } else {
-    x2 = this.RouteInfo.LaneRows[this.VerticalPassages[iEnd].LaneRowIndex][this.VerticalPassages[iEnd].LaneIndex].Mid;
+    x2 = this.routeInfo.laneRows[this.verticalPassages[iEnd].laneRowIndex][this.verticalPassages[iEnd].laneIndex].mid;
   }
   if(x2 > x1) {
-    thruwayRouteInfo.XMin = x1;
-    thruwayRouteInfo.XMax = x2;
+    thruwayRouteInfo.xMin = x1;
+    thruwayRouteInfo.xMax = x2;
   } else {
-    thruwayRouteInfo.XMin = x2;
-    thruwayRouteInfo.XMax = x1;
+    thruwayRouteInfo.xMin = x2;
+    thruwayRouteInfo.xMax = x1;
   }
 }
 
 /**
  * This routine performs the not all so trivial task of finding the orientation of the final segment of the path, the one
  * that ends in the input compartment of the sink neuron.
- * @method FindEndAngle
+ * @method findEndAngle
  * @param {N.UI.PiNeuron} endNeuron
  * @param {N.UI.Vector} directionVector
  * @returns {{RequiresVert: *, VertDirection: *, VertSide: string, Last: N.UI.Vector, NextToLast: N.UI.Vector, EndNeuronCenter: N.UI.Vector}}
  */
-N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector) {
-  var n = this.RouteInfo.GetNeuron(this.PiConnection.Network, endNeuron);
-  var comp = n.CompartmentsById[N.CompFromPath(endNeuron)];
-  var dockAngles = comp.DockAngles;
+N.UI.PiRouteFinder.prototype.findEndAngle = function(endNeuron, directionVector) {
+  var n = this.routeInfo.getNeuron(this.piConnection.network, endNeuron);
+  var comp = n.compartmentsById[N.compFromPath(endNeuron)];
+  var dockAngles = comp.dockAngles;
   var quadrants = [ [], [], [], [] ]; // 0->90, 90->180, 180->270, 270->360
   var angleRange, from, to;
 
@@ -237,14 +236,14 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector)
     // Go through each quadrant.
     angleRange = dockAngles[i];
     for (var j=0; j<4; j++) {
-      if(this.IsRangeWithinLimitAngles(angleRange.From, angleRange.To, j*90, (j+1)*90)) {
+      if(this.isRangeWithinLimitAngles(angleRange.from, angleRange.to, j*90, (j+1)*90)) {
         quadrants[j].push(i);
       }
     }
   }
 
   // Which quadrant is ideal?
-  var directionQuadrant = (directionVector.X < 0 ? (directionVector.Y > 0.0 ? 3 : 0) : (directionVector.Y > 0.0 ? 2 : 1));
+  var directionQuadrant = (directionVector.x < 0 ? (directionVector.y > 0.0 ? 3 : 0) : (directionVector.y > 0.0 ? 2 : 1));
 
   var qi = directionQuadrant;
   if(quadrants[directionQuadrant].length === 0) {
@@ -263,7 +262,7 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector)
   var success = false;
   for(i in quadrants[qi]) {
     angleRange = dockAngles[quadrants[qi][i]];
-    if(this.IsAngleWithinLimitAngles(exitAngle, angleRange.From, angleRange.To)) {
+    if(this.isAngleWithinLimitAngles(exitAngle, angleRange.from, angleRange.to)) {
       success = true;
       break;
     }
@@ -276,13 +275,13 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector)
     var quadLimitHigh = quadLimitLow+90;
     for(i in quadrants[qi]) {
       angleRange = dockAngles[quadrants[qi][i]];
-      var intersection = this.IntersectionOfRangeAndLimitAngles(angleRange.From, angleRange.To, quadLimitLow, quadLimitHigh);
+      var intersection = this.intersectionOfRangeAndLimitAngles(angleRange.from, angleRange.to, quadLimitLow, quadLimitHigh);
       ranges.push(intersection);
-      totals.push(-intersection.Total);
+      totals.push(-intersection.total);
     }
-    var toUse = N.IndexOfMin(totals);
+    var toUse = N.indexOfMin(totals);
     var bestIntersection = ranges[toUse];
-    exitAngle = bestIntersection.From+0.5*bestIntersection.Total;
+    exitAngle = bestIntersection.from+0.5*bestIntersection.total;
   }
 
   var vertAngle = qi*90+45;
@@ -295,27 +294,27 @@ N.UI.PiRouteFinder.prototype.FindEndAngle = function(endNeuron, directionVector)
     case 3: requiresVert = exitAngle >= vertAngle; vertDir =  1.0; break;
   }
 
-  var dx = Math.cos(N.Rad(exitAngle));
-  var dy = Math.sin(N.Rad(exitAngle));
-  var networkY = n.Network.Y;
-  var last = new N.UI.Vector(dx*n.Radius+n.X, dy*n.Radius+n.Y+networkY);
-  var nextToLast = new N.UI.Vector( dx*(n.Radius+10.0)+n.X, dy*(n.Radius+10.0)+n.Y+networkY);
+  var dx = Math.cos(N.rad(exitAngle));
+  var dy = Math.sin(N.rad(exitAngle));
+  var networkY = n.network.y;
+  var last = new N.UI.Vector(dx*n.radius+n.x, dy*n.radius+n.y+networkY);
+  var nextToLast = new N.UI.Vector( dx*(n.radius+10.0)+n.x, dy*(n.radius+10.0)+n.y+networkY);
 
-  return { RequiresVert: requiresVert, VertDirection: vertDir, VertSide: (qi === 1 || qi === 2 ? 'L' : 'R'), Last: last, NextToLast: nextToLast, EndNeuronCenter: new N.UI.Vector(n.X, n.Y+networkY)  };
+  return { requiresVert: requiresVert, vertDirection: vertDir, vertSide: (qi === 1 || qi === 2 ? 'L' : 'R'), last: last, nextToLast: nextToLast, endNeuronCenter: new N.UI.Vector(n.x, n.y+networkY)  };
 }
 
-N.UI.PiRouteFinder.prototype.GetPath = function() {
-  this.BuildPath();
+N.UI.PiRouteFinder.prototype.getPath = function() {
+  this.buildPath();
 
-  var path = 'M'+this.Vertices[0].X+' '+this.Vertices[0].Y;
-  for(var i=1; i<this.Vertices.length; i++) {
-    var s = this.Vertices[i];
-    path += 'L'+s.X+' '+s.Y;
+  var path = 'M'+this.vertices[0].x+' '+this.vertices[0].y;
+  for(var i=1; i<this.vertices.length; i++) {
+    var s = this.vertices[i];
+    path += 'L'+s.x+' '+s.y;
   }
   return path;
 }
 
-N.UI.PiRouteFinder.prototype.IsRangeWithinLimitAngles = function(from, to, lowerLimit, upperLimit) {
+N.UI.PiRouteFinder.prototype.isRangeWithinLimitAngles = function(from, to, lowerLimit, upperLimit) {
   var lower = lowerLimit-360;
   var upper = upperLimit-360;
   for(var i=0; i<3; i++) {
@@ -343,7 +342,7 @@ N.UI.PiRouteFinder.prototype.IsRangeWithinLimitAngles = function(from, to, lower
  * @returns {boolean}
  * @constructor
  */
-N.UI.PiRouteFinder.prototype.IsAngleWithinLimitAngles = function(angle, lowerLimit, upperLimit) {
+N.UI.PiRouteFinder.prototype.isAngleWithinLimitAngles = function(angle, lowerLimit, upperLimit) {
   var lower = lowerLimit-360;
   var upper = upperLimit-360;
   for(var i=0; i<3; i++) {
@@ -359,7 +358,7 @@ N.UI.PiRouteFinder.prototype.IsAngleWithinLimitAngles = function(angle, lowerLim
 /**
  * Finds the range, within this quadrant specified by the upper and lower limits, that is within the limits and
  * within the to/from range. It assumes that the to/from range is definitely within the limit angles.
- * @method IntersectionOfRangeAndLimitAngles
+ * @method intersectionOfRangeAndLimitAngles
  * @param from
  * @param to
  * @param lowerLimit
@@ -367,61 +366,61 @@ N.UI.PiRouteFinder.prototype.IsAngleWithinLimitAngles = function(angle, lowerLim
  * @returns {{Lower: number, Upper: number, Total: number}} Returns the new from/to intersection values and total angle
  * @constructor
  */
-N.UI.PiRouteFinder.prototype.IntersectionOfRangeAndLimitAngles = function(from, to, lowerLimit, upperLimit) {
+N.UI.PiRouteFinder.prototype.intersectionOfRangeAndLimitAngles = function(from, to, lowerLimit, upperLimit) {
   var low = (from > lowerLimit ? from : lowerLimit);
   var high = (from > lowerLimit ? from : lowerLimit);
   return { From: low, To: high, Total: high-low };
 }
 
-N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function() {
+N.UI.PiRouteFinder.prototype.createSimpleVertices = function() {
   var vertices = [];
 
   // Add the two vertices from the base of the output to its drop position directly below it.
-  vertices.push(this.Start.Base);
-  var thruwayIndex = this.StartNeuronRow;
+  vertices.push(this.start.base);
+  var thruwayIndex = this.startNeuronRow;
   var endOffset = 0.0;
-  if(this.ThruwayOffsets[thruwayIndex]) {
-    endOffset = this.ThruwayOffsets[thruwayIndex].Offset;
+  if(this.thruwayOffsets[thruwayIndex]) {
+    endOffset = this.thruwayOffsets[thruwayIndex].offset;
   }
-  vertices.push(this.Start.End.Clone().Offset(0.0, endOffset));
+  vertices.push(this.start.end.clone().offset(0.0, endOffset));
 
-//  vertices.push(this.Start.End.Offset(0, (this.VerticalPassages.length > 0 ? this.VerticalPassages[0].VertOffset : 0.0)));
+//  vertices.push(this.start.end.offset(0, (this.verticalPassages.length > 0 ? this.verticalPassages[0].vertOffset : 0.0)));
 
   // Go through all the thruways and lanes to get near the output neuron.
-  for(var i=0; i<this.VerticalPassages.length; i++) {
-    var vp = this.VerticalPassages[i];
-    var lane = this.RouteInfo.LaneRows[vp.LaneRowIndex][vp.LaneIndex];
-    var x = lane.Mid+vp.Offset;
-    var yPos = lane.ThruPos.Mid;
-    var yNeg = lane.ThruNeg.Mid;
-    if(this.IncVert > 0) { var temp = yPos; yPos = yNeg; yNeg = temp; }
+  for(var i=0; i<this.verticalPassages.length; i++) {
+    var vp = this.verticalPassages[i];
+    var lane = this.routeInfo.laneRows[vp.laneRowIndex][vp.laneIndex];
+    var x = lane.mid+vp.offset;
+    var yPos = lane.thruPos.mid;
+    var yNeg = lane.thruNeg.mid;
+    if(this.incVert > 0) { var temp = yPos; yPos = yNeg; yNeg = temp; }
 
     var vertOffsetFirst = 0.0;
-    if(this.ThruwayOffsets[thruwayIndex]) {
-      vertOffsetFirst += this.ThruwayOffsets[thruwayIndex].Offset;
+    if(this.thruwayOffsets[thruwayIndex]) {
+      vertOffsetFirst += this.thruwayOffsets[thruwayIndex].offset;
     }
 
-    thruwayIndex += this.IncVert;
+    thruwayIndex += this.incVert;
 
     var vertOffsetLast = 0.0;
-    if(this.ThruwayOffsets[thruwayIndex]) {
-      vertOffsetLast += this.ThruwayOffsets[thruwayIndex].Offset;
+    if(this.thruwayOffsets[thruwayIndex]) {
+      vertOffsetLast += this.thruwayOffsets[thruwayIndex].offset;
     }
 
     vertices.push( new N.UI.Vector(x, yPos+vertOffsetFirst) ); // First vertex of the lane.
     vertices.push( new N.UI.Vector(x, yNeg+vertOffsetLast) ); // Second vertex of the lane.
   }
 
-  if(Math.abs(this.LastPassageX-vertices[vertices.length-1].X) > this.MinSegmentLength) {
-    vertices.push( new N.UI.Vector(this.LastPassageX, vertices[vertices.length-1].Y) );
+  if(Math.abs(this.lastPassageX-vertices[vertices.length-1].x) > this.minSegmentLength) {
+    vertices.push( new N.UI.Vector(this.lastPassageX, vertices[vertices.length-1].y) );
   }
 
   // We are almost there. If final connection into the neuron is more horizontal than vertical we need to
   // to add a path up the side of the neuron.
-  if (this.NeuronEnd.RequiresVert) {
-    vertices.push(this.End.Clone().Offset(0, (this.ThruwayOffsets[thruwayIndex] ? this.ThruwayOffsets[thruwayIndex].Offset : 0.0)));
-    var vertical = vertices[vertices.length-1].Clone();
-    vertical.Offset(0.0, this.NeuronEnd.VertDirection*100.0);
+  if (this.neuronEnd.requiresVert) {
+    vertices.push(this.end.clone().offset(0, (this.thruwayOffsets[thruwayIndex] ? this.thruwayOffsets[thruwayIndex].offset : 0.0)));
+    var vertical = vertices[vertices.length-1].clone();
+    vertical.offset(0.0, this.neuronEnd.vertDirection*100.0);
     vertices.push(vertical);
   }
 
@@ -436,15 +435,15 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function() {
     var iNextToLast = vertices.length-1;
     var v0 = vertices[iNextToLast-1];
     var v1 = vertices[iNextToLast];
-    var v2 = this.NeuronEnd.NextToLast;
-    var v3 = this.NeuronEnd.Last;
-    var vIntersection = this.FindIntersection(v0.X, v0.Y, v1.X, v1.Y, v2.X, v2.Y, v3.X, v3.Y);
+    var v2 = this.neuronEnd.nextToLast;
+    var v3 = this.neuronEnd.last;
+    var vIntersection = this.findIntersection(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y, v3.x, v3.y);
 
-    var dir = v1.Y-v0.Y;
-    if(!horizontalAdded && !this.NeuronEnd.RequiresVert && dir !== 0.0) {
-      if((dir < 0.0 && vIntersection.Y > v1.Y) || (dir > 0.0 && vIntersection.Y < v1.Y)) {
-        var horiz = vertices[vertices.length-1].Clone();
-        horiz.Offset(-1.0, 0.0);
+    var dir = v1.y-v0.y;
+    if(!horizontalAdded && !this.neuronEnd.requiresVert && dir !== 0.0) {
+      if((dir < 0.0 && vIntersection.y > v1.y) || (dir > 0.0 && vIntersection.y < v1.y)) {
+        var horiz = vertices[vertices.length-1].clone();
+        horiz.offset(-1.0, 0.0);
         vertices.push(horiz);
         i--;
         horizontalAdded = true;
@@ -453,11 +452,11 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function() {
     }
 
     // Is the last vertex way too small?
-    var len = vIntersection.Distance(v0);
-    if(len >= this.MinSegmentLength) {
+    var len = vIntersection.distance(v0);
+    if(len >= this.minSegmentLength) {
       vertices.length = vertices.length-1;
       vertices.push(vIntersection);
-      vertices.push(this.NeuronEnd.Last);
+      vertices.push(this.neuronEnd.last);
       break;
     } else {
       vertices.length = vertices.length-1;
@@ -467,43 +466,43 @@ N.UI.PiRouteFinder.prototype.CreateSimpleVertices = function() {
   return vertices;
 }
 
-N.UI.PiRouteFinder.prototype.GetRow = function(neuron) {
-  if(neuron.Network === this.PiConnection.Network) {
-    return neuron.Row;
+N.UI.PiRouteFinder.prototype.getRow = function(neuron) {
+  if(neuron.network === this.piConnection.network) {
+    return neuron.row;
   } else {
     var row = 0;
-    var top = this.PiConnection.Network;
-    for(var i in top.Networks) {
-      if(neuron.Network === top.Networks[i]) {
-        return row+neuron.Row;
+    var top = this.piConnection.network;
+    for(var i in top.networks) {
+      if(neuron.network === top.networks[i]) {
+        return row+neuron.row;
       }
-      row += top.Networks[i].Rows.length;
+      row += top.networks[i].rows.length;
     }
   }
 }
 
 
-N.UI.PiRouteFinder.prototype.AngleBetween = function(v0, v1, v2) {
-  var dv0 = (new N.UI.Vector(v0, v1)).Normalize();
-  var dv1 = (new N.UI.Vector(v1, v2)).Normalize();
-  var dot = (dv0.X*dv1.X+dv0.Y*dv1.Y);
-  return N.Deg(Math.acos(dot));
+N.UI.PiRouteFinder.prototype.angleBetween = function(v0, v1, v2) {
+  var dv0 = (new N.UI.Vector(v0, v1)).normalize();
+  var dv1 = (new N.UI.Vector(v1, v2)).normalize();
+  var dot = (dv0.x*dv1.x+dv0.y*dv1.y);
+  return N.deg(Math.acos(dot));
 }
 
-N.UI.PiRouteFinder.prototype.CalculateLengths = function(simpleVertices) {
+N.UI.PiRouteFinder.prototype.calculateLengths = function(simpleVertices) {
   for(var i=0; i<simpleVertices.length-1; i++) {
-    var len =  simpleVertices[i].Distance(simpleVertices[i+1]);
+    var len =  simpleVertices[i].distance(simpleVertices[i+1]);
     if(len < 0.001) {
       simpleVertices.splice(i, 1);
       i--;
     }
-    else if(len < this.MinSegmentLength && (simpleVertices[i].X !== simpleVertices[i+1].X)) {
-      simpleVertices[i].Join = true;
+    else if(len < this.minSegmentLength && (simpleVertices[i].x !== simpleVertices[i+1].x)) {
+      simpleVertices[i].join = true;
     }
   }
 }
 
-N.UI.PiRouteFinder.prototype.FindIntersection = function(p0X, p0Y, p1X, p1Y, p2X, p2Y, p3X, p3Y) {
+N.UI.PiRouteFinder.prototype.findIntersection = function(p0X, p0Y, p1X, p1Y, p2X, p2Y, p3X, p3Y) {
   var s1X = p1X - p0X;
   var s1Y = p1Y - p0Y;
   var s2X = p3X - p2X;
@@ -514,4 +513,3 @@ N.UI.PiRouteFinder.prototype.FindIntersection = function(p0X, p0Y, p1X, p1Y, p2X
 
   return new N.UI.Vector(p0X + (t * s1X), p0Y + (t * s1Y));
 }
-

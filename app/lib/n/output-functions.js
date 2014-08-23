@@ -21,9 +21,9 @@ N.Comp = N.Comp || {};
 N.Comp.OutputFunc = N.Comp.OutputFunc || {};
 
 // See http://math.stackexchange.com/questions/321569/approximating-the-error-function-erf-by-analytical-functions.
-N.Comp.OutputFunc.TanhCoeff = Math.sqrt(Math.PI)*Math.log(2.0);
+N.Comp.OutputFunc.tanhCoeff = Math.sqrt(Math.PI)*Math.log(2.0);
 
-N.Comp.OutputFunc.Tanh = function(x) {
+N.Comp.OutputFunc.tanh = function(x) {
   return (Math.exp(x)-Math.exp(-x))/(Math.exp(x)+Math.exp(-x));
 }
 
@@ -37,58 +37,51 @@ N.Comp.OutputFunc.Tanh = function(x) {
  *         },
  *     }
  *
- * @class Comp.OutputFunc.LinearSum
+ * @class Comp.OutputFunc.linearSum
  * @param {N.Comp.*} A component object that has a 'Main' input source.
  * @constructor
  */
 
-N.Comp.OutputFunc.LinearSum = function(comp, t) {
-  var main = comp.Inputs.Main;
-  comp.Output = main.Gain*main.Comp.GetOutputAt(t-main.Delay);
+N.Comp.OutputFunc.linearSum = function(comp, t) {
+  var main = comp.inputs.main;
+  comp.output = main.gain*main.comp.getOutputAt(t-main.delay);
 }
 
-N.Comp.OutputFunc.LinearSum.validate = function(comp, report) {
-  if(!_.isObject(comp.OutputLogic.Sources.Main.Compartment)) { report.Error(comp.getPath()+'[func:=OutputLogic.OutputFunc]', 'The source compartment is null'); }
+N.Comp.OutputFunc.linearSum.validate = function(comp, report) {
+  if(!_.isObject(comp.outputLogic.sources.main.compartment)) { report.Error(comp.getPath()+'[func:=OutputLogic.OutputFunc]', 'The source compartment is null'); }
 }
 
 /**
  * Summing function with approximate error function type output curve with modulating input.
  * @example
  *     var template = {
- *         Main: {
- *             ComponentName: 'IP',
- *             Gain: 0.5,
- *             Threshhold: 0.0
+ *         main: {
+ *             componentName: 'IP',
+ *             gain: 0.5,
+ *             threshhold: 0.0
  *         },
- *         Modulator: {
- *             ComponentName: 'AIP',
- *             Gain: 0.2,
- *             Threshhold: 0.0
+ *         modulator: {
+ *             componentName: 'AIP',
+ *             gain: 0.2,
+ *             threshhold: 0.0
  *         }
  *     }
  *
- * @class Comp.OutputFunc.ErrFuncSumWithMod
+ * @class Comp.OutputFunc.errFuncSumWithMod
  * @param {N.Comp.*} A component object that has a 'Main' input source and a 'Modulator' source.
  * @constructor
  */
 
-N.Comp.OutputFunc.ErrFuncSumWithMod = function(comp) {
-  var inMain = comp.Inputs.Main.Comp.Output-comp.Inputs.Main.Threshhold;
+N.Comp.OutputFunc.errFuncSumWithMod = function(comp) {
+  var inMain = comp.inputs.main.comp.output-comp.inputs.main.threshhold;
   if(inMain < 0.0) {
-    comp.Output = 0.0;
+    comp.output = 0.0;
     return;
   }
-  var gain = comp.Inputs.Main.Gain;
-  comp.Output =  gain*N.Comp.OutputFunc.Tanh(N.Comp.OutputFunc.TanhCoeff*inMain);
-  var inMod = comp.Inputs.Modulator.Output;
+  var gain = comp.inputs.main.gain;
+  comp.output =  gain*N.Comp.OutputFunc.tanh(N.Comp.OutputFunc.tanhCoeff*inMain);
+  var inMod = comp.inputs.modulator.output;
   if(inMod > 0.00001) {
-    var modulation = 1.0+comp.Inputs.Modulator.Gain*N.Comp.OutputFunc.Tanh(N.Comp.OutputFunc.TanhCoeff*inMod);
+    var modulation = 1.0+comp.inputs.modulator.gain*N.Comp.OutputFunc.tanh(N.Comp.OutputFunc.tanhCoeff*inMod);
   }
-}
-
-// See http://math.stackexchange.com/questions/321569/approximating-the-error-function-erf-by-analytical-functions.
-N.Comp.OutputFunc.TanhCoeff = Math.sqrt(Math.PI)*Math.log(2.0);
-
-N.Comp.OutputFunc.Tanh = function(x) {
-  return (Math.exp(x)-Math.exp(-x))/(Math.exp(x)+Math.exp(-x));
 }

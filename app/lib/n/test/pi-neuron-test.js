@@ -13,7 +13,7 @@ All Rights Reserved.
 'use strict';
 
 var N = N || {};
-N.Test = N.Test || {};
+N.test = N.test || {};
 
   //**************************
   //* PiNeuronTestController *
@@ -23,9 +23,9 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('PiNeuronTestController', ['$scope',
   function PiNeuronTestController($scope) {
-    $scope.Test = new N.PiNeuronTest();
-    $scope.Test.CreateScenes();
-    $scope.Scenes = $scope.Test.Scenes;
+    $scope.test = new N.PiNeuronTest();
+    $scope.test.createScenes();
+    $scope.scenes = $scope.test.scenes;
   }
 ]);
 
@@ -39,65 +39,65 @@ nSimAppControllers.controller('PiNeuronTestItemController', ['$scope',
   //******************
 
 N.PiNeuronTest = function() {
-  this.Scenes  = [];
+  this.scenes  = [];
 }
 
-N.PiNeuronTest.prototype.CreateScenes = function() {
+N.PiNeuronTest.prototype.createScenes = function() {
 
-  for(var i=0; i<N.PiNeuronTest.TestConfigurations.length; i++) {
-    var config = N.PiNeuronTest.TestConfigurations[i];
-    var neuron = (new N.Neuron()).LoadFrom(config.Neuron);
+  for(var i=0; i<N.PiNeuronTest.testConfigurations.length; i++) {
+    var config = N.PiNeuronTest.testConfigurations[i];
+    var neuron = (new N.Neuron()).loadFrom(config.neuron);
 
     var scene = new N.UI.NeuronScene();
-    scene.SetNeuron(neuron, config.Neuron.Display.Template);
-    this.Scenes.push(scene);
+    scene.setNeuron(neuron, config.neuron.display.template);
+    this.scenes.push(scene);
   }
 }
 
-N.PiNeuronTest.TestConfigurations = [{
-    Neuron: {
-      ClassName: 'N.Neuron',
-      Compartments: [{
-        ClassName: 'N.Comp.OutputFromSignal',
-        Name: 'SO',
-        Signal: {
-          ClassName: 'N.DiscreteSignal',
-          DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
+N.PiNeuronTest.testConfigurations = [{
+    neuron: {
+      className: 'N.Neuron',
+      compartments: [{
+        className: 'N.Comp.OutputFromSignal',
+        name: 'SO',
+        signal: {
+          className: 'N.DiscreteSignal',
+          dataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
         }
       }],
-      Display: {
-        Template: 'N.UI.StandardNeuronTemplates.Pyramidal',
-        Radius: 100
+      display: {
+        template: 'N.UI.StandardNeuronTemplates.Pyramidal',
+        radius: 100
       }
     }
   },{
-    Neuron: {
-      ClassName: 'N.Neuron',
-      Compartments: [{
-        ClassName: 'N.Comp.Output',
-        Name: 'OP'
+    neuron: {
+      className: 'N.Neuron',
+      compartments: [{
+        className: 'N.Comp.Output',
+        name: 'OP'
       },{
-        ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'IP'
+        className: 'N.Comp.LinearSummingInput',
+        name: 'IP'
       }],
-      Display: {
-        Template: 'N.UI.StandardNeuronTemplates.Stellate',
-        Radius: 60
+      display: {
+        template: 'N.UI.StandardNeuronTemplates.Stellate',
+        radius: 60
       }
     }
   },{
-    Neuron: {
-      ClassName: 'N.Neuron',
-      Compartments: [{
-        ClassName: 'N.Comp.InhibitoryOutput',
-        Name: 'IOP'
+    neuron: {
+      className: 'N.Neuron',
+      compartments: [{
+        className: 'N.Comp.InhibitoryOutput',
+        name: 'IOP'
       },{
-        ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'IP'
+        className: 'N.Comp.LinearSummingInput',
+        name: 'IP'
       }],
-      Display: {
-        Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
-        Radius: 40
+      display: {
+        template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
+        radius: 40
       }
     }
   }];

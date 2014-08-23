@@ -21,58 +21,58 @@ N.UI = N.UI || {};
 
 N.UI.Vector = function(x, y) {
   if(_.isNumber(x)) {
-    this.X = x;
-    this.Y = y;
+    this.x = x;
+    this.y = y;
   } else if(_.isObject(x)) {
     if(_.isObject(y)) {
-      this.X = y.X- x.X;
-      this.Y = y.Y- x.Y;
+      this.x = y.x- x.x;
+      this.y = y.y- x.y;
     } else {
-      this.X = x.X;
-      this.Y = x.Y;
+      this.x = x.x;
+      this.y = x.y;
     }
   } else {
-    this.X = 0.0;
-    this.Y = 0.0;
+    this.x = 0.0;
+    this.y = 0.0;
   }
 }
 
-N.UI.Vector.prototype.Shorten = function(basePoint, newLen) {
+N.UI.Vector.prototype.shorten = function(basePoint, newLen) {
   var vec = new N.UI.Vector(this, basePoint);
-  var len = vec.Length();
+  var len = vec.vectorLength();
   var ratio = (len-newLen)/len;
-  vec.X *= ratio;
-  vec.Y *= ratio;
-  return new N.UI.Vector(basePoint.X-vec.X, basePoint.Y-vec.Y);
+  vec.x *= ratio;
+  vec.y *= ratio;
+  return new N.UI.Vector(basePoint.x-vec.x, basePoint.y-vec.y);
 }
 
-N.UI.Vector.prototype.Length = function() {
-  return Math.sqrt(this.X*this.X+this.Y*this.Y);
+N.UI.Vector.prototype.vectorLength = function() {
+  return Math.sqrt(this.x*this.x+this.y*this.y);
 }
 
-N.UI.Vector.prototype.Normalize = function() {
-  var lenInv = 1.0/Math.sqrt(this.X*this.X+this.Y*this.Y);
-  this.X *= lenInv;
-  this.Y *= lenInv;
+N.UI.Vector.prototype.normalize = function() {
+  var lenInv = 1.0/Math.sqrt(this.x*this.x+this.y*this.y);
+  this.x *= lenInv;
+  this.y *= lenInv;
   return this;
 }
 
-N.UI.Vector.prototype.DotProduct = function(vec) {
-  return this.X*vec.X+this.Y*vec.Y;
+N.UI.Vector.prototype.dotProduct = function(vec) {
+  return this.x*vec.x+this.y*vec.y;
 }
 
-N.UI.Vector.prototype.Distance = function(vec) {
-  var x = this.X-vec.X;
-  var y = this.Y-vec.Y;
+N.UI.Vector.prototype.distance = function(vec) {
+  var x = this.x-vec.x;
+  var y = this.y-vec.y;
   return Math.sqrt(x*x+y*y);
 }
 
-N.UI.Vector.prototype.Clone = function() {
-  return new N.UI.Vector(this.X, this.Y);
+N.UI.Vector.prototype.clone = function() {
+  return new N.UI.Vector(this.x, this.y);
 }
 
-N.UI.Vector.prototype.Offset = function(x, y) {
-  this.X += x;
-  this.Y += y;
-  return new N.UI.Vector(this.X, this.Y);
+N.UI.Vector.prototype.offset = function(x, y) {
+  this.x += x;
+  this.y += y;
+  return new N.UI.Vector(this.x, this.y);
 }

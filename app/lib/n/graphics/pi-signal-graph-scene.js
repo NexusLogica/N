@@ -26,56 +26,56 @@ N.UI = N.UI || {};
  */
 
 N.UI.SignalGraphScene = function() {
-  this.ClassName = 'N.UI.SignalGraphScene';
+  this.className = 'N.UI.SignalGraphScene';
   this.signalGraph = new N.UI.SignalGraph();
-  this.X = 0;
-  this.Y = 0;
-  this.Width = 100;
-  this.Height = 100;
+  this.x = 0;
+  this.y = 0;
+  this.width = 100;
+  this.height = 100;
 }
 
-N.UI.SignalGraphScene.prototype.AddTraceFromSource = function(id, source, propName) {
-  this.signalGraph.AddTraceFromSource(id, source, propName);
+N.UI.SignalGraphScene.prototype.addTraceFromSource = function(id, source, propName) {
+  this.signalGraph.addTraceFromSource(id, source, propName);
 }
 
-N.UI.SignalGraphScene.prototype.GetTraceFromId = function(id) {
-  return this.signalGraph.TracesById[id];
+N.UI.SignalGraphScene.prototype.getTraceFromId = function(id) {
+  return this.signalGraph.tracesById[id];
 }
 
 /**
  * Calculates the scale that will fit the network to a given width.
- * @method ScaleToFitWidth
+ * @method scaleToFitWidth
  * @param width
  * @param paddingHoriz
  * @param paddingVert
  */
-N.UI.SignalGraphScene.prototype.ScaleToFitWidth = function(width, padding) {
-  var w = width-padding.Horizontal();
-  this.IdealContainerWidth = w;
-  var num = this.signalGraph.Traces.length;
-  this.IdealContainerHeight = (num > 0 ? num : 1)*w*0.2+padding.Vertical();
-  this.signalGraph.X = padding.Left();
-  this.signalGraph.Y = padding.Top();
+N.UI.SignalGraphScene.prototype.scaleToFitWidth = function(width, padding) {
+  var w = width-padding.horizontal();
+  this.idealContainerWidth = w;
+  var num = this.signalGraph.traces.length;
+  this.idealContainerHeight = (num > 0 ? num : 1)*w*0.2+padding.vertical();
+  this.signalGraph.x = padding.left();
+  this.signalGraph.y = padding.top();
 }
 
-N.UI.SignalGraphScene.prototype.Render = function(svgParent, size, padding) {
-  this.Width = size.Width;
-  this.Height = size.Height;
-  this.Padding = padding;
+N.UI.SignalGraphScene.prototype.render = function(svgParent, size, padding) {
+  this.width = size.width;
+  this.height = size.height;
+  this.padding = padding;
 
-  this.Group = svgParent.group().move(this.X, this.Y).size(this.Width, this.Height).attr({ 'class': 'pi-signal-graph-scene' });
-  this.signalGraph.Render(this.Group, size, padding);
+  this.group = svgParent.group().move(this.x, this.y).size(this.width, this.height).attr({ 'class': 'pi-signal-graph-scene' });
+  this.signalGraph.render(this.group, size, padding);
 }
 
-N.UI.SignalGraphScene.prototype.Fit = function(svgParent) {
+N.UI.SignalGraphScene.prototype.fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.Network.Width/this.Network.Height;
+  var aspectRatioNetwork = this.network.width/this.network.height;
   if(aspectRatioNetwork > aspectRatioSvg) {
-    return 0.9*svgWidth/this.Network.Width;
+    return 0.9*svgWidth/this.network.width;
   }
   else {
-    return 0.9*svgHeight/this.Network.Height;
+    return 0.9*svgHeight/this.network.height;
   }
 }

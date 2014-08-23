@@ -20,67 +20,67 @@ N.UI = N.UI || {};
   //***********************
 
 N.UI.PiRouteManager = function(network) {
-  this.Network = network;
-  this.Connections = [];
-  this.CrowdedLanes = [];
-  this.CrowdedThruways = [];
+  this.network = network;
+  this.connections = [];
+  this.crowdedLanes = [];
+  this.crowdedThruways = [];
 }
 
-N.UI.PiRouteManager.prototype.AddConnections = function(connections) {
+N.UI.PiRouteManager.prototype.addConnections = function(connections) {
   if(_.isArray(connections)) {
-    this.Connections = this.Connections.concat(connections);
+    this.connections = this.connections.concat(connections);
   } else {
-    this.Connections.push(connections);
+    this.connections.push(connections);
   }
 }
 
-N.UI.PiRouteManager.prototype.Render = function(name) {
+N.UI.PiRouteManager.prototype.render = function(name) {
   if(_.isEmpty(name)) { name = 'route'; }
 
-  var svgGroup = this.Network.Group.group();
+  var svgGroup = this.network.group.group();
 
-  this.RouteFinders = [];
+  this.routeFinders = [];
   var routeFinder, piConnection;
-  for(var i in this.Connections) {
-    piConnection = this.Connections[i]
-    piConnection.RouteFinder = new N.UI.PiRouteFinder(piConnection);
-    piConnection.RouteFinder.FindRoute(this);
+  for(var i in this.connections) {
+    piConnection = this.connections[i]
+    piConnection.routeFinder = new N.UI.PiRouteFinder(piConnection);
+    piConnection.routeFinder.findRoute(this);
   }
 
-  //this.UncrowdRoutes();
-  //this.UncrowdThruways();
+  //this.uncrowdRoutes();
+  //this.uncrowdThruways();
 
-  for(i in this.Connections) {
-    piConnection = this.Connections[i]
-    var pathString = piConnection.RouteFinder.GetPath();
-    var endInfo = piConnection.RouteFinder.GetEndInfo();
+  for(i in this.connections) {
+    piConnection = this.connections[i]
+    var pathString = piConnection.routeFinder.getPath();
+    var endInfo = piConnection.routeFinder.getEndInfo();
 
-    piConnection.CreatePath(piConnection.Network.Group.group(), pathString);
-    piConnection.CreateEnd(piConnection.Network.Group.group(), endInfo);
+    piConnection.createPath(piConnection.network.group.group(), pathString);
+    piConnection.createEnd(piConnection.network.group.group(), endInfo);
   }
 
-  this.Network.AddConnectionDisplay(name, svgGroup);
+  this.network.addConnectionDisplay(name, svgGroup);
 }
 
-N.UI.PiRouteManager.prototype.AddLaneSegment = function(finder, neuronRowIndex, laneIndex, nextLaneIndex, verticalPassageIndex) {
-  if(!this.CrowdedLanes[neuronRowIndex]) { this.CrowdedLanes[neuronRowIndex] = []; }
-  if(!this.CrowdedLanes[neuronRowIndex][laneIndex]) { this.CrowdedLanes[neuronRowIndex][laneIndex] = []; }
-  this.CrowdedLanes[neuronRowIndex][laneIndex].push({ Finder: finder, NextLaneIndex: nextLaneIndex, VerticalPassageIndex: verticalPassageIndex });
+N.UI.PiRouteManager.prototype.addLaneSegment = function(finder, neuronRowIndex, laneIndex, nextLaneIndex, verticalPassageIndex) {
+  if(!this.crowdedLanes[neuronRowIndex]) { this.crowdedLanes[neuronRowIndex] = []; }
+  if(!this.crowdedLanes[neuronRowIndex][laneIndex]) { this.crowdedLanes[neuronRowIndex][laneIndex] = []; }
+  this.crowdedLanes[neuronRowIndex][laneIndex].push({ finder: finder, nextLaneIndex: nextLaneIndex, verticalPassageIndex: verticalPassageIndex });
 }
 
-N.UI.PiRouteManager.prototype.AddThruwaySegment = function(finder, thruwayIndex, startSegIndex, endSegIndex, verticalDirection) {
-  if(!this.CrowdedThruways[thruwayIndex]) { this.CrowdedThruways[thruwayIndex] = []; }
-  this.CrowdedThruways[thruwayIndex].push({ Finder: finder, StartSegIndex: startSegIndex, EndSegIndex: endSegIndex, VerticalDirection: verticalDirection, ThruwayIndex: thruwayIndex });
+N.UI.PiRouteManager.prototype.addThruwaySegment = function(finder, thruwayIndex, startSegIndex, endSegIndex, verticalDirection) {
+  if(!this.crowdedThruways[thruwayIndex]) { this.crowdedThruways[thruwayIndex] = []; }
+  this.crowdedThruways[thruwayIndex].push({ finder: finder, startSegIndex: startSegIndex, endSegIndex: endSegIndex, verticalDirection: verticalDirection, thruwayIndex: thruwayIndex });
 }
 
-N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
+N.UI.PiRouteManager.prototype.uncrowdRoutes = function() {
   var laneOrder = function(a, b) {
-    return a.NextLaneIndex > b.NextLaneIndex;
+    return a.nextLaneIndex > b.nextLaneIndex;
   }
 
-  for(var i in this.CrowdedLanes) {
-    for(var j in this.CrowdedLanes[i]) {
-      var laneRoutes = this.CrowdedLanes[i][j];
+  for(var i in this.crowdedLanes) {
+    for(var j in this.crowdedLanes[i]) {
+      var laneRoutes = this.crowdedLanes[i][j];
       if(laneRoutes.length > 1) {
         // console.log('*** LaneRoutes['+i+']['+j+'] = '+laneRoutes.length);
         laneRoutes.sort(laneOrder);
@@ -90,7 +90,7 @@ N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
 
         for(var k in laneRoutes) {
           var route = laneRoutes[k];
-          route.Finder.SetVerticalPassageOffset(route.VerticalPassageIndex, offset);
+          route.finder.setVerticalPassageOffset(route.verticalPassageIndex, offset);
           offset += inc;
         }
       }
@@ -98,26 +98,26 @@ N.UI.PiRouteManager.prototype.UncrowdRoutes = function() {
   }
 }
 
-N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
+N.UI.PiRouteManager.prototype.uncrowdThruways = function() {
 
-  for(var i in this.CrowdedThruways) {
-    var thruwayRoutes = this.CrowdedThruways[i];
+  for(var i in this.crowdedThruways) {
+    var thruwayRoutes = this.crowdedThruways[i];
     if(thruwayRoutes.length > 1) {
 
       // We need x values in the thruway info.
       for(var j in thruwayRoutes) {
-        thruwayRoutes[j].Finder.UpdateThruwayInfo(thruwayRoutes[j]);
+        thruwayRoutes[j].finder.updateThruwayInfo(thruwayRoutes[j]);
       }
 
-      var crowds = this.BreakCrowdIntoGroups(thruwayRoutes);
+      var crowds = this.breakCrowdIntoGroups(thruwayRoutes);
 
       for(var k in crowds) {
-        var crowd = crowds[k].Routes;
+        var crowd = crowds[k].routes;
         var inc = 6;
         var offset = -0.5*inc*(crowd.length-1);
         for(var m in crowd) {
           var route = crowd[m];
-          route.Finder.SetHorizontalPassageOffset(route, offset);
+          route.finder.setHorizontalPassageOffset(route, offset);
           offset += inc;
         }
       }
@@ -126,12 +126,12 @@ N.UI.PiRouteManager.prototype.UncrowdThruways = function() {
   }
 }
 
-N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
+N.UI.PiRouteManager.prototype.breakCrowdIntoGroups = function(thruwayCrowd) {
   // These are, in the end, the groups to uncrowd, where each route in the group is overlapping of the others in the group.
   var groups = [];
   for(var k in thruwayCrowd) {
     var route = thruwayCrowd[k];
-    groups.push({ Routes: [route], XMin: route.XMin, XMax: route.XMax });
+    groups.push({ routes: [route], xMin: route.xMin, xMax: route.xMax });
   }
 
   // Do this for each route. In the loop each route will end up in a group, by itself, or with others.
@@ -146,7 +146,7 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
       for(var j in groups) {
         if(j !== i) {
           var testGroup = groups[j];
-          if(this.Overlap(testGroup, group)) {
+          if(this.overlap(testGroup, group)) {
             if(i > j) {
               groups.splice(i, 1);
               groups.splice(j, 1);
@@ -154,7 +154,7 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
               groups.splice(j, 1);
               groups.splice(i, 1);
             }
-            groups.push(this.CombineThruGroup(testGroup, group));
+            groups.push(this.combineThruGroup(testGroup, group));
             numCombined++
             break;
           }
@@ -168,28 +168,28 @@ N.UI.PiRouteManager.prototype.BreakCrowdIntoGroups = function(thruwayCrowd) {
   return groups;
 }
 
-N.UI.PiRouteManager.prototype.Overlap = function(a, b) {
-  if(a.XMax <= b.XMin || b.XMax <= a.XMin) {
+N.UI.PiRouteManager.prototype.overlap = function(a, b) {
+  if(a.xMax <= b.xMin || b.xMax <= a.xMin) {
     return false;
   }
   return true;
 }
 
-N.UI.PiRouteManager.prototype.CombineThruGroup = function(groupA, groupB) {
+N.UI.PiRouteManager.prototype.combineThruGroup = function(groupA, groupB) {
   var unionGroup = { Routes: [] };
-  unionGroup.Routes = unionGroup.Routes.concat(groupA.Routes);
+  unionGroup.routes = unionGroup.routes.concat(groupA.routes);
   if (groupB) {
-    unionGroup.Routes = unionGroup.Routes.concat(groupB.Routes);
+    unionGroup.routes = unionGroup.routes.concat(groupB.routes);
   }
 
-  unionGroup.XMin = unionGroup.Routes[0].XMin;
-  unionGroup.XMax = unionGroup.Routes[0].XMax;
-  for(var i=1; i<unionGroup.Routes.length; i++) {
-    if(unionGroup.Routes[i].XMin < unionGroup.XMin) {
-      unionGroup.XMin = unionGroup.Routes[i].XMin;
+  unionGroup.xMin = unionGroup.routes[0].xMin;
+  unionGroup.xMax = unionGroup.routes[0].xMax;
+  for(var i=1; i<unionGroup.routes.length; i++) {
+    if(unionGroup.routes[i].xMin < unionGroup.xMin) {
+      unionGroup.xMin = unionGroup.routes[i].xMin;
     }
-    if(unionGroup.Routes[i].XMax > unionGroup.XMax) {
-      unionGroup.XMax = unionGroup.Routes[i].XMax;
+    if(unionGroup.routes[i].xMax > unionGroup.xMax) {
+      unionGroup.xMax = unionGroup.routes[i].xMax;
     }
   }
 

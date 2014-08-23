@@ -35,52 +35,52 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
     },
     link : function($scope, $element, $attrs) {
 
-      $element.scope().OnEvent = function(event, obj) {
+      $element.scope().onEvent = function(event, obj) {
         $scope.$emit('pi-canvas:event-broadcast-request', event, obj);
       }
 
-      var GetSvgParent = function() {
+      var getSvgParent = function() {
         return $element.children('svg')[0].instance;
       }
 
-      var GetSize = function() {
+      var getSize = function() {
         var w = $element.width();
         var h = $element.height();
         if(!$attrs.fitToParent) {
           if($attrs.canvasWidth)  { w = $attrs.canvasWidth;  }
           if($attrs.canvasHeight) { h = $attrs.canvasHeight; }
         }
-        return { Width: w, Height: h };
+        return { width: w, height: h };
       }
 
-      var Configure = function() {
+      var configure = function() {
         $element.addClass('pi-canvas');
 
-        var size = GetSize();
+        var size = getSize();
 
         var padding = new N.UI.Padding((_.isUndefined($attrs.piPadding) ? 0 : parseInt($attrs.piPadding, 10)));
 
-        if(!_.isUndefined($attrs.piFitWidth) && $scope.scene.ScaleToFitWidth) {
-          $scope.scene.ScaleToFitWidth(size.Width, padding);
-          size.Height = $scope.scene.IdealContainerHeight;
-          $element.height(size.Height);
+        if(!_.isUndefined($attrs.piFitWidth) && $scope.scene.scaleToFitWidth) {
+          $scope.scene.scaleToFitWidth(size.width, padding);
+          size.height = $scope.scene.idealContainerHeight;
+          $element.height(size.height);
         }
         else {
-          $scope.scene.ScaleToFit(size.Width, size.Height, padding);
+          $scope.scene.scaleToFit(size.width, size.height, padding);
         }
 
-        var svg = SVG($element[0]).size(size.Width, size.Height);
+        var svg = SVG($element[0]).size(size.width, size.height);
 
-        var backgroundRect = svg.rect(size.Width, size.Height).attr({ class: 'pi-canvas' });
-        svg.MainGroup = svg.group().size(size.Width, size.Height);
+        var backgroundRect = svg.rect(size.width, size.height).attr({ class: 'pi-canvas' });
+        svg.mainGroup = svg.group().size(size.width, size.height);
 
         var origin = ($attrs.canvasOrigin ? $attrs.canvasOrigin : 'upper-left');
         switch(origin) {
-          case 'center': { svg.MainGroup.translate(0.5*size.Width, 0.5*size.Height); break; }
+          case 'center': { svg.mainGroup.translate(0.5*size.width, 0.5*size.height); break; }
           case 'upper-left': { break; }
         }
 
-        $scope.scene.Render(svg.MainGroup, size, padding);
+        $scope.scene.render(svg.mainGroup, size, padding);
 
         $timeout(function() {
           $element.trigger('onInitialRender', [$scope]);
@@ -88,7 +88,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
         }, 1);
       }
 
-      Configure();
+      configure();
     }
   }
 }]);
@@ -102,7 +102,7 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
  * @class directive.piCanvas
  */
 nSimAppControllers.controller('PiEventReceiver', ['$scope', function($scope) {
-  $scope.OnEvent = function(event, obj) {
+  $scope.onEvent = function(event, obj) {
     debugger;
     $scope.$broadcast('pi-canvas:event', event, obj);
   }

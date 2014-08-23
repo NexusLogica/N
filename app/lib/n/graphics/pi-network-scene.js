@@ -43,7 +43,7 @@ N.UI.NetworkScene = function() {
  * @param position
  */
 N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
-  this.network = (new N.UI.PiNetwork()).loadFrom(network.Display).setNetwork(network);
+  this.network = (new N.UI.PiNetwork()).loadFrom(network.display).setNetwork(network);
   this.renderMappings = renderMappings;
   this.network.layout(this.renderMappings);
   return this;

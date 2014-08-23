@@ -22,17 +22,17 @@ N.UI = N.UI || {};
 
 N.UI.Categories = {
   Excitatory : {
-    TraceColor: '#294052'
+    traceColor: '#294052'
   },
   Inhibitory : {
-    TraceColor: '#E21A09'
+    traceColor: '#E21A09'
   },
   Default : {
-    TraceColor: '#000000'
+    traceColor: '#000000'
   }
 }
 
-N.UI.SvgAddClass = function(svg, className) {
+N.UI.svgAddClass = function(svg, className) {
   if(className) {
     var classes = svg.attr('class').split(' ');
     var str = _.union(classes, (_.isArray(className) ? className : [className])).join(' ');
@@ -40,7 +40,7 @@ N.UI.SvgAddClass = function(svg, className) {
   }
 }
 
-N.UI.SvgRemoveClass = function(svg, className) {
+N.UI.svgRemoveClass = function(svg, className) {
   if(className) {
     var classes = svg.attr('class').split(' ');
     _.pull(classes, className);
@@ -49,25 +49,25 @@ N.UI.SvgRemoveClass = function(svg, className) {
   }
 }
 
-N.UI.Padding = function() {
+N.UI.padding = function() {
   var p0 = arguments[0];
   var p1 = arguments[1];
   if(arguments.length === 0) {
-    this.P = [ 0, 0, 0, 0];
+    this.p = [ 0, 0, 0, 0];
   } else if(arguments.length === 1) {
-    this.P = [ p0, p0, p0, p0];
+    this.p = [ p0, p0, p0, p0];
   } else if(arguments.length === 2) {
-    this.P = [ p0, p1, p0, p1];
+    this.p = [ p0, p1, p0, p1];
   } else if(arguments.length === 4) {
     var p2 = arguments[2];
     var p3 = arguments[3];
-    this.P = [ p0, p1, p2, p3];
+    this.p = [ p0, p1, p2, p3];
   }
 }
 
-N.UI.Padding.prototype.Top         = function() { return this.P[0]; }
-N.UI.Padding.prototype.Right       = function() { return this.P[1]; }
-N.UI.Padding.prototype.Bottom      = function() { return this.P[2]; }
-N.UI.Padding.prototype.Left        = function() { return this.P[3]; }
-N.UI.Padding.prototype.Vertical    = function() { return this.P[0]+this.P[2]; }
-N.UI.Padding.prototype.Horizontal  = function() { return this.P[1]+this.P[3]; }
+N.UI.Padding.prototype.top         = function() { return this.p[0]; }
+N.UI.Padding.prototype.right       = function() { return this.p[1]; }
+N.UI.Padding.prototype.bottom      = function() { return this.p[2]; }
+N.UI.Padding.prototype.left        = function() { return this.p[3]; }
+N.UI.Padding.prototype.vertical    = function() { return this.p[0]+this.p[2]; }
+N.UI.Padding.prototype.horizontal  = function() { return this.p[1]+this.p[3]; }

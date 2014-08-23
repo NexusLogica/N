@@ -20,94 +20,94 @@ N.UI = N.UI || {};
   //*****************
 
 N.UI.PiNeuron = function() {
-  this.X = 0;
-  this.Y = 0;
+  this.x = 0;
+  this.y = 0;
   this._set = null;
-  this.NeuronClassName = '';
-  this.Neuron = null;
-  this.Compartments = {};
-  this.CompartmentsById = {};
+  this.neuronClassName = '';
+  this.neuron = null;
+  this.compartments = {};
+  this.compartmentsById = {};
 }
 
-N.UI.PiNeuron.prototype.Render = function(neuron, svgParent) {
-  this.Neuron = neuron;
-  this.Group = svgParent.group();
+N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
+  this.neuron = neuron;
+  this.group = svgParent.group();
   var classNameFull = 'pi-neuron';
-  if(this.hasOwnProperty('ClassName')) { classNameFull += ' '+this.ClassName; }
-  this.Group.attr({ class: classNameFull });
+  if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
+  this.group.attr({ class: classNameFull });
 
   var _this = this;
-  var compartmentMap = (neuron.Display ? neuron.Display.CompartmentMap : null);
-  for(var i in this.Compartments) {
-    var compartment = this.Compartments[i];
-    compartment.Neuron = this;
-    compartment.path = this.Group.path(compartment.pathString).attr({ fill: compartment.color });
+  var compartmentMap = (neuron.display ? neuron.display.compartmentMap : null);
+  for(var i in this.compartments) {
+    var compartment = this.compartments[i];
+    compartment.neuron = this;
+    compartment.path = this.group.path(compartment.pathString).attr({ fill: compartment.color });
 
     var compartmentClassName = 'compartment';
-    if(compartment.hasOwnProperty('ClassName')) { compartmentClassName += ' '+compartment.ClassName; }
-    compartment.path.attr( { class: compartmentClassName } );
+    if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
+    compartment.path.attr( { 'class': compartmentClassName } );
 
     if(compartmentMap) {
       var neuronCompartmentName = compartmentMap[compartment.name];
       if(neuronCompartmentName) {
-        var compartmentObj = neuron.GetCompartmentByName(neuronCompartmentName);
-        compartment.SetCompartmentObj(compartmentObj);
+        var compartmentObj = neuron.getCompartmentByName(neuronCompartmentName);
+        compartment.setCompartmentObj(compartmentObj);
         if(compartmentObj) {
-          this.CompartmentsById[compartmentObj.Name] = compartment;
-          compartment.CompartmentObj = compartmentObj;
-          this.AddEventHandlers(compartment);
+          this.compartmentsById[compartmentObj.name] = compartment;
+          compartment.compartmentObj = compartmentObj;
+          this.addEventHandlers(compartment);
         }
       }
     }
   }
 
   if(compartmentMap) {
-    this.DrawCallouts(compartmentMap);
+    this.drawCallouts(compartmentMap);
   }
 
-  this.Group.translate(this.X, this.Y);
+  this.group.translate(this.x, this.y);
 }
 
-N.UI.PiNeuron.prototype.DrawCallouts = function(compartmentMap) {
-  var r = this.Radius;
-  for(var i in this.Compartments) {
-    var compartment = this.Compartments[i];
-    var pos = compartment.Callout;
-    var target = compartment.Center;
+N.UI.PiNeuron.prototype.drawCallouts = function(compartmentMap) {
+  var r = this.radius;
+  for(var i in this.compartments) {
+    var compartment = this.compartments[i];
+    var pos = compartment.callout;
+    var target = compartment.center;
     if(pos && target) {
       var shortName = compartmentMap[compartment.name];
-      var coPos = new N.UI.Vector(r*pos.r*Math.cos(N.Rad(pos.angle)), r*pos.r*Math.sin(N.Rad(pos.angle)));
-      var tarPos = new N.UI.Vector(r*target.r*Math.cos(N.Rad(target.angle)), r*target.r*Math.sin(N.Rad(target.angle)));
+      var coPos = new N.UI.Vector(r*pos.r*Math.cos(N.rad(pos.angle)), r*pos.r*Math.sin(N.rad(pos.angle)));
+      var tarPos = new N.UI.Vector(r*target.r*Math.cos(N.rad(target.angle)), r*target.r*Math.sin(N.rad(target.angle)));
 
-      var text = this.Group.plain(shortName);
+      var text = this.group.plain(shortName);
       var bbox = text.bbox();
-      text.move(coPos.X+bbox.x, coPos.Y+bbox.y).attr({class: 'callout-label' }).attr({ 'dominant-baseline': 'central'}).attr({ 'text-anchor': 'middle' });
-      var short = coPos.Shorten(tarPos, 5);
+      text.move(coPos.x+bbox.x, coPos.y+bbox.y).attr({class: 'callout-label' }).attr({ 'dominant-baseline': 'central'}).attr({ 'text-anchor': 'middle' });
+      var short = coPos.shorten(tarPos, 5);
 
-      var line = this.Group.line(tarPos.X, tarPos.Y, short.X, short.Y).stroke({width: 1}).attr({class: 'callout-line' });
+      var line = this.group.line(tarPos.x, tarPos.y, short.x, short.y).stroke({width: 1}).attr({class: 'callout-line' });
     }
   }
 }
 
-N.UI.PiNeuron.prototype.AddEventHandlers = function(piCompartment) {
+N.UI.PiNeuron.prototype.addEventHandlers = function(piCompartment) {
   var node = piCompartment.path.node;
   jQuery.data(node, 'piCompartment', piCompartment);
 
   $(node).on('mouseenter mouseleave click', function(event) {
     var piCompartment = $(event.target).data('piCompartment');
-    $(this).closest('.pi-canvas').scope().OnEvent(event, piCompartment);
+    $(this).closest('.pi-canvas').scope().onEvent(event, piCompartment);
   });
 }
 
-N.UI.PiNeuron.prototype.Highlight = function(compartment) {
-  N.UI.SvgAddClass(this.Group, 'highlight');
+N.UI.PiNeuron.prototype.highlight = function(compartment) {
+  N.UI.svgAddClass(this.group, 'highlight');
 }
 
-N.UI.PiNeuron.prototype.RemoveHighlight = function(compartment) {
-  N.UI.SvgRemoveClass(this.Group, 'highlight');
+N.UI.PiNeuron.prototype.removeHighlight = function(compartment) {
+  N.UI.svgRemoveClass(this.group, 'highlight');
 }
 
-N.UI.PiNeuron.prototype.GetType = function() {
+N.UI.PiNeuron.prototype.getType = function() {
   return N.Type.PiNeuron;
 }
 
@@ -116,30 +116,30 @@ N.UI.PiNeuron.prototype.GetType = function() {
   //**********************
 
 N.UI.PiCompartment = function() {
-  this.CompartmentObj = null;
+  this.compartmentObj = null;
 }
 
-N.UI.PiCompartment.prototype.GetType = function() {
+N.UI.PiCompartment.prototype.getType = function() {
   return N.Type.PiCompartment;
 }
 
-N.UI.PiCompartment.prototype.SetCompartmentObj = function(compartmentObj) {
-  this.CompartmentObj = compartmentObj;
+N.UI.PiCompartment.prototype.setCompartmentObj = function(compartmentObj) {
+  this.compartmentObj = compartmentObj;
   return this;
 }
 
-N.UI.PiCompartment.prototype.ShowConnections = function() {
-  if(!this.CompartmentObj) { return; }
+N.UI.PiCompartment.prototype.showConnections = function() {
+  if(!this.compartmentObj) { return; }
 
   // Get the input connections paths
-  var input  = this.CompartmentObj.InputConnections;
-  var output = this.CompartmentObj.OutputConnections;
+  var input  = this.compartmentObj.inputConnections;
+  var output = this.compartmentObj.outputConnections;
 
-  var thisNetwork = this.Neuron.Network;
+  var thisNetwork = this.neuron.network;
   var createPiConnection = function(connection) {
     var net = thisNetwork;
     do {
-      if (connection.Network === net.Network) {
+      if (connection.network === net.network) {
         return new N.UI.PiConnection(net, connection);
       }
     } while((net = net.parentNetwork));
@@ -157,18 +157,18 @@ N.UI.PiCompartment.prototype.ShowConnections = function() {
   piInput = _.filter(piInput);
   piOutput = _.filter(piOutput);
 
-  this.RouteManager = new N.UI.PiRouteManager(findTop(thisNetwork));
-  this.RouteManager.AddConnections(piInput);
-  this.RouteManager.AddConnections(piOutput);
-  this.RouteManager.Render();
+  this.routeManager = new N.UI.PiRouteManager(findTop(thisNetwork));
+  this.routeManager.addConnections(piInput);
+  this.routeManager.addConnections(piOutput);
+  this.routeManager.render();
   return this;
 }
 
-N.UI.PiCompartment.prototype.HideConnections = function() {
+N.UI.PiCompartment.prototype.hideConnections = function() {
   return this;
 }
 
-N.UI.PiCompartment.prototype.Clone = function() {
+N.UI.PiCompartment.prototype.clone = function() {
   var c = new N.UI.PiCompartment();
   _.assign(c, this);
   return c;
@@ -182,7 +182,7 @@ N.UI.PiNeuronFactory = (function() {
   var defaultPadding = 0.02;
   var factories = {};
 
-  function CreatePiNeuron(templateName, radius) {
+  function createPiNeuron(templateName, radius) {
     var decaRadius = parseInt(radius, 10);
     if(decaRadius === 0) { decaRadius = 10; }
 
@@ -190,16 +190,16 @@ N.UI.PiNeuronFactory = (function() {
     if(!factory) {
       var template = getTemplate(templateName);
       if(!template) {
-        N.L('N.PiGraphicsFactory::createGraphic Unable to find template '+templateName);
+        N.log('N.PiGraphicsFactory::createGraphic Unable to find template '+templateName);
         throw 'N.PiGraphicsFactory::createGraphic Unable to find template '+templateName;
       }
 
-      factory = CreateFactory(template, decaRadius);
+      factory = createFactory(template, decaRadius);
 
       factories[templateName] = factories[templateName] || {};
       factories[templateName][decaRadius] = factory;
     }
-    return factory.CreateNewGraphic();
+    return factory.createNewGraphic();
   }
 
   function getTemplate(templateName) {
@@ -214,8 +214,8 @@ N.UI.PiNeuronFactory = (function() {
     return null;
   }
 
-  function CreateFactory(template, radius) {
-    var factory = GraphicFactory(template, radius);
+  function createFactory(template, radius) {
+    var factory = graphicFactory(template, radius);
     return factory;
   }
 
@@ -230,14 +230,14 @@ N.UI.PiNeuronFactory = (function() {
     return p;
   }
 
-  function PiCompartmentToPath(compartment, outerRadius) {
+  function piCompartmentToPath(compartment, outerRadius) {
     var p = '';
     if(compartment.segments.length < 1) {
       return p;
     }
 
     if(compartment.segments[0].outerRadius) {
-      return PiCircularCompartmentToPath(compartment.segments[0], outerRadius);
+      return piCircularCompartmentToPath(compartment.segments[0], outerRadius);
     }
   
     for(var side = 1; side <= (compartment.mirror ? 2 : 1); side++) {
@@ -252,7 +252,7 @@ N.UI.PiNeuronFactory = (function() {
   
       var padding = (compartment.segments[0].hasOwnProperty('padding') ? compartment.segments[0].padding : defaultPadding);
       var angleDelta = -facing*Math.asin(padding/rSeg);
-      var angleRadians = N.Rad(angle)+angleDelta;
+      var angleRadians = N.rad(angle)+angleDelta;
   
       var x = r*Math.cos(angleRadians);
       var y = r*Math.sin(angleRadians);
@@ -279,12 +279,12 @@ N.UI.PiNeuronFactory = (function() {
         }
         else {
           angle = angleNow-angleNext;
-          //N.L('CASE 3/4 = '+ angle);
+          //N.log('CASE 3/4 = '+ angle);
         }
   
         padding = (compartment.segments[iNext].hasOwnProperty('padding') ? compartment.segments[iNext].padding : defaultPadding);
         angleDelta = -facingNext*Math.asin(padding/rSeg);
-        angleRadians = N.Rad(angleNext)+angleDelta;
+        angleRadians = N.rad(angleNext)+angleDelta;
   
         x = r*Math.cos(angleRadians);
         y = r*Math.sin(angleRadians);
@@ -307,7 +307,7 @@ N.UI.PiNeuronFactory = (function() {
   
           angleDelta = -facingNext*Math.asin(padding/nextSeg.radius);
   
-          angleRadians = N.Rad(angleNext)+angleDelta;
+          angleRadians = N.rad(angleNext)+angleDelta;
           x = rNext*Math.cos(angleRadians);
           y = rNext*Math.sin(angleRadians);
           p += 'L'+x+' '+y;
@@ -317,22 +317,22 @@ N.UI.PiNeuronFactory = (function() {
     return p;
   }
 
-  var GraphicFactory = function(skeletonTemplate, graphicRadius) {
+  var graphicFactory = function(skeletonTemplate, graphicRadius) {
     var template = skeletonTemplate;
     var filledTemplate = null;
     var radius = graphicRadius;
 
-    function CreateNewGraphic() {
+    function createNewGraphic() {
       if(!filledTemplate) {
-        BuildFromTemplate();
+        buildFromTemplate();
       }
       var pin = new N.UI.PiNeuron();
 
       for(var i in filledTemplate) {
-        if(i === 'Compartments') {
+        if(i === 'compartments') {
           var compartments = filledTemplate[i];
           for(var j in compartments) {
-            pin.Compartments[j] = compartments[j].Clone();
+            pin.compartments[j] = compartments[j].clone();
           }
         } else {
           pin[i] = _.cloneDeep(filledTemplate[i]);
@@ -341,30 +341,30 @@ N.UI.PiNeuronFactory = (function() {
       return pin;
     }
 
-    function BuildFromTemplate() {
+    function buildFromTemplate() {
       filledTemplate = {};
       if(template.hasOwnProperty('ClassName')) {
-        filledTemplate.ClassName = template.ClassName;
+        filledTemplate.className = template.className;
       }
-      filledTemplate.Compartments = {};
-      for(var i in template.Compartments) {
-        var templateCompartment = template.Compartments[i];
-        var pathString = PiCompartmentToPath(templateCompartment, radius);
+      filledTemplate.compartments = {};
+      for(var i in template.compartments) {
+        var templateCompartment = template.compartments[i];
+        var pathString = piCompartmentToPath(templateCompartment, radius);
 
         var compartment = new N.UI.PiCompartment();
         _.assign(compartment, _.cloneDeep(templateCompartment));
 
         compartment.pathString = pathString;
-        filledTemplate.Compartments[compartment.name] = compartment;
+        filledTemplate.compartments[compartment.name] = compartment;
       }
     }
 
     return {
-      CreateNewGraphic: CreateNewGraphic
+      createNewGraphic: createNewGraphic
     }
   }
 
   return {
-    CreatePiNeuron:CreatePiNeuron
+    createPiNeuron:createPiNeuron
   }
 })();

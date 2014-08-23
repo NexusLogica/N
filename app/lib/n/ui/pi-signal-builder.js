@@ -43,21 +43,21 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
 
       $scope.signal = new N.AnalogSignal();
       $scope.signalScene = new N.UI.SignalTraceScene();
-      $scope.signalScene.SetSignal($scope.signal);
+      $scope.signalScene.setSignal($scope.signal);
 
     }],
     link: function($scope, $element, $attrs) {
       $scope.$watch('[ signalBuilder.start, signalBuilder.duration, signalBuilder.amplitude, signalBuilder.type, signalBuilder.offset ]', function(newVal) {
           if($scope.signalBuilder) {
             $scope.signalBuilder.buildSignal($scope.signal, $scope.totalTime);
-            $scope.signalScene.TraceRenderer.Update();
+            $scope.signalScene.traceRenderer.update();
             _.assign($scope.builderFormStatus, _.pick($scope.builderForm, ['$valid', '$pristine', '$invalid', '$dirty']));
           }
         }, 10);
 
       // TODO: Fix this so that the canvas supplies the scene with its svgParent.
       var svgParent = $element.find('g.pi-signal-trace').get(0).instance;
-      $scope.signalScene.Render(svgParent);
+      $scope.signalScene.render(svgParent);
     }
   };
 }]);

@@ -21,80 +21,80 @@ All Rights Reserved.
 var N = N || {};
 N.Rand = N.Rand || {};
 
-N.Rand.MaxInteger =  9007199254740992;
-N.Rand.MinInteger = -9007199254740992;
+N.Rand.maxInteger =  9007199254740992;
+N.Rand.minInteger = -9007199254740992;
 
     //**************************
     //* N.Rand.RandomGenerator *
     //**************************
 
 N.Rand.RandomGenerator = function(seed) {
-  this.SeedSet          = false;
+  this.seedSet          = false;
   if(arguments.length > 0) {
-    this.SetSeed(seed);
+    this.setSeed(seed);
   }
 }
 
-N.Rand.RandomGenerator.GetDefaultRandomGenerator = function() {
-  if(!N.Rand.GlobalGenerator) {
-    N.Rand.GlobalGenerator = new N.Rand.RandomGenerator((new Date()).getTime());
+N.Rand.RandomGenerator.getDefaultRandomGenerator = function() {
+  if(!N.Rand.globalGenerator) {
+    N.Rand.globalGenerator = new N.Rand.RandomGenerator((new Date()).getTime());
   }
-  return N.Rand.GlobalGenerator;
+  return N.Rand.globalGenerator;
 }
 
-N.Rand.RandomGenerator.prototype.Reinitialize = function() {
-  if(!this.SeedSet) {
-    this.Seed = N.Rand.RandomGenerator.GetDefaultRandomGenerator().GetRandomInteger();
-    this.SeedSet = true;
+N.Rand.RandomGenerator.prototype.reinitialize = function() {
+  if(!this.seedSet) {
+    this.seed = N.Rand.RandomGenerator.getDefaultRandomGenerator().getRandomInteger();
+    this.seedSet = true;
   }
-  this.Generator = new Random(this.Seed);
+  this.generator = new Random(this.seed);
 }
 
-N.Rand.RandomGenerator.prototype.GetSeed = function() {
-  if(!this.SeedSet) {
-    this.Reinitialize();
+N.Rand.RandomGenerator.prototype.getSeed = function() {
+  if(!this.seedSet) {
+    this.reinitialize();
   }
 
-  return this.Seed;
+  return this.seed;
 }
 
-N.Rand.RandomGenerator.prototype.SetSeed = function(seed) {
-  this.SeedSet      = true;
-  this.Seed         = seed;
-  this.RandomNumber = this.Seed;
-  this.Reinitialize();
+N.Rand.RandomGenerator.prototype.setSeed = function(seed) {
+  this.seedSet      = true;
+  this.seed         = seed;
+  this.randomNumber = this.seed;
+  this.reinitialize();
 }
 
-N.Rand.RandomGenerator.prototype.GetRandomInteger = function() {
-  if(!this.SeedSet) {
-    this.Reinitialize();
+N.Rand.RandomGenerator.prototype.getRandomInteger = function() {
+  if(!this.seedSet) {
+    this.reinitialize();
   }
-  return parseInt(this.Generator.uniform(N.Rand.MinInteger, N.Rand.MaxInteger));
+  return parseInt(this.generator.uniform(N.Rand.minInteger, N.Rand.maxInteger), 10);
 }
 
-N.Rand.RandomGenerator.prototype.GetRandomIntegerInRange = function(minValue, maxValue) {
-  var randomValue = this.GetRandomInteger();
+N.Rand.RandomGenerator.prototype.getRandomIntegerInRange = function(minValue, maxValue) {
+  var randomValue = this.getRandomInteger();
   return (Math.abs(randomValue) % (maxValue-minValue+1)) + minValue;
 }
 
 /**
  * Get a floating point number between a minimum and maximum value. Note that min can be greater than max - the function reverses them.
- * @method GetRandomDouble
+ * @method getRandomDouble
  * @param {Real} minValue
  * @param {Real} maxValue
  * @returns {Real} A double precision floating point number at or between minValue and maxValue.
  */
-N.Rand.RandomGenerator.prototype.GetRandomDouble = function(minValue, maxValue) {
-  if(!this.SeedSet) {
-    this.Reinitialize();
+N.Rand.RandomGenerator.prototype.getRandomDouble = function(minValue, maxValue) {
+  if(!this.seedSet) {
+    this.reinitialize();
   }
-  return this.Generator.uniform(minValue, maxValue);
+  return this.generator.uniform(minValue, maxValue);
 }
 
-N.Rand.RandomGenerator.prototype.GetRandSignalArray = function(data) {  //{Range: [0.0, 0.5], TimeEnd: 0, Num: 5 }
+N.Rand.RandomGenerator.prototype.getRandSignalArray = function(data) {  //{Range: [0.0, 0.5], TimeEnd: 0, Num: 5 }
   var a = [];
-  var val = this.GetRandomDouble(data.Range[0], data.Range[1]);
-  for(var i = data.TimeEnd-(data.Num-1); i <= data.TimeEnd; i++) {
+  var val = this.getRandomDouble(data.range[0], data.range[1]);
+  for(var i = data.timeEnd-(data.num-1); i <= data.timeEnd; i++) {
     a.push({ t: i, v: val });
   }
   return a;

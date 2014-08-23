@@ -20,63 +20,63 @@ N.UI = N.UI || {};
   //********************
 
 N.UI.SignalGraph = function() {
-  this.NeedsRecalc = true;
-  this.TimeAtOrigin = 0.0;
-  this.YAtOrigin = 0.0;
-  this.X = 0;
-  this.Y = 0;
-  this.Width = 100;
-  this.Height = 100;
+  this.needsRecalc = true;
+  this.timeAtOrigin = 0.0;
+  this.yAtOrigin = 0.0;
+  this.x = 0;
+  this.y = 0;
+  this.width = 100;
+  this.height = 100;
 
-  this.Traces = [];
-  this.TracesById = {};
+  this.traces = [];
+  this.tracesById = {};
 }
 
-N.UI.SignalGraph.prototype.AddTraceFromSource = function(id, source, propName, additionalClasses) {
-  this.TracesById[id] = { id: id, Source: source, PropName: propName, AdditionalClasses: additionalClasses };
-  this.Traces.push(this.TracesById[id]);
+N.UI.SignalGraph.prototype.addTraceFromSource = function(id, source, propName, additionalClasses) {
+  this.tracesById[id] = { id: id, source: source, propName: propName, additionalClasses: additionalClasses };
+  this.traces.push(this.tracesById[id]);
 }
 
-N.UI.SignalGraph.prototype.AddTrace = function(signal) {
-  this.Traces.push({ Signal: signal});
+N.UI.SignalGraph.prototype.addTrace = function(signal) {
+  this.traces.push({ signal: signal});
 }
 
-N.UI.SignalGraph.prototype.Render = function(svgParent, size, padding) {
-  this.SvgParent = svgParent;
-  this.Padding = padding;
-  this.Width = size.Width;
-  this.Height = size.Height;
+N.UI.SignalGraph.prototype.render = function(svgParent, size, padding) {
+  this.svgParent = svgParent;
+  this.padding = padding;
+  this.width = size.width;
+  this.height = size.height;
 
-  this.Group = this.SvgParent.group().size(this.Width, this.Height).attr({ 'class': 'pi-signal-graph' });
+  this.group = this.svgParent.group().size(this.width, this.height).attr({ 'class': 'pi-signal-graph' });
 
-  this.Group.rect(this.Width-this.Padding.Horizontal(), this.Height-this.Padding.Vertical()).move(this.Padding.Left(), this.Padding.Top()).attr({ 'class': 'graph-background'});
+  this.group.rect(this.width-this.padding.horizontal(), this.height-this.padding.vertical()).move(this.padding.left(), this.padding.top()).attr({ 'class': 'graph-background'});
 
-  if(this.Traces.length === 0) {
-    this.RenderEmptyGraph();
+  if(this.traces.length === 0) {
+    this.renderEmptyGraph();
     return;
   }
 
-  var h = Math.floor((this.Height-this.Padding.Vertical())/this.Traces.length);
-  var w = this.Width-this.Padding.Horizontal();
+  var h = Math.floor((this.height-this.padding.vertical())/this.traces.length);
+  var w = this.width-this.padding.horizontal();
 
   // Add traces
   var yOffset = 0;
-  for(var i in this.Traces) {
-    var trace = this.Traces[i];
-    trace.SignalGraphic = (new N.UI.SignalTrace()).
-        AddClasses([ (i % 2 ? 'even' : 'odd') ]).
-        SetSignal({ Source: trace.Source, PropName: trace.PropName }).
-        Render(this.Group, { X: 0, Y: yOffset, Width: w, Height: h }, new N.UI.Padding(0, 0));
-    if(trace.AdditionalClasses) {
-      trace.SignalGraphic.AddClasses(trace.AdditionalClasses);
+  for(var i in this.traces) {
+    var trace = this.traces[i];
+    trace.signalGraphic = (new N.UI.SignalTrace()).
+        addClasses([ (i % 2 ? 'even' : 'odd') ]).
+        setSignal({ source: trace.source, propName: trace.propName }).
+        render(this.group, { x: 0, y: yOffset, width: w, height: h }, new N.UI.padding(0, 0));
+    if(trace.additionalClasses) {
+      trace.signalGraphic.addClasses(trace.additionalClasses);
     }
     yOffset += h;
   }
 }
 
 N.UI.SignalGraph.prototype.updateAll = function() {
-  for(var i in this.Traces) {
-    var trace = this.Traces[i];
-    trace.SignalGraphic.Update();
+  for(var i in this.traces) {
+    var trace = this.traces[i];
+    trace.signalGraphic.update();
   }
 }

@@ -65,7 +65,7 @@ console.log("RUN TEST");
   network.clear();
 
   var duration = test.duration;
-  var inc = N.TimeStep;
+  var inc = N.timeStep;
   var t = 0.0;
   var maxSteps = 100000;
   var breakAfterStep = false;

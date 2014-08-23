@@ -34,231 +34,231 @@ N.UI = N.UI || {};
  * @param {N.UI.PiNetwork} network
  * @constructor
  */
-N.UI.RouteInfo = function(network) {
-  this.Network = network;
-  this.Thruways = [];
-  this.LaneRows = [];
-  this.Debug = false;
+N.UI.routeInfo = function(network) {
+  this.network = network;
+  this.thruways = [];
+  this.laneRows = [];
+  this.debug    = false;
 }
 
 /**
  * Build the thruway and lane information from the network and neuron layouts. This must be called prior to doing any actual routing of connectors.
- * @method BuildPassageInformation
- * @return {N.UI.RouteInfo} Returns a reference to self.
+ * @method buildPassageInformation
+ * @return {N.UI.routeInfo} Returns a reference to self.
  */
-N.UI.RouteInfo.prototype.BuildPassageInformation = function() {
-  if(this.Network.Networks.length > 0) {
-    this.CopyChildNetworks();
+N.UI.routeInfo.prototype.buildPassageInformation = function() {
+  if(this.network.networks.length > 0) {
+    this.copyChildNetworks();
   }
   else {
-    var rows = this.Network.Rows;
+    var rows = this.network.rows;
 
     // Calculate the thruway information.
     // Note that there is one more thruway than neuron rows.
     // See note above on YNeg and YPos.
     for(var i=0; i<=rows.length; i++) {
-      var yNeg = (i === 0 ? this.Network.Rect.Top : this.MaximumNeuronRowY(i-1));
-      var yPos = (i === rows.length ? this.Network.Rect.Bottom : this.MinimumNeuronRowY(i));
+      var yNeg = (i === 0 ? this.network.rect.top : this.maximumNeuronRowY(i-1));
+      var yPos = (i === rows.length ? this.network.rect.bottom : this.minimumNeuronRowY(i));
 
-      this.Thruways.push({ YNeg: yNeg, YPos: yPos, Mid: 0.5*(yNeg+yPos) });
+      this.thruways.push({ yNeg: yNeg, yPos: yPos, mid: 0.5*(yNeg+yPos) });
     }
 
-    var networkLeft = this.Network.Rect.Left;
-    var networkRight = this.Network.Rect.Right;
+    var networkLeft = this.network.rect.left;
+    var networkRight = this.network.rect.right;
 
     // Calculate the lane information
     for(i=0; i<rows.length; i++) {
 
       var lanes = [];
-      var row = this.Network.Rows[i];
+      var row = this.network.rows[i];
       var left = networkLeft;
-      var thruNeg = this.Thruways[i];
-      var thruPos = this.Thruways[i+1];
-      lanes.ThruNeg = thruNeg;
-      lanes.ThruPos = thruPos;
+      var thruNeg = this.thruways[i];
+      var thruPos = this.thruways[i+1];
+      lanes.thruNeg = thruNeg;
+      lanes.thruPos = thruPos;
 
-      for(var j=0; j<row.Cols.length; j++) {
-        var name = row.Cols[j].Name;
+      for(var j=0; j<row.cols.length; j++) {
+        var name = row.cols[j].name;
         if(name && name.length) {
-          var n = this.Network.NeuronsByName[name];
-          var right = n.X-n.Radius;
-          lanes.push({ Left: left, Right: right, Mid: 0.5*(left+right), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
-          left = n.X+n.Radius;
+          var n = this.network.neuronsByName[name];
+          var right = n.x-n.radius;
+          lanes.push({ left: left, right: right, mid: 0.5*(left+right), thruNeg: thruNeg, thruPos: thruPos, yMid: 0.5*(thruPos.yNeg+thruNeg.yPos) });
+          left = n.x+n.radius;
         }
       }
-      lanes.push({ Left: left, Right: networkRight, Mid: 0.5*(left+networkRight), ThruNeg: thruNeg, ThruPos: thruPos, YMid: 0.5*(thruPos.YNeg+thruNeg.YPos) });
+      lanes.push({ left: left, right: networkRight, mid: 0.5*(left+networkRight), thruNeg: thruNeg, thruPos: thruPos, yMid: 0.5*(thruPos.yNeg+thruNeg.yPos) });
 
-      this.LaneRows.push(lanes);
+      this.laneRows.push(lanes);
     }
   }
 
-  if(this.Debug) {
-    console.log('**** Route Info for '+(!_.isEmpty(this.Network.Network.Name) ? this.Network.Network.Name : 'Root Network'));
-    console.log('**** Thruways:\n'+JSON.stringify(this.Thruways, undefined, 2));
-    console.log('**** LaneRows:\n'+JSON.stringify(this.LaneRows, undefined, 2));
+  if(this.debug) {
+    console.log('**** Route Info for '+(!_.isEmpty(this.network.network.name) ? this.network.network.name : 'Root Network'));
+    console.log('**** Thruways:\n'+JSON.stringify(this.thruways, undefined, 2));
+    console.log('**** LaneRows:\n'+JSON.stringify(this.laneRows, undefined, 2));
   }
   return this;
 }
 
-N.UI.RouteInfo.prototype.CopyChildNetworks = function() {
+N.UI.routeInfo.prototype.copyChildNetworks = function() {
   var childNetwork, yOffset, routeInfo;
-  for(var i in this.Network.Networks) {
-    childNetwork = this.Network.Networks[i];
-    yOffset = childNetwork.Y;
-    routeInfo = childNetwork.RouteInfo;
+  for(var i in this.network.networks) {
+    childNetwork = this.network.networks[i];
+    yOffset = childNetwork.y;
+    routeInfo = childNetwork.routeInfo;
 
     // Copy, offset and insert the thruways.
-    for(var j in routeInfo.Thruways) {
-      var thruway = routeInfo.Thruways[j];
+    for(var j in routeInfo.thruways) {
+      var thruway = routeInfo.thruways[j];
 
       // If we are starting a new  there is a thruway above then combine them.
-      if(j === '0' && this.Thruways.length > 0) {
-        var thruPrev = this.Thruways[this.Thruways.length-1];
-        thruPrev.YPos = thruway.YPos+yOffset;
-        thruPrev.Mid = 0.5*(thruPrev.YPos+thruPrev.YNeg);
+      if(j === '0' && this.thruways.length > 0) {
+        var thruPrev = this.thruways[this.thruways.length-1];
+        thruPrev.yPos = thruway.yPos+yOffset;
+        thruPrev.mid = 0.5*(thruPrev.yPos+thruPrev.yNeg);
       } else {
-        var thruOffset = { YNeg: thruway.YNeg+yOffset, Mid: thruway.Mid+yOffset, YPos: thruway.YPos+yOffset };
-        this.Thruways.push(thruOffset);
+        var thruOffset = { yNeg: thruway.yNeg+yOffset, mid: thruway.mid+yOffset, yPos: thruway.yPos+yOffset };
+        this.thruways.push(thruOffset);
       }
     }
   }
 
-  //console.log("**** "+JSON.stringify(this.Thruways, undefined, 2));
+  //console.log("**** "+JSON.stringify(this.thruways, undefined, 2));
 
   // Do the above, but now for lane-rows and use the thruway info for offsets.
   var m = 0
-  for(i in this.Network.Networks) {
-    childNetwork = this.Network.Networks[i];
-    yOffset = childNetwork.Y;
-    routeInfo = childNetwork.RouteInfo;
+  for(i in this.network.networks) {
+    childNetwork = this.network.networks[i];
+    yOffset = childNetwork.y;
+    routeInfo = childNetwork.routeInfo;
 
-    for(var k in routeInfo.LaneRows) {
-      var thruNeg = this.Thruways[m];
-      var thruPos = this.Thruways[m+1];
+    for(var k in routeInfo.laneRows) {
+      var thruNeg = this.thruways[m];
+      var thruPos = this.thruways[m+1];
 
-      var laneRow = routeInfo.LaneRows[k];
+      var laneRow = routeInfo.laneRows[k];
       var laneRowCopy = _.cloneDeep(laneRow);
-      laneRowCopy.ThruNeg = _.cloneDeep(thruNeg);
-      laneRowCopy.ThruPos = _.cloneDeep(thruPos);
+      laneRowCopy.thruNeg = _.cloneDeep(thruNeg);
+      laneRowCopy.thruPos = _.cloneDeep(thruPos);
       for(var l in laneRowCopy) {
         var lane = laneRowCopy[l];
-        lane.YMid += yOffset;
-        lane.ThruNeg = _.cloneDeep(thruNeg);
-        lane.ThruPos = _.cloneDeep(thruPos);
+        lane.yMid += yOffset;
+        lane.thruNeg = _.cloneDeep(thruNeg);
+        lane.thruPos = _.cloneDeep(thruPos);
       }
 
-      this.LaneRows.push(laneRowCopy);
+      this.laneRows.push(laneRowCopy);
       m++;
     }
   }
-  //console.log("**** "+JSON.stringify(this.LaneRows, undefined, 2));
+  //console.log("**** "+JSON.stringify(this.laneRows, undefined, 2));
 }
 
-N.UI.RouteInfo.prototype.GetNeuron = function(network, neuronName) {
+N.UI.routeInfo.prototype.getNeuron = function(network, neuronName) {
   var parts = neuronName.split('>');
-  var  n = N.FromPath(network, parts[0]);
+  var  n = N.fromPath(network, parts[0]);
   return n;
 }
 
-N.UI.RouteInfo.prototype.GetNeuronOutputPosition = function(network, neuronName) {
-  var n = this.GetNeuron(network, neuronName);
-  var x = n.X+ n.Network.X;
-  var y = n.Y+ n.Network.Y+n.Radius;
-  var lane = this.LaneRows[n.Row];
+N.UI.routeInfo.prototype.getNeuronOutputPosition = function(network, neuronName) {
+  var n = this.getNeuron(network, neuronName);
+  var x = n.x+ n.network.x;
+  var y = n.y+ n.network.y+n.radius;
+  var lane = this.laneRows[n.row];
 
-  return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.ThruPos.Mid+n.Network.Y) ];
+  return [ new N.UI.Vector(x, y), new N.UI.Vector(x, lane.thruPos.mid+n.network.y) ];
 }
 
-N.UI.RouteInfo.prototype.GetLaneCenter = function(rowIndex, laneIndex) {
-  var lanes = this.LaneRows[rowIndex];
+N.UI.routeInfo.prototype.getLaneCenter = function(rowIndex, laneIndex) {
+  var lanes = this.laneRows[rowIndex];
   var lane = lanes[laneIndex];
 
-  return new N.UI.Vector(lane.Mid, lane.YMid);
+  return new N.UI.Vector(lane.mid, lane.yMid);
 }
 
-N.UI.RouteInfo.prototype.GetPoint = function(rc) {
+N.UI.routeInfo.prototype.getPoint = function(rc) {
   var pos = [];
   var name, x, y, rx, ry, drop, n;
-  if(rc.hasOwnProperty('Src')) {
-    name = rc.Src.split('>')[0];
-    n = this.Network.NeuronsByName[name];
-    x = n.X;
-    y = n.Y+n.Radius;
-    drop = this.Thruways[n.Row+1].Mid;
-    pos.push({ X: x, Y: y });
-    this.ProcessOffset(pos, rc);
+  if(rc.hasOwnProperty('src')) {
+    name = rc.src.split('>')[0];
+    n = this.network.neuronsByName[name];
+    x = n.x;
+    y = n.y+n.radius;
+    drop = this.thruways[n.row+1].mid;
+    pos.push({ x: x, y: y });
+    this.processOffset(pos, rc);
   }
-  else if(rc.hasOwnProperty('SrcOffset')) {
-    name = rc.SrcOffset.split('>')[0];
-    n = this.Network.NeuronsByName[name];
-    x = n.X;
-    y = n.Y+n.Radius;
-    drop = this.Thruways[n.Row+1].Mid;
-    pos.push({ X: x, Y: drop });
-    this.ProcessOffset(pos, rc);
+  else if(rc.hasOwnProperty('srcOffset')) {
+    name = rc.srcOffset.split('>')[0];
+    n = this.network.neuronsByName[name];
+    x = n.x;
+    y = n.y+n.radius;
+    drop = this.thruways[n.row+1].mid;
+    pos.push({ x: x, y: drop });
+    this.processOffset(pos, rc);
   }
-  else if(rc.hasOwnProperty('Coord')) {
-    var indices = rc.Coord.split(' ');
-    ry = this.Thruways[indices[0]].Mid;
-    rx = this.LaneRows[indices[1]][indices[2]].Mid;
-    pos.push({ X: rx, Y: ry });
-    this.ProcessOffset(pos, rc);
+  else if(rc.hasOwnProperty('coord')) {
+    var indices = rc.coord.split(' ');
+    ry = this.thruways[indices[0]].mid;
+    rx = this.laneRows[indices[1]][indices[2]].mid;
+    pos.push({ x: rx, y: ry });
+    this.processOffset(pos, rc);
   }
 
-  if(rc.hasOwnProperty('Sink')) {
-    pos[0].Join = true;
-    name = rc.Sink.split('>')[0];
-    n = this.Network.NeuronsByName[name];
-    x = n.X;
-    y = n.Y;
-    var r = n.Radius;
-    var angle = N.Rad(rc.Angle);
+  if(rc.hasOwnProperty('sink')) {
+    pos[0].join = true;
+    name = rc.sink.split('>')[0];
+    n = this.network.neuronsByName[name];
+    x = n.x;
+    y = n.y;
+    var r = n.radius;
+    var angle = N.rad(rc.angle);
     rx = r*Math.cos(angle);
     ry = r*Math.sin(angle);
-    pos.push({ BaseX: x+rx, BaseY: y+ry, DX: rx, DY: ry  });
+    pos.push({ baseX: x+rx, baseY: y+ry, dX: rx, dY: ry  });
   }
   return pos;
 }
 
 /**
  * If the segment is offset (not centered in a thruway or lane then use this routine will offset the segment.
- * @method ProcessOffset
+ * @method processOffset
  * @param {Array} pos An array of segment positions.
  * @param {Object} rc An object containing row, column, and offset components that define the desired segment end.
  */
-N.UI.RouteInfo.prototype.ProcessOffset = function(pos, rc) {
-  if(pos.length && rc.hasOwnProperty('Offset')) {
+N.UI.routeInfo.prototype.processOffset = function(pos, rc) {
+  if(pos.length && rc.hasOwnProperty('offset')) {
     var offsetSize = 5.0;
-    var offsets = rc.Offset.split(' ');
+    var offsets = rc.offset.split(' ');
     var dX = 0, dY = 0;
     for(var i=0; i<offsets.length; i += 2) {
       switch(offsets[i]) {
-        case 'DX': dX += offsets[i+1]*offsetSize; break;
-        case 'DY': dY += offsets[i+1]*offsetSize; break;
+        case 'dX': dX += offsets[i+1]*offsetSize; break;
+        case 'dY': dY += offsets[i+1]*offsetSize; break;
         default: break;
       }
     }
     for(var j=0; j<pos.length; j++) {
-      pos[j].X += dX;
-      pos[j].Y += dY;
+      pos[j].x += dX;
+      pos[j].y += dY;
     }
   }
 }
 
 /**
  * Iterates through all the pi elements in a row and returns the greatest y value. In other words, returns the height of the circle most in the way.
- * @method MaximumNeuronRowY
+ * @method maximumNeuronRowY
  * @param {Integer} index The neuron row index
  * @return {Real} Returns the y value of the row maximum
  * @protected
  */
-N.UI.RouteInfo.prototype.MaximumNeuronRowY = function(index) {
-  var row = this.Network.Rows[index];
-  for(var i=0; i<row.Cols.length; i++) {
-    var name = row.Cols[i].Name;
+N.UI.routeInfo.prototype.maximumNeuronRowY = function(index) {
+  var row = this.network.rows[index];
+  for(var i=0; i<row.cols.length; i++) {
+    var name = row.cols[i].name;
     if(name && name.length) {
-      var n = this.Network.NeuronsByName[name];
-      return n.Y+n.Radius;
+      var n = this.network.neuronsByName[name];
+      return n.y+n.radius;
     }
   }
   return null;
@@ -266,18 +266,18 @@ N.UI.RouteInfo.prototype.MaximumNeuronRowY = function(index) {
 
 /**
  * Iterates through all the pi elements in a row and returns the lowest y value. In other words, returns the height of the circle most in the way.
- * @method MinimumNeuronRowY
+ * @method minimumNeuronRowY
  * @param {Integer} index The neuron row index
  * @return {Real} Returns the y value of the row minimum
  * @protected
  */
-N.UI.RouteInfo.prototype.MinimumNeuronRowY = function(index) {
-  var row = this.Network.Rows[index];
-  for(var i=0; i<row.Cols.length; i++) {
-    var name = row.Cols[i].Name;
+N.UI.routeInfo.prototype.minimumNeuronRowY = function(index) {
+  var row = this.network.rows[index];
+  for(var i=0; i<row.cols.length; i++) {
+    var name = row.cols[i].name;
     if(name && name.length) {
-      var n = this.Network.NeuronsByName[name];
-      return n.Y-n.Radius;
+      var n = this.network.neuronsByName[name];
+      return n.y-n.radius;
     }
   }
   return null;

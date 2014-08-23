@@ -23,10 +23,10 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('NetworkColumnTestController', ['$scope',
   function NetworkColumnTestController($scope) {
-    $scope.Test = new N.ColumnNetworkTest();
-    $scope.Test.CreateScenes();
-    $scope.Scenes = $scope.Test.Scenes;
-    $scope.TestInfo = { Name: 'Column Network Test' };
+    $scope.test = new N.ColumnNetworkTest();
+    $scope.test.createScenes();
+    $scope.scenes = $scope.test.scenes;
+    $scope.testInfo = { name: 'Column Network Test' };
   }
 ]);
 
@@ -43,127 +43,127 @@ N.ColumnNetworkTest = function() {
   this.Scenes  = [];
 }
 
-N.ColumnNetworkTest.prototype.CreateScenes = function() {
+N.ColumnNetworkTest.prototype.createScenes = function() {
   var renderMappings = {
-    'ColumnSpacing': 0.3,
-    'RowSpacing': 0.3,
-    'SS' : { Template: 'N.UI.StandardNeuronTemplates.Stellate',              Radius: 0.3 },
-    'IN' : { Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', Radius: 0.3 },
-    'IP' : { Template: 'N.UI.StandardNeuronTemplates.InputSource',           Radius: 0.2 },
-    'OP' : { Template: 'N.UI.StandardNeuronTemplates.OutputSink',            Radius: 0.2 },
-    'RN' : { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.3 },
-    'Default' :  { Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', Radius: 0.2 }
+    'columnSpacing': 0.3,
+    'rowSpacing': 0.3,
+    'SS' : { template: 'N.UI.StandardNeuronTemplates.Stellate',              radius: 0.3 },
+    'IN' : { template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron', radius: 0.3 },
+    'IP' : { template: 'N.UI.StandardNeuronTemplates.InputSource',           radius: 0.2 },
+    'OP' : { template: 'N.UI.StandardNeuronTemplates.OutputSink',            radius: 0.2 },
+    'RN' : { template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', radius: 0.3 },
+    'Default' :  { template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron', radius: 0.2 }
   };
 
-  for(var i=1; i<N.ColumnNetworkTest.TestConfigurations.length-1; i++) {
-    var config = N.ColumnNetworkTest.TestConfigurations[i];
-    var network = (new N.Network()).AddTemplates(
+  for(var i=1; i<N.ColumnNetworkTest.testConfigurations.length-1; i++) {
+    var config = N.ColumnNetworkTest.testConfigurations[i];
+    var network = (new N.Network()).addTemplates(
         { 'N.ColumnNetworkTest.SpinyStellate': N.ColumnNetworkTest.SpinyStellate,
           'N.ColumnNetworkTest.FastSpiking': N.ColumnNetworkTest.FastSpiking
-        }).LoadFrom(config.Network);
+        }).loadFrom(config.Network);
 
     var scene = new N.UI.NetworkScene();
-    scene.Layout(network, renderMappings);
-    this.Scenes.push(scene);
+    scene.layout(network, renderMappings);
+    this.scenes.push(scene);
   }
 }
 
 N.ColumnNetworkTest.SpinyStellate = {
-  ClassName: 'N.Neuron',
-  Name: 'SS',
-  Compartments: [{
-    ClassName: 'N.Comp.Output',
-    Name: 'OP'
+  classname: 'N.Neuron',
+  name: 'SS',
+  compartments: [{
+    classname: 'N.Comp.Output',
+    name: 'OP'
   },{
-    ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'IP'
+    classname: 'N.Comp.LinearSummingInput',
+    name: 'IP'
   },{
-    ClassName: 'N.Comp.AcetylcholineInput',
-    Name: 'AIP'
+    classname: 'N.Comp.AcetylcholineInput',
+    name: 'AIP'
   }],
-  Display: {
-    Template: 'N.UI.StandardNeuronTemplates.Stellate',
-    Radius: 0.3,
-    CompartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
+  display: {
+    template: 'N.UI.StandardNeuronTemplates.Stellate',
+    radius: 0.3,
+    compartmentMap : { 'Dendrites': 'IP', 'Acetylcholine Receptors': 'AIP', 'Body': 'OP'  }
   }
 }
 
 N.ColumnNetworkTest.FastSpiking = {
-  ClassName: 'N.Neuron',
-  Name: 'FS',
-  Compartments: [{
-    ClassName: 'N.Comp.Output',
-    Name: 'OP'
+  classname: 'N.Neuron',
+  name: 'FS',
+  compartments: [{
+    classname: 'N.Comp.Output',
+    name: 'OP'
   },{
-    ClassName: 'N.Comp.LinearSummingInput',
-    Name: 'IP'
+    classname: 'N.Comp.LinearSummingInput',
+    name: 'IP'
   }],
-  Display: {
-    Template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
-    Radius: 0.2,
-    CompartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
+  display: {
+    template: 'N.UI.StandardNeuronTemplates.InhibitoryInterneuron',
+    radius: 0.2,
+    compartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
   }
 }
 
-N.ColumnNetworkTest.TestConfigurations = [{
+N.ColumnNetworkTest.testConfigurations = [{
 
   //******************
   //* Simple Network *
   //******************
 
-  Network: {
-    ClassName: 'N.Network',
-    Name: 'SN',
-    Neurons: [{
-      Name: 'IP',
-      Compartments: [{
-        ClassName: 'N.Comp.OutputFromSignal',
-        Name: 'SO',
-        Signal: {
-          ClassName: 'N.DiscreteSignal',
-          DataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
+  network: {
+    classname: 'N.Network',
+    name: 'SN',
+    neurons: [{
+      name: 'IP',
+      compartments: [{
+        classname: 'N.Comp.OutputFromSignal',
+        name: 'SO',
+        signal: {
+          classname: 'N.DiscreteSignal',
+          dataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
         }
       }],
-      Display: {
-        Template: 'N.UI.StandardNeuronTemplates.InputSource',
-        Radius: 0.3,
-        CompartmentMap : { 'Body': 'SO' }
+      display: {
+        template: 'N.UI.StandardNeuronTemplates.InputSource',
+        radius: 0.3,
+        compartmentMap : { 'Body': 'SO' }
       }
     },{
-      ClassName: 'N.Neuron',
-      Name: 'RN',
-      Compartments: [{
-        ClassName: 'N.Comp.Output',
-        Name: 'OP'
+      classname: 'N.Neuron',
+      name: 'RN',
+      compartments: [{
+        classname: 'N.Comp.Output',
+        name: 'OP'
       },{
-        ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'IP'
+        classname: 'N.Comp.LinearSummingInput',
+        name: 'IP'
       }],
-      Display: {
-        Template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron',
-        Radius: 0.4,
-        CompartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
+      display: {
+        template: 'N.UI.StandardNeuronTemplates.ExcitatoryInterneuron',
+        radius: 0.4,
+        compartmentMap: { 'Dendrites': 'IP', 'Body': 'OP'  }
       }
     },{
-      ClassName: 'N.Neuron',
-      Name: 'OP',
-      Compartments: [{
-        ClassName: 'N.Comp.LinearSummingInput',
-        Name: 'IN'
+      classname: 'N.Neuron',
+      name: 'OP',
+      compartments: [{
+        classname: 'N.Comp.LinearSummingInput',
+        name: 'IN'
       }],
-      Display: {
-        Template: 'N.UI.StandardNeuronTemplates.OutputSink',
-        Radius: 0.3,
-        CompartmentMap : { 'Input': 'IN'  }
+      display: {
+        template: 'N.UI.StandardNeuronTemplates.OutputSink',
+        radius: 0.3,
+        compartmentMap: { 'Input': 'IN'  }
       }
     }],
-    Display: {
-      Rows: [
-        { RowId: 'main', NumPoints: 3, Spacing: 1.0, Y: 0.0,
-          Cols: [
-            { Name: 'IP' },
-            { Name: 'RN' },
-            { Name: 'OP' }
+    display: {
+      rows: [
+        { rowId: 'main', numPoints: 3, spacing: 1.0, Y: 0.0,
+          cols: [
+            { name: 'IP' },
+            { name: 'RN' },
+            { name: 'OP' }
           ]
         }
       ]
@@ -175,50 +175,50 @@ N.ColumnNetworkTest.TestConfigurations = [{
   //* Layer 4 Network *
   //*******************
 
-  Network: {
-    Connections: [
-      { Path: 'L3:SS[2]>OP->L3:IN[3]>IP' },
-      { Path: 'L3:SS[2]>OP->L3:SS[0]>IP' },
-      { Path: 'L3:SS[2]>OP->L4:SS[1]>IP' },
-      { Path: 'L3:SS[2]>OP->L4:SS[2]>IP' },
-      { Path: 'L3:SS[2]>OP->L4:SS[3]>IP' },
-      { Path: 'L3:SS[2]>OP->L3:IN[2]>IP' },
-      { Path: 'L3:SS[2]>OP->L4:IN[1]>IP' },
-      { Path: 'L3:SS[2]>OP->L3:IN[1]>IP' },
-      { Path: 'L3:SS[2]>OP->L4:IN[0]>IP' }
+  network: {
+    connections: [
+      { path: 'L3:SS[2]>OP->L3:IN[3]>IP' },
+      { path: 'L3:SS[2]>OP->L3:SS[0]>IP' },
+      { path: 'L3:SS[2]>OP->L4:SS[1]>IP' },
+      { path: 'L3:SS[2]>OP->L4:SS[2]>IP' },
+      { path: 'L3:SS[2]>OP->L4:SS[3]>IP' },
+      { path: 'L3:SS[2]>OP->L3:IN[2]>IP' },
+      { path: 'L3:SS[2]>OP->L4:IN[1]>IP' },
+      { path: 'L3:SS[2]>OP->L3:IN[1]>IP' },
+      { path: 'L3:SS[2]>OP->L4:IN[0]>IP' }
     ],
-    Networks: [{
-      Name: 'L3',
-      Neurons: [
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[0]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[1]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[2]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
+    networks: [{
+      name: 'L3',
+      neurons: [
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[0]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[1]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[2]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[3]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[4]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[0]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[1]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[2]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[3]'}
       ],
-      Connections: [
-      //  { Path: ':SS[0]>OP->:IN[0]>IP' }
+      connections: [
+      //  { path: ':SS[0]>OP->:IN[0]>IP' }
       ]
     }, {
-      Name: 'L4',
-      Neurons: [
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},
-        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},
-//        { Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[0]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[1]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[2]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'},
-        { Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[4]'}
+      name: 'L4',
+      neurons: [
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[0]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[1]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[2]'},
+        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[3]'},
+//        { template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[4]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[0]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[1]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[2]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[3]'},
+        { template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[4]'}
       ],
-      Connections: [
-        //{ Path: ':SS[0]>OP->:IN[0]>IP' }
+      connections: [
+        //{ path: ':SS[0]>OP->:IN[0]>IP' }
       ]
     }]
   }
@@ -228,24 +228,24 @@ N.ColumnNetworkTest.TestConfigurations = [{
   //* Layer 4 Network *
   //*******************
 
-  Network: {
-    Name: 'L4',
-    Neurons: [
-      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[0]'},
-      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[1]'},
-      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[2]'},
-      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[3]'},
-      {Template: 'N.ColumnNetworkTest.SpinyStellate', Name: 'SS[4]'},
-      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[0]'},
-      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[1]'},
-      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[2]'},
-      {Template: 'N.ColumnNetworkTest.FastSpiking', Name: 'IN[3]'}
+  network: {
+    name: 'L4',
+    neurons: [
+      {template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[0]'},
+      {template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[1]'},
+      {template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[2]'},
+      {template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[3]'},
+      {template: 'N.ColumnNetworkTest.SpinyStellate', name: 'SS[4]'},
+      {template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[0]'},
+      {template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[1]'},
+      {template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[2]'},
+      {template: 'N.ColumnNetworkTest.FastSpiking', name: 'IN[3]'}
     ],
-    Display: {
-      Rows: [{
-        Neurons: [ 'SS[0]', 'SS[1]', 'SS[2]', 'SS[3]', 'SS[4]' ]
+    display: {
+      rows: [{
+        neurons: [ 'SS[0]', 'SS[1]', 'SS[2]', 'SS[3]', 'SS[4]' ]
       },{
-        Neurons: [ 'IN[0]', 'IN[1]', 'IN[2]', 'IN[3]' ]
+        neurons: [ 'IN[0]', 'IN[1]', 'IN[2]', 'IN[3]' ]
       }]
     }
   }

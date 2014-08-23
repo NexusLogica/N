@@ -26,7 +26,7 @@ var N = N || {};
 N.WorkbenchTest = function(workbench) {
   this.workbench    = workbench;
   this.className    = 'N.WorkbenchTest';
-  this.id           = N.GenerateUUID();
+  this.id           = N.generateUUID();
   this.name         = '';
   this.description  = '';
   this.duration     = 0.10; // duration of the test in seconds
@@ -71,8 +71,8 @@ console.log("UPDATE NETWORK");
 
     signal = new N.AnalogSignal();
     inputSignal.builder.buildSignal(signal, this.duration);
-    compartment = N.FromPath(this.workbench.Network, inputSignal.compartmentPath);
-    compartment.SetSignal(inputSignal.outputName, signal);
+    compartment = N.fromPath(this.workbench.network, inputSignal.compartmentPath);
+    compartment.setSignal(inputSignal.outputName, signal);
 
     removePath = inputSignal.compartmentPath;
     _.remove(unsetSources, remove);
@@ -80,10 +80,10 @@ console.log("UPDATE NETWORK");
 
   var flatSignalData = [ {t: 0, v: 0}, {t: this.duration, v: 0} ];
   for(var j in unsetSources) {
-    compartment = N.FromPath(this.workbench.Network, unsetSources[j]);
+    compartment = N.fromPath(this.workbench.network, unsetSources[j]);
     signal = new N.AnalogSignal();
     signal.appendDataArray(flatSignalData);
-    compartment.SetSignal('Main', signal);
+    compartment.setSignal('Main', signal);
   }
 }
 
@@ -93,7 +93,7 @@ console.log("UPDATE NETWORK");
 
 N.WorkbenchTestInput = function() {
   this.workbenchTest = null;
-  this.id = N.GenerateUUID();
+  this.id = N.generateUUID();
   this.connection = ''; // The path
   this.builder = new N.SignalBuilder();
   this.compartmentPath = '';
