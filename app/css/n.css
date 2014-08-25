@@ -219,7 +219,7 @@ body {
   .administration .database-current table thead tr th {
     text-align: center; }
   .administration .database-current table thead .description {
-    width: 250px; }
+    width: 350px; }
   .administration .database-current table thead .host {
     width: 150px; }
   .administration .database-current table thead .name {

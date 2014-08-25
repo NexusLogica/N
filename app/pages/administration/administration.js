@@ -20,41 +20,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
     controller: ['$scope', '$timeout', 'localStorageService', function ($scope, $timeout, localStorageService) {
       $scope.userInfo = { firstName: 'Lawrence', lastName: 'Gunn' };
       $scope.database = { url: '' };
-      $scope.databaseList = [];
-
-      var readDatabaseList = function() {
-        var list = localStorageService.get('accessedDatabases');
-        if(list) {
-          $scope.databaseList = list;
-        } else {
-          $scope.databaseList = [];
-        }
-      }
-      readDatabaseList();
-
-      var writeDatabaseList = function() {
-        var currentListData = [];
-        var list = localStorageService.get('accessedDatabases');
-        if(list) {
-          currentListData = list;
-        }
-        $scope.databaseList = _.uniq(_.union($scope.databaseList, currentListData), function(db) {
-          return db.url+db.name;
-        });
-        localStorageService.set('accessedDatabases', $scope.databaseList);
-      }
-      readDatabaseList();
-
-      $scope.addDatabase = function(url, name, description) {
-        $scope.databaseList.push({ url: url, name: name, description: description, accessible: true });
-        writeDatabaseList();
-      }
-
-      $scope.removeDatabase = function(url, name) {
-        readDatabaseList();
-        _.remove($scope.databaseList, function(item) { if(item.url === url && item.name === name) { return true; } return false; });
-        localStorageService.set('accessedDatabases', $scope.databaseList);
-      }
+      $scope.databaseList = N.NWS.services.databases;
 
       /***
        * Watch the database url field and auto-check the url for validity.
@@ -63,8 +29,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
         if(!_.isEmpty(value)) {
           $timeout(function() {
             if(value === $scope.database.url) {
-              var db = new N.NWS.Database();
-              db.canConnectToDB($scope.database.url).then(
+              N.NWS.WebServices.canConnectToDB(_.string.trim($scope.database.url)).then(
                 function(status) { // success
                   $scope.$apply(function() {
                     $scope.formMessage = 'Database is accessible.';
@@ -73,7 +38,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
                 },
                 function(status) { // failure
                   $scope.$apply(function() {
-                    $scope.formMessage = 'Database can not be accessed: '+status.errMsg;
+                    $scope.formMessage = 'Database can not be accessed: '+status.errMsg.textStatus;
                     $scope.createDbForm.databaseurl.$setValidity('administrationDb', false);
                   });
                 }
@@ -101,12 +66,11 @@ angular.module('nSimApp.directives').directive('administration', [function() {
           return;
         }
         $scope.formMessage = '';
-        var db = new N.NWS.Database();
-        db.createDatabase($scope.database.url, $scope.database.name, $scope.database.description, $scope.userInfo).then(
-          function(status) { // success
+        N.NWS.services.createDatabase(_.string.trim($scope.database.url), _.string.trim($scope.database.name), $scope.database.description, $scope.userInfo).then(
+          function(database) { // success
             $scope.$apply(function() {
-              $scope.addDatabase($scope.database.url, $scope.database.name, $scope.database.description);
               $element.find('.create-database').modal('hide');
+              N.NWS.services.writeDatabasesToLocalStorage();
               $scope.database = { url: '', name: '', description: '' };
             });
           },
@@ -129,18 +93,17 @@ angular.module('nSimApp.directives').directive('administration', [function() {
       $scope.deleteDatabase = function() {
         bootbox.confirm('Are you certain you want to delete this database?', function(result) {
           if(result === true) {
-            var db = new N.NWS.Database();
-            db.deleteDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name).then(
+            N.NWS.services.deleteDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name).then(
               function() {
                 $scope.$apply(function() {
                   $element.find('.delete-database').modal('hide');
-                  $scope.removeDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name);
+                  N.NWS.services.writeDatabasesToLocalStorage();
                   $scope.databaseToDelete = null;
                 });
               },
               function(status) {
                 $scope.$apply(function() {
-                  $scope.formMessage = 'Database could not be created: '+status.errMsg;
+                  $scope.formMessage = 'Database could not be deleted: '+status.errMsg;
                 });
               }
             );
