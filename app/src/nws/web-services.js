@@ -37,9 +37,31 @@ N.NWS.WebServices = function() {
 }
 
 /**
- * Returns the minimum and maximum values in the signal.
- * @method createDatabase
+ * Returns the associated database.
+ * @method getDatabase
  * @returns {{status: boolean, errMsg: string}}
+ */
+N.NWS.WebServices.prototype.getDatabase = function(url) {
+  if(this.databasesByUrl[url]) {
+    return this.databasesByUrl[url];
+  }
+  var database = new N.NWS.Database();
+  var urlAndName = this.urlAndNameFromFullUrl(url);
+  return this.addDatabaseToList(urlAndName.url, urlAndName.name);
+}
+
+N.NWS.WebServices.prototype.urlAndNameFromFullUrl = function(fullUrl) {
+  var i = fullUrl.lastIndexOf('/');
+  var url = fullUrl.substring(0, i+1);
+  var name = fullUrl.substring(i+1);
+  return { url: url, name: name };
+}
+
+
+/**
+ * Creates a new database and adds it to the databases list.
+ * @method createDatabase
+ * @returns {Q.promise}
  */
 N.NWS.WebServices.prototype.createDatabase = function(url, name, description, userInfo) {
   var deferred = Q.defer();
@@ -141,9 +163,9 @@ N.NWS.WebServices.prototype.writeDatabasesToLocalStorage = function() {
 
 N.NWS.WebServices.prototype.addDatabaseToList = function(url, name, description) {
   var database = new N.NWS.Database();
+  database.load(url, name, description);
   this.databases.push(database);
   this.databasesByUrl[database.url+database.name] = database;
-  database.load(url, name, description);
   return database;
 }
 

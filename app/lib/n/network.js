@@ -529,6 +529,11 @@ N.Network.prototype.getTemplate = function(templateName) {
   return null;
 }
 
+N.Network.prototype.getRemoteTemplate = function(remoteTemplateData) {
+  var database = N.NWS.services.getDatabase(remoteTemplateData.url);
+  return database.readDocumentById(remoteTemplateData.id);
+}
+
 N.Network.prototype.addTemplates = function(templates) {
   for(var i in templates) {
     var template = templates[i];

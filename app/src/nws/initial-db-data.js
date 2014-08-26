@@ -27,10 +27,14 @@ N.NWS.InitialData = function() {
 }
 
 N.NWS.InitialData.prototype.writeToDb = function(database) {
+  var promises = [];
+
   var data = N.NWS.InitialData.data;
   for(var i in data) {
-    database.writeDocument(data[i]);
+    promises.push(database.writeDocument(data[i]._id, data[i]));
   }
+
+  return Q.all(promises);
 }
 
 N.NWS.InitialData.data = [{

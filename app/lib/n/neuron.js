@@ -213,9 +213,8 @@ N.Neuron.prototype.loadTemplate = function(json) {
       var merged = _.merge(localTemplate, json);
       deferred.resolve(merged);
     }
-  } else if(json.template) {
-    debugger;
-    this.network.getRemoteTemplate(json.template).then(
+  } else if(json.template.hasOwnProperty('remote')) {
+    this.network.getRemoteTemplate(json.template.remote).then(
       function(remoteTemplate) {
         debugger;
         var merged = _.merge(json, remoteTemplate);

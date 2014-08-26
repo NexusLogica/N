@@ -66,7 +66,15 @@ N.NWS.Database.prototype.create = function(url, name, description, userInfo) {
         httpDoc.put(_this.url+_this.name+'/n_simulator', doc).then(
           function() {
             _this.accessible = true;
-            deferred.resolve( { status: true, errMsg: '' } );
+
+            var initializer = new N.NWS.InitialData();
+            initializer.writeToDb(_this).then(
+              function() {
+                deferred.resolve( { status: true, errMsg: '' } );
+              }, function(status) {
+                deferred.reject(status);
+              }
+            ).catch(N.reportQError);
           },
           function(error) {
             deferred.reject( { status: false, errMsg: 'Unable to write indentifier doc: '+error.responseJSON.reason } );
@@ -97,11 +105,9 @@ N.NWS.Database.prototype.load = function(url, name, description) {
 
   N.NWS.WebServices.canConnectToDB(url).then(
     function() {
-      debugger;
-      _this.getDocById('n_simulator').then(
+      _this.readDocumentById('n_simulator').then(
         function(data) {
           _this.accessible = true;
-          debugger;
         }, function(status) {
           deferred.reject(status);
         }
@@ -113,7 +119,20 @@ N.NWS.Database.prototype.load = function(url, name, description) {
   return deferred.promise;
 }
 
-N.NWS.Database.prototype.getDocById = function(docId) {
+N.NWS.Database.prototype.writeDocument = function(docId, document) {
+  var deferred = Q.defer();
+  var http = new N.Http();
+  http.put(this.url+this.name+'/'+docId, document).then(
+    function(data) {
+      deferred.resolve(data);
+    }, function(status) {
+      deferred.reject(status);
+    }
+  ).catch(N.reportQError);
+  return deferred.promise;
+}
+
+N.NWS.Database.prototype.readDocumentById = function(docId) {
   var deferred = Q.defer();
   var http = new N.Http();
   http.get(this.url+this.name+'/'+docId).then(

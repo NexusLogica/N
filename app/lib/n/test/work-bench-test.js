@@ -119,6 +119,7 @@ N.WorkbenchTestScenes.FastSpiking = {
 }
 
 N.WorkbenchTestScenes.testConfigurations = [{
-  targets : [ { template: { local: 'N.WorkbenchTestScenes.FastSpiking' }, name: 'IN[0]'} ]
+//  targets : [ { template: { local: 'N.WorkbenchTestScenes.FastSpiking' }, name: 'IN[0]'} ]
+  targets : [ { template: { remote: { url: 'http://127.0.0.1:5984/test1', id: 'fb958ba82f424b3888b04add2849468b'} }, name: 'IN[0]'} ]
  }
 ];
