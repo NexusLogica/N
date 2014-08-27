@@ -15,8 +15,6 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
   //**********************
   //* PiCanvas Directive *
   //**********************

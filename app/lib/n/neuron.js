@@ -215,12 +215,24 @@ N.Neuron.prototype.loadTemplate = function(json) {
     }
   } else if(json.template.hasOwnProperty('remote')) {
     this.network.getRemoteTemplate(json.template.remote).then(
+
       function(remoteTemplate) {
-        debugger;
-        var merged = _.merge(json, remoteTemplate);
-        deferred.resolve(merged);
+        if(remoteTemplate.template) {
+          this.loadTemplate(remoteTemplate).then(
+            function(childMerged) {
+              var merged = _.merge(childMerged, json);
+              deferred.resolve(merged);
+            }, function(status) {
+              deferred.reject(status);
+            }
+          ).catch(N.reportQError);
+        } else {
+          var merged = _.merge(remoteTemplate, json);
+          deferred.resolve(merged);
+        }
       }, function(status) {
         debugger;
+        this.routeErrorMsg('ERROR: Unable to find remote template "'+json.template.remote.url+'/'+json.template.remote.id+'"');
         deferred.reject(status);
       }
     ).catch(N.reportQError);

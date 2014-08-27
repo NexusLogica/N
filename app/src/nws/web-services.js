@@ -57,7 +57,6 @@ N.NWS.WebServices.prototype.urlAndNameFromFullUrl = function(fullUrl) {
   return { url: url, name: name };
 }
 
-
 /**
  * Creates a new database and adds it to the databases list.
  * @method createDatabase

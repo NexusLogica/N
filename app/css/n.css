@@ -167,10 +167,11 @@ body {
     .header .dropdown-toggle:hover {
       color: black;
       background-color: #E0E0E0; }
-  .header ul.nav.nav-pills {
-    float: right;
-    margin: 7px 0px 0px 0px;
-    display: inline-block; }
+  .header .menu-bar {
+    float: right; }
+    .header .menu-bar ul.nav.nav-pills {
+      margin: 7px 5px 0px 5px;
+      display: inline-block; }
 
 .main-tabs-container {
   margin-top: 10px; }

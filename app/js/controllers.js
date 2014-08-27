@@ -64,7 +64,7 @@ nSimAppControllers.controller('SignalGraphControlsController', ['$scope', '$root
 //
 function HeaderController($scope, $compile, $rootScope, guidGenerator) {
   $scope.waveformsNew = function() {
-    var guid = guidGenerator.CreateUUID();
+    var guid = N.generateUUID();
     var html = $compile('<div class="container" main-window-id="'+guid+'" ng-include onload="renderWave()" src="\'partials/waveform-editor.html\'"  ng-controller="WaveformEditorController"></div>')($scope);
     $("#main-app-container").append(html);
     $rootScope.$broadcast("newMainWindow", "New Waveform", guid);

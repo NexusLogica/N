@@ -5,6 +5,7 @@
 angular.module('nSimApp', ['nSimApp.filters', 'nSimApp.services', 'nSimApp.directives', 'nSimApp.controllers', 'ngRoute', 'LocalStorageModule']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/workbench', { templateUrl: 'partials/workbench.html' });
+    $routeProvider.when('/sim', { templateUrl: 'pages/sim/sim.html' });
     $routeProvider.when('/administration', { templateUrl: 'pages/administration/administration.html' });
     $routeProvider.when('/n', {templateUrl: 'partials/n.html' });
     $routeProvider.otherwise({redirectTo: '/n'});
@@ -15,6 +16,7 @@ angular.module('nSimApp', ['nSimApp.filters', 'nSimApp.services', 'nSimApp.direc
     Q.longStackSupport = true;
    }]);
 
-angular.module('nSimApp.controllers', []);
-angular.module('nSimApp.directives',  []);
-
+var nSimAppControllers = angular.module('nSimApp.controllers', []);
+var nSimAppDirectives  = angular.module('nSimApp.directives',  []);
+var nSimAppServices    = angular.module('nSimApp.services',    []);
+var nSimAppFilters     = angular.module('nSimApp.filters',     []);

@@ -25,6 +25,13 @@ angular.module('nSimApp.directives').directive('header', [function() {
         $location.path(locationName);
       }
 
+      $scope.newOf = function(newTypeOf) {
+        debugger;
+        if(newTypeOf === 'workbench') {
+          $scope.$emit('n-app:create-new', 'workbench');
+        }
+      }
+
     }],
     link: function($scope, $element, $attrs) {
     }

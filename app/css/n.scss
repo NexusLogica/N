@@ -268,11 +268,12 @@ body {
     }
   }
 
-  ul.nav.nav-pills {
+  .menu-bar {
     float: right;
-    margin: 7px 0px 0px 0px;
-    display: inline-block;
-
+    ul.nav.nav-pills {
+      margin: 7px 5px 0px 5px;
+      display: inline-block;
+    }
   }
 }
 
