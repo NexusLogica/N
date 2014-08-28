@@ -26,10 +26,7 @@ angular.module('nSimApp.directives').directive('header', [function() {
       }
 
       $scope.newOf = function(newTypeOf) {
-        debugger;
-        if(newTypeOf === 'workbench') {
-          $scope.$emit('n-app:create-new', 'workbench');
-        }
+        $scope.$emit('n-app:create-new', newTypeOf);
       }
 
     }],

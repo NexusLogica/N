@@ -13,22 +13,29 @@ All Rights Reserved.
 'use strict';
 
 angular.module('nSimApp.directives').directive('sim', [function() {
-  debugger;
   return {
     restrict: 'E',
     //scope: {
     //},
     controller: ['$scope', '$timeout', '$compile', function ($scope, $timeout, $compile) {
+      $scope.panels = {};
 
       $scope.$on('n-app:create-new', function(event, typeOfNew) {
-        debugger;
         if(typeOfNew === 'workbench') {
           $scope.insertComponent('hi')
+        } else if(typeOfNew === 'network-builder') {
+          $scope.insertComponent('network-builder')
         }
       });
 
       $scope.insertComponent = function(componentType) {
-        var html = $compile('<div class="container" >'+componentType+'</div>')($scope);
+
+        var panelData = { name: 'First', id: N.generateUUID(), show: true };
+        $scope.panels[panelData.id] = panelData;
+        $scope.panelid = panelData.id;
+
+        //$scope.panelData = { name: 'ASDFASDF' };
+        var html = $compile('<'+componentType+' class="container" panel-data="panels[\''+panelData.id+'\']"></'+componentType+'>')($scope);
         $scope.appendHtml(html);
       }
 
