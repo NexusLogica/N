@@ -16,7 +16,8 @@ angular.module('nSimApp.directives').directive('header', [function() {
   return {
     restrict: 'E',
     scope: {
-      currentPage: '@currentPage'
+      currentPage: '@currentPage',
+      projectName: '@projectName'
     },
     templateUrl: 'components/header/header.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$location', function (ComponentExtensions, $scope, $element, $attrs, $location) {

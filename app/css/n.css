@@ -517,3 +517,11 @@ body {
     height: 340px; }
   .pi-dialog .close {
     margin: 4px 2px; }
+
+.bach .field-viewer-panel .render-target {
+  width: 700px;
+  height: 450px;
+  background-color: green;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 75px; }

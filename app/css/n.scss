@@ -63,6 +63,11 @@ $padding-med: 20px;
   padding-top: 15px;
 }
 
+@mixin auto-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @mixin border-radius($radius) {
   border-radius: $radius;
   -webkit-border-radius: $radius;
@@ -828,4 +833,16 @@ body {
     margin: 4px 2px;
   }
 
+}
+
+.bach {
+  .field-viewer-panel {
+    .render-target {
+      width:700px;
+      height:450px;
+      background-color: green;
+      @include auto-center();
+      margin-top: 75px;
+    }
+  }
 }
