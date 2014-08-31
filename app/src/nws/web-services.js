@@ -169,5 +169,9 @@ N.NWS.WebServices.prototype.addDatabaseToList = function(url, name, description)
   return database;
 }
 
-N.NWS.services = new N.NWS.WebServices();
-N.NWS.services.loadDatabasesFromLocalStorage();
+N.NWS.WebServices.Load = function() {
+  if(!N.NWS.services) {
+    N.NWS.services = new N.NWS.WebServices();
+    N.NWS.services.loadDatabasesFromLocalStorage();
+  }
+}

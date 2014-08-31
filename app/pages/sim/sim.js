@@ -19,6 +19,10 @@ angular.module('nSimApp.directives').directive('sim', [function() {
     //},
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile) {
       ComponentExtensions.initialize(this, 'sim', $scope, $attrs);
+
+      // Ensure the services are loaded.
+      N.NWS.WebServices.Load();
+
       $scope.panels = {};
 
       $scope.$on('n-app:create-new', function(event, typeOfNew) {

@@ -4,6 +4,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('nSimApp', ['nSimApp.filters', 'nSimApp.services', 'nSimApp.directives', 'nSimApp.controllers', 'ngRoute', 'ui.bootstrap.modal', 'LocalStorageModule']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    $routeProvider.when('/fieldview', { templateUrl: 'pages/field-viewer/field-viewer.html' });
     $routeProvider.when('/workbench', { templateUrl: 'partials/workbench.html' });
     $routeProvider.when('/sim', { templateUrl: 'pages/sim/sim.html' });
     $routeProvider.when('/administration', { templateUrl: 'pages/administration/administration.html' });
