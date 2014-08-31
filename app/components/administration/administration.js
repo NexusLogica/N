@@ -94,7 +94,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
       }
 
       $scope.showDeleteDatabase = function() {
-        $element.deleteDatabaseDialog.open();
+        $scope.deleteDatabaseDialog.open();
       }
 
       $scope.selectedDeleteDatabase = function(database) {
@@ -102,22 +102,37 @@ angular.module('nSimApp.directives').directive('administration', [function() {
       }
 
       $scope.deleteDatabase = function() {
-        bootbox.confirm('Are you certain you want to delete this database?', function(result) {
-          if(result === true) {
-            N.NWS.services.deleteDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name).then(
-              function() {
-                $scope.$apply(function() {
-                  $scope.deleteDatabaseDialog.close();
-                  N.NWS.services.writeDatabasesToLocalStorage();
-                  $scope.databaseToDelete = null;
-                });
-              },
-              function(status) {
-                $scope.$apply(function() {
-                  $scope.formMessage = 'Database could not be deleted: '+status.errMsg;
-                });
+        bootbox.dialog({
+          message: 'Are you certain you want to delete this database?',
+          title: 'Delete database',
+          buttons: {
+            yes: {
+              label: 'Yes',
+              className: 'btn-success',
+              callback: function() {
+                N.NWS.services.deleteDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name).then(
+                  function() {
+                    $scope.$apply(function() {
+                      $scope.deleteDatabaseDialog.close();
+                      N.NWS.services.writeDatabasesToLocalStorage();
+                      $scope.databaseToDelete = null;
+                    });
+                  },
+                  function(status) {
+                    $scope.$apply(function() {
+                      $scope.formMessage = 'Database could not be deleted: '+status.errMsg;
+                    });
+                  }
+                );
               }
-            );
+            },
+            no: {
+              label: 'No',
+              className: 'btn-primary',
+              callback: function() {
+
+              }
+            }
           }
         });
       }

@@ -1,8 +1,8 @@
 <div>
-  <div class="container administration">
-    <div class="row">
-      <div class="database-admin-links col-lg-5 col-md-7">
-        <div class="n-med-title">Database administration</div>
+  <div class="administration">
+    <div class="admin-row">
+      <div class="database-admin-links">
+        <div class="section-title">Database administration</div>
         <div class="links">
           <a href="javascript:void(0)" ng-click="showCreateDatabase()">Create a database</a>
         </div>
@@ -11,9 +11,9 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="database-current col-lg-14 col-md-10">
-        <div class="n-med-title">Current databases</div>
+    <div class="admin-row">
+      <div class="database-current">
+        <div class="section-title">Current databases</div>
         <div>
           <table class="table table-bordered table-striped">
             <thead>
@@ -109,8 +109,8 @@
     </dialog>
 
 
-    <dialog expose-to-parent="deleteDatabaseDialog" modal-close-function="deleteDatabaseClose" class="modal-mediumsize">
-      <div id="delete-database-dialog-content" class="dialog-content">
+    <dialog expose-to-parent="deleteDatabaseDialog" class="pi-dialog delete-database-dialog">
+      <div id="delete-database-dialog-content" class="delete-database dialog-content">
         <div class="modal-body">
           <div class="message-container">
             <div class="dropdown databases">
@@ -134,6 +134,11 @@
             <div class="well">
               A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
             </div>
+          </div>
+          <div class="modal-footer">
+            <div class="footer-message" ng-bind="formMessage" ng-class="formMessageType"></div>
+            <button type="button" class="btn btn-default" ng-click="closeDeleteDatabaseDialog()">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="deleteDatabase()">Delete database</button>
           </div>
         </div>
       </div>

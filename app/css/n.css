@@ -12,7 +12,7 @@ input:-ms-input-placeholder {
 
 .n-large-title, .n-large-title-light {
   font-weight: 100;
-  font-size: 30px;
+  font-size: 22px;
   font-family: "Raleway", sans-serif;
   color: #294052;
   font-size: 40px;
@@ -23,10 +23,11 @@ input:-ms-input-placeholder {
 
 .n-med-title, .n-med-title-light {
   font-weight: 100;
-  font-size: 30px;
+  font-size: 22px;
   font-family: "Raleway", sans-serif;
   color: #294052;
-  font-size: 30px;
+  font-weight: normal;
+  font-size: 22px;
   color: #153450; }
 
 .n-med-title-light {
@@ -34,10 +35,10 @@ input:-ms-input-placeholder {
 
 .n-small-title {
   font-weight: 100;
-  font-size: 30px;
+  font-size: 22px;
   font-family: "Raleway", sans-serif;
   color: #294052;
-  font-size: 20px;
+  font-size: 16px;
   padding-bottom: 20px; }
 
 ul::-webkit-scrollbar {
@@ -209,16 +210,29 @@ body {
   color: #294052;
   cursor: pointer; }
 
+.administration .admin-row {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto; }
 .administration a {
   font-family: "Raleway", sans-serif;
   font-weight: 300;
   font-size: 18px; }
+.administration .section-title {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-weight: normal;
+  font-size: 22px;
+  color: #153450;
+  margin-bottom: 8px; }
 .administration .welcome {
   margin-top: 20px; }
 .administration .database-admin-links {
-  margin-top: 40px; }
+  margin-top: 15px; }
   .administration .database-admin-links .links {
-    margin-left: 20px; }
+    margin-left: 25px; }
 .administration .database-current {
   margin-top: 40px; }
   .administration .database-current table thead tr th {
@@ -231,25 +245,32 @@ body {
     width: 150px; }
   .administration .database-current table thead .accessible {
     width: 50px; }
-.administration .delete-database .dropdown .btn {
-  text-align: left;
-  width: 560px; }
-.administration .delete-database .item-set {
-  margin-top: 10px; }
-  .administration .delete-database .item-set .item-label {
-    display: inline-block;
-    width: 60px; }
-  .administration .delete-database .item-set .item-value {
-    margin-left: 10px;
-    display: inline-block;
-    width: 450px; }
-.administration .delete-database .well {
-  margin-top: 10px; }
-.administration .delete-database .footer-message {
-  width: 310px; }
+
+.pi-dialog .modal-footer {
+  margin-top: 15px;
+  padding: 19px 20px 0px 20px; }
 
 .pi-dialog.create-database-dialog {
   max-width: 650px; }
+
+.pi-dialog.delete-database-dialog .modal-wrap {
+  width: 640px; }
+.pi-dialog.delete-database-dialog .dropdown .btn {
+  text-align: left;
+  width: 560px; }
+.pi-dialog.delete-database-dialog .item-set {
+  margin-top: 10px; }
+  .pi-dialog.delete-database-dialog .item-set .item-label {
+    display: inline-block;
+    width: 60px; }
+  .pi-dialog.delete-database-dialog .item-set .item-value {
+    margin-left: 10px;
+    display: inline-block;
+    width: 450px; }
+.pi-dialog.delete-database-dialog .well {
+  margin-top: 10px; }
+.pi-dialog.delete-database-dialog .footer-message {
+  width: 310px; }
 
 .n {
   margin-top: 100px; }

@@ -1,7 +1,7 @@
 $thin: 100;
 $font-size-large: 40px;
-$font-size-med: 30px;
-$font-size-avg: 20px;
+$font-size-med: 22px;
+$font-size-avg: 16px;
 $font-size-text: 16px;
 $font-size-small: 12px;
 $helv-font: "Raleway", sans-serif;
@@ -103,6 +103,7 @@ $padding-med: 20px;
 
 .n-med-title {
   @include title-base;
+  font-weight: normal;
   font-size: $font-size-med;
   color: $color-darkest;
 }
@@ -345,11 +346,24 @@ body {
 //*****************************
 // Administration page
 .administration {
+  .admin-row {
+    width:90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   a {
     font-family: $helv-font;
     font-weight: 300;
     font-size: 18px;
+  }
 
+  .section-title {
+    @include title-base;
+    font-weight: normal;
+    font-size: $font-size-med;
+    color: $color-darkest;
+    margin-bottom:8px;
   }
 
   .welcome {
@@ -357,9 +371,9 @@ body {
   }
 
   .database-admin-links {
-    margin-top: 40px;
+    margin-top: 15px;
     .links {
-      margin-left:20px;
+      margin-left:25px;
     }
   }
 
@@ -380,35 +394,45 @@ body {
     }
   }
 
-  .delete-database {
-    .dropdown .btn {
-      text-align: left;
-      width: 560px;
-    }
-    .item-set {
-      margin-top:10px;
+}
 
-      .item-label {
-        display: inline-block;
-        width: 60px;
-      }
-      .item-value {
-        margin-left: 10px;
-        display: inline-block;
-        width: 450px;
-      }
-    }
-    .well {
-      margin-top: 10px;
-    }
-    .footer-message {
-      width: 310px;
-    }
-  }
+.pi-dialog .modal-footer {
+  margin-top: 15px;
+  padding: 19px 20px 0px 20px;
 }
 
 .pi-dialog.create-database-dialog {
   max-width: 650px;
+}
+
+.pi-dialog.delete-database-dialog {
+  .modal-wrap {
+    width: 640px;
+  }
+
+  .dropdown .btn {
+    text-align: left;
+    width: 560px;
+  }
+  .item-set {
+    margin-top:10px;
+
+    .item-label {
+      display: inline-block;
+      width: 60px;
+    }
+    .item-value {
+      margin-left: 10px;
+      display: inline-block;
+      width: 450px;
+    }
+  }
+  .well {
+    margin-top: 10px;
+  }
+  .footer-message {
+    width: 310px;
+  }
 }
 
 
