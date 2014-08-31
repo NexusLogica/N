@@ -98,13 +98,12 @@
               A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
             </div>
           </div>
-
+          <div class="modal-footer">
+            <div class="footer-message" ng-bind="formMessage" ng-class="formMessageType"></div>
+            <button type="button" class="btn btn-default" ng-click="closeCreateDatabaseDialog()">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="createDatabase()">Create database</button>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <div class="footer-message" ng-bind="formMessage" ng-class="formMessageType"></div>
-        <button type="button" class="btn btn-default" ng-click="closeCreateDatabaseDialog()">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="createDatabase()">Create database</button>
       </div>
     </dialog>
 
