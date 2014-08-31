@@ -16,79 +16,96 @@ angular.module('nSimApp.directives').directive('dialog', [function() {
   return {
     restrict: 'E',
     scope: {
-      contentsTemplateId: '@contentsTemplateId'
+      modalCloseFunction: '@?'
     },
-//    templateUrl: 'components/dialog/dialog.html',
-    controller: ['$scope', '$element', '$attrs', '$modal', '$templateCache', function ($scope, $element, $attrs, $modal, $templateCache) {
+    transclude: true,
+    templateUrl: 'components/dialog/dialog.html',
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$window', function (ComponentExtensions, $scope, $element, $attrs, $window) {
+      ComponentExtensions.initialize(this, 'dialog', $scope, $attrs);
 
-      // get the temlate elements from the template URL and refresh the template cache
-      var dialogTemplates = {
-        'modal-window': 'template/modal/window.html',
-        'modal-backdrop': 'template/modal/backdrop.html'
-      };
-      dialogTemplates[$scope.contentsTemplateId] =  $scope.contentsTemplateId;
+      $scope.closable = !_.isUndefined($attrs.closable) ? angular.wilson.utils.parseBoolean($attrs.closable) : true;
 
-      _.each(dialogTemplates, function(cacheId, viewId) {
+      var trackLabel = $attrs.modalTrackingId || _.string.dasherize($attrs.expose) || false;
+      if ($attrs.noTrack) { trackLabel = false; }
+      var trackIsOpen = false;
 
-        //get the template element
-        var holderElement = $element.find('#' + viewId);
-        if(!holderElement.length) {
-          holderElement = $('body').find('#' + viewId);
-        }
-        if (holderElement.length) {
-          if (!$templateCache.get(cacheId)) {
-            //get its markup
-            var holderElementHtml = holderElement.html();
-            //add to the tempalteCache
-            $templateCache.put(cacheId, holderElementHtml);
+      $scope.stateMachine = StateMachine.create({
+        initial: 'Closed',
+        events: [
+          { name: 'open',     from: 'Closed',       to: 'Opened'      },
+          { name: 'close',    from: 'Opened',       to: 'Closed'     }
+        ],
+        timeouts: [],
+        callbacks: {
+          onenterOpened: function() {
+            $window.scrollTo(0, 0);
+            trackIsOpen = true;
+          },
+          onenterClosed: function() {
+            if (trackLabel && trackIsOpen) {
+              trackIsOpen = false;
+              $scope.$emit('tracking-service:modal-close', trackLabel);
+            }
           }
-
-          //remove the element from the DOM
-          holderElement.remove();
         }
       });
 
-      var DialogInstanceController = ['$scope', '$modalInstance', 'options', function($scope, $modalInstance, context) {
-        $scope.context = context;
-
-        $scope.ok = function () {
-          $modalInstance.close('ok');
-        };
-
-        $scope.cancel = function () {
-          $modalInstance.dismiss('cancel');
-        };
-      }];
-
-      $scope.open = function (data) {
-
-        var modalInstance = $modal.open({
-          templateUrl: $scope.contentsTemplateId,
-          controller: DialogInstanceController,
-          windowClass: 'pi-dialog',
-          size: $scope.size,
-          resolve: {
-            options: function () {
-              return data;
-            }
+      $scope.close = function() {
+        if ($scope.closable) {
+          if ($scope.modalCloseFunction && $scope.parentComponent[$scope.modalCloseFunction]) {
+            $scope.parentComponent[$scope.modalCloseFunction].close();
+          } else {
+            $scope.stateMachine.close();
           }
-        });
-
-        modalInstance.result.then(function (result) {
-          $scope.result = result;
-        }, function () {
-          console.log('Modal dismissed at: ' + new Date());
-        });
+        }
       };
+
+      $scope.open = function() {
+        // Find all open modals and update zIndex as incremented
+        var modalIndex = _.max(_.map($('.ht-modal-mask'), function(modal) {
+          return parseInt($(modal).css('zIndex'), 10);
+        }));
+
+        if (_.isNumber(modalIndex)) {
+          $element.css('zIndex', modalIndex + 1);
+        }
+
+
+        // Similarly, for forms.
+        if (!_.isEmpty($attrs.exposeForm)) {
+          var form = $('form[name="'+$attrs.exposeForm+'"]');
+          if(form.length) {
+            var formController = $('form[name="'+$attrs.exposeForm+'"]').scope()[$attrs.exposeForm];
+            $scope.piParentComponent[$attrs.exposeForm] = formController;
+          } else {
+            N.log('ERROR: dialog: Form '+$attrs.exposeForm+' not found');
+          }
+        }
+
+        $scope.stateMachine.open();
+      };
+
+      /*
+       * no need to stop dropping files on modal mask anymore because it affects dnd from file chooser to send form
+      controller.autoOn('dragover dragenter drag drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      */
+
+      // Remove the modal on $destroy
+      var destroyDeregistration = $scope.$on('$destroy', function() {
+        destroyDeregistration();
+        if (trackLabel && trackIsOpen) {
+          trackIsOpen = false;
+          $scope.$emit('tracking-service:modal-close', trackLabel);
+        }
+        $element.remove();
+      });
     }],
     link: function($scope, $element, $attrs, controller) {
-      $scope.size = $attrs.size ? $attrs.size : 'sm';
 
-      var exposeName = $attrs.exposeToParent;
-      if (exposeName) {
-        var parentScope = $scope.$parent;
-        parentScope[exposeName] = $scope;
-      }
+      angular.element('body').append($element);
     }
   }
 }]);

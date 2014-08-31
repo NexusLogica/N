@@ -1,8 +1,5 @@
 <div>
   <div class="container administration">
-    <div class="row welcome">
-      <div class="n-med-title col-lg-5 col-md-7">Welcome <span ng-bind="userInfo.firstName"></span></div>
-    </div>
     <div class="row">
       <div class="database-admin-links col-lg-5 col-md-7">
         <div class="n-med-title">Database administration</div>
@@ -15,7 +12,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="database-current col-lg-14 col-md-14">
+      <div class="database-current col-lg-14 col-md-10">
         <div class="n-med-title">Current databases</div>
         <div>
           <table class="table table-bordered table-striped">
@@ -41,105 +38,106 @@
     </div>
 
     <!-- Create a database -->
-    <dialog class="create-database-dialog" expose-to-parent="createDatabaseDialog" contents-template-id="create-database-dialog-content" dialog-data></dialog>
-    <div id="create-database-dialog-content" class="dialog-content" ng-non-bindable>
-      <div class="modal-body">
-        <div class="message-container">
-          <form novalidate class="form-horizontal" role="form" name="createDbForm">
-            <div class="form-group">
-              <label class="col-sm-4 control-label" for="databaseurl">Database URL:</label>
-              <div class="col-sm-10">
-                <input type="text"
-                       name="databaseurl"
-                       tabindex="1"
-                       ng-class="{ 'pi-error': createDbForm.databaseurl.$invalid }"
-                       class="form-control default-focus"
-                       required
-                       id="databaseurl"
-                       data-toggle="tooltip"
-                       data-placement="right"
-                       title="The url of the couchDb, for example: http://127.0.0.1:5984"
-                       ng-model="database.url"
-                       placeholder="Database URL">
+    <dialog expose-to-parent="createDatabaseDialog" expose-form="createDbForm" class="pi-dialog modal-medium">
+      <div id="create-database-dialog-content" class="dialog-content">
+        <div class="modal-body">
+          <div class="message-container">
+            <form novalidate class="form-horizontal" role="form" name="createDbForm">
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="databaseurl">Database URL:</label>
+                <div class="col-sm-10">
+                  <input type="text"
+                         name="databaseurl"
+                         tabindex="1"
+                         ng-class="{ 'pi-error': createDbForm.databaseurl.$invalid }"
+                         class="form-control default-focus"
+                         required
+                         id="databaseurl"
+                         data-toggle="tooltip"
+                         data-placement="right"
+                         title="The url of the couchDb, for example: http://127.0.0.1:5984"
+                         ng-model="database.url"
+                         placeholder="Database URL">
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label" for="database-name">Name:</label>
-              <div class="col-sm-10">
-                <input type="text"
-                       class="form-control"
-                       name="databasename"
-                       tabindex="2"
-                       ng-pattern="/^[a-z][a-z0-9_\$\(\)\+\-\/]*$/"
-                       ng-class="{ 'pi-error': createDbForm.databasename.$invalid }"
-                       id="database-name"
-                       data-toggle="tooltip"
-                       data-placement="right"
-                       title="The name of the database, lower case a-z, 0-9, or _$()+-/ and must start with a letter."
-                       ng-model="database.name"
-                       placeholder="Database name"></textarea>
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="database-name">Name:</label>
+                <div class="col-sm-10">
+                  <input type="text"
+                         class="form-control"
+                         name="databasename"
+                         tabindex="2"
+                         ng-pattern="/^[a-z][a-z0-9_\$\(\)\+\-\/]*$/"
+                         ng-class="{ 'pi-error': createDbForm.databasename.$invalid }"
+                         id="database-name"
+                         data-toggle="tooltip"
+                         data-placement="right"
+                         title="The name of the database, lower case a-z, 0-9, or _$()+-/ and must start with a letter."
+                         ng-model="database.name"
+                         placeholder="Database name"></textarea>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label" for="database-description">Description:</label>
-              <div class="col-sm-10">
-                <input type="text"
-                       class="form-control"
-                       name="databasedescription"
-                       tabindex="3"
-                       ng-class="{ 'pi-error': createDbForm.databasedescription.$invalid }"
-                       id="database-description"
-                       data-toggle="tooltip"
-                       data-placement="right"
-                       title="The readable name of the database."
-                       ng-model="database.description"
-                       placeholder="Database description"></textarea>
+              <div class="form-group">
+                <label class="col-sm-4 control-label" for="database-description">Description:</label>
+                <div class="col-sm-10">
+                  <input type="text"
+                         class="form-control"
+                         name="databasedescription"
+                         tabindex="3"
+                         ng-class="{ 'pi-error': createDbForm.databasedescription.$invalid }"
+                         id="database-description"
+                         data-toggle="tooltip"
+                         data-placement="right"
+                         title="The readable name of the database."
+                         ng-model="database.description"
+                         placeholder="Database description"></textarea>
+                </div>
               </div>
+            </form>
+            <div class="well">
+              A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
             </div>
-          </form>
-          <div class="well">
-            A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
           </div>
-        </div>
 
-        <div class="modal-footer">
-          <div class="footer-message" ng-bind="formMessage"></div>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" ng-click="createDatabase()">Create database</button>
         </div>
       </div>
-    </div>
+      <div class="modal-footer">
+        <div class="footer-message" ng-bind="formMessage" ng-class="formMessageType"></div>
+        <button type="button" class="btn btn-default" ng-click="closeCreateDatabaseDialog()">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="createDatabase()">Create database</button>
+      </div>
+    </dialog>
 
 
-    <dialog class="n-dialog" expose-to-parent="deleteDatabaseDialog" contents-template-id="builder-dialog-content" dialog-data></dialog>
-    <div id="delete-database-dialog-content" class="dialog-content" ng-non-bindable>
-      <div class="modal-body">
-        <div class="message-container">
-          <div class="dropdown databases">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-delete-select" data-toggle="dropdown">
-              <span ng-show="databaseToDelete">{{ databaseToDelete.description }}</span>
-              <span ng-hide="databaseToDelete" class="placeholder">Select database...</span>
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-delete-select">
-              <li ng-repeat="database in databaseList"><a ng-click="selectedDeleteDatabase(database)" tabindex="-1" href="#">{{database.description}}</a></li>
-            </ul>
-          </div>
-          <div class="item-set">
-            <div class="item-label" ng-class="propertiesLabelWidth">Url:</div>
-            <div class="item-value" ng-if="databaseToDelete" >{{databaseToDelete.url}}</div>
-          </div>
-          <div class="item-set">
-            <div class="item-label" >Name:</div>
-            <div class="item-value" ng-if="databaseToDelete">{{databaseToDelete.name}}</div>
-          </div>
-          <div class="well">
-            A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
+    <dialog expose-to-parent="deleteDatabaseDialog" modal-close-function="deleteDatabaseClose" class="modal-mediumsize">
+      <div id="delete-database-dialog-content" class="dialog-content">
+        <div class="modal-body">
+          <div class="message-container">
+            <div class="dropdown databases">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-delete-select" data-toggle="dropdown">
+                <span ng-show="databaseToDelete">{{ databaseToDelete.description }}</span>
+                <span ng-hide="databaseToDelete" class="placeholder">Select database...</span>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-delete-select">
+                <li ng-repeat="database in databaseList"><a ng-click="selectedDeleteDatabase(database)" tabindex="-1" href="#">{{database.description}}</a></li>
+              </ul>
+            </div>
+            <div class="item-set">
+              <div class="item-label" ng-class="propertiesLabelWidth">Url:</div>
+              <div class="item-value" ng-if="databaseToDelete" >{{databaseToDelete.url}}</div>
+            </div>
+            <div class="item-set">
+              <div class="item-label" >Name:</div>
+              <div class="item-value" ng-if="databaseToDelete">{{databaseToDelete.name}}</div>
+            </div>
+            <div class="well">
+              A database is a place for storing and retrieving N simulation data. N uses CouchDB for the storage.
+            </div>
           </div>
         </div>
       </div>
-
-    </div>
+    </dialog>
 
   </div>
 </div>

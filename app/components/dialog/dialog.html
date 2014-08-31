@@ -1,0 +1,7 @@
+<div class="pi-dialog fade-fast ng-hide" ng-show="stateMachine.is('Opened')" ng-class="{ closing: stateMachine.is('Closing') }">
+  <div class="overlay"></div>
+  <div class="modal-wrap">
+    <div class="close" ng-click="close()" ng-if="closable"></div>
+    <div class="modal-content" ng-transclude>This is a placeholder for desktop modal-mask</div>
+  </div>
+</div>

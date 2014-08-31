@@ -144,7 +144,8 @@ N.NWS.WebServices.prototype.loadDatabasesFromLocalStorage = function() {
 }
 
 N.NWS.WebServices.prototype.reloadDatabasesFromLocalStorage = function() {
-  var storedDatabases = localStorage['n.databases'];
+  var storedDatabasesJson = localStorage['n.databases'];
+  var storedDatabases = _.isEmpty(storedDatabasesJson) ? []:  JSON.parse(storedDatabasesJson);
 
   for(var i in storedDatabases) {
     var stored = storedDatabases[i];

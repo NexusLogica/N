@@ -19,15 +19,21 @@ angular.module('nSimApp.directives').directive('networkBuilder', [function() {
       panelData: '=panelData'
     },
     templateUrl: 'components/network-builder/network-builder.html',
-    controller: ['$scope', '$timeout', function ($scope, $timeout) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
+      ComponentExtensions.initialize(this, 'networkBuilder', $scope, $attrs);
+
       $timeout(function() { $scope.panelData.name = 'blah blah'; }, 2000);
 
       $scope.options = { message: 'Hi there', content: 'Blah blah blah blah blah blah blah blah blah blah blah blah blah.', okText: 'Ok', cancelText: 'Cancel' };
+
+      $scope.closeAdministrationDialog = function() {
+        $scope.administrationDialog.close();
+      }
+
     }],
     link: function($scope, $element, $attrs) {
       $scope.openDialog = function() {
-
-        $scope.administrationDialog.open($scope.options);
+        $scope.administrationDialog.open();
       }
     }
   };

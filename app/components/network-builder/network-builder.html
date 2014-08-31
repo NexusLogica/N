@@ -3,17 +3,13 @@
     <div class="row">
       <button class="btn" ng-click="openDialog()">Open</button>
 
-      <dialog class="n-dialog" expose-to-parent="administrationDialog" contents-template-id="builder-dialog-content" dialog-data></dialog>
-      <div id="builder-dialog-content" class="dialog-content" ng-non-bindable>
-        <div class="modal-body">
-          <div class="message-container">
-            <administration></administration>
-          </div>
-          <div class="button-container center">
-            <button class="btn cancel" ng-click="cancel()">Close</button>
-          </div>
+      <dialog expose-to-parent="administrationDialog" class="pi-dialog modal-medium">
+        <administration></administration>
+        <div class="modal-footer">
+          <div class="footer-message" ng-bind="formMessage"></div>
+          <button type="button" class="btn btn-default" ng-click="closeAdministrationDialog()">Close</button>
         </div>
-      </div>
+      </dialog>
 
     </div>
   </div>

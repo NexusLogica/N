@@ -18,10 +18,14 @@ angular.module('nSimApp.directives').directive('administration', [function() {
     //scope: {
     //},
     templateUrl: 'components/administration/administration.html',
-    controller: ['$scope', '$timeout', 'localStorageService', function ($scope, $timeout, localStorageService) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', 'localStorageService', function (ComponentExtensions, $scope, $element, $attrs, $timeout, localStorageService) {
+      ComponentExtensions.initialize(this, 'administration', $scope, $attrs);
+
       $scope.userInfo = { firstName: 'Lawrence', lastName: 'Gunn' };
       $scope.database = { url: '' };
       $scope.databaseList = N.NWS.services.databases;
+      $scope.formMessage = '';
+      $scope.formMessageType = '';
 
       /***
        * Watch the database url field and auto-check the url for validity.
@@ -34,12 +38,14 @@ angular.module('nSimApp.directives').directive('administration', [function() {
                 function(status) { // success
                   $scope.$apply(function() {
                     $scope.formMessage = 'Database is accessible.';
+                    $scope.formMessageType = 'success';
                     $scope.createDbForm.databaseurl.$setValidity('administrationDb', true);
                   });
                 },
                 function(status) { // failure
                   $scope.$apply(function() {
                     $scope.formMessage = 'Database can not be accessed: '+status.errMsg.textStatus;
+                    $scope.formMessageType = 'error';
                     $scope.createDbForm.databaseurl.$setValidity('administrationDb', false);
                   });
                 }
@@ -58,7 +64,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
        * @method showCreateDatabase
        */
       $scope.showCreateDatabase = function() {
-        $scope.createDatabaseDialog.open($scope.database);
+        $scope.createDatabaseDialog.open($scope.database, 'database');
       }
 
       $scope.createDatabase = function() {
@@ -70,9 +76,9 @@ angular.module('nSimApp.directives').directive('administration', [function() {
         N.NWS.services.createDatabase(_.string.trim($scope.database.url), _.string.trim($scope.database.name), $scope.database.description, $scope.userInfo).then(
           function(database) { // success
             $scope.$apply(function() {
-              $element.find('.create-database').modal('hide');
               N.NWS.services.writeDatabasesToLocalStorage();
               $scope.database = { url: '', name: '', description: '' };
+              $scope.createDatabaseDialog.close();
             });
           },
           function(status) { // failure
@@ -83,8 +89,12 @@ angular.module('nSimApp.directives').directive('administration', [function() {
         );
       }
 
+      $scope.closeCreateDatabaseDialog = function() {
+        $scope.createDatabaseDialog.close();
+      }
+
       $scope.showDeleteDatabase = function() {
-        $element.find('.delete-database').modal('show');
+        $element.deleteDatabaseDialog.open();
       }
 
       $scope.selectedDeleteDatabase = function(database) {
@@ -97,7 +107,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
             N.NWS.services.deleteDatabase($scope.databaseToDelete.url, $scope.databaseToDelete.name).then(
               function() {
                 $scope.$apply(function() {
-                  $element.find('.delete-database').modal('hide');
+                  $scope.deleteDatabaseDialog.close();
                   N.NWS.services.writeDatabasesToLocalStorage();
                   $scope.databaseToDelete = null;
                 });

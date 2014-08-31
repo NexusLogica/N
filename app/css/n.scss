@@ -8,7 +8,8 @@ $helv-font: "Raleway", sans-serif;
 $text-color: #000000;
 $text-color-med: #888888;
 $text-color-light: #cccccc;
-$text-color-error: #eb881e;
+$text-color-success: dodgerblue;
+$text-color-error: #fa1e20;
 
 $separator-color-light: #eeeeee;
 
@@ -18,6 +19,7 @@ $color-med-dark: #447294;
 $color-med: #8fbcdb;
 $color-light: #f4d6bc;
 $color-lightest: #f8e4cc;
+$color-error: #eb881e;
 
 //$color-space: #F8F2EA
 $color-space: lighten($color-lightest, 9.5%);
@@ -71,6 +73,21 @@ $padding-med: 20px;
   -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
   -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
   box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+}
+
+@mixin opacity($opacity) {
+  -moz-opacity: $opacity;
+  opacity: $opacity;
+  filter: alpha(opacity=($opacity * 100));
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=" + ($opacity * 100) + ")";
+  -khtml-opacity: $opacity;
+}
+
+@mixin animation($animation) {
+  -webkit-animation: $animation;
+  -moz-animation: $animation;
+  -ms-animation: $animation;
+  animation: $animation;
 }
 
 .n-large-title {
@@ -189,7 +206,7 @@ body {
 }
 
 .pi-error {
-  border-color: $text-color-error;
+  border-color: $color-error;
 }
 
 .pi-body {
@@ -220,7 +237,13 @@ body {
   text-align: left;
   margin-top:14px;
   float: left;
-  color: $text-color-error;
+  color: $text-color;
+  &.success {
+    color: dodgerblue;
+  }
+  &.error {
+    color: #FA1E20;
+  }
 }
 
 .tooltip.top {
@@ -357,10 +380,6 @@ body {
     }
   }
 
-  .create-database-dialog {
-
-  }
-
   .delete-database {
     .dropdown .btn {
       text-align: left;
@@ -387,6 +406,11 @@ body {
     }
   }
 }
+
+.pi-dialog.create-database-dialog {
+  max-width: 650px;
+}
+
 
 //*****************************
 // Main page
@@ -711,204 +735,73 @@ body {
   }
 }
 
-.dialog-content {
-  display: none;
-}
-
 .pi-dialog {
-
-  .message-container {
-    margin: 10px auto 0px auto;
-    text-align: left;
-  }
-
-  .message-header {
-    border-bottom: 3px solid #CFCFCF;
-    padding: 0px 8px 8px 8px;
-  }
-
-  .message-content {
-    margin-top: 15px;
-    padding: 0px 8px;
-  }
-
-  .button-container {
-    width: 100%;
-    display: block;
-    margin-top: 40px;
-    height: 38px;
-
-    &:after {
-      *zoom: 1;
-      content: "";
-      clear: both;
-    }
-  }
-
-  button {
-    float: right;
-    cursor: pointer;
-
-    &.call-to-action {
-    }
-
-    &.cancel {
-    }
-
-    &.call-to-action, &.cancel {
-      margin: 0px 0px 0px 15px;
-
-      &:first-child {
-        margin-right: 8px;
-      }
-    }
-  }
-}
-
-/*!
- * Bootstrap v2.3.2
- *
- * Copyright 2013 Twitter, Inc
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Designed and built with all the love in the world @twitter by @mdo and @fat.
- */
-.clearfix {
-  *zoom: 1;
-
-  &:before, &:after {
-    display: table;
-    content: "";
-    line-height: 0;
-  }
-  &:after {
-    clear: both;
-  }
-}
-
-.hide-text {
-  font: 0/0 a;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  border: 0;
-}
-
-.input-block-level {
-  display: block;
+  position: fixed;
+  top: 0px;
   width: 100%;
-  min-height: 30px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
 
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1040;
-  background-color: #ffffff;
-  opacity: 0.9;
-  filter: alpha(opacity=90);
-
-  .fade {
-    opacity: 0;
+  .overlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    @include opacity(0.95);
+    background-color: #f2f2f2;
   }
 
-  &.fade.in {
-    opacity: 0.9;
-    filter: alpha(opacity=90);
-  }
-}
+  .modal-wrap {
+    @include animation(fadeIn 1s);
+    position: relative;
+    margin: 40px auto 100px auto;
+    color: $text-color;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width: 960px;
 
-.modal {
-  display: block;
-  bottom: initial;
-  position: fixed;
-  top: 10%;
-  z-index: 1050;
-  max-width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #f2f2f2;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-shadow: 0px 0px 10px #B4B4B4;
-  box-shadow: 0px 0px 10px #B4B4B4;
-  -webkit-box-shadow: 0px 0px 10px #B4B4B4;
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding-box;
-  background-clip: padding-box;
-  outline: none;
-  &.fade {
-    -webkit-transition: opacity .3s linear, top .3s ease-out;
-    -moz-transition: opacity .3s linear, top .3s ease-out;
-    -o-transition: opacity .3s linear, top .3s ease-out;
-    transition: opacity .3s linear, top .3s ease-out;
-    top: -25%;
-  }
-  &.fade.in {
-    top: 10%;
-  }
-}
+    .modal-content {
+      margin: 24px 0px;
+    }
 
-.modal-header {
-  padding: 9px 15px;
-  border-bottom: 1px solid #eee;
+  }
+
+  &.modal-wide {
+    .modal-wrap {
+      width: 960px;
+    }
+  }
+
+  &.modal-medium {
+    .modal-wrap {
+      width: 780px;
+    }
+  }
+
+  &.modal-narrow {
+    .modal-wrap {
+      width: 540px;
+    }
+  }
+
+  &.modal-square {
+    .modal-wrap {
+      width: 400px;
+      height: 400px;
+    }
+  }
+
+  &.modal-square {
+    .modal-wrap {
+      width: 460px;
+      height: 340px;
+    }
+  }
+
   .close {
-    margin-top: 2px;
+    //@include size(16px, 16px);
+    //@include pos-top-right(absolute, 8px, 12px);
+    //@extend .icons-closebutton;
+    margin: 4px 2px;
   }
-  h3 {
-    margin: 0;
-    line-height: 30px;
-  }
-}
 
-.modal-body {
-  position: relative;
-  overflow-y: auto;
-  padding: 35px;
 }
-
-.modal-form {
-  margin-bottom: 0;
-}
-
-.modal-footer {
-  padding: 14px 15px 15px;
-  margin-bottom: 0;
-  text-align: right;
-  background-color: #f5f5f5;
-  border-top: 1px solid #ddd;
-  -webkit-border-radius: 0 0 6px 6px;
-  -moz-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
-  -webkit-box-shadow: inset 0 1px 0 #ffffff;
-  -moz-box-shadow: inset 0 1px 0 #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff;
-  *zoom: 1;
-  &:before, &:after {
-    display: table;
-    content: "";
-    line-height: 0;
-  }
-  &:after {
-    clear: both;
-  }
-  .btn + .btn {
-    margin-left: 5px;
-    margin-bottom: 0;
-  }
-  .btn-group .btn + .btn {
-    margin-left: -1px;
-  }
-  .btn-block + .btn-block {
-    margin-left: 0;
-  }
-}
-

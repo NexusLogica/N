@@ -17,7 +17,8 @@ angular.module('nSimApp.directives').directive('sim', [function() {
     restrict: 'E',
     //scope: {
     //},
-    controller: ['$scope', '$timeout', '$compile', function ($scope, $timeout, $compile) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile) {
+      ComponentExtensions.initialize(this, 'sim', $scope, $attrs);
       $scope.panels = {};
 
       $scope.$on('n-app:create-new', function(event, typeOfNew) {
