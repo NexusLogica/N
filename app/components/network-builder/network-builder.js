@@ -20,7 +20,7 @@ angular.module('nSimApp.directives').directive('networkBuilder', [function() {
     },
     templateUrl: 'components/network-builder/network-builder.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
-      ComponentExtensions.initialize(this, 'networkBuilder', $scope, $attrs);
+      ComponentExtensions.initialize(this, 'networkBuilder', $scope, $element, $attrs);
 
       $timeout(function() { $scope.panelData.name = 'blah blah'; }, 2000);
 

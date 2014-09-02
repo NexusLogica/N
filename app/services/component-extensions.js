@@ -22,9 +22,10 @@ nSimAppServices.service('ComponentExtensions', [function() {
    * @param $scope
    * @param $attrs
    */
-  var initialize = function(controller, name, $scope, $attrs) {
+  var initialize = function(controller, name, $scope, $element, $attrs) {
 
     $scope.piComponentName = name;
+    $element.addClass(N.camelCaseToDashed(name));
 
     // Allow for more intelligent parent/child scope communications. Set the
     // piParentComponent for this scope.

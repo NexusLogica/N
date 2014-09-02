@@ -19,7 +19,7 @@ angular.module('nSimApp.directives').directive('administration', [function() {
     //},
     templateUrl: 'components/administration/administration.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', 'localStorageService', function (ComponentExtensions, $scope, $element, $attrs, $timeout, localStorageService) {
-      ComponentExtensions.initialize(this, 'administration', $scope, $attrs);
+      ComponentExtensions.initialize(this, 'administration', $scope, $element, $attrs);
 
       $scope.userInfo = { firstName: 'Lawrence', lastName: 'Gunn' };
       $scope.database = { url: '' };

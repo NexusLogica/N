@@ -1,0 +1,56 @@
+/**********************************************************************
+
+File     : dialog.scss
+Project  : N Simulator Library
+Purpose  : Source file for dialog component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../css/core.scss';
+@import '../../css/mixins.scss';
+@import '../../css/common.scss';
+
+
+.pi-dialog .modal-footer {
+  margin-top: 15px;
+  padding: 19px 20px 0px 20px;
+}
+
+.pi-dialog.create-database-dialog {
+  max-width: 650px;
+}
+
+.pi-dialog.delete-database-dialog {
+  .modal-wrap {
+    width: 640px;
+  }
+
+  .dropdown .btn {
+    text-align: left;
+    width: 560px;
+  }
+  .item-set {
+    margin-top:10px;
+
+    .item-label {
+      display: inline-block;
+      width: 60px;
+    }
+    .item-value {
+      margin-left: 10px;
+      display: inline-block;
+      width: 450px;
+    }
+  }
+  .well {
+    margin-top: 10px;
+  }
+  .footer-message {
+    width: 310px;
+  }
+}

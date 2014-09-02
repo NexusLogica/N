@@ -21,7 +21,7 @@ angular.module('nSimApp.directives').directive('header', [function() {
     },
     templateUrl: 'components/header/header.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$location', function (ComponentExtensions, $scope, $element, $attrs, $location) {
-      ComponentExtensions.initialize(this, 'header', $scope, $attrs);
+      ComponentExtensions.initialize(this, 'header', $scope, $element, $attrs);
 
       $scope.navigateTo = function(locationName) {
         $location.path(locationName);

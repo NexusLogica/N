@@ -18,7 +18,7 @@ angular.module('nSimApp.directives').directive('sim', [function() {
     //scope: {
     //},
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile) {
-      ComponentExtensions.initialize(this, 'sim', $scope, $attrs);
+      ComponentExtensions.initialize(this, 'sim', $scope, $element, $attrs);
 
       // Ensure the services are loaded.
       N.NWS.WebServices.Load();

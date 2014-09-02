@@ -21,7 +21,7 @@ angular.module('nSimApp.directives').directive('dialog', [function() {
     transclude: true,
     templateUrl: 'components/dialog/dialog.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$window', function (ComponentExtensions, $scope, $element, $attrs, $window) {
-      ComponentExtensions.initialize(this, 'dialog', $scope, $attrs);
+      ComponentExtensions.initialize(this, 'dialog', $scope, $element, $attrs);
 
       $scope.closable = !_.isUndefined($attrs.closable) ? angular.wilson.utils.parseBoolean($attrs.closable) : true;
 

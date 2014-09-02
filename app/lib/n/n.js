@@ -318,6 +318,17 @@ N.shortenName = function(longName) {
 }
 
 /**
+ * Take capitals of camel case identifier and inserts a dash and makes lower case, i.e. thisString becomes this-string.
+ * @method camelCaseToDashed
+ * @param camelCaseName
+ * @returns {string}
+ */
+N.camelCaseToDashed = function(camelCase) {
+  return camelCase.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
+
+/**
  * Remove [ and ] and replace with . separators.
  * @method cleanName
  * @param name

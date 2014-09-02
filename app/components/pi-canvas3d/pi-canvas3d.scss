@@ -1,0 +1,26 @@
+/**********************************************************************
+
+File     : pi-canvas3d.scss
+Project  : N Simulator Library
+Purpose  : Source file for the pi-canvas-3d component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/01/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../css/core.scss';
+@import '../../css/mixins.scss';
+@import '../../css/common.scss';
+
+
+.pi-canvas3d {
+  display: block;
+
+  .canvas3d-container {
+    width: 500px;
+    height: 400px;
+  }
+}
