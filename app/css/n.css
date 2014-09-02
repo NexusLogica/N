@@ -2305,10 +2305,7 @@ body {
   stroke-opacity: 0.5; }
 
 .field-viewer-panel {
-  display: block;
-  background-color: green;
-  height: 700px;
-  width: 1200px; }
+  display: block; }
 
 /**********************************************************************
 
@@ -2707,7 +2704,7 @@ body {
 
 .pi-canvas3d {
   display: block; }
-  .pi-canvas3d .canvas3d-container {
+  .pi-canvas3d .render-target {
     width: 500px;
     height: 400px; }
 
