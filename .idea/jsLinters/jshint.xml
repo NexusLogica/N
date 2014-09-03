@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JSHintConfiguration" version="2.1.10" use-config-file="false" default-config-file-path="$PROJECT_DIR$/.jshintrc">
+  <component name="JSHintConfiguration" version="2.3.0" use-config-file="false" default-config-file-path="$PROJECT_DIR$/.jshintrc">
     <option bitwise="true" />
     <option camelcase="true" />
     <option curly="true" />
@@ -63,7 +63,7 @@
     <option passfail="false" />
     <option white="false" />
     <option maxerr="50" />
-    <option predef="_,Q,angular,console,N,bootbox,ComponentExtensions,StateMachine" />
+    <option predef="_,Q,angular,console,N,bootbox,ComponentExtensions,StateMachine,Detector,THREE,requestAnimationFrame" />
   </component>
 </project>
 
