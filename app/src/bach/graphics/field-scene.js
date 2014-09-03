@@ -11,59 +11,72 @@ All Rights Reserved.
 
 */
 
+'use strict';
+
 N.Bach.FieldScene = function() {
   this.size = new THREE.Vector3(1.0, 1.0, 1.0);
+  this.size.multiplyScalar(2.0);
   this.grid = new THREE.Vector3(5, 5, 5);
 }
 
 N.Bach.FieldScene.prototype.build = function(scene, camera, renderer) {
+  var points = this.createPoints();
+  var buffer = this.buildCloud(points);
+  scene.add(buffer);
 
-  this.points = [];
+  this.setLighting(scene);
+}
 
-  var geometry = new THREE.BoxGeometry(1,1,1);
-  var material = new THREE.MeshPhongMaterial({
-  specular: '#FFFFFF',
-  // intermediate
-  color: '#FF0000',
-  emissive: '#000000',
-  // dark
-  shininess: 100  });
-  var root = new THREE.Object3D();
-  scene.add(root);
+N.Bach.FieldScene.prototype.createPoints = function() {
+  var geometry = new THREE.BufferGeometry();
+  var numPoints = this.grid.x*this.grid.y*this.grid.z;
 
-  var cube = new THREE.Mesh(geometry, material);
-  root.add(cube);
-  cube.translateY(0.25);
+  var positions = new Float32Array(numPoints*3);
+  var colors = new Float32Array(numPoints*3);
+  var color = new THREE.Color(0xFF0000);
+  var intensity = 1.0;
 
-  var geometry2 = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-  var cube2 = new THREE.Mesh(geometry2, material);
-  cube.add(cube2);
-  cube2.translateX(1.5);
+  var xInc = this.size.x/(this.grid.x-1);
+  var yInc = this.size.y/(this.grid.y-1);
+  var zInc = this.size.z/(this.grid.z-1);
 
-  var sphereGeometry = new THREE.SphereGeometry( 0.1, 32, 32 );
+  var m = 0;
+  var x = -0.5*this.size.x;
+  for(var i = 0; i < this.grid.x; i++) {
+    var y = -0.5*this.size.y;
+    for(var j = 0; j < this.grid.y; j++) {
+      var z = -0.5*this.size.z;
+      for(var k = 0; k < this.grid.z; k++) {
+        positions[ 3 * m ] =     x;
+        positions[ 3 * m + 1 ] = y;
+        positions[ 3 * m + 2 ] = z;
 
-  var spheres = [];
-  for ( var i = 0; i < 40; i++ ) {
-    var sphere = new THREE.Mesh( sphereGeometry, material );
-    scene.add( sphere );
-    sphere.translateX(0.2*i);
-    spheres.push( sphere );
-   }
+        colors[ 3 * m ]     = color.r * intensity;
+        colors[ 3 * m + 1 ] = color.g * intensity;
+        colors[ 3 * m + 2 ] = color.b * intensity;
 
-  var material3 = new THREE.MeshBasicMaterial({
-    color: 0x0000ff
-  });
+        z += zInc;
+        m++;
+      }
+      y += yInc;
+    }
+    x += xInc;
+  }
 
-  var radius = 0.5;
-  var segments = 32;
+  geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.computeBoundingBox();
 
-  var geometry4 = new THREE.SphereGeometry( 0.5, 32, 32 );
-  var sphere = new THREE.Mesh( geometry4, material );
-  cube.add( sphere );
-  sphere.translateY(1.5);
+  return geometry;
+}
 
-  camera.position.z = 3;
+N.Bach.FieldScene.prototype.buildCloud = function(points) {
+  var material = new THREE.PointCloudMaterial({ size: 0.05, vertexColors: THREE.VertexColors });
+  var pointcloud = new THREE.PointCloud(points, material);
+  return pointcloud;
+}
 
+N.Bach.FieldScene.prototype.setLighting = function(scene) {
   // add subtle ambient lighting
   var ambientLight = new THREE.AmbientLight(0x202020);
   scene.add(ambientLight);

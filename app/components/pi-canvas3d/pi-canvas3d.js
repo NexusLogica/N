@@ -46,6 +46,8 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
 
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera( 75, target.width() / target.height(), 0.1, 1000 );
+        camera.position.z = 3;
+
         renderer = new THREE.WebGLRenderer();
         renderer.setSize( target.width(), target.height() );
         target.append(renderer.domElement);
