@@ -22,7 +22,9 @@ angular.module('nSimApp.directives').directive('fieldViewerPanel', [function() {
       $scope.stopRendering = false;
 
       $scope.field = new N.Bach.CylindricalField();
+      $scope.grid  = new N.Bach.FieldGrid();
       $scope.scene = new N.Bach.FieldScene();
+      $scope.scene.setFieldAndGrid($scope.field, $scope.grid);
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
