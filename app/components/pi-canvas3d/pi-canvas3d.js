@@ -19,21 +19,17 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
       scene: '=scene'
     },
     templateUrl: 'components/pi-canvas3d/pi-canvas3d.html',
-    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', function (ComponentExtensions, $scope, $element, $attrs) {
       ComponentExtensions.initialize(this, 'piCanvas3d', $scope, $element, $attrs);
 
 
     }],
-    link: function($scope, $element, $attrs, ctrl) {
+    link: function($scope, $element, $attrs) {
       var useTrackingControls = $attrs.hasOwnProperty('useTrackingControls');
 
       $scope.stop = function() {
-        if($scope.stopRendering) {
-          $scope.stopRendering = false;
-        } else {
-          $scope.stopRendering = true;
-        }
-      }
+        $scope.stopRendering = !$scope.stopRendering;
+      };
 
       var scene, camera, renderer;
 
@@ -63,7 +59,7 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
         if($scope.scene) {
           $scope.scene.build(scene, camera, renderer);
         }
-      }
+      };
 
       var render = function () {
         requestAnimationFrame(render);

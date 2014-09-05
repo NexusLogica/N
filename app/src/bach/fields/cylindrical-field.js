@@ -10,15 +10,16 @@ Copyright (c) 2014 by Lawrence Gunn
 All Rights Reserved.
 
 */
+'use strict';
 
 N.Bach.CylindricalField = function() {
   this.intensityAtDistance = 1.0; // Intensity of the field at a given distance from the axis.
   this.axis = new THREE.Vector3(0.0, 0.0, 1.0);
-}
+};
 
 N.Bach.CylindricalField.prototype.getFieldVectorAt = function(vec) {
-  var len = vec.length();
+  var len = Math.sqrt(vec.x*vec.x+vec.y*vec.y);
   var out = new THREE.Vector3();
-  out.crossVectors(this.axis, vec).normalize().multiplyScalar(this.intensityAtDistance);
+  out.crossVectors(this.axis, vec).normalize().multiplyScalar(this.intensityAtDistance*len);
   return out;
-}
+};
