@@ -38,7 +38,17 @@ All Rights Reserved.
 @mixin shadow() {
   -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
   -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
-  box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+}
+
+@mixin panel-border-square() {
+  @include shadow();
+  border: solid 1px #8fbcdb;
+}
+
+@mixin panel-border() {
+  @include panel-border-square();
+  @include border-radius(5px);
 }
 
 @mixin opacity($opacity) {

@@ -18,8 +18,9 @@ All Rights Reserved.
 @import '../components/header/header.scss';
 @import '../components/administration/administration.scss';
 @import '../components/dialog/dialog.scss';
-@import '../components/field-viewer-panel/field-viewer-panel.scss';
 @import '../components/pi-canvas3d/pi-canvas3d.scss';
+@import '../components/field-viewer-panel/field-viewer-panel.scss';
+@import '../components/field-viewer-settings/field-viewer-settings.scss';
 
 
 .test-top {
@@ -191,8 +192,7 @@ All Rights Reserved.
   .console {
     min-height: 250px;
     padding: 0px 0px;
-    border: solid 1px $color-med;
-    @include  shadow();
+    @include panel-border();
 
     .top-header {
       border-bottom: 1px solid lighten($text-color-light, 5%);
@@ -332,18 +332,6 @@ All Rights Reserved.
       opacity:0;
       transition: all 0.5s ease;
        -webkit-transition: all 0.5s ease;
-    }
-  }
-}
-
-.bach {
-  .field-viewer-panel {
-    .render-target {
-      width:700px;
-      height:450px;
-      background-color: green;
-      @include auto-center();
-      margin-top: 75px;
     }
   }
 }

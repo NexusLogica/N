@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : field-viewer-panel.scss
+File     : field-viewer-settings.scss
 Project  : N Simulator Library
 Purpose  : Source file for the field viewer panel component SCSS files.
 Revisions: Original definition by Lawrence Gunn.
@@ -16,16 +16,9 @@ All Rights Reserved.
 @import '../../css/common.scss';
 
 
-.field-viewer-panel {
-  margin-top: 50px;
+.field-viewer-settings {
   display: block;
-  text-align:center;
-
-
-  .field-viewer-settings, .pi-canvas3d {
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
+  height: 500px;
+  width: 500px;
+  @include panel-border();
 }

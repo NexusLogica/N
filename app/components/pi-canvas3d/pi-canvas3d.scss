@@ -18,6 +18,7 @@ All Rights Reserved.
 
 .pi-canvas3d {
   display: block;
+  @include panel-border-square();
 
   .render-target {
     width: 500px;

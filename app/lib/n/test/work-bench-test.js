@@ -23,6 +23,9 @@ var nSimAppControllers = angular.module('nSimApp.controllers');
 
 nSimAppControllers.controller('WorkbenchTestController', ['$scope',
   function WorkbenchTestController($scope) {
+    // Ensure the services are loaded.
+    N.NWS.WebServices.Load();
+
     $scope.test = new N.WorkbenchTestScenes();
     $scope.test.createScenes();
     $scope.workbenches = $scope.test.workbenches;

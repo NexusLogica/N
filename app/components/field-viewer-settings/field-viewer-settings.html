@@ -1,0 +1,18 @@
+<div>
+  <div class="settings-container">
+    <div>
+      <div class="dropdown field-type">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-connection-select" data-toggle="dropdown">
+          <span ng-show="targetInputSignalCopy.connection">{{ targetInputSignalCopy.connection }}</span>
+          <span ng-hide="targetInputSignalCopy.connection" class="placeholder">Select a field type...</span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-connection-select">
+          <li ng-repeat="source in inputLayerSourceCompartments">
+            <a ng-click="setInputSignalPath(source.connection.path)" tabindex="-1" href="#">{{source.connection.path}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

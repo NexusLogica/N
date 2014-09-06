@@ -18,6 +18,9 @@ angular.module('nSimApp.directives').directive('administration', [function() {
     //scope: {
     //},
     controller: ['$scope', '$timeout', 'localStorageService', function ($scope, $timeout, localStorageService) {
+      // Ensure the services are loaded.
+      N.NWS.WebServices.Load();
+
       $scope.userInfo = { firstName: 'Lawrence', lastName: 'Gunn' };
       $scope.database = { url: '' };
       $scope.databaseList = N.NWS.services.databases;
