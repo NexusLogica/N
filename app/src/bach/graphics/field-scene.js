@@ -16,6 +16,7 @@ N.Bach.FieldScene = function() {
   this.arrowScaling = 0.4;
   this.showPoints = false;
   this.showArrows = true;
+  this.charges = [];
 };
 
 N.Bach.FieldScene.prototype.setFieldAndGrid = function(field, grid) {
@@ -25,20 +26,42 @@ N.Bach.FieldScene.prototype.setFieldAndGrid = function(field, grid) {
 
 N.Bach.FieldScene.prototype.build = function(scene) {
 
+  this.scene = scene;
   this.grid.build();
   this.grid.applyField(this.field);
 
-  var points = this.createPoints(scene);
+  var points = this.createPoints();
 
   if(this.showPoints) {
     var buffer = this.buildCloud(points);
-    scene.add(buffer);
+    this.scene.add(buffer);
+  }
+
+  for(var i in this.charges) {
+    var charge = this.charges[i];
+    if(!charge.graphic) {
+      charge.graphic = new THREE.Mesh(
+        new THREE.SphereGeometry(this.grid.size.x*0.1, 12, 10),
+        new THREE.MeshPhongMaterial({
+          specular: '#888888',
+          color: '#AA0000',
+          emissive: '#220000',
+          shininess: 4  })
+      );
+      charge.graphic.overdraw = true;
+      this.scene.add(charge.graphic);
+    }
   }
 
   this.setLighting(scene);
 };
 
-N.Bach.FieldScene.prototype.createPoints = function(scene) {
+N.Bach.FieldScene.prototype.addCharge = function(position, magnitude, color) {
+  var charge = {position: position, magnitude: magnitude, color: _.isUndefined(color) ? (magnitude > 0 ? 0xff0000 : 0x0000ff) : color };
+  this.charges.push(charge);
+}
+
+N.Bach.FieldScene.prototype.createPoints = function() {
   var geometry = new THREE.BufferGeometry();
   var numPoints = this.grid.points.length;
 
@@ -70,7 +93,7 @@ N.Bach.FieldScene.prototype.createPoints = function(scene) {
     if(this.showArrows) {
       var arrow = this.createArrow(point, intensityColor);
       if(arrow) {
-        scene.add(arrow);
+        this.scene.add(arrow);
         arrows.push(arrow);
       }
     }
@@ -107,6 +130,7 @@ N.Bach.FieldScene.prototype.createArrow = function(point, color) {
       0.2*arrowLength,
       0.2*arrowLength
   );
+  arrow.userData = { uiType: 'Grid arrow', data: point };
   return arrow;
 };
 

@@ -32,6 +32,7 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
       };
 
       var scene, camera, renderer;
+      var pointerDetectRay, projector, mouse2D;
 
       var initializeRenderer = function() {
         if(!Detector.webgl) {
@@ -56,13 +57,34 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
           });
         }
 
+        //pointerDetectRay = new THREE.Raycaster();
+        //pointerDetectRay.ray.direction.set(0, -1, 0);
+        //projector = new THREE.Projector();
+        //mouse2D = new THREE.Vector3(0, 0, 0);
+
         if($scope.scene) {
           $scope.scene.build(scene, camera, renderer);
         }
       };
 
+//      $scope.onMouseDown = function($event) {
+//        $event.preventDefault();
+//        mouse2D.x = ($event.clientX / $element.width()) * 2 - 1;
+//        mouse2D.y = -($event.clientY / $element.height()) * 2 + 1;
+//        var intersects = pointerDetectRay.intersectObjects(scene.children, true);
+//
+//        if (intersects.length > 0) {
+//            var intersect = intersects[0];
+//debugger;
+//          console.log('yes');
+//            // intersect is the object under your mouse!
+//            // do what ever you want!
+//        }
+//      };
+
       var render = function () {
         requestAnimationFrame(render);
+//        pointerDetectRay = projector.pickingRay(mouse2D.clone(), camera);
         renderer.render(scene, camera);
       };
 

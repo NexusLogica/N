@@ -25,6 +25,7 @@ angular.module('nSimApp.directives').directive('fieldViewerPanel', [function() {
       $scope.grid  = new N.Bach.FieldGrid();
       $scope.scene = new N.Bach.FieldScene();
       $scope.scene.setFieldAndGrid($scope.field, $scope.grid);
+      $scope.scene.addCharge(new THREE.Vector3(0.0, 0.0, 0.0), -1.0)
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
