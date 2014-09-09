@@ -17,6 +17,10 @@ N.Bach.FieldScene = function() {
   this.showPoints = false;
   this.showArrows = true;
   this.charges = [];
+  this.arrows = [];
+
+  this.gridCenterOriginal = new THREE.Vector3(0.0, 0.0, 0.0);
+  this.gridCenterCurrent = this.gridCenterOriginal.clone();
 };
 
 N.Bach.FieldScene.prototype.setFieldAndGrid = function(field, grid) {
@@ -56,6 +60,17 @@ N.Bach.FieldScene.prototype.build = function(scene) {
   this.setLighting(scene);
 };
 
+N.Bach.FieldScene.prototype.slideGrid = function(value, direction) {
+  var scale = 1.0;
+  if(direction === 'z') {
+    for(var i in this.arrows) {
+      var arrowFrame = this.arrows[i];
+      var point = arrowFrame.userData.originalPos;
+      arrowFrame.position.z = point.z+value;
+    }
+  }
+}
+
 N.Bach.FieldScene.prototype.addCharge = function(position, magnitude, color) {
   var charge = {position: position, magnitude: magnitude, color: _.isUndefined(color) ? (magnitude > 0 ? 0xff0000 : 0x0000ff) : color };
   this.charges.push(charge);
@@ -72,8 +87,6 @@ N.Bach.FieldScene.prototype.createPoints = function() {
   var colorHigh = new THREE.Color(0xFF0000);
 
   var range = this.grid.max-this.grid.min;
-
-  var arrows = [];
 
   for(var i in this.grid.points) {
     var point = this.grid.points[i];
@@ -94,7 +107,7 @@ N.Bach.FieldScene.prototype.createPoints = function() {
       var arrow = this.createArrow(point, intensityColor);
       if(arrow) {
         this.scene.add(arrow);
-        arrows.push(arrow);
+        this.arrows.push(arrow);
       }
     }
   }
@@ -122,16 +135,20 @@ N.Bach.FieldScene.prototype.createArrow = function(point, color) {
     return undefined;
   }
 
+  var frame = new THREE.Object3D();
+  frame.position.copy(origin);
+
   var arrow = new THREE.ArrowHelper(
       point.fieldVec.clone().normalize(),
-      origin,
+      new THREE.Vector3(0, 0, 0),
       this.arrowScaling*point.fieldVec.length(),
       color,
       0.2*arrowLength,
       0.2*arrowLength
   );
-  arrow.userData = { uiType: 'Grid arrow', data: point };
-  return arrow;
+  frame.userData = { uiType: 'Grid arrow', data: point, originalPos: origin };
+  frame.add(arrow);
+  return frame;
 };
 
 N.Bach.FieldScene.prototype.buildCloud = function(points) {

@@ -95,6 +95,11 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
       initializeRenderer();
       startRenderLoop();
 
+      $scope.$on('pi-canvas3d:slide-grid', function($event, value, direction) {
+        $event.preventDefault();
+        $scope.scene.slideGrid(value, direction);
+      });
+
     }
   };
 }]);

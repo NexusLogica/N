@@ -3141,7 +3141,25 @@ body {
     border: solid 1px #8fbcdb;
     border-radius: 5px;
     -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    margin-bottom: 10px; }
+  .field-viewer-settings .view-settings {
+    padding: 10px;
+    width: 500px;
+    -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+    border: solid 1px #8fbcdb;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
     -moz-border-radius: 5px; }
+    .field-viewer-settings .view-settings .slider-container {
+      text-align: center; }
+      .field-viewer-settings .view-settings .slider-container .slider {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: 350px; }
 
 .test-top {
   line-height: normal;
