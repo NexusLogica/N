@@ -19,7 +19,7 @@ N.Bach.FieldGrid = function() {
   this.points = [];
   this.min = 0.0;
   this.max = 0.0;
-}
+};
 
 N.Bach.FieldGrid.prototype.build = function() {
   this.points = [];
@@ -44,18 +44,24 @@ N.Bach.FieldGrid.prototype.build = function() {
     }
     x += xInc;
   }
-}
+};
 
-N.Bach.FieldGrid.prototype.applyField = function(field) {
+N.Bach.FieldGrid.prototype.applyField = function(field, offset) {
   this.min = undefined;
   this.max = undefined;
   for(var i in this.points) {
-    var point = this.points[i];
-    point.fieldVec = field.getFieldVectorAt(point.position);
-    point.intensity = point.fieldVec.length();
-    if(_.isUndefined(this.min)) { this.max = this.min = point.intensity; }
-    else if(point.intensity > this.max) { this.max = point.intensity; }
-    else if(point.intensity < this.min) { this.min = point.intensity; }
-  }
-}
 
+    var point = this.points[i];
+    point.fieldVec = field.getFieldVectorAt(point.position.clone().add(offset));
+    point.intensity = point.fieldVec.length();
+    point.currentPosition = point.position.clone().add(offset);
+
+    if(_.isUndefined(this.min)) {
+      this.max = this.min = point.intensity;
+    } else if(point.intensity > this.max) {
+      this.max = point.intensity;
+    } else if(point.intensity < this.min) {
+      this.min = point.intensity;
+    }
+  }
+};

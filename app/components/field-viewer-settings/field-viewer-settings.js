@@ -45,7 +45,7 @@ angular.module('nSimApp.directives').directive('fieldViewerSettings', [function(
         max: 100,
         step: 2,
         slide: function( event, ui ) {
-          $scope.$emit('field-viewer-settings:slide-grid', ui.value/100, 'z');
+          $scope.$emit('field-viewer-settings:slide-grid', ui.value/100, 'x');
         }
 
       });
