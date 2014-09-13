@@ -39,16 +39,6 @@ angular.module('nSimApp.directives').directive('fieldViewerSettings', [function(
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
-      $element.find('.view-settings .slider').slider({
-        value: 0,
-        min: -100,
-        max: 100,
-        step: 2,
-        slide: function( event, ui ) {
-          $scope.$emit('field-viewer-settings:slide-grid', ui.value/100, 'x');
-        }
-
-      });
     }
   };
 }]);

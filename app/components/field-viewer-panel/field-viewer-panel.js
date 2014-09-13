@@ -27,9 +27,9 @@ angular.module('nSimApp.directives').directive('fieldViewerPanel', [function() {
       $scope.scene.setFieldAndGrid($scope.field, $scope.grid);
       $scope.scene.addCharge(new THREE.Vector3(0.0, 0.0, 0.0), -1.0);
 
-      $scope.$on('field-viewer-settings:slide-grid', function($event, value, direction) {
+      $scope.$on('field-viewer-settings:slide-grid', function($event, vec) {
         $event.stopPropagation();
-        $scope.$broadcast('pi-canvas3d:slide-grid', value, direction);
+        $scope.$broadcast('pi-canvas3d:slide-grid', vec);
       });
     }],
     link: function($scope, $element, $attrs, ctrl) {

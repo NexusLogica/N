@@ -67,16 +67,11 @@ N.Bach.FieldScene.prototype.build = function(scene) {
   this.update(this.gridCenterOriginal);
 };
 
-N.Bach.FieldScene.prototype.slideGrid = function(value, direction) {
+N.Bach.FieldScene.prototype.slideGrid = function(vec) {
   var scale = 1.0;
-  if(direction === 'x') {
-    var offset = this.gridCenterOriginal.clone().setX(this.gridCenterOriginal.x+value);
-    this.update(offset);
-  }
-  else if(direction === 'z') {
-    var offset = this.gridCenterOriginal.clone().setZ(this.gridCenterOriginal.z+value);
-    this.update(offset);
-  }
+  var scaledVec = vec.clone().multiplyScalar(scale);
+  var offset = this.gridCenterOriginal.clone().add(scaledVec);
+  this.update(offset);
 };
 
 N.Bach.FieldScene.prototype.createPoints = function() {
@@ -189,7 +184,7 @@ N.Bach.FieldScene.prototype.updateArrow = function(arrowFrame, point, color) {
   var arrow = arrowFrame.children[0];
   arrow.setDirection(point.fieldVec.clone().normalize());
   var len = point.fieldVec.length();
-  arrow.setLength(this.arrowScaling*len, 0.3*this.arrowScaling*len, 0.4*this.arrowScaling*len);
+  arrow.setLength(this.arrowScaling*len, 0.2*this.arrowScaling*len, 0.2*this.arrowScaling*len);
   arrow.setColor(color);
 };
 
