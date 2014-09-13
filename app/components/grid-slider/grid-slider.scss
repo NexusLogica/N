@@ -26,11 +26,24 @@ All Rights Reserved.
     border: silver 1px solid;
     @include auto-center();
     margin-bottom: 20px;
+    pointer-events: all;
 
     .selection-rect {
-      fill: #EEEEEE;
       stroke: black;
       stroke-width: 2px;
+      pointer-events: all;
+      fill: none;
+    }
+
+    .hint-text-title {
+      fill: gray;
+      stroke: none;
+      font-size: 14px;
+    }
+    .hint-text-detail {
+      fill: gray;
+      stroke: none;
+      font-size: 10px;
     }
   }
 

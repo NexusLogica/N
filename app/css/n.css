@@ -2311,8 +2311,8 @@ body {
   box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
   border: solid 1px #8fbcdb; }
   .pi-canvas3d .render-target {
-    width: 500px;
-    height: 400px; }
+    width: 700px;
+    height: 500px; }
 
 /**********************************************************************
 
@@ -3558,11 +3558,21 @@ body {
     border: silver 1px solid;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 20px; }
+    margin-bottom: 20px;
+    pointer-events: all; }
     .grid-slider .svg-container .selection-rect {
-      fill: #EEEEEE;
       stroke: black;
-      stroke-width: 2px; }
+      stroke-width: 2px;
+      pointer-events: all;
+      fill: none; }
+    .grid-slider .svg-container .hint-text-title {
+      fill: gray;
+      stroke: none;
+      font-size: 14px; }
+    .grid-slider .svg-container .hint-text-detail {
+      fill: gray;
+      stroke: none;
+      font-size: 10px; }
   .grid-slider .horizontal-slider-container {
     text-align: center; }
     .grid-slider .horizontal-slider-container .slider {

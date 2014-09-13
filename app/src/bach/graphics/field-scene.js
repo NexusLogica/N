@@ -117,9 +117,9 @@ N.Bach.FieldScene.prototype.createCharges = function() {
         new THREE.SphereGeometry(this.grid.size.x*0.1, 12, 10),
         new THREE.MeshPhongMaterial({
           specular: '#888888',
-          color: '#AA0000',
-          emissive: '#220000',
-          shininess: 4  })
+          color: '#FF0000',
+          emissive: '#AA4444',
+          shininess: 6  })
       );
       charge.graphic.overdraw = true;
       this.scene.add(charge.graphic);
@@ -184,17 +184,17 @@ N.Bach.FieldScene.prototype.updateArrow = function(arrowFrame, point, color) {
   var arrow = arrowFrame.children[0];
   arrow.setDirection(point.fieldVec.clone().normalize());
   var len = point.fieldVec.length();
-  arrow.setLength(this.arrowScaling*len, 0.2*this.arrowScaling*len, 0.2*this.arrowScaling*len);
+  arrow.setLength(this.arrowScaling*len, 0.2*this.arrowScaling*len, 0.1*this.arrowScaling*len);
   arrow.setColor(color);
 };
 
 N.Bach.FieldScene.prototype.setLighting = function(scene) {
   // add subtle ambient lighting
-  var ambientLight = new THREE.AmbientLight(0x202020);
+  var ambientLight = new THREE.AmbientLight(0x303030);
   scene.add(ambientLight);
 
   // directional lighting
-  var directionalLight = new THREE.DirectionalLight(0x808080);
+  var directionalLight = new THREE.DirectionalLight(0xB0B0B0);
   directionalLight.position.set(0.8, 0.6, 1.2).normalize();
   scene.add(directionalLight);
 };
