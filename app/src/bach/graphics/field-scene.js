@@ -13,7 +13,8 @@ All Rights Reserved.
 'use strict';
 
 N.Bach.FieldScene = function() {
-  this.arrowScaling = 0.4;
+  this.maxArrowLength = 0.5;
+  this.arrowAutoScaling = 1.0;
   this.showPoints = false;
   this.showArrows = true;
   this.charges = [];
@@ -46,10 +47,16 @@ N.Bach.FieldScene.prototype.build = function(scene) {
   this.gridMin = this.grid.min;
   if(this.gridMin > 0) {
     this.gridMin = 0.0;
+    this.arrowAutoScaling = 1.0/this.gridMax;
   }
   else if(this.gridMax < 0) {
     this.gridMax = 0.0;
+    this.arrowAutoScaling = -1.0/this.gridMin;
+  } else {
+    this.arrowAutoScaling = 1.0/Math.max(Math.abs(this.gridMax), Math.abs(this.gridMin));
   }
+
+  this.absoluteMaxArrowLength = 2.0*this.maxArrowLength;
 
   if(this.showPoints) {
     this.geometry = this.createPoints()
@@ -62,13 +69,18 @@ N.Bach.FieldScene.prototype.build = function(scene) {
 
   this.createCharges();
 
+  this.axis = new THREE.AxisHelper(2.0);
+  this.scene.add(this.axis);
+
   this.setLighting(scene);
+
+  this.range = this.gridMax-this.gridMin;
 
   this.update(this.gridCenterOriginal);
 };
 
 N.Bach.FieldScene.prototype.slideGrid = function(vec) {
-  var scale = 1.0;
+  var scale = 1.0
   var scaledVec = vec.clone().multiplyScalar(scale);
   var offset = this.gridCenterOriginal.clone().add(scaledVec);
   this.update(offset);
@@ -116,10 +128,10 @@ N.Bach.FieldScene.prototype.createCharges = function() {
       charge.graphic = new THREE.Mesh(
         new THREE.SphereGeometry(this.grid.size.x*0.1, 12, 10),
         new THREE.MeshPhongMaterial({
-          specular: '#888888',
+          specular: '#882222',
           color: '#FF0000',
-          emissive: '#AA4444',
-          shininess: 6  })
+          emissive: '#AA0000',
+          shininess: 8  })
       );
       charge.graphic.overdraw = true;
       this.scene.add(charge.graphic);
@@ -133,12 +145,10 @@ N.Bach.FieldScene.prototype.update = function(offset) {
   var colorLow = new THREE.Color(0x00FF00);
   var colorHigh = new THREE.Color(0xFF0000);
 
-  var range = this.gridMax-this.gridMin;
-
   for(var i in this.grid.points) {
     var point = this.grid.points[i];
 
-    var intensity = (point.intensity-this.gridMin)/range;
+    var intensity = (point.intensity-this.gridMin)/this.range;
     var intensityColor = colorLow.clone();
     intensityColor.lerp(colorHigh, intensity);
 
@@ -164,8 +174,9 @@ N.Bach.FieldScene.prototype.update = function(offset) {
 N.Bach.FieldScene.prototype.updateArrow = function(arrowFrame, point, color) {
 
   // Place the middle of the point.
+  var scaling = this.arrowAutoScaling*this.maxArrowLength;
   var arrowDirection = point.fieldVec.clone().normalize();
-  var arrowLength = this.arrowScaling*point.fieldVec.length();
+  var arrowLength = scaling*point.fieldVec.length();
 
   var originOffset = arrowDirection.clone().multiplyScalar(-arrowLength*0.5);
   var origin = point.currentPosition.clone().add(originOffset);
@@ -182,9 +193,24 @@ N.Bach.FieldScene.prototype.updateArrow = function(arrowFrame, point, color) {
   arrowFrame.position.copy(origin);
 
   var arrow = arrowFrame.children[0];
+
+  if(Math.abs(arrowLength) > this.maxArrowLength) {
+    var op = 1.0-(Math.abs(arrowLength)-this.maxArrowLength)/this.maxArrowLength;
+    if(op < 0.0) {
+      op = 0.0;
+    }
+    arrow.cone.material.transparent = true;
+    arrow.line.material.transparent = true;
+    arrow.cone.material.opacity= op;
+    arrow.line.material.opacity= op;
+  } else {
+    arrow.cone.material.transparent = false;
+    arrow.line.material.transparent = false;
+  }
+
   arrow.setDirection(point.fieldVec.clone().normalize());
   var len = point.fieldVec.length();
-  arrow.setLength(this.arrowScaling*len, 0.2*this.arrowScaling*len, 0.1*this.arrowScaling*len);
+  arrow.setLength(scaling*len, 0.3*scaling*len, 0.2*scaling*len);
   arrow.setColor(color);
 };
 

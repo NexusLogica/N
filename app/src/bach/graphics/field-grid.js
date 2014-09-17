@@ -54,6 +54,9 @@ N.Bach.FieldGrid.prototype.applyField = function(field, offset) {
     var point = this.points[i];
     point.fieldVec = field.getFieldVectorAt(point.position.clone().add(offset));
     point.intensity = point.fieldVec.length();
+    if(_.isNaN(point.intensity)) {
+      point.intensity = 0.0;
+    }
     point.currentPosition = point.position.clone().add(offset);
 
     if(_.isUndefined(this.min)) {

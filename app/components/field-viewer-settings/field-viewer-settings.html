@@ -4,7 +4,7 @@
       <span>Select a field type</span>
       <div class="dropdown field-type">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdown-field-type-select" data-toggle="dropdown">
-          <span >{{ activeField.name }}</span>
+          <span >{{ currentField }}</span>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-field-type-select">
@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="field-settings">
-      <div class="single-electric-field" ng-if="activeField.className === 'N.Bach.SingleChargeScene'">
+      <div class="single-electric-field" ng-if="currentField.name === 'Cyclindrical test field'">
           <form novalidate class="form-horizontal" role="form" name="testform">
             <div class="form-group">
               <label class="col-sm-4 control-label" for="test-name">Charge:</label>
