@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>N WebGL Test Page</title>
+  <link rel="shortcut icon" href="./img/pi.ico" />
+  <style>
+    .canvas-container {
+      width: 700px;
+      height: 500px;
+      margin: 40px auto 0px auto;
+      background-color: gray;
+    }
+
+    .canvas-3d {
+      width: 700px;
+      height: 700px;
+    }
+  </style>
+
+  <script id="flat-vertex-shader" type="x-shader/x-vertex">
+    // A basic flat vertex shader, hello world'esque.
+    attribute vec2 position2d;
+    uniform float size;
+
+    void main() {
+      vec2 sizedPosition = position2d*size;
+      gl_Position = vec4(sizedPosition, 0, 1);
+    }
+  </script>
+
+  <script id="flat-fragment-shader" type="x-shader/x-fragment">
+    // A basic flat fragment shader, hello world'esque.
+
+    void main() {
+      gl_FragColor = vec4(0, 1, 0, 1);
+    }
+  </script>
+
+
+</head>
+<body>
+  <div class="canvas-container">
+    <canvas class="canvas-3d" width="700" height="700"/>
+  </div>
+
+  <script src="lib/jquery/jquery.js"></script>
+  <script src="lib/bower_components/gl-matrix/dist/gl-matrix.js"></script>
+  <script src="lib/webgl-utils/webgl-utils.js"></script>
+  <script src="src/gl/webgl-test.js"></script>
+  <script>
+    $().ready(function() {
+      var canvas = $('.canvas-3d');
+      var scene = Ngl.Scene();
+      canvas.data('scene', scene);
+      scene.initialize(canvas);
+
+      var surface = Ngl.Object3D({ x: 0.0, y: 0.0 }, 0.5);
+      scene.add(surface);
+
+      scene.render();
+    });
+  </script>
+
+</body>
+</html>

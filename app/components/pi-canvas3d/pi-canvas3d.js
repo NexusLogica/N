@@ -33,6 +33,7 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
 
       var scene, camera, renderer;
       var pointerDetectRay, projector, mouse2D;
+      var width, height;
 
       var initializeRenderer = function() {
         if(!Detector.webgl) {
@@ -40,14 +41,16 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
         }
 
         var target = $element.find('.render-target');
+        width = target.width();
+        height = target.height();
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(width, height);
+        target.append(renderer.domElement);
 
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera( 75, target.width() / target.height(), 0.1, 1000 );
         camera.position.z = 3;
-
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize( target.width(), target.height() );
-        target.append(renderer.domElement);
 
         if(useTrackingControls) {
           var controls = new THREE.OrbitControls(camera, target[0]);
@@ -62,9 +65,20 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
         //projector = new THREE.Projector();
         //mouse2D = new THREE.Vector3(0, 0, 0);
 
+//        if($scope.scene) {
+//          $scope.scene.build(scene, camera, renderer);
+//        }
+      };
+
+      $scope.$watch('scene', function(newVal) {
         if($scope.scene) {
+          scene.children = [];
           $scope.scene.build(scene, camera, renderer);
         }
+      });
+
+      var buildScene = function() {
+
       };
 
 //      $scope.onMouseDown = function($event) {
