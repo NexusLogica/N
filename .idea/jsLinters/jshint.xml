@@ -63,7 +63,7 @@
     <option passfail="false" />
     <option white="false" />
     <option maxerr="50" />
-    <option predef="_,Q,angular,console,N,bootbox,ComponentExtensions,StateMachine,Detector,THREE,requestAnimationFrame,SVG" />
+    <option predef="_,Q,angular,console,N,bootbox,ComponentExtensions,StateMachine,Detector,THREE,requestAnimationFrame,SVG,mat4" />
   </component>
 </project>
 

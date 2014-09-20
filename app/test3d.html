@@ -19,12 +19,13 @@
 
   <script id="flat-vertex-shader" type="x-shader/x-vertex">
     // A basic flat vertex shader, hello world'esque.
-    attribute vec2 position2d;
+    uniform mat4 projectionMatrix;
+    attribute vec2 position;
     uniform float size;
 
     void main() {
-      vec2 sizedPosition = position2d*size;
-      gl_Position = vec4(sizedPosition, 0, 1);
+      vec4 sizedPosition = vec4(position[0]*size, position[1]*size, 0.0, 1.0);
+      gl_Position = projectionMatrix*sizedPosition;
     }
   </script>
 

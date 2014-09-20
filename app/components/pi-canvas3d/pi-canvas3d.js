@@ -97,8 +97,9 @@ angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
 //      };
 
       var render = function () {
-        requestAnimationFrame(render);
+//        requestAnimationFrame(render);
 //        pointerDetectRay = projector.pickingRay(mouse2D.clone(), camera);
+        debugger;
         renderer.render(scene, camera);
       };
 
