@@ -1,6 +1,6 @@
 logs/*
 !.gitkeep
-.idea/
+.idea
 .DS_Store
 .sass-cache
 src/lib/bower_components
