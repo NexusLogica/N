@@ -1,0 +1,22 @@
+{
+  "name": "n-simulator",
+  "version": "0.0.1",
+  "dependencies": {
+    "jquery": "2.1.1",
+    "lodash": "2.4.1",
+    "lodash-deep": "1.4.2",
+    "javascript-state-machine": "2.3.0",
+    "jquery-ui": "1.11.1",
+    "gl-matrix": "git://github.com/toji/gl-matrix",
+    "qunit": "1.15.0",
+    "angular": "1.2.25",
+    "angular-route": "1.2.25",
+    "angular-bootstrap": "0.11.2",
+    "bootstrap": "3.2.0",
+    "tube-player": "git://github.com/nirvanatikku/jQuery-TubePlayer-Plugin",
+    "momentjs": "2.4.0",
+    "q": "1.0.1",
+    "sprintf": "git://github.com/alexei/sprintf.js",
+    "svg.js": "git://github.com/wout/svg.js.git"
+  }
+}
