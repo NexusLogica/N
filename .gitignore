@@ -1,6 +1,7 @@
 logs/*
 !.gitkeep
-.idea/workspace.xml
-.idea/tasks.xml
+.idea/
 .DS_Store
 .sass-cache
+src/lib/bower_components
+src/npm-debug.log
