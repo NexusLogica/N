@@ -12,13 +12,13 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('networkBuilder', [function() {
+angular.module('nSimulationApp').directive('networkBuilder', [function() {
   return {
     restrict: 'E',
     scope: {
       panelData: '=panelData'
     },
-    templateUrl: 'components/network-builder/network-builder.html',
+    templateUrl: 'src/components/network-builder/network-builder.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'networkBuilder', $scope, $element, $attrs);
 

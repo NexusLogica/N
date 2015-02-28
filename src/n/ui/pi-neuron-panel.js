@@ -23,9 +23,7 @@ N.UI = N.UI || {};
  *
  * @type {module|module|*|module|module|module}
  */
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('PiNeuronPanelController', ['$scope',
+angular.module('nSimulationApp').controller('PiNeuronPanelController', ['$scope',
   function PiNeuronPanelController($scope) {
     $scope.onCompartmentMouseEnter = function(event, compartment) {
       console.log('mouseEnter on ['+compartment.neuron.network.name+'.'+compartment.neuron.name+':'+compartment.name+']');

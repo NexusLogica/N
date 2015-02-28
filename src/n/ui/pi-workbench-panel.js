@@ -19,13 +19,13 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-angular.module('nSimApp.directives').directive('piWorkbenchPanel', [function() {
+angular.module('nSimulationApp').directive('piWorkbenchPanel', [function() {
   return {
     restrict: 'E',
     scope: {
       workbenchScene: '=workbenchScene'
     },
-    templateUrl: 'partials/pi-workbench-panel.html',
+    templateUrl: 'src/partials/pi-workbench-panel.html',
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
 
       $scope.workbench = $scope.workbenchScene.workbench;

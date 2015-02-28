@@ -19,7 +19,7 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
+angular.module('nSimulationApp').directive('piSignalBuilder', [function() {
   return {
     restrict: 'E',
     scope: {
@@ -27,7 +27,7 @@ angular.module('nSimApp.directives').directive('piSignalBuilder', [function() {
       totalTime: '=totalTime',
       builderFormStatus: '=builderFormStatus'
     },
-    templateUrl: 'partials/pi-signal-builder.html',
+    templateUrl: 'src/partials/pi-signal-builder.html',
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
 
       $scope.inputTypes = [ { name: 'Voltage', type: 'voltage', units: 'millivolts' }, { name: 'Spiking', type: 'spiking', units: 'Hertz' } ];

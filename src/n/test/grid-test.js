@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : pi-network-test.js
+File     : grid-test.js
 Project  : N Simulator Library
 Purpose  : Source file for network graphics testing.
 Revisions: Original definition by Lawrence Gunn.

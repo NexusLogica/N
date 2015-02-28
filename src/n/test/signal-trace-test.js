@@ -19,9 +19,7 @@ N.Test = N.Test || {};
   //* SignalTestController *
   //************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('SignalTraceTestController', ['$scope',
+angular.module('nSimulationApp').controller('SignalTraceTestController', ['$scope',
   function SignalTraceTestController($scope) {
 
     $scope.TestInfo = { Name: 'Signal Trace Test' };
@@ -40,7 +38,7 @@ nSimAppControllers.controller('SignalTraceTestController', ['$scope',
   }
 ]);
 
-nSimAppControllers.controller('SignalTraceTestItemController', ['$scope',
+angular.module('nSimulationApp').controller('SignalTraceTestItemController', ['$scope',
   function SignalTraceTestItemController($scope) {
   }
 ]);

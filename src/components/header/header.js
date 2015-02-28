@@ -12,14 +12,14 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('header', [function() {
+angular.module('nSimulationApp').directive('header', [function() {
   return {
     restrict: 'E',
     scope: {
       currentPage: '@currentPage',
       projectName: '@projectName'
     },
-    templateUrl: 'components/header/header.html',
+    templateUrl: 'src/components/header/header.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$location', function (ComponentExtensions, $scope, $element, $attrs, $location) {
       ComponentExtensions.initialize(this, 'header', $scope, $element, $attrs);
 

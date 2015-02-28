@@ -12,7 +12,7 @@ All Rights Reserved.
 */
 'use strict';
 
-nSimAppServices.service('ComponentExtensions', [function() {
+angular.module('nSimulationApp').service('ComponentExtensions', [function() {
 
   /***
    * Initializes the component directive by performing standard setup tasks and adding extensions to the controller

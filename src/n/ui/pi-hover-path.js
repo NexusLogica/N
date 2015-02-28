@@ -23,7 +23,7 @@ N.UI = N.UI || {};
  * The network scene controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNetworkPanelController"&gt;...<br/>
  * @class PiNetworkPanelController
  */
-angular.module('nSimApp.directives').directive('piHoverPath', [ '$timeout', function($timeout) {
+angular.module('nSimulationApp').directive('piHoverPath', [ '$timeout', function($timeout) {
   return {
     restrict: 'E',
     template: '<div class="pi-hover-path"><span class="action">Neuron:</span> <span class="path" ng-class="{ blank: !hovering, showing: hovering }" ng-bind="current.hoverPath"></span></div>',

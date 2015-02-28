@@ -19,14 +19,14 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function() {
+angular.module('nSimulationApp').directive('piWorkbenchTestPanel', [function() {
   return {
     restrict: 'E',
     scope: {
       test: '=test',
       testStatus: '=testStatus'
     },
-    templateUrl: 'partials/pi-workbench-test-panel.html',
+    templateUrl: 'src/partials/pi-workbench-test-panel.html',
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
       $scope.propertiesCopy = {};
 
@@ -35,7 +35,7 @@ angular.module('nSimApp.directives').directive('piWorkbenchTestPanel', [function
 
       $scope.amplitudeUnits = function(inputSignal) {
         return (inputSignal ? _.find($scope.inputTypes, function(inputType) { return (inputType.type === inputSignal.type); }).units : '');
-      }
+      };
 
       $scope.targetInputSignalId = '';
       $scope.targetInputSignal = null;

@@ -19,15 +19,13 @@ N.UI = N.UI || {};
   //* PiNeuronInfoPanelController *
   //*******************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
 /**
  * The neuron information panel controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNeuronInfoPanelController"&gt;...<br/>
  *
  *
  * @class PiNeuronInfoPanelController
  */
-nSimAppControllers.controller('PiNeuronInfoPanelController', ['$scope',
+angular.module('nSimulationApp').controller('PiNeuronInfoPanelController', ['$scope',
   function PiNeuronInfoPanelController($scope) {
     $scope.$on('pi-canvas:event', function(broadcastEvent, event, obj) {
       if(obj.getType() === N.Type.PiCompartment) {

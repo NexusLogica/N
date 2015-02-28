@@ -12,10 +12,10 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('fieldViewerPanel', [function() {
+angular.module('nSimulationApp').directive('fieldViewerPanel', [function() {
   return {
     restrict: 'E',
-    templateUrl: 'components/field-viewer-panel/field-viewer-panel.html',
+    templateUrl: 'src/components/field-viewer-panel/field-viewer-panel.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'fieldViewerPanel', $scope, $element, $attrs);
 

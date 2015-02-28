@@ -19,9 +19,7 @@ N.test = N.test || {};
   //* PiNeuronTestController *
   //**************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('PiNeuronTestController', ['$scope',
+angular.module('nSimulationApp').controller('PiNeuronTestController', ['$scope',
   function PiNeuronTestController($scope) {
     $scope.test = new N.PiNeuronTest();
     $scope.test.createScenes();
@@ -29,7 +27,7 @@ nSimAppControllers.controller('PiNeuronTestController', ['$scope',
   }
 ]);
 
-nSimAppControllers.controller('PiNeuronTestItemController', ['$scope',
+angular.module('nSimulationApp').controller('PiNeuronTestItemController', ['$scope',
   function PiNeuronTestItemController($scope) {
   }
 ]);
@@ -40,7 +38,7 @@ nSimAppControllers.controller('PiNeuronTestItemController', ['$scope',
 
 N.PiNeuronTest = function() {
   this.scenes  = [];
-}
+};
 
 N.PiNeuronTest.prototype.createScenes = function() {
 
@@ -52,7 +50,7 @@ N.PiNeuronTest.prototype.createScenes = function() {
     scene.setNeuron(neuron, config.neuron.display.template);
     this.scenes.push(scene);
   }
-}
+};
 
 N.PiNeuronTest.testConfigurations = [{
     neuron: {

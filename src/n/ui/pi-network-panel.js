@@ -19,13 +19,11 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
 /**
  * The network scene controller. Create via<br/>&nbsp;&nbsp;&nbsp;&lt;div ng-controller="PiNetworkPanelController"&gt;...<br/>
  * @class PiNetworkPanelController
  */
-nSimAppControllers.controller('PiNetworkPanelController', ['$scope',
+angular.module('nSimulationApp').controller('PiNetworkPanelController', ['$scope',
   function PiNetworkPanelController($scope) {
 
     $scope.current = {};

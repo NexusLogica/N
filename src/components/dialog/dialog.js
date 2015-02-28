@@ -12,14 +12,14 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('dialog', [function() {
+angular.module('nSimulationApp').directive('dialog', [function() {
   return {
     restrict: 'E',
     scope: {
       modalCloseFunction: '@?'
     },
     transclude: true,
-    templateUrl: 'components/dialog/dialog.html',
+    templateUrl: 'src/components/dialog/dialog.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$window', function (ComponentExtensions, $scope, $element, $attrs, $window) {
       ComponentExtensions.initialize(this, 'dialog', $scope, $element, $attrs);
 

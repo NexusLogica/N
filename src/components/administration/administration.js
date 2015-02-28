@@ -12,12 +12,12 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('administration', [function() {
+angular.module('nSimulationApp').directive('administration', [function() {
   return {
     restrict: 'E',
     //scope: {
     //},
-    templateUrl: 'components/administration/administration.html',
+    templateUrl: 'src/components/administration/administration.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', 'localStorageService', function (ComponentExtensions, $scope, $element, $attrs, $timeout, localStorageService) {
       ComponentExtensions.initialize(this, 'administration', $scope, $element, $attrs);
 

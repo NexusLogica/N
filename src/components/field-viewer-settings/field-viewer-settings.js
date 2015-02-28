@@ -12,14 +12,14 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('fieldViewerSettings', [function() {
+angular.module('nSimulationApp').directive('fieldViewerSettings', [function() {
   return {
     restrict: 'E',
     scope: {
       availableFields: '=availableFields',
       currentField: '=currentField'
     },
-    templateUrl: 'components/field-viewer-settings/field-viewer-settings.html',
+    templateUrl: 'src/components/field-viewer-settings/field-viewer-settings.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'fieldViewerSettings', $scope, $element, $attrs);
 

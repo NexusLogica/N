@@ -12,13 +12,13 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('piCanvas3d', [function() {
+angular.module('nSimulationApp').directive('piCanvas3d', [function() {
   return {
     restrict: 'E',
     scope: {
       scene: '=scene'
     },
-    templateUrl: 'components/pi-canvas3d/pi-canvas3d.html',
+    templateUrl: 'src/components/pi-canvas3d/pi-canvas3d.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', function (ComponentExtensions, $scope, $element, $attrs) {
       ComponentExtensions.initialize(this, 'piCanvas3d', $scope, $element, $attrs);
 

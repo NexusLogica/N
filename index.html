@@ -7,8 +7,8 @@
   <link rel="shortcut icon" href="src/appearance/images/pi.ico"/>
   <link href='http://fonts.googleapis.com/css?family=Raleway:400,100,200,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="src/lib/bower_components/jquery-ui/themes/pepper-grinder/jquery-ui.css"/>
-  <link rel="stylesheet" href="src/lib/bower_components/bootstrap/css/bootstrap.css"/>
-  <link rel="stylesheet" href="src/lib/bower_components/slider/css/slider.css"/>
+  <link rel="stylesheet" href="src/lib/bower_components/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" href="src/lib/slider/css/slider.css"/>
   <link rel="stylesheet" href="src/appearance/css/n.css"/>
 </head>
 <body>
@@ -29,72 +29,69 @@
   <script src="src/lib/bower_components/lodash-deep/lodash-deep.js"></script>
   <script src="src/lib/bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="src/lib/bower_components/angular/angular.js"></script>
-  <script src="lib/angular-route/angular-route.js"></script>
-  <script src="lib/angular-ui-bootstrap/src/modal/modal.js"></script>
-  <script src="lib/angular-local-storage/angular-local-storage.js"></script>
-  <script src="lib/bootbox/bootbox.min.js"></script>
-  <script src="lib/state-machine/state-machine.js"></script>
-  <script src="lib/random/random-0.26.js"></script>
-  <script src="lib/q/v1/q.js"></script>
-  <script src="lib/svg.js/svg.js"></script>
-  <script src="lib/n/n.js"></script>
+  <script src="src/lib/bower_components/angular-route/angular-route.js"></script>
+  <script src="src/lib/bower_components/angular-ui-bootstrap/src/modal/modal.js"></script>
+  <script src="src/lib/bower_components/angular-ui-bootstrap/src/transition/transition.js"></script>
+  <script src="src/lib/bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+  <script src="src/lib/bower_components/bootbox/bootbox.js"></script>
+  <script src="src/lib/bower_components/javascript-state-machine/state-machine.js"></script>
+  <script src="src/lib/random/random-0.26.js"></script>
+  <script src="src/lib/bower_components/q/q.js"></script>
+  <script src="src/lib/bower_components/svg.js/dist/svg.js"></script>
+
+  <script src="src/n/n.js"></script>
 
   <script src="src/app.js"></script>
   <script src="src/nws/http.js"></script>
   <script src="src/nws/database.js"></script>
   <script src="src/nws/web-services.js"></script>
   <script src="src/nws/initial-db-data.js"></script>
-  <script src="lib/n/random.js"></script>
-  <script src="lib/n/network.js"></script>
-  <script src="lib/n/neuron.js"></script>
-  <script src="lib/n/compartments.js"></script>
-  <script src="lib/n/output-functions.js"></script>
-  <script src="lib/n/connection.js"></script>
-  <script src="lib/n/signal.js"></script>
-  <script src="lib/n/signal-builder.js"></script>
-  <script src="lib/n/workbench.js"></script>
-  <script src="lib/n/workbench-test.js"></script>
-  <script src="lib/n/graphics/constants.js"></script>
-  <script src="lib/n/graphics/vector.js"></script>
-  <script src="lib/n/graphics/pi-network-scene.js"></script>
-  <script src="lib/n/graphics/pi-workbench-scene.js"></script>
-  <script src="lib/n/graphics/pi-canvas.js"></script>
-  <script src="lib/n/graphics/pi-network.js"></script>
-  <script src="lib/n/graphics/pi-neuron.js"></script>
-  <script src="lib/n/graphics/pi-connection.js"></script>
-  <script src="lib/n/graphics/pi-route-info.js"></script>
-  <script src="lib/n/graphics/pi-route-manager.js"></script>
-  <script src="lib/n/graphics/pi-route-finder.js"></script>
-  <script src="lib/n/graphics/pi-signal-trace.js"></script>
-  <script src="lib/n/graphics/pi-signal-graph.js"></script>
-  <script src="lib/n/graphics/pi-signal-graph-scene.js"></script>
-  <script src="lib/n/graphics/pi-signal-trace-scene.js"></script>
-  <script src="lib/n/graphics/pi-standard-templates.js"></script>
+  <script src="src/n/random.js"></script>
+  <script src="src/n/network.js"></script>
+  <script src="src/n/neuron.js"></script>
+  <script src="src/n/compartments.js"></script>
+  <script src="src/n/output-functions.js"></script>
+  <script src="src/n/connection.js"></script>
+  <script src="src/n/signal.js"></script>
+  <script src="src/n/signal-builder.js"></script>
+  <script src="src/n/workbench.js"></script>
+  <script src="src/n/workbench-test.js"></script>
+  <script src="src/n/graphics/constants.js"></script>
+  <script src="src/n/graphics/vector.js"></script>
+  <script src="src/n/graphics/pi-network-scene.js"></script>
+  <script src="src/n/graphics/pi-workbench-scene.js"></script>
+  <script src="src/n/graphics/pi-canvas.js"></script>
+  <script src="src/n/graphics/pi-network.js"></script>
+  <script src="src/n/graphics/pi-neuron.js"></script>
+  <script src="src/n/graphics/pi-connection.js"></script>
+  <script src="src/n/graphics/pi-route-info.js"></script>
+  <script src="src/n/graphics/pi-route-manager.js"></script>
+  <script src="src/n/graphics/pi-route-finder.js"></script>
+  <script src="src/n/graphics/pi-signal-trace.js"></script>
+  <script src="src/n/graphics/pi-signal-graph.js"></script>
+  <script src="src/n/graphics/pi-signal-graph-scene.js"></script>
+  <script src="src/n/graphics/pi-signal-trace-scene.js"></script>
+  <script src="src/n/graphics/pi-standard-templates.js"></script>
 
-  <script src="src/bach/bach.js"></script>
-  <script src="src/bach/graphics/field-scene.js"></script>
-  <script src="src/bach/graphics/field-grid.js"></script>
-  <script src="src/bach/fields/cylindrical-field.js"></script>
-  <script src="src/bach/fields/electric-field.js"></script>
+  <script src="src/services/component-extensions.js"></script>
+  <script src="src/components/header/header.js"></script>
+  <script src="src/components/dialog/dialog.js"></script>
+  <script src="src/components/network-builder/network-builder.js"></script>
+  <script src="src/components/administration/administration.js"></script>
+  <script src="src/components/field-viewer-panel/field-viewer-panel.js"></script>
+  <script src="src/components/field-viewer-settings/field-viewer-settings.js"></script>
+  <script src="src/components/grid-slider/grid-slider.js"></script>
+  <script src="src/components/pi-canvas3d/pi-canvas3d.js"></script>
+  <script src="src/pages/sim/sim.js"></script>
+  <script src="src/pages/field-viewer/field-viewer.js"></script>
 
-  <script src="services/component-extensions.js"></script>
-  <script src="components/header/header.js"></script>
-  <script src="components/dialog/dialog.js"></script>
-  <script src="components/network-builder/network-builder.js"></script>
-  <script src="components/administration/administration.js"></script>
-  <script src="components/field-viewer-panel/field-viewer-panel.js"></script>
-  <script src="components/field-viewer-settings/field-viewer-settings.js"></script>
-  <script src="components/grid-slider/grid-slider.js"></script>
-  <script src="components/pi-canvas3d/pi-canvas3d.js"></script>
-  <script src="pages/sim/sim.js"></script>
-  <script src="pages/field-viewer/field-viewer.js"></script>
-  <script src="lib/n/ui/pi-network-panel.js"></script>
-  <script src="lib/n/ui/pi-workbench-panel.js"></script>
-  <script src="lib/n/ui/pi-workbench-test-panel.js"></script>
-  <script src="lib/n/ui/pi-signal-builder.js"></script>
-  <script src="lib/n/ui/pi-modal.js"></script>
-  <script src="lib/n/ui/pi-hover-path.js"></script>
-  <script src="lib/n/test/work-bench-test.js"></script>
+  <script src="src/n/ui/pi-network-panel.js"></script>
+  <script src="src/n/ui/pi-workbench-panel.js"></script>
+  <script src="src/n/ui/pi-workbench-test-panel.js"></script>
+  <script src="src/n/ui/pi-signal-builder.js"></script>
+  <script src="src/n/ui/pi-modal.js"></script>
+  <script src="src/n/ui/pi-hover-path.js"></script>
+  <script src="src/n/test/work-bench-test.js"></script>
 
 
 </body>

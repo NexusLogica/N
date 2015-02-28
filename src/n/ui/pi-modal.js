@@ -19,7 +19,7 @@ All Rights Reserved.
 var N = N || {};
 N.UI = N.UI || {};
 
-angular.module('nSimApp.directives').directive('piModal', [ function() {
+angular.module('nSimulationApp').directive('piModal', [ function() {
   return {
     restrict: 'A',
     controller: function($scope) {

@@ -12,7 +12,6 @@ All Rights Reserved.
 */
 'use strict';
 
-var N = N || {};
 N.UI = N.UI || {};
 
   //**********************
@@ -23,7 +22,7 @@ N.UI = N.UI || {};
  * This Angular JS directive is for creating an SVG canvas.
  * @class directive.piCanvas
  */
-nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
+angular.module('nSimulationApp').directive('piCanvas', ['$timeout', function($timeout) {
   return {
     restrict: 'AEC',
     scope : {
@@ -99,9 +98,8 @@ nSimAppDirectives.directive('piCanvas', ['$timeout', function($timeout) {
  * This Angular JS directive is for creating an SVG canvas.
  * @class directive.piCanvas
  */
-nSimAppControllers.controller('PiEventReceiver', ['$scope', function($scope) {
+angular.module('nSimulationApp').controller('piEventReceiver', ['$scope', function($scope) {
   $scope.onEvent = function(event, obj) {
-    debugger;
     $scope.$broadcast('pi-canvas:event', event, obj);
   }
 }]);

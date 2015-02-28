@@ -19,9 +19,7 @@ N.Test = N.Test || {};
   //* PiConnectionTestController *
   //******************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('PiConnectionTestController', ['$scope', '$timeout',
+angular.module('nSimulationApp').controller('PiConnectionTestController', ['$scope', '$timeout',
   function PiConnectionTestController($scope, $timeout) {
     $scope.test = new N.Test.PiConnectionTest();
     $scope.test.createScene();
@@ -38,9 +36,7 @@ nSimAppControllers.controller('PiConnectionTestController', ['$scope', '$timeout
   }
 ]);
 
-var nSimAppDirectives = angular.module('nSimApp.directives');
-
-nSimAppDirectives.directive('piConnectionTest', [function() {
+angular.module('nSimulationApp').directive('piConnectionTest', [function() {
   function link($scope, $element, $attrs) {
     $($element).find('.pi-canvas').on('onInitialRender', function(event, renderer, scene) {
       $scope.$emit('PiConnectionTest:OnInitialRender');

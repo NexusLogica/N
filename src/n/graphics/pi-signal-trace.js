@@ -19,7 +19,7 @@ N.UI = N.UI || {};
   //* SignalTraceController *
   //*************************
 
-nSimAppDirectives.directive('piTraceView', [function() {
+angular.module('nSimulationApp').directive('piTraceView', [function() {
   return {
     restrict: 'A',
     link : function($scope, $element, $attrs) {

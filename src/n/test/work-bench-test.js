@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : pi-network-test.js
+File     : work-bench-test.js
 Project  : N Simulator Library
 Purpose  : Source file for network graphics testing.
 Revisions: Original definition by Lawrence Gunn.
@@ -19,9 +19,7 @@ N.Test = N.Test || {};
   //* WorkBenchTestController *
   //***************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('WorkbenchTestController', ['$scope',
+angular.module('nSimulationApp').controller('WorkbenchTestController', ['$scope',
   function WorkbenchTestController($scope) {
     // Ensure the services are loaded.
     N.NWS.WebServices.Load();
@@ -105,7 +103,7 @@ N.WorkbenchTestScenes.FastSpiking = {
     name: 'OP',
     initialOutput: 0.0,
     outputLogic: {
-      outputFunc: N.Comp.OutputFunc.LinearSum,
+      outputFunc: 'N.Comp.OutputFunc.LinearSum',
       sources: {
         main: { componentName: 'IP',  gain: 0.5 }
       }

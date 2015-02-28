@@ -2,17 +2,15 @@
 
 /* Services */
 
-var nSimAppServices = angular.module('nSimApp.services', []);
-
 // Demonstrate how to register services
 // In this case it is a simple value service.
-nSimAppServices.service("version", function() {
+angular.module('nSimulationApp').service("version", function() {
   var version = function() {
     return 0.2;
   }
   return version;
 });
-//nSimAppServices.
+//angular.module('nSimulationApp').
 //  value('version', '0.1');
 
 
@@ -22,7 +20,7 @@ var app = angular.module('myApp', []);
 // guidGenerator
 //   Creates a guid in string form.
 //
-nSimAppServices.service("guidGenerator", function() {
+angular.module('nSimulationApp').service("guidGenerator", function() {
   this.CreateUUID = function() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -38,7 +36,7 @@ nSimAppServices.service("guidGenerator", function() {
 //   * name: must be non-zero length
 //   * waveform: valid JSON waveform as string
 //
-nSimAppServices.service('postNewWaveform', function($http) {
+angular.module('nSimulationApp').service('postNewWaveform', function($http) {
 
   var postNewWaveform = {
     doPost: function(id, name, waveform) {
@@ -70,7 +68,7 @@ nSimAppServices.service('postNewWaveform', function($http) {
 //***************************************************
 // GET waveforms
 //
-nSimAppServices.service('getWaveforms', function($http) {
+angular.module('nSimulationApp').service('getWaveforms', function($http) {
 
   var getWaveforms = {
     doGet: function() {
@@ -99,7 +97,7 @@ nSimAppServices.service('getWaveforms', function($http) {
 //***************************************************
 // GET waveform
 //
-nSimAppServices.service('getWaveform', function($http) {
+angular.module('nSimulationApp').service('getWaveform', function($http) {
 
   var getWaveform = {
     doGet: function(id) {

@@ -12,7 +12,7 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('administration', [function() {
+angular.module('nSimulationApp').directive('administration', [function() {
   return {
     restrict: 'E',
     //scope: {

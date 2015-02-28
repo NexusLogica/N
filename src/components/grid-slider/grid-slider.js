@@ -12,10 +12,10 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('gridSlider', [function() {
+angular.module('nSimulationApp').directive('gridSlider', [function() {
   return {
     restrict: 'E',
-    templateUrl: 'components/grid-slider/grid-slider.html',
+    templateUrl: 'src/components/grid-slider/grid-slider.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', function (ComponentExtensions, $scope, $element, $attrs) {
       ComponentExtensions.initialize(this, 'gridSlider', $scope, $element, $attrs);
 

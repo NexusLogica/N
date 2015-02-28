@@ -12,7 +12,7 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimApp.directives').directive('field-viewer', [function() {
+angular.module('nSimulationApp').directive('field-viewer', [function() {
   return {
     restrict: 'E',
     //scope: {

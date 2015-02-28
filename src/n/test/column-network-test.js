@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : pi-network-test.js
+File     : column-network-test.js
 Project  : N Simulator Library
 Purpose  : Source file for network graphics testing.
 Revisions: Original definition by Lawrence Gunn.
@@ -19,9 +19,7 @@ N.Test = N.Test || {};
   //* NetworkColumnTestController *
   //*******************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('NetworkColumnTestController', ['$scope',
+angular.module('nSimulationApp').controller('NetworkColumnTestController', ['$scope',
   function NetworkColumnTestController($scope) {
     $scope.test = new N.ColumnNetworkTest();
     $scope.test.createScenes();
@@ -30,7 +28,7 @@ nSimAppControllers.controller('NetworkColumnTestController', ['$scope',
   }
 ]);
 
-nSimAppControllers.controller('NetworkTestItemController', ['$scope',
+angular.module('nSimulationApp').controller('NetworkTestItemController', ['$scope',
   function NetworkTestItemController($scope) {
   }
 ]);

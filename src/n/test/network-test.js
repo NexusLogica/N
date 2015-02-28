@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : pi-network-test.js
+File     : network-test.js
 Project  : N Simulator Library
 Purpose  : Source file for network graphics testing.
 Revisions: Original definition by Lawrence Gunn.
@@ -19,9 +19,7 @@ N.test = N.test || {};
   //* NetworkTestController *
   //*************************
 
-var nSimAppControllers = angular.module('nSimApp.controllers');
-
-nSimAppControllers.controller('NetworkTestController', ['$scope',
+angular.module('nSimulationApp').controller('NetworkTestController', ['$scope',
   function NetworkTestController($scope) {
     $scope.test = new N.NetworkTest();
     $scope.test.createScenes();
@@ -30,7 +28,7 @@ nSimAppControllers.controller('NetworkTestController', ['$scope',
   }
 ]);
 
-nSimAppControllers.controller('NetworkTestItemController', ['$scope',
+angular.module('nSimulationApp').controller('NetworkTestItemController', ['$scope',
   function NetworkTestItemController($scope) {
   }
 ]);
