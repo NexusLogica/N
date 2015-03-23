@@ -20,6 +20,7 @@ var express = require('express'),
   port = parseInt(process.env.PORT, 10) || 3021,
   fs = require('fs'),
   busboy = require('connect-busboy'),
+  util = require('util'),
   //fs = require('fs-extra'),
   publicDir = process.argv[2] + '/public' || __dirname + '/public';
 
@@ -39,6 +40,41 @@ app.get('/file/*', function (req, res) {
       console.log('Sending:' + fullPath);
     }
   });
+});
+
+var ignoreList = { '.DS_Store' : true };
+
+var getDirectoryJson = function(directory) {
+
+  var children = fs.readdirSync(directory);
+
+  var filesJson = [];
+  var dirsJson = [];
+  for(var i=0; i<children.length; i++) {
+    var name = children[i];
+    if(!ignoreList[name]) {
+      var childPath = directory+'/'+name;
+      var stats = fs.statSync(childPath);
+      if(stats.isFile()) {
+        filesJson.push({ name: name, size: stats.size, modTime: stats.mtime });
+      } else {
+        var childTree = getDirectoryJson(childPath);
+        childTree.name = name;
+        dirsJson.push(childTree);
+      }
+    }
+  }
+  var tree = {
+    directories: dirsJson,
+    files: filesJson
+  };
+  return tree;
+};
+
+app.get('/files', function (req, res) {
+  console.log('Files: request');
+  var tree = getDirectoryJson(publicDir);
+  res.status(200).json(tree);
 });
 
 app.get('/*', function (req, res) {
@@ -75,6 +111,7 @@ app.post('/file/*', function(req, res) {
     });
   });
 });
+
 
 //app.use(methodOverride());
 //app.use(bodyParser.json());
