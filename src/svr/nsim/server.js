@@ -27,6 +27,12 @@ var express = require('express'),
 var app = express();
 app.use(busboy());
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.get('/file/*', function (req, res) {
   var relativePath = req.originalUrl.substring(6);
   var fullPath = publicDir+'/'+relativePath;
@@ -110,6 +116,29 @@ app.post('/file/*', function(req, res) {
       res.status(200).json({ status: 'success' });
     });
   });
+});
+
+
+/***
+ * @method PUT - Create a directory where the path is the URL path
+ */
+app.put('/file/*', function(req, res) {
+  var relativePath = req.originalUrl.substring(6);
+  var fullPath = publicDir+'/'+relativePath;
+  var dirs = fullPath.split('/');
+
+  console.log('Creating directory: '+fullPath);
+
+  var dirToMake = publicDir;
+  for(var i=0; i<dirs.length; i++) {
+    dirToMake += '/'+dirs[i];
+    try {
+      fs.mkdirSync(dirToMake);
+    } catch(e) {
+      if ( e.code !== 'EEXIST' ) { throw e; }
+    }
+  }
+  res.status(200).json({ status: 'success' });
 });
 
 

@@ -17,30 +17,19 @@ All Rights Reserved.
  * @module N
  */
 var N = N || {};
+N.Http = N.Http || {};
 
   //**********
   //* N.Http *
   //**********
 
 /**
- * The main database class.
- * @class N.Http
- * @constructor
- * @param {String} name
- * @param {String} shortName
- */
-
-N.Http = function() {
-  this.className  = 'N.Http';
-}
-
-/**
  * Perform an HTTP GET.
  * @method get
  * @returns { Promise }
  */
-N.Http.prototype.get = function(url, data) {
-  return this.call('GET', url, data);
+N.Http.get = function(url, data) {
+  return N.Http.call('GET', url, data);
 }
 
 /**
@@ -48,29 +37,29 @@ N.Http.prototype.get = function(url, data) {
  * @method put
  * @returns { Promise }
  */
-N.Http.prototype.put = function(url, data) {
-  return this.call('PUT', url, data);
-}
+N.Http.put = function(url, data) {
+  return N.Http.call('PUT', url, data);
+};
 
 /**
  * Perform an HTTP DELETE.
  * @method delete
  * @returns { Promise }
  */
-N.Http.prototype.delete = function(url, data) {
-  return this.call('DELETE', url, data);
-}
+N.Http.delete = function(url, data) {
+  return N.Http.call('DELETE', url, data);
+};
 
 /**
  * Returns the minimum and maximum values in the signal.
  * @method GetRange
  * @returns {{Min: Real, Max: Real}}
  */
-N.Http.prototype.call = function(type, url, data) {
+N.Http.call = function(type, url, data) {
   var ajaxData = {
-    type: type,
-    url: url,
-    dataType: 'json'
+    method: type,
+    dataType: 'json',
+    crossDomain: true
   };
 
   if(data) {
@@ -79,7 +68,7 @@ N.Http.prototype.call = function(type, url, data) {
   }
 
   var deferred = Q.defer();
-  $.ajax(ajaxData).then(
+  $.ajax(url, ajaxData).then(
     function(data, textStatus, jqXHR) {
       deferred.resolve(data, textStatus);
     },
@@ -89,4 +78,4 @@ N.Http.prototype.call = function(type, url, data) {
   );
 
   return deferred.promise;
-}
+};

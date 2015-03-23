@@ -23,6 +23,7 @@
     "sprintf": "git://github.com/alexei/sprintf.js",
     "svg.js": "git://github.com/wout/svg.js.git",
     "ace": "git://github.com/ajaxorg/ace-builds",
-    "signals": "git://github.com/millermedeiros/js-signals"
+    "signals": "git://github.com/millermedeiros/js-signals",
+    "josh": "git://github.com/sdether/josh.js"
   }
 }

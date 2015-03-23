@@ -1,21 +1,23 @@
 <div>
 
-  <div class="new-open" ng-hide="build.network">
-    <button class="btn" ng-click="createNew()">New network</button>
-    <button class="btn" ng-click="openExisting()">Open existing network</button>
-  </div>
+  <div class="dev-env">
+    <div class="left-panel">
+      <pi-workbench network="build.network">
 
-  <div class="dev-env" ng-show="build.network">
-    <pi-workbench network="build.network">
-
-    </pi-workbench>
-
-    <div class="editor-container">
-      <div class="editor-top">
-        <input type="text" value="build"/>
+      </pi-workbench>
+      <div class="shell">
+        <div id="network-build-shell">
+          <div id="network-build-shell-view">
+          </div>
         </div>
-      <n-editor>
-      </n-editor>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="editor-container">
+        <n-editor signals="signals">
+        </n-editor>
+      </div>
     </div>
   </div>
 
