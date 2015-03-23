@@ -1,19 +1,47 @@
-<div class="network-builder">
-  <div class="container">
-    <div class="row">
-      <button class="btn" ng-click="openDialog()">Open</button>
+<div>
 
-      <dialog expose-to-parent="administrationDialog" class="pi-dialog modal-medium">
-        <div id="delete-database-dialog-content" class="delete-database dialog-content">
-          <div class="modal-body">
-            <administration></administration>
-            <div class="modal-footer">
-              <div class="footer-message" ng-bind="formMessage"></div>
-              <button type="button" class="btn btn-default" ng-click="closeAdministrationDialog()">Close</button>
-            </div>
-          </div>
+  <div class="new-open" ng-hide="build.network">
+    <button class="btn" ng-click="createNew()">New network</button>
+    <button class="btn" ng-click="openExisting()">Open existing network</button>
+  </div>
+
+  <div class="dev-env" ng-show="build.network">
+    <pi-workbench network="build.network">
+
+    </pi-workbench>
+
+    <div class="editor-container">
+      <div class="editor-top">
+        <button class="btn" ng-click="build()">Build</button>
+        <div class="btn-group" dropdown is-open="status.isopen">
+          <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+            Button dropdown <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
         </div>
-      </dialog>
+      </div>
+      <n-editor>
+      </n-editor>
+    </div>
+  </div>
+
+      <!--<dialog expose-to-parent="administrationDialog" class="pi-dialog modal-medium">-->
+        <!--<div id="delete-database-dialog-content" class="delete-database dialog-content">-->
+          <!--<div class="modal-body">-->
+            <!--<administration></administration>-->
+            <!--<div class="modal-footer">-->
+              <!--<div class="footer-message" ng-bind="formMessage"></div>-->
+              <!--<button type="button" class="btn btn-default" ng-click="closeAdministrationDialog()">Close</button>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</dialog>-->
 
     </div>
   </div>

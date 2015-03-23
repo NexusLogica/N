@@ -1,0 +1,52 @@
+/**********************************************************************
+
+File     : network-builder.scss
+Project  : N Simulator Library
+Purpose  : Source file for header component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/21
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+@import '../../appearance/css/common.scss';
+
+.network-builder {
+  display: block;
+  position: relative;
+  width: 1200px;
+  margin: 10px auto auto auto;
+
+  .new-open {
+    width: 400px;
+    height: 200px;
+    margin: 200px auto auto auto;
+    text-align: center;
+
+    button {
+      display: inline-block;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+  }
+
+  .pi-workbench {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 595px;
+    height: 800px;
+  }
+
+  .editor-container {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 595px;
+    height: 800px;
+  }
+}

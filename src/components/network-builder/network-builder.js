@@ -15,26 +15,33 @@ All Rights Reserved.
 angular.module('nSimulationApp').directive('networkBuilder', [function() {
   return {
     restrict: 'E',
-    scope: {
-      panelData: '=panelData'
-    },
     templateUrl: 'src/components/network-builder/network-builder.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'networkBuilder', $scope, $element, $attrs);
 
-      $timeout(function() { $scope.panelData.name = 'blah blah'; }, 2000);
+      $scope.signals = {
+        'compartment-enter': new signals.Signal(),
+        'compartment-leave': new signals.Signal(),
+        'compartment-click': new signals.Signal()
+      };
 
-      $scope.options = { message: 'Hi there', content: 'Blah blah blah blah blah blah blah blah blah blah blah blah blah.', okText: 'Ok', cancelText: 'Cancel' };
+      $scope.build = {};
 
-      $scope.closeAdministrationDialog = function() {
-        $scope.administrationDialog.close();
-      }
+      $scope.openExisting = function() {
+      };
+
+      $scope.createNew = function() {
+        $scope.build.network = new N.Network();
+        $scope.$broadcast('network-builder:new');
+      };
+
+      $scope.doFullBuild = function() {
+
+      };
 
     }],
     link: function($scope, $element, $attrs) {
-      $scope.openDialog = function() {
-        $scope.administrationDialog.open();
-      }
+      $element.find('.ace_editor').focus();
     }
   };
 }]);

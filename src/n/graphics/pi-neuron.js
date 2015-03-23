@@ -27,7 +27,7 @@ N.UI.PiNeuron = function() {
   this.neuron = null;
   this.compartments = {};
   this.compartmentsById = {};
-}
+};
 
 N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
   this.neuron = neuron;
@@ -66,7 +66,7 @@ N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
   }
 
   this.group.translate(this.x, this.y);
-}
+};
 
 N.UI.PiNeuron.prototype.drawCallouts = function(compartmentMap) {
   var r = this.radius;
@@ -87,7 +87,13 @@ N.UI.PiNeuron.prototype.drawCallouts = function(compartmentMap) {
       var line = this.group.line(tarPos.x, tarPos.y, short.x, short.y).stroke({width: 1}).attr({class: 'callout-line' });
     }
   }
-}
+};
+
+N.UI.PiNeuron.EventTypes = {
+  'mouseenter': 'compartment-enter',
+  'mouseleave': 'compartment-leave',
+  'click'     : 'compartment-click'
+};
 
 N.UI.PiNeuron.prototype.addEventHandlers = function(piCompartment) {
   var node = piCompartment.path.node;
@@ -95,21 +101,24 @@ N.UI.PiNeuron.prototype.addEventHandlers = function(piCompartment) {
 
   $(node).on('mouseenter mouseleave click', function(event) {
     var piCompartment = $(event.target).data('piCompartment');
-    $(this).closest('.pi-canvas').scope().onEvent(event, piCompartment);
+    var closestSignals = $(this).closest('.pi-canvas').scope().signals;
+    if(closestSignals) {
+      closestSignals[N.UI.PiNeuron.EventTypes[event.type]].dispatch(event, piCompartment);
+    }
   });
-}
+};
 
 N.UI.PiNeuron.prototype.highlight = function(compartment) {
   N.UI.svgAddClass(this.group, 'highlight');
-}
+};
 
 N.UI.PiNeuron.prototype.removeHighlight = function(compartment) {
   N.UI.svgRemoveClass(this.group, 'highlight');
-}
+};
 
 N.UI.PiNeuron.prototype.getType = function() {
   return N.Type.PiNeuron;
-}
+};
 
   //**********************
   //* N.UI.PiCompartment *
@@ -362,7 +371,7 @@ N.UI.PiNeuronFactory = (function() {
     return {
       createNewGraphic: createNewGraphic
     }
-  }
+  };
 
   return {
     createPiNeuron:createPiNeuron

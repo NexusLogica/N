@@ -16,7 +16,8 @@ angular.module('nSimulationApp').directive('piCanvas3d', [function() {
   return {
     restrict: 'E',
     scope: {
-      scene: '=scene'
+      scene: '=scene',
+      signals: '=signals'
     },
     templateUrl: 'src/components/pi-canvas3d/pi-canvas3d.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', function (ComponentExtensions, $scope, $element, $attrs) {

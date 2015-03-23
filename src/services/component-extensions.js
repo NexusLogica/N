@@ -37,7 +37,7 @@ angular.module('nSimulationApp').service('ComponentExtensions', [function() {
 
     // If there is an expose-to-parent="someChild" attribute then set on the parent scope
     // the property accessed in the parent scope as $scope.someChild.
-    if (!_.isEmpty($attrs.exposeToParent)) {
+    if (parentScope && !_.isEmpty($attrs.exposeToParent)) {
       parentScope[$attrs.exposeToParent] = $scope;
     }
   }

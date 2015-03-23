@@ -12,9 +12,6 @@ All Rights Reserved.
 */
 'use strict';
 
-var N = N || {};
-N.UI = N.UI || {};
-
   //***********************
   //* N.UI.WorkbenchScene *
   //***********************
@@ -36,7 +33,7 @@ N.UI.WorkbenchScene = function() {
   this.y = 0;
   this.networkPadding = new N.UI.Padding(0, Math.ceil(0.5*this.centralPadding), 0, 0);
   this.graphPadding = new N.UI.Padding(0, 0, 0, Math.floor(0.5*this.centralPadding));
-}
+};
 
 /**
  *
@@ -50,7 +47,7 @@ N.UI.WorkbenchScene.prototype.layout = function(workbench, renderMappings) {
   this.networkScene = (new N.UI.NetworkScene()).layout(workbench.network, renderMappings);
   this.signalGraphScene = (new N.UI.SignalGraphScene());
 
-  var traceStyle = { inputs: 'workbench-inputs', targets: 'workbench-targets', outputs: 'workbench-outputs' };
+  var traceStyle = { inputs: 'pi-workbench-inputs', targets: 'pi-workbench-targets', outputs: 'pi-workbench-outputs' };
 
   for(var i in workbench.network.networks) {
     var network = workbench.network.networks[i];
@@ -70,12 +67,12 @@ N.UI.WorkbenchScene.prototype.layout = function(workbench, renderMappings) {
       }
     }
   }
-}
+};
 
 N.UI.WorkbenchScene.prototype.showTest = function(test) {
   this.activeTest = test;
   this.testUpdated();
-}
+};
 
 N.UI.WorkbenchScene.prototype.testUpdated = function() {
 console.log('GRAPHS UPDATING');
@@ -106,22 +103,21 @@ console.log('GRAPHS UPDATING');
     }
   }
 */
-}
+};
 
 N.UI.WorkbenchScene.prototype.runActiveTest = function() {
   this.workbench.runTest(this.activeTest);
-}
+};
 
 N.UI.WorkbenchScene.prototype.runTest = function(test) {
   this.workbench.runTest(test);
-}
+};
 
 /**
  * Calculates the scale that will fit the network to a given width.
  * @method ScaleToFitWidth
  * @param width
- * @param paddingHoriz
- * @param paddingVert
+ * @param padding
  */
 N.UI.WorkbenchScene.prototype.scaleToFitWidth = function(width, padding) {
   var w = width-padding.horizontal();
@@ -131,14 +127,14 @@ N.UI.WorkbenchScene.prototype.scaleToFitWidth = function(width, padding) {
   this.networkScene.network.x = padding.left();
   this.networkScene.network.y = padding.top();
 
-}
+};
 
 N.UI.WorkbenchScene.prototype.render = function(svgParent, size, padding) {
   this.width = size.width;
   this.height = size.height;
   this.padding = padding;
 
-  this.group = svgParent.group().move(this.x, this.y).attr({ 'class': 'pi-workbench-scene' });
+  this.group = svgParent.group().move(this.x, this.y).attr({ 'class': 'pi-pi-workbench-scene' });
   this.networkScene.render(this.group);
 
   var networkWidth = this.networkScene.network.width+this.networkPadding.horizontal();
@@ -146,7 +142,7 @@ N.UI.WorkbenchScene.prototype.render = function(svgParent, size, padding) {
   this.signalGraphScene.x = networkWidth+this.graphPadding.left()+this.padding.left();
   this.signalGraphScene.y = this.padding.top();
   this.signalGraphScene.render(this.group, { width: graphWidth, height: this.height-this.padding.vertical() }, this.graphPadding);
-}
+};
 
 N.UI.WorkbenchScene.prototype.fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
@@ -159,4 +155,4 @@ N.UI.WorkbenchScene.prototype.fit = function(svgParent) {
   else {
     return 0.9*svgHeight/this.network.height;
   }
-}
+};

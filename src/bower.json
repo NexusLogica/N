@@ -5,6 +5,7 @@
     "jquery": "2.1.1",
     "lodash": "2.4.1",
     "lodash-deep": "1.4.2",
+    "underscore.string": "git://github.com/epeli/underscore.string",
     "javascript-state-machine": "2.3.0",
     "jquery-ui": "1.11.1",
     "gl-matrix": "git://github.com/toji/gl-matrix",
@@ -20,6 +21,8 @@
     "momentjs": "2.4.0",
     "q": "1.0.1",
     "sprintf": "git://github.com/alexei/sprintf.js",
-    "svg.js": "git://github.com/wout/svg.js.git"
+    "svg.js": "git://github.com/wout/svg.js.git",
+    "ace": "git://github.com/ajaxorg/ace-builds",
+    "signals": "git://github.com/millermedeiros/js-signals"
   }
 }

@@ -26,7 +26,7 @@ angular.module('nSimulationApp').directive('piWorkbenchTestPanel', [function() {
       test: '=test',
       testStatus: '=testStatus'
     },
-    templateUrl: 'src/partials/pi-workbench-test-panel.html',
+    templateUrl: 'src/partials/pi-pi-workbench-test-panel.html',
     controller: ['$scope', '$timeout', function ($scope, $timeout) {
       $scope.propertiesCopy = {};
 
@@ -139,7 +139,7 @@ angular.module('nSimulationApp').directive('piWorkbenchTestPanel', [function() {
         $scope.updateWorkbenchScene();
       }
 
-      $scope.$on('pi-workbench-panel:show-properties', function(event, selectedTestId) {
+      $scope.$on('pi-pi-workbench-panel:show-properties', function(event, selectedTestId) {
         if($scope.test.id === selectedTestId) {
           $scope.showPropertiesEdit();
         }

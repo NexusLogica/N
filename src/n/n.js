@@ -17,6 +17,7 @@ All Rights Reserved.
  * @module N
  */
 var N = N || {};
+N.UI = N.UI || {};
 
 /**
  * Globally accessible functions.

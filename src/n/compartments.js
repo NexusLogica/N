@@ -215,22 +215,22 @@ N.Comp.Output = function(neuron, name) {
     signals:[{
       name: 'main', propName: 'outputStore'
     }]
-  }
+  };
   N.Comp.initializeCompartment(this);
-}
+};
 
 N.Comp.extend(N.Comp.Output);
 
 N.Comp.Output.prototype.addInput = function(input) {
   this.input = input;
-}
+};
 
 N.Comp.Output.prototype.update = function(t) {
   var main = this.outputLogic.sources.main;
   this.output = main.compartment.getOutputAt(t-main.delay);
   this.outputStore.appendData(t, this.output);
   return this.output;
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
@@ -238,7 +238,7 @@ N.Comp.Output.prototype.update = function(t) {
  */
 N.Comp.Output.prototype.clear = function() {
   this.outputStore.clear();
-}
+};
 
 /**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
@@ -257,7 +257,7 @@ N.Comp.Output.prototype.validate = function(report) {
 
   if(this.getNumInputConnections()  !== 0) { report.warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
   if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
-}
+};
 
   //********************
   //* N.Comp.InputSink *

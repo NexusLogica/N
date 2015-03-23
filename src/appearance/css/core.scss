@@ -55,3 +55,7 @@ input::-webkit-input-placeholder  { color: $placeholder-color; }
 input::-moz-placeholder           { color: $placeholder-color; }
 input::-moz-placeholder           { color: $placeholder-color; }
 input:-ms-input-placeholder       { color: $placeholder-color; }
+
+.hidden {
+  display: none;
+}

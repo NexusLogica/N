@@ -1,12 +1,12 @@
 /**********************************************************************
 
-File     : pi-canvas3d.scss
+File     : n-editor.scss
 Project  : N Simulator Library
-Purpose  : Source file for the pi-canvas-3d component SCSS files.
+Purpose  : Source file for the [template] component SCSS files.
 Revisions: Original definition by Lawrence Gunn.
-           2014/01/01
+           2015/03/21
 
-Copyright (c) 2014 by Lawrence Gunn
+Copyright (c) 2015 by Lawrence Gunn
 All Rights Reserved.
 
 */
@@ -16,12 +16,11 @@ All Rights Reserved.
 @import '../../appearance/css/common.scss';
 
 
-.pi-canvas3d {
+.n-editor {
   display: block;
-  @include panel-border-square();
 
-  .render-target {
-    width: 700px;
-    height: 500px;
+  .ace-editor {
+    width: 500px;
+    height: 900px;
   }
 }

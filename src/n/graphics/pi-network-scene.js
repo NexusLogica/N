@@ -12,9 +12,6 @@ All Rights Reserved.
 */
 'use strict';
 
-var N = N || {};
-N.UI = N.UI || {};
-
   //*********************
   //* N.UI.NetworkScene *
   //*********************
@@ -33,7 +30,7 @@ N.UI.NetworkScene = function() {
   this.scale = 100;
   this.x = 0;
   this.y = 0;
-}
+};
 
 /**
  *
@@ -47,7 +44,7 @@ N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
   this.renderMappings = renderMappings;
   this.network.layout(this.renderMappings);
   return this;
-}
+};
 
 /**
  * Calculates the scale that will fit the network to a given width.
@@ -63,12 +60,12 @@ N.UI.NetworkScene.prototype.scaleToFitWidth = function(width, padding) {
   this.idealContainerHeight = this.network.unscaledHeight*this.scale+padding.vertical();
   this.network.x = padding.left();
   this.network.y = padding.top();
-}
+};
 
 N.UI.NetworkScene.prototype.render = function(svgParent) {
   this.group = svgParent.group().move(this.x, this.y);
   this.network.render(this.group, this.scale, this.renderMappings);
-}
+};
 
 N.UI.NetworkScene.prototype.fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
@@ -81,4 +78,5 @@ N.UI.NetworkScene.prototype.fit = function(svgParent) {
   else {
     return 0.9*svgHeight/this.network.height;
   }
-}
+};
+

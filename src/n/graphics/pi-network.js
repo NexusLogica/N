@@ -12,9 +12,6 @@ All Rights Reserved.
 */
 'use strict';
 
-var N = N || {};
-N.UI = N.UI || {};
-
   //******************
   //* N.UI.PiNetwork *
   //******************
@@ -33,7 +30,7 @@ N.UI.PiNetwork = function(parentNetwork) {
   this.networks = [];
   this.networksByName = {};
   this.drawBorder = true;
-}
+};
 
 /**
  * Set the network connection.
@@ -45,7 +42,7 @@ N.UI.PiNetwork = function(parentNetwork) {
 N.UI.PiNetwork.prototype.setNetwork = function(network) {
   this.network = network;
   return this;
-}
+};
 
 /**
  * Get a PiNetwork object owned by this PiNetwork object given the network name.
@@ -55,7 +52,7 @@ N.UI.PiNetwork.prototype.setNetwork = function(network) {
  */
 N.UI.PiNetwork.prototype.getNetworkByName = function(name) {
   return this.networksByName[name];
-}
+};
 
 /**
  * Get a PiNetwork object owned by this PiNetwork object given the network name.
@@ -65,14 +62,14 @@ N.UI.PiNetwork.prototype.getNetworkByName = function(name) {
  */
 N.UI.PiNetwork.prototype.getNeuronByName = function(name) {
   return this.neuronsByName[name];
-}
+};
 
 N.UI.PiNetwork.prototype.addConnectionDisplay = function(name, group) {
   if(this.connectionsDisplays.hasOwnProperty(name)) {
     this.connectionsDisplays[name].remove();
   }
   this.connectionsDisplays[name] = group;
-}
+};
 
 N.UI.PiNetwork.prototype.layout = function(renderMappings) {
 
@@ -99,7 +96,7 @@ N.UI.PiNetwork.prototype.layout = function(renderMappings) {
   this.unscaledWidth = width;
   this.unscaledHeight = (height !== 0 ? height : 0.3);
   return this;
-}
+};
 
 N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings) {
 
@@ -188,14 +185,14 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings) {
 
   this.routeInfo = new N.UI.RouteInfo(this);
   this.routeInfo.buildPassageInformation();
-}
+};
 
 N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
   this.outerRect = this.group.rect(this.rect.right-this.rect.left-padding[3]-padding[1], this.rect.bottom-this.rect.top-padding[2]-padding[0])
     .move(this.rect.left+padding[3], this.rect.top+padding[0])
     .back()
     .attr({ class: className});
-}
+};
 
 /**
  * Returns the svg.js group object that contains the network and all of its contents.
@@ -205,7 +202,7 @@ N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
  */
 N.UI.PiNetwork.prototype.getGroup = function() {
   return this.group;
-}
+};
 
 N.UI.PiNetwork.prototype.getTemplate = function(renderMappings, groupName) {
   var template = renderMappings[groupName];
@@ -224,7 +221,7 @@ N.UI.PiNetwork.prototype.getTemplate = function(renderMappings, groupName) {
     }
   }
   return template;
-}
+};
 
 N.UI.PiNetwork.prototype.loadFrom = function(json) {
   for(var i in json) {
@@ -232,7 +229,7 @@ N.UI.PiNetwork.prototype.loadFrom = function(json) {
   }
 
   return this;
-}
+};
 
 N.UI.PiNetwork.prototype.showRoutes = function() {
   var r = this.routeInfo;
@@ -247,11 +244,11 @@ N.UI.PiNetwork.prototype.showRoutes = function() {
       this.group.circle(2*radius).move(lane.left+0.5*(lane.right-lane.left)-radius, yNeg+0.5*(yPos-yNeg)-radius).fill('red');
     }
   }
-}
+};
 
 N.UI.PiNetwork.prototype.createStackedLayout = function(renderMappings) {
   return this.appendNetworkToStackedLayout(this.network, renderMappings);
-}
+};
 
 N.UI.PiNetwork.prototype.appendNetworkToStackedLayout = function(network, renderMappings) {
   var networkJson = { };
@@ -294,7 +291,7 @@ N.UI.PiNetwork.prototype.appendNetworkToStackedLayout = function(network, render
   networkJson.idealHeight = totalHeight;
 
   return networkJson;
-}
+};
 
 N.UI.PiNetwork.prototype.calculateRowDimensions = function(row, renderMappings) {
   var offset = 0;
@@ -322,7 +319,7 @@ N.UI.PiNetwork.prototype.calculateRowDimensions = function(row, renderMappings) 
   var actualSpacing = row.width-rFirst-rLast;
   var finalSpacing = (row.length > 2 ? actualSpacing/(row.length-1) : 1);
   return { width: row.width, spacing: spacing, height: height };
-}
+};
 
 N.UI.PiNetwork.prototype.getGroupName = function(name) {
   var i1 = name.lastIndexOf('[');
@@ -333,7 +330,7 @@ N.UI.PiNetwork.prototype.getGroupName = function(name) {
     }
   }
   return name;
-}
+};
 
 N.UI.PiNetwork.prototype.getGroupNameData = function(name) {
   var i1 = name.lastIndexOf('[');
@@ -344,5 +341,5 @@ N.UI.PiNetwork.prototype.getGroupNameData = function(name) {
     }
   }
   return { name: name,  groupName: name };
-}
+};
 
