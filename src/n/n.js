@@ -398,7 +398,7 @@ N.rad = function(angleDegrees) {
  */
 N.deg = function(angleRadians) {
   return angleRadians*180/Math.PI;
-}
+};
 
 /**
  * Create a globally unique ID and return it as a string.
@@ -413,7 +413,7 @@ N.generateUUID = function() {
       return (c==='x' ? r : (r&0x7|0x8)).toString(16);
   });
   return uuid;
-}
+};
 
 
 /**
@@ -425,7 +425,7 @@ N.generateUUID = function() {
 N.ConfigurationReport = function() {
   this.errors = [];
   this.warnings = [];
-}
+};
 
 /**
  * Add an error message and the path for the source of the object.
@@ -437,7 +437,7 @@ N.ConfigurationReport = function() {
 N.ConfigurationReport.prototype.error = function(path, message) {
   this.errors.push({ path: path, message: message });
   return this;
-}
+};
 
 /**
  * Add a warning message and the path for the source of the object.

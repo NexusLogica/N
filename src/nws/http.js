@@ -28,8 +28,8 @@ N.Http = N.Http || {};
  * @method get
  * @returns { Promise }
  */
-N.Http.get = function(url, data) {
-  return N.Http.call('GET', url, data);
+N.Http.get = function(url, config) {
+  return N.Http.call('GET', url, undefined, config);
 };
 
 /**
@@ -64,7 +64,7 @@ N.Http.del = function(url, data) {
  * @method GetRange
  * @returns {{Min: Real, Max: Real}}
  */
-N.Http.call = function(type, url, data) {
+N.Http.call = function(type, url, data, config) {
   var ajaxData = {
     method: type,
     //dataType: 'json',
@@ -80,6 +80,10 @@ N.Http.call = function(type, url, data) {
   } else if(data) {
     ajaxData.data        = JSON.stringify(data);
     ajaxData.contentType = type === 'POST' ? 'multipart/form-data' : 'application/json; charset=utf-8';
+  }
+
+  if(config) {
+    _.merge(ajaxData, config);
   }
 
   var deferred = Q.defer();

@@ -16,14 +16,40 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
   return {
     restrict: 'E',
     templateUrl: 'src/components/network-builder/network-builder.html',
-    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile) {
       ComponentExtensions.initialize(this, 'networkBuilder', $scope, $element, $attrs);
+
+      $scope.sources = new N.Sources();
 
       $scope.signals = {
         'compartment-enter': new signals.Signal(),
         'compartment-leave': new signals.Signal(),
         'compartment-click': new signals.Signal(),
-        'input-has-focus': new signals.Signal()
+        'input-has-focus'  : new signals.Signal()
+      };
+
+      $scope.editorsByGuid = {};
+      $scope.activeEditor = '';
+
+      $scope.addEditor = function(sourceFile) {
+        var editor = {
+          file: sourceFile,
+          guid: 'guid'+N.generateUUID().replace(/-/g, ''),
+          signals: {
+            save: new signals.Signal()
+          }
+        };
+
+        $scope.activeEditor = editor.guid;
+
+        $scope.editorsByGuid[editor.guid] = editor;
+
+        var html = $compile('<n-editor class="'+editor.guid+'" source-file="editorsByGuid.'+editor.guid+'" signals="signals" ng-show="activeEditor == \''+editor.guid+'\'"></n-editor>')($scope);
+        $element.find('.editors').append(html);
+      };
+
+      $scope.getCurrentPath = function() {
+        return ($scope.pwd.length === 0 ? '/' : '/' + $scope.pwd.concat('/'));
       };
 
       $scope.build = {};
@@ -54,7 +80,8 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.shell = Josh.Shell({
           'history': history,
           'shell_panel_id': 'network-build-shell',
-          'shell_view_id': 'network-build-shell-view'
+          'shell_view_id': 'network-build-shell-view',
+          'blinktime': 1000
         });
         $scope.shell.activate();
 
@@ -116,7 +143,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             if(path.substr(0,1) === '/') {
               fullPath = path;
             } else {
-              fullPath = $scope.pwd.concat('/')+path;
+              fullPath = $scope.getCurrentPath()+path;
             }
 
             var formData = new FormData();
@@ -139,8 +166,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       $scope.shell.setCommandHandler('pwd', {
         exec: function (cmd, args, callback) {
-          var path = $scope.pwd.length === 0 ? '/' : '/'+$scope.pwd.concat('/');
-          callback(path);
+          callback($scope.getCurrentPath());
         }
       });
 
@@ -190,15 +216,66 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       $scope.shell.setCommandHandler('edit', {
         exec: function (cmd, args, callback) {
-          var file = args[0];
-          var path = $scope.pwd.length === 0 ? '/' +file : '/'+$scope.pwd.concat('/')+file;
+          var usage = 'Usage: edit [-n] [filepath]';
 
-          N.Http.get($scope.scriptHost+'/file'+path).then(function(data) {
-            console.log(data);
-            callback('File loaded');
-          }, function(err) {
-            callback('Error opening file for edit: '+err.httpStatusCodeDescription);
-          });
+          if(args.length < 1 || args.length > 2) {
+            callback(usage)
+          } else if(args.length === 1) {
+            var file = args[0];
+            var path = $scope.getCurrentPath() + file;
+
+            N.Http.get($scope.scriptHost + '/file' + path, {
+              contentType: 'text/plain',
+              dataType: 'text'
+            }).then(function (data) {
+
+              // Add the file to the list of sources.
+              var file = new N.SourceFile();
+              file.setPath(path);
+              file.setText(data);
+              $scope.sources.addSource(file);
+              $scope.addEditor(file);
+
+              callback('File loaded');
+            }, function (err) {
+              callback('Error opening file for edit: ' + err.httpStatusCodeDescription);
+            });
+          } else if(args.length === 2) {
+            if (args[0] !== '-n') {
+              callback(usage);
+            }
+            var sourceFile = new N.SourceFile();
+            var fullPath = args[1].indexOf('/') === 1 ? args[1] : $scope.getCurrentPath() +'/'+args[1];
+            sourceFile.setPath(fullPath);
+            $scope.addEditor(sourceFile);
+            callback('');
+          }
+        }
+      });
+
+      $scope.shell.setCommandHandler('save', {
+        exec: function (cmd, args, callback) {
+          if (args.length) {
+            var file = args[0];
+            callback('NOT IMPLEMENTED');
+          } else {
+            var sourceFile = $scope.editorsByGuid[$scope.activeEditor];
+            if(sourceFile) {
+              sourceFile.signals.save.dispatch();
+
+              var formData = new FormData();
+              formData.append('file', new Blob([sourceFile.file.getText()], {
+                type: 'text/plain'
+              }));
+
+              N.Http.post($scope.scriptHost+'/file'+sourceFile.file.path, formData).then(function(data) {
+                sourceFile.file.setDirty(false);
+                callback('File saved');
+              }, function(err) {
+                callback('ERROR: Unable to save file');
+              });
+            }
+          }
         }
       });
 

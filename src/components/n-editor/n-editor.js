@@ -17,7 +17,8 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
     restrict: 'E',
     templateUrl: 'src/components/n-editor/n-editor.html',
     scope: {
-      signals: '=signals'
+      signals: '=signals',
+      sourceFile: '=sourceFile'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'nEditor', $scope, $element, $attrs);
@@ -44,6 +45,14 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
           $scope.editor.blur();
         }
       });
+
+      if($scope.sourceFile) {
+        $scope.editor.setValue($scope.sourceFile.file.getText());
+
+        $scope.sourceFile.signals.save.add(function() {
+          $scope.sourceFile.file.updateText($scope.editor.getValue());
+        });
+      }
     }
   };
 }]);

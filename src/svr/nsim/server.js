@@ -90,6 +90,7 @@ app.get('/*', function (req, res) {
 
 
 app.post('/file/*', function(req, res) {
+  console.log("*********** PST");
   var relativePath = req.originalUrl.substring('/file/'.length);
   var fullPath = publicDir+'/'+relativePath;
   var directory = relativePath.substring(0, relativePath.lastIndexOf('/'));
@@ -107,6 +108,7 @@ app.post('/file/*', function(req, res) {
 
   req.pipe(req.busboy);
   req.busboy.on('file', function (fieldname, file, filename) {
+    console.log("******* file fieldname: "+fieldname);
     console.log('Uploading: '+fullPath);
 
     // Path where image will be uploaded
@@ -115,6 +117,18 @@ app.post('/file/*', function(req, res) {
     fstream.on('close', function () {
       res.status(200).json({ status: 'success' });
     });
+  });
+  req.busboy.on('field', function (fieldname, file, filename) {
+    console.log("******* field fieldname: "+fieldname);
+
+    console.log('Uploading: '+fullPath);
+
+    //// Path where image will be uploaded
+    //var fstream = fs.createWriteStream(fullPath);
+    //file.pipe(fstream);
+    //fstream.on('close', function () {
+    //  res.status(200).json({ status: 'success' });
+    //});
   });
 });
 
