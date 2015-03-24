@@ -40,6 +40,14 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       };
 
+      $scope.setCdFromPwd = function() {
+        $scope.cd = $scope.fileSystem;
+        for(var i=0; i<$scope.pwd.length; i++) {
+          var dirName = $scope.pwd[i];
+          $scope.cd = _.find($scope.cd.directories, 'name', dirName);
+        }
+      };
+
       $scope.createShell = function() {
         var history = new Josh.History({ key: 'network-builder.history'});
 
@@ -51,6 +59,13 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.shell.activate();
 
         $scope.scriptHost = localStorage.getItem('lastScriptHost');
+
+        if($scope.scriptHost) {
+          N.Http.get($scope.scriptHost+'/files').then(function(data) {
+            $scope.fileSystem = data;
+            $scope.cd = data;
+          });
+        }
 
         $element.find('#network-build-shell').on('click', function() {
           $scope.shell.activate();
@@ -89,7 +104,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           }
         },
         completion: function(cmd, arg, line, callback) {
-          callback($scope.shell.bestMatch(arg, ['world', 'josh']))
+          callback($scope.shell.bestMatch(arg, ['world', 'josh']));
         }
       });
 
@@ -97,21 +112,93 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         exec: function(cmd, args, callback) {
           if(args.length === 1) {
             var path = args[0];
-            var fullPath = $scope.pwd .concat('/')+path;
-            var output = 'Creating: '+fullPath;
-            callback(output);
-        } else {
-          callback('Usage: mkdir [path]     Makes a new directory or directories.');
-      }
-    },
-    completion: function(cmd, arg, line, callback) {
-      callback($scope.shell.bestMatch(arg, ['world', 'josh']))
-    }
+            var fullPath;
+            if(path.substr(0,1) === '/') {
+              fullPath = path;
+            } else {
+              fullPath = $scope.pwd.concat('/')+path;
+            }
+
+            var formData = new FormData();
+            formData.append('action', 'create');
+
+            N.Http.post($scope.scriptHost+'/directory'+fullPath, formData).then(function(data) {
+              var output = 'Created: '+fullPath;
+              callback(output);
+            }, function(err) {
+              callback('Not a valid host name: '+err.httpStatusCodeDescription);
+            });
+          } else {
+            callback('Usage: mkdir [path]     Makes a new directory or directories.');
+          }
+        },
+        completion: function(cmd, arg, line, callback) {
+          callback($scope.shell.bestMatch(arg, ['world', 'josh']))
+        }
       });
 
       $scope.shell.setCommandHandler('pwd', {
         exec: function (cmd, args, callback) {
-          callback('/'+$scope.pwd.concat('/'));
+          var path = $scope.pwd.length === 0 ? '/' : '/'+$scope.pwd.concat('/');
+          callback(path);
+        }
+      });
+
+      $scope.shell.setCommandHandler('cd', {
+        exec: function (cmd, args, callback) {
+          var path = args[0];
+          if(path === '.') {
+            _.noop();
+          } else if(path ==='..') {
+            if($scope.pwd.length > 0) {
+              $scope.pwd.pop();
+            }
+          } else {
+            var cd = _.find($scope.cd.directories, 'name', path);
+            if(!cd) {
+              callback('cd: '+path+': No such directory');
+              return;
+            }
+            $scope.cd = cd;
+            $scope.pwd.push(path);
+          }
+          callback('');
+        }
+      });
+
+      $scope.shell.setCommandHandler('ls', {
+        exec: function (cmd, args, callback) {
+          var dir = $scope.fileSystem;
+          for(var i=0; i<$scope.pwd.length; i++) {
+            var dirName = $scope.pwd[i];
+            dir = _.find(dir.directories, 'name', dirName);
+          }
+          var list = [];
+          for(var j=0; j<dir.directories.length; j++) {
+            list.push(dir.directories[j].name);
+          }
+          for(var k=0; k<dir.files.length; k++) {
+            list.push(dir.files[k].name);
+          }
+
+          list.sort();
+          var output = '';
+          _.forEach(list, function(name) { output += '<div>'+name+'</div>'; });
+          callback(output);
+        }
+      });
+
+      $scope.shell.setCommandHandler('edit', {
+        exec: function (cmd, args, callback) {
+          var file = args[0];
+          var path = $scope.pwd.length === 0 ? '/' +file : '/'+$scope.pwd.concat('/')+file;
+
+          N.Http.get($scope.scriptHost+'/file'+path).then(function(data) {
+            console.log(data);
+            callback('File loaded');
+          }, function(err) {
+            callback('Error opening file for edit: '+err.httpStatusCodeDescription);
+          });
         }
       });
 

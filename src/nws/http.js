@@ -30,7 +30,16 @@ N.Http = N.Http || {};
  */
 N.Http.get = function(url, data) {
   return N.Http.call('GET', url, data);
-}
+};
+
+/**
+ * Perform an HTTP POST.
+ * @method post
+ * @returns { Promise }
+ */
+N.Http.post = function(url, data) {
+  return N.Http.call('POST', url, data);
+};
 
 /**
  * Perform an HTTP PUT.
@@ -43,10 +52,10 @@ N.Http.put = function(url, data) {
 
 /**
  * Perform an HTTP DELETE.
- * @method delete
+ * @method del
  * @returns { Promise }
  */
-N.Http.delete = function(url, data) {
+N.Http.del = function(url, data) {
   return N.Http.call('DELETE', url, data);
 };
 
@@ -58,13 +67,19 @@ N.Http.delete = function(url, data) {
 N.Http.call = function(type, url, data) {
   var ajaxData = {
     method: type,
-    dataType: 'json',
+    //dataType: 'json',
     crossDomain: true
   };
 
-  if(data) {
+  if(data instanceof FormData) {
+    ajaxData.data = data;
+    ajaxData.contentType = 'multipart/form-data';
+    ajaxData.contentType = false;
+    ajaxData.processData = false;
+          //ajaxData.dataType = undefined;
+  } else if(data) {
     ajaxData.data        = JSON.stringify(data);
-    ajaxData.contentType = 'application/json; charset=utf-8';
+    ajaxData.contentType = type === 'POST' ? 'multipart/form-data' : 'application/json; charset=utf-8';
   }
 
   var deferred = Q.defer();

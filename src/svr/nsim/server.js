@@ -28,8 +28,9 @@ var app = express();
 app.use(busboy());
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, content-Type, accept');
   next();
 });
 
@@ -70,11 +71,10 @@ var getDirectoryJson = function(directory) {
       }
     }
   }
-  var tree = {
+  return {
     directories: dirsJson,
     files: filesJson
   };
-  return tree;
 };
 
 app.get('/files', function (req, res) {
@@ -90,7 +90,7 @@ app.get('/*', function (req, res) {
 
 
 app.post('/file/*', function(req, res) {
-  var relativePath = req.originalUrl.substring(6);
+  var relativePath = req.originalUrl.substring('/file/'.length);
   var fullPath = publicDir+'/'+relativePath;
   var directory = relativePath.substring(0, relativePath.lastIndexOf('/'));
   var dirs = directory.split('/');
@@ -120,12 +120,12 @@ app.post('/file/*', function(req, res) {
 
 
 /***
- * @method PUT - Create a directory where the path is the URL path
+ * @method POST - Create a directory where the path is the URL path
  */
-app.put('/file/*', function(req, res) {
-  var relativePath = req.originalUrl.substring(6);
+app.post('/directory/*', function(req, res) {
+  var relativePath = req.originalUrl.substring('/directory/'.length);
   var fullPath = publicDir+'/'+relativePath;
-  var dirs = fullPath.split('/');
+  var dirs = relativePath.split('/');
 
   console.log('Creating directory: '+fullPath);
 
