@@ -18,7 +18,8 @@ All Rights Reserved.
  * @constructor
  */
 N.Sources = function() {
-  this.sourcesByPath = {}
+  this.sourcesByPath = {};
+  this.sourcesByGuid = {};
 };
 
 /**
@@ -28,4 +29,5 @@ N.Sources = function() {
  */
 N.Sources.prototype.addSource = function(sourceFileObj) {
   this.sourcesByPath[sourceFileObj.path] = sourceFileObj;
+  this.sourcesByGuid[sourceFileObj.guid] = sourceFileObj;
 };

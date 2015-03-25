@@ -18,6 +18,7 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
     templateUrl: 'src/components/n-editor/n-editor.html',
     scope: {
       signals: '=signals',
+      ideSignals: '=ideSignals',
       sourceFile: '=sourceFile'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
@@ -37,10 +38,10 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
       $scope.editor.setTheme('ace/theme/kuroir');
       $scope.editor.getSession().setMode('ace/mode/javascript');
       $scope.editor.on('focus', function() {
-        $scope.signals['input-has-focus'].dispatch($scope);
+        $scope.ideSignals['input-has-focus'].dispatch($scope);
       });
 
-      $scope.signals['input-has-focus'].add(function(focusScope) {
+      $scope.ideSignals['input-has-focus'].add(function(focusScope) {
         if(focusScope !== $scope) {
           $scope.editor.blur();
         }

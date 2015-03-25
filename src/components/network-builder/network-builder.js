@@ -28,26 +28,6 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         'input-has-focus'  : new signals.Signal()
       };
 
-      $scope.editorsByGuid = {};
-      $scope.activeEditor = '';
-
-      $scope.addEditor = function(sourceFile) {
-        var editor = {
-          file: sourceFile,
-          guid: 'guid'+N.generateUUID().replace(/-/g, ''),
-          signals: {
-            save: new signals.Signal()
-          }
-        };
-
-        $scope.activeEditor = editor.guid;
-
-        $scope.editorsByGuid[editor.guid] = editor;
-
-        var html = $compile('<n-editor class="'+editor.guid+'" source-file="editorsByGuid.'+editor.guid+'" signals="signals" ng-show="activeEditor == \''+editor.guid+'\'"></n-editor>')($scope);
-        $element.find('.editors').append(html);
-      };
-
       $scope.getCurrentPath = function() {
         return ($scope.pwd.length === 0 ? '/' : '/' + $scope.pwd.concat('/'));
       };
@@ -219,8 +199,11 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           var usage = 'Usage: edit [-n] [filepath]';
 
           if(args.length < 1 || args.length > 2) {
+
             callback(usage)
+
           } else if(args.length === 1) {
+
             var file = args[0];
             var path = $scope.getCurrentPath() + file;
 
@@ -240,15 +223,29 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             }, function (err) {
               callback('Error opening file for edit: ' + err.httpStatusCodeDescription);
             });
+
           } else if(args.length === 2) {
+
             if (args[0] !== '-n') {
               callback(usage);
+              return;
             }
             var sourceFile = new N.SourceFile();
-            var fullPath = args[1].indexOf('/') === 1 ? args[1] : $scope.getCurrentPath() +'/'+args[1];
+            var fullPath;
+            if(args[1].indexOf('/') === 1) {
+              fullPath = args[1];
+            } else if($scope.pwd.length === 0) {
+              fullPath = '/'+args[1];
+            } else {
+              fullPath = $scope.getCurrentPath() +'/'+args[1];
+            }
+
             sourceFile.setPath(fullPath);
-            $scope.addEditor(sourceFile);
+            $scope.sources.addSource(sourceFile);
+
+            $scope.editorPanel.addEditor(sourceFile);
             callback('');
+
           }
         }
       });
@@ -259,22 +256,27 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             var file = args[0];
             callback('NOT IMPLEMENTED');
           } else {
-            var sourceFile = $scope.editorsByGuid[$scope.activeEditor];
-            if(sourceFile) {
-              sourceFile.signals.save.dispatch();
+            $scope.editorPanel.saveAllFilesToSourceFiles();
+            var num = 0;
+            var all = [];
+            _.forEach($scope.sources.sourcesByGuid, function(sourceFile) {
 
-              var formData = new FormData();
-              formData.append('file', new Blob([sourceFile.file.getText()], {
-                type: 'text/plain'
-              }));
+              if (sourceFile.dirty) {
+                num++;
+                var formData = new FormData();
+                formData.append('file', new Blob([sourceFile.getText()], {
+                  type: 'text/plain'
+                }));
 
-              N.Http.post($scope.scriptHost+'/file'+sourceFile.file.path, formData).then(function(data) {
-                sourceFile.file.setDirty(false);
-                callback('File saved');
-              }, function(err) {
-                callback('ERROR: Unable to save file');
-              });
-            }
+                var deferred = N.Http.post($scope.scriptHost + '/file' + sourceFile.path, formData);
+                all.push(deferred);
+              }
+            });
+            $.when.apply($, all).then(function() {
+              callback(num === 1 ? '1 file was saved' :  num+' files were saved');
+            }, function(err) {
+              callback('ERROR: Unable to save the files');
+            });
           }
         }
       });

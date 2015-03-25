@@ -21,6 +21,7 @@ N.SourceFile = function() {
   this.text = '';
   this.dirty = false;
   this.path = '';
+  this.guid = 'guid'+N.generateUUID().replace(/-/g, '');
 };
 
 /**

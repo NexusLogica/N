@@ -1,0 +1,26 @@
+/**********************************************************************
+
+File     : editors-panel.scss
+Project  : N Simulator Library
+Purpose  : Source file for the editors-panel component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/24
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+@import '../../appearance/css/common.scss';
+
+
+.editors-panel {
+  display: block;
+
+  .ace-editor {
+    width: 500px;
+    height: 900px;
+  }
+}
