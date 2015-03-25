@@ -29,7 +29,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
       };
 
       $scope.getCurrentPath = function() {
-        return ($scope.pwd.length === 0 ? '/' : '/' + $scope.pwd.concat('/'));
+        return '/'+$scope.pwd.join('/');
       };
 
       $scope.build = {};
@@ -217,7 +217,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
               file.setPath(path);
               file.setText(data);
               $scope.sources.addSource(file);
-              $scope.addEditor(file);
+              $scope.editorPanel.addEditor(file);
 
               callback('File loaded');
             }, function (err) {
