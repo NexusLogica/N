@@ -143,7 +143,7 @@ N.Network.prototype.getNetworkByIndex = function(index) {
  */
 N.Network.prototype.getNetworkByName = function(name) {
   return this.networksByName[name];
-}
+};
 
 /**
  * Adds a neuron to the network.
@@ -464,7 +464,7 @@ N.Network.prototype.loadTemplate = function(json) {
     deferred.resolve();
   }
   return deferred.promise;
-}
+};
 
 N.Network.prototype.loadNetworks = function(json) {
   var promises = [];

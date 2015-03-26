@@ -37,6 +37,7 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
       $scope.editor = ace.edit($element.find('.ace-editor').get(0));
       $scope.editor.setTheme('ace/theme/kuroir');
       $scope.editor.getSession().setMode('ace/mode/javascript');
+      $scope.editor.getSession().setTabSize(2);
       $scope.editor.on('focus', function() {
         $scope.ideSignals['input-has-focus'].dispatch($scope);
       });

@@ -63,7 +63,28 @@ N.createInstance = function(json) {
  */
 N.reportQError = function(error) {
   console.log(error.stack);
-}
+};
+
+/***
+ * For use in compiling N JSON template functions.
+ * @method N.Template
+ * @param argStringArray
+ * @param functionText
+ * @returns {FactoryFunction}
+ */
+N.Template = function(imports, func) {
+  return { imports: imports, func: func };
+};
+
+/***
+ * @method N.compileTemplateFunction
+ * @param {string} templateText
+ * @returns {Obj, Function} - Returns
+ */
+N.compileTemplateFunction = function(templateText) {
+  var templateFunction = new Function('return '+templateText);
+  return templateFunction();
+};
 
 /**
  * Create a new 'N' object. The object must be in the 'N' namespace.
@@ -448,7 +469,7 @@ N.ConfigurationReport.prototype.error = function(path, message) {
  */
 N.ConfigurationReport.prototype.warning = function(path, message) {
   this.warnings.push({ path: path, message: message });
-}
+};
 
 /**
  * Write the report to the system log via N.log(), which is usually the console.log().

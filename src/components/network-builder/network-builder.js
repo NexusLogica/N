@@ -32,6 +32,14 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         return '/'+$scope.pwd.join('/');
       };
 
+      $scope.makeFullPath = function(filePath) {
+        return filePath.indexOf('/') === 0 ?
+          filePath :
+          $scope.getCurrentPath()+($scope.pwd.length === 0 ? '' : '/')+filePath;
+      };
+
+      $scope.variables = {};
+
       $scope.build = {};
       $scope.fileSystem = {};
       $scope.pwd = [];
@@ -42,8 +50,18 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.$broadcast('network-builder:new');
       };
 
-      $scope.doFullBuild = function() {
+      $scope.buildFromFile = function(sourceFile) {
+        var deferred = Q.defer();
+        var configTemplate = N.compileTemplateFunction(sourceFile.getText());
+        var config = configTemplate.func();
 
+        var network = new N.Network();
+        network.loadFrom(config).then(function() {
+          deferred.resolve(network);
+        }, function(status) {
+          deferred.reject(status);
+        });
+        return deferred.promise;
       };
 
       $scope.setCdFromPwd = function() {
@@ -84,9 +102,39 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             $scope.shell.deactivate();
           }
         });
+
       };
 
-    }],
+      $scope.loadFile = function(filePath) {
+        var deferred = Q.defer();
+        var sourceFile = $scope.sources.sourcesByPath[filePath];
+        if(sourceFile) {
+          deferred.resolve(sourceFile);
+        } else {
+          N.Http.get($scope.scriptHost + '/file' + filePath, {
+            contentType: 'text/plain',
+            dataType: 'text'
+          }).then(function (fileContents) {
+
+            // Add the file to the list of sources.
+            sourceFile = new N.SourceFile();
+            sourceFile.setPath(filePath);
+            sourceFile.setText(fileContents);
+
+            $scope.sources.addSource(sourceFile);
+
+            deferred.resolve(sourceFile);
+          }, function (err) {
+            err.description = 'ERROR: Unable to load file '+filePath+' - '+err.httpStatusCodeDescription;
+            console.log(err.description);
+            deferred.reject(err);
+          });
+        }
+        return deferred.promise;
+      }
+
+
+      }],
     link: function($scope, $element, $attrs) {
       $scope.createShell();
 
@@ -246,6 +294,28 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             $scope.editorPanel.addEditor(sourceFile);
             callback('');
 
+          }
+        }
+      });
+
+      $scope.shell.setCommandHandler('build', {
+        exec: function (cmd, args, callback) {
+          var usage = 'Usage: build [source-file-path] [output-object-name]';
+
+          if (args.length === 2) {
+            var filePath = $scope.makeFullPath(args[0]);
+            var outputName = args[1];
+            $scope.loadFile(filePath).then(function(sourceFile) {
+              $scope.buildFromFile(sourceFile).then(function(network) {
+                $scope.variables[outputName] = network;
+                callback('Build successful');
+              }, function(err) {
+                callback('ERROR: Unable to build network: '+err.description);
+              })
+            });
+
+          } else {
+            callback(usage);
           }
         }
       });
