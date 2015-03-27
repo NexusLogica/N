@@ -67,16 +67,16 @@ N.NetworkTest.prototype.createScenes = function() {
 }
 
 N.NetworkTest.SpinyStellate = {
-  classname: 'N.Neuron',
+  className: 'N.Neuron',
   name: 'SS',
   compartments: [{
-    classname: 'N.Comp.Output',
+    className: 'N.Comp.Output',
     name: 'OP'
   },{
-    classname: 'N.Comp.LinearSummingInput',
+    className: 'N.Comp.LinearSummingInput',
     name: 'IP'
   },{
-    classname: 'N.Comp.AcetylcholineInput',
+    className: 'N.Comp.AcetylcholineInput',
     name: 'AIP'
   }],
   display: {
@@ -87,13 +87,13 @@ N.NetworkTest.SpinyStellate = {
 }
 
 N.NetworkTest.FastSpiking = {
-  classname: 'N.Neuron',
+  className: 'N.Neuron',
   name: 'FS',
   compartments: [{
-    classname: 'N.Comp.Output',
+    className: 'N.Comp.Output',
     name: 'OP'
   },{
-    classname: 'N.Comp.LinearSummingInput',
+    className: 'N.Comp.LinearSummingInput',
     name: 'IP'
   }],
   display: {
@@ -110,16 +110,16 @@ N.NetworkTest.testConfigurations = [{
   //******************
 
   network: {
-    classname: 'N.Network',
+    className: 'N.Network',
     name: 'SN',
     neurons: [{
-      classname: 'N.Neuron',
+      className: 'N.Neuron',
       name: 'IP',
       compartments: [{
-        classname: 'N.Comp.OutputFromSignal',
+        className: 'N.Comp.OutputFromSignal',
         name: 'SO',
         signal: {
-          classname: 'N.DiscreteSignal',
+          className: 'N.DiscreteSignal',
           dataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
         }
       }],
@@ -129,13 +129,13 @@ N.NetworkTest.testConfigurations = [{
         compartmentMap : { 'Body': 'SO' }
       }
     },{
-      classname: 'N.Neuron',
+      className: 'N.Neuron',
       name: 'RN',
       compartments: [{
-        classname: 'N.Comp.Output',
+        className: 'N.Comp.Output',
         name: 'OP'
       },{
-        classname: 'N.Comp.LinearSummingInput',
+        className: 'N.Comp.LinearSummingInput',
         name: 'IP'
       }],
       display: {
@@ -144,10 +144,10 @@ N.NetworkTest.testConfigurations = [{
         compartmentMap : { 'Dendrites': 'IP', 'Body': 'OP'  }
       }
     },{
-      classname: 'N.Neuron',
+      className: 'N.Neuron',
       name: 'OP',
       compartments: [{
-        classname: 'N.Comp.LinearSummingInput',
+        className: 'N.Comp.LinearSummingInput',
         name: 'IN'
       }],
       display: {
@@ -175,7 +175,7 @@ N.NetworkTest.testConfigurations = [{
   //*******************
 
   network: {
-    classname: 'N.Network',
+    className: 'N.Network',
     name: 'L4',
     neurons: [
       {template: 'N.NetworkTest.SpinyStellate', name: 'SS[0]'},

@@ -50,16 +50,116 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.$broadcast('network-builder:new');
       };
 
+      var DeferredRequestGroup = function() {
+        var deferred = Q.defer();
+        var active = false;
+        var numPromises = 0;
+
+        var begin = function() {
+          return deferred.promise;
+        };
+
+        var addPromise = function(promise) {
+          numPromises++;
+          promise.then(function() {
+            numPromises--;
+            if(numPromises === 0) {
+              deferred.resolve();
+            }
+          }, function(err) {
+            deferred.reject(err);
+          })
+        };
+
+        return {
+          begin: begin,
+          addPromise: addPromise
+        }
+      };
+
+      /***
+       * Load an import.
+       * @method loadImport
+       * @param loader - This is the loader object.
+       * @param requestingTemplate - This is the instantiated template object (i.e. imports, loadedImports, function).
+       * @param key - Import key name
+       * @param path - Import path
+       * @param {DeferredRequestGroup} deferredGroup - The deferred object. Resolving the current load must be done after starting the child imports.
+       * @returns {*}
+       */
+      $scope.loadImport = function(loader, requestingTemplate, key, path, deferredGroup) {
+        var deferred = Q.defer();
+        if (loader.templatesByPath[path]) {
+          requestingTemplate.loadedImports[key] = loader.templatesByPath[path];
+          deferred.resolve();
+        } else {
+          // Block other load requests from uploading this file.
+          loader.templatesByPath[path] = {};
+          $scope.loadFile(path).then(function (sourceFile) {
+
+            var configTemplate = N.compileTemplateFunction(sourceFile.getText());
+            requestingTemplate.loadedImports[key] = configTemplate;
+            loader.templatesByPath[path] = configTemplate;
+
+            // Now, load the imports.
+            for (var importKey in configTemplate.imports) {
+              if (configTemplate.imports.hasOwnProperty(importKey)) {
+                var promise = $scope.loadImport(loader, configTemplate, importKey, configTemplate.imports[importKey], deferredGroup);
+                deferredGroup.addPromise(promise);
+              }
+            }
+
+            deferred.resolve();
+
+          }, function (err) {
+            deferred.reject(err);
+          });
+        }
+        return deferred.promise;
+      };
+
+      $scope.compile = function(filePath) {
+        var deferred = Q.defer();
+
+        var rootTemplate = {
+          import: { '$$root': filePath },
+          loadedImports: {},
+          func: function() {} // no-op
+        };
+        var loader = { templatesByPath: {} };
+
+        var deferredGroup = DeferredRequestGroup();
+        var promise = deferredGroup.begin();
+
+        $scope.loadImport(loader, rootTemplate, '$$root', filePath, deferredGroup);
+
+        promise.then(function() {
+          debugger;
+          var config = {};
+          var root = rootTemplate.loadedImports.$$root;
+          root.func(config, config, root.loadedImports, this);
+          deferred.resolve(config);
+        }, function(err) {
+          deferred.reject(err);
+        });
+        return deferred.promise;
+      };
+
       $scope.buildFromFile = function(sourceFile) {
         var deferred = Q.defer();
-        var configTemplate = N.compileTemplateFunction(sourceFile.getText());
-        var config = configTemplate.func();
+        $scope.compile(sourceFile).then(function(config) {
+          // Template compiling is complete, now build the object.
+          if (!config.className) {
+            deferred.reject({description: 'No className entry - could not build object'});
+            return;
+          }
 
-        var network = new N.Network();
-        network.loadFrom(config).then(function() {
-          deferred.resolve(network);
-        }, function(status) {
-          deferred.reject(status);
+          var nObject = N.newN(config.className);
+          nObject.loadFrom(config).then(function () {
+            deferred.resolve(nObject);
+          }, function (status) {
+            deferred.reject(status);
+          });
         });
         return deferred.promise;
       };
@@ -305,13 +405,12 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           if (args.length === 2) {
             var filePath = $scope.makeFullPath(args[0]);
             var outputName = args[1];
-            $scope.loadFile(filePath).then(function(sourceFile) {
-              $scope.buildFromFile(sourceFile).then(function(network) {
-                $scope.variables[outputName] = network;
-                callback('Build successful');
-              }, function(err) {
-                callback('ERROR: Unable to build network: '+err.description);
-              })
+
+            $scope.buildFromFile(filePath).then(function(network) {
+              $scope.variables[outputName] = network;
+              callback('Build successful');
+            }, function(err) {
+              callback('ERROR: Unable to build network: '+err.description);
             });
 
           } else {

@@ -67,16 +67,16 @@ N.ColumnNetworkTest.prototype.createScenes = function() {
 }
 
 N.ColumnNetworkTest.SpinyStellate = {
-  classname: 'N.Neuron',
+  className: 'N.Neuron',
   name: 'SS',
   compartments: [{
-    classname: 'N.Comp.Output',
+    className: 'N.Comp.Output',
     name: 'OP'
   },{
-    classname: 'N.Comp.LinearSummingInput',
+    className: 'N.Comp.LinearSummingInput',
     name: 'IP'
   },{
-    classname: 'N.Comp.AcetylcholineInput',
+    className: 'N.Comp.AcetylcholineInput',
     name: 'AIP'
   }],
   display: {
@@ -87,13 +87,13 @@ N.ColumnNetworkTest.SpinyStellate = {
 }
 
 N.ColumnNetworkTest.FastSpiking = {
-  classname: 'N.Neuron',
+  className: 'N.Neuron',
   name: 'FS',
   compartments: [{
-    classname: 'N.Comp.Output',
+    className: 'N.Comp.Output',
     name: 'OP'
   },{
-    classname: 'N.Comp.LinearSummingInput',
+    className: 'N.Comp.LinearSummingInput',
     name: 'IP'
   }],
   display: {
@@ -110,15 +110,15 @@ N.ColumnNetworkTest.testConfigurations = [{
   //******************
 
   network: {
-    classname: 'N.Network',
+    className: 'N.Network',
     name: 'SN',
     neurons: [{
       name: 'IP',
       compartments: [{
-        classname: 'N.Comp.OutputFromSignal',
+        className: 'N.Comp.OutputFromSignal',
         name: 'SO',
         signal: {
-          classname: 'N.DiscreteSignal',
+          className: 'N.DiscreteSignal',
           dataArray: [{ t:0.0, v:0 }, { t:0.05, v:1 }, { t:0.10, v:0 }, { t:0.15, v:1 }, { t:0.20, v:0 }, { t:0.25, v:1 }]
         }
       }],
@@ -128,13 +128,13 @@ N.ColumnNetworkTest.testConfigurations = [{
         compartmentMap : { 'Body': 'SO' }
       }
     },{
-      classname: 'N.Neuron',
+      className: 'N.Neuron',
       name: 'RN',
       compartments: [{
-        classname: 'N.Comp.Output',
+        className: 'N.Comp.Output',
         name: 'OP'
       },{
-        classname: 'N.Comp.LinearSummingInput',
+        className: 'N.Comp.LinearSummingInput',
         name: 'IP'
       }],
       display: {
@@ -143,10 +143,10 @@ N.ColumnNetworkTest.testConfigurations = [{
         compartmentMap: { 'Dendrites': 'IP', 'Body': 'OP'  }
       }
     },{
-      classname: 'N.Neuron',
+      className: 'N.Neuron',
       name: 'OP',
       compartments: [{
-        classname: 'N.Comp.LinearSummingInput',
+        className: 'N.Comp.LinearSummingInput',
         name: 'IN'
       }],
       display: {

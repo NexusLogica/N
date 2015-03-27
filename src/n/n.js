@@ -73,7 +73,7 @@ N.reportQError = function(error) {
  * @returns {FactoryFunction}
  */
 N.Template = function(imports, func) {
-  return { imports: imports, func: func };
+  return { imports: imports, loadedImports: {}, func: func };
 };
 
 /***

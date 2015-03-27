@@ -174,16 +174,16 @@ N.Test.PiConnectionTest.prototype.toConnectionStubs = function(pathArray) {
 }
 
 N.Test.PiConnectionTest.SpinyStellate = {
-  classname: 'N.Neuron',
+  className: 'N.Neuron',
   name: 'SS',
   compartments: [{
-    classname: 'N.Comp.Output',
+    className: 'N.Comp.Output',
     name: 'OP'
   },{
-    classname: 'N.Comp.LinearSummingInput',
+    className: 'N.Comp.LinearSummingInput',
     name: 'IP'
   },{
-    classname: 'N.Comp.AcetylcholineInput',
+    className: 'N.Comp.AcetylcholineInput',
     name: 'AIP'
   }],
   display: {
