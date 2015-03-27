@@ -118,6 +118,27 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         return deferred.promise;
       };
 
+      var Compiler = function() {
+
+        var buildOut = function(root, self, imports) {
+          if(self.build) {
+            for(var i=0; i<self.build.length; i++) {
+              var command = self.build[i];
+              var template = imports[command.id];
+              if(!template) {
+                return { description: 'Import id '+command.id+'not found'}
+              }
+              var args = [].concat(root, self, imports, this, command.args);
+              template.func.apply(this, args);
+            }
+          }
+        };
+
+        return {
+          buildOut: buildOut
+        };
+      };
+
       $scope.compile = function(filePath) {
         var deferred = Q.defer();
 
@@ -135,9 +156,10 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
         promise.then(function() {
           debugger;
+          var compiler = Compiler();
           var config = {};
           var root = rootTemplate.loadedImports.$$root;
-          root.func(config, config, root.loadedImports, this);
+          root.func(config, config, root.loadedImports, compiler);
           deferred.resolve(config);
         }, function(err) {
           deferred.reject(err);
