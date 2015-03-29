@@ -155,7 +155,7 @@ N.Comp.SignalSource.prototype.setSignal = function(outputName, signal) {
  * Upates the output value of the compartment. The output value is from the signal object.
  * @method update
  * @param t
- * @returns {Real}
+ * @returns {float}
  */
 N.Comp.SignalSource.prototype.update = function(t) {
   if(this.signal) {
@@ -399,20 +399,20 @@ N.Comp.LinearSummingInput = function(neuron, name) {
     signals:[{
       name: 'main', propName: 'outputStore'
     }]
-  }
+  };
   N.Comp.initializeCompartment(this);
-}
+};
 
 N.Comp.extend(N.Comp.LinearSummingInput);
 
 N.Comp.LinearSummingInput.prototype.connect = function(connection) {
   this.connections.push(connection);
-}
+};
 
 /**
  * Sum the inputs.
  * @method sumInputs
- * @returns {Real}
+ * @returns {float}
  */
 N.Comp.LinearSummingInput.prototype.sumInputs = function() {
   var len = this.inputConnections.length;
@@ -421,17 +421,17 @@ N.Comp.LinearSummingInput.prototype.sumInputs = function() {
     this.sum += this.inputConnections[i].output;
   }
   return this.sum;
-}
+};
 
 /**
  * update the output of the compartment.
  * @method update
- * @param {Real} t Time
- * @returns {Real}
+ * @param {float} t Time
+ * @returns {float}
  */
 N.Comp.LinearSummingInput.prototype.update = function(t) {
   this.outputStore.appendData(t, this.sumInputs());
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
@@ -576,8 +576,8 @@ N.Comp.AcetylcholineInput.prototype.sumInputs = function(t) {
 /**
  * Updates the output of the compartment.
  * @method update
- * @param {Real} t Time
- * @returns {Real}
+ * @param {float} t Time
+ * @returns {float}
  */
 N.Comp.AcetylcholineInput.prototype.update = function(t) {
   this.outputStore.appendData(t, this.sumInputs());

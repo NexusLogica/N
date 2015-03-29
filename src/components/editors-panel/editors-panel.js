@@ -26,36 +26,35 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
       $scope.editorsByGuid = {};
       $scope.activeEditor = '';
 
-      $scope.addEditor = function(sourceFile) {
+      $scope.addEditor = function(source) {
         var editor = {
-          file: sourceFile,
+          source: source,
           signals: {
             save: new signals.Signal()
           }
         };
 
-        $scope.getActiveFile = function() {
-          var file;
-          if($scope.activeEditor) {
-            file = $scope.editorsByGuid[$scope.activeEditor].file;
-          }
-          return file;
-        };
+        var guid = editor.source.guid;
+        $scope.activeEditor = guid;
+        $scope.editorsByGuid[guid] = editor;
 
-        $scope.saveAllFilesToSourceFiles = function() {
-          _.forEach($scope.editorsByGuid, function(editor) {
-            editor.signals.save.dispatch();
-          });
-        };
-
-        $scope.activeEditor = editor.file.guid;
-
-        $scope.editorsByGuid[editor.file.guid] = editor;
-
-        var html = $compile('<n-editor class="'+editor.file.guid+'" source-file="editorsByGuid.'+editor.file.guid+'" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+editor.file.guid+'\'"></n-editor>')($scope);
+        var html = $compile('<n-editor class="'+guid+'" edit="editorsByGuid.'+guid+'" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></n-editor>')($scope);
         $element.find('.editors').append(html);
       };
 
+      $scope.getActiveFile = function() {
+        var file;
+        if($scope.activeEditor) {
+          file = $scope.editorsByGuid[$scope.activeEditor].file;
+        }
+        return file;
+      };
+
+      $scope.saveAllFilesToSourceFiles = function() {
+        _.forEach($scope.editorsByGuid, function(editor) {
+          editor.signals.save.dispatch();
+        });
+      };
 
     }],
     link: function($scope, $element, $attrs, ctrl) {

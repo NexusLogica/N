@@ -68,7 +68,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             }
           }, function(err) {
             deferred.reject(err);
-          })
+          }).catch(N.reportQError);
         };
 
         return {
@@ -113,7 +113,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
           }, function (err) {
             deferred.reject(err);
-          });
+          }).catch(N.reportQError);
         }
         return deferred.promise;
       };
@@ -155,7 +155,6 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.loadImport(loader, rootTemplate, '$$root', filePath, deferredGroup);
 
         promise.then(function() {
-          debugger;
           var compiler = Compiler();
           var config = {};
           var root = rootTemplate.loadedImports.$$root;
@@ -163,7 +162,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           deferred.resolve(config);
         }, function(err) {
           deferred.reject(err);
-        });
+        }).catch(N.reportQError);
         return deferred.promise;
       };
 
@@ -181,7 +180,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             deferred.resolve(nObject);
           }, function (status) {
             deferred.reject(status);
-          });
+          }).catch(N.reportQError);
         });
         return deferred.promise;
       };
@@ -211,7 +210,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           N.Http.get($scope.scriptHost+'/files').then(function(data) {
             $scope.fileSystem = data;
             $scope.cd = data;
-          });
+          }).catch(N.reportQError);
         }
 
         $element.find('#network-build-shell').on('click', function() {
@@ -250,7 +249,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             err.description = 'ERROR: Unable to load file '+filePath+' - '+err.httpStatusCodeDescription;
             console.log(err.description);
             deferred.reject(err);
-          });
+          }).catch(N.reportQError);
         }
         return deferred.promise;
       }
@@ -274,7 +273,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
               callback('Setting host to: '+host);
             }, function(err) {
               callback('Not a valid host name: '+err.httpStatusCodeDescription);
-            });
+            }).catch(N.reportQError);
           } else {
             callback('Usage: host              returns current host name\n'+
                      '       host [new-host]   sets the new host');
@@ -304,7 +303,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
               callback(output);
             }, function(err) {
               callback('Not a valid host name: '+err.httpStatusCodeDescription);
-            });
+            }).catch(N.reportQError);
           } else {
             callback('Usage: mkdir [path]     Makes a new directory or directories.');
           }
@@ -366,59 +365,99 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       $scope.shell.setCommandHandler('edit', {
         exec: function (cmd, args, callback) {
-          var usage = 'Usage: edit [-n] [filepath]';
+          try {
+            var usage = 'Usage: edit [-n] [filepath]';
 
-          if(args.length < 1 || args.length > 2) {
+            if(args.length < 1 || args.length > 2) {
 
-            callback(usage)
+              callback(usage)
 
-          } else if(args.length === 1) {
+            } else if(args.length === 1) {
 
-            var file = args[0];
-            var path = $scope.getCurrentPath() + file;
+              if(args[0].indexOf('$') === 0) {
+                var key = args[0].substr(1);
+                var obj = $scope.variables[key];
+                if(obj) {
+                  if(obj.type === 'compiled') {
+                    $scope.editorPanel.addEditor(obj);
+                  }
+                  callback('');
+                } else {
+                  callback('Unable to find variable ' + args[0]);
+                }
 
-            N.Http.get($scope.scriptHost + '/file' + path, {
-              contentType: 'text/plain',
-              dataType: 'text'
-            }).then(function (data) {
+              } else {
 
-              // Add the file to the list of sources.
-              var file = new N.SourceFile();
-              file.setPath(path);
-              file.setText(data);
-              $scope.sources.addSource(file);
-              $scope.editorPanel.addEditor(file);
+                var file = args[0];
+                var path = $scope.getCurrentPath() + file;
 
-              callback('File loaded');
-            }, function (err) {
-              callback('Error opening file for edit: ' + err.httpStatusCodeDescription);
-            });
+                N.Http.get($scope.scriptHost + '/file' + path, {
+                  contentType: 'text/plain',
+                  dataType: 'text'
+                }).then(function (data) {
 
-          } else if(args.length === 2) {
+                  // Add the file to the list of sources.
+                  var file = new N.SourceFile();
+                  file.setPath(path);
+                  file.setText(data);
+                  $scope.sources.addSource(file);
+                  $scope.editorPanel.addEditor(file);
 
-            if (args[0] !== '-n') {
-              callback(usage);
-              return;
+                  callback('File loaded');
+                }, function (err) {
+                  callback('Error opening file for edit: ' + err.httpStatusCodeDescription);
+                }).catch(N.reportQError);
+              }
+
+            } else if(args.length === 2) {
+
+              if (args[0] !== '-n') {
+                callback(usage);
+                return;
+              }
+              var sourceFile = new N.SourceFile();
+              var fullPath;
+              if (args[1].indexOf('/') === 1) {
+                fullPath = args[1];
+              } else if ($scope.pwd.length === 0) {
+                fullPath = '/' + args[1];
+              } else {
+                fullPath = $scope.getCurrentPath() + '/' + args[1];
+              }
+
+              sourceFile.setPath(fullPath);
+              $scope.sources.addSource(sourceFile);
+
+              $scope.editorPanel.addEditor(sourceFile);
+              callback('');
             }
-            var sourceFile = new N.SourceFile();
-            var fullPath;
-            if(args[1].indexOf('/') === 1) {
-              fullPath = args[1];
-            } else if($scope.pwd.length === 0) {
-              fullPath = '/'+args[1];
-            } else {
-              fullPath = $scope.getCurrentPath() +'/'+args[1];
-            }
-
-            sourceFile.setPath(fullPath);
-            $scope.sources.addSource(sourceFile);
-
-            $scope.editorPanel.addEditor(sourceFile);
-            callback('');
-
+          } catch(err) {
+            callback('ERROR: '+err.stack)
           }
         }
       });
+
+      $scope.shell.setCommandHandler('compile', {
+        exec: function (cmd, args, callback) {
+          var usage = 'Usage: compile [source-file-path] [output-object-name]';
+
+          if (args.length === 2) {
+            var filePath = $scope.makeFullPath(args[0]);
+            var outputName = args[1];
+
+            $scope.compile(filePath).then(function(config) {
+              $scope.variables[outputName] = { type: 'compiled', source: filePath, output: config, guid: 'guid'+N.generateUUID() };
+              callback('Compile successful');
+            }, function(err) {
+              callback('ERROR: Unable to compile: '+err.description);
+            }).catch(N.reportQError);
+
+          } else {
+            callback(usage);
+          }
+        }
+      });
+
 
       $scope.shell.setCommandHandler('build', {
         exec: function (cmd, args, callback) {
@@ -433,7 +472,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
               callback('Build successful');
             }, function(err) {
               callback('ERROR: Unable to build network: '+err.description);
-            });
+            }).catch(N.reportQError);
 
           } else {
             callback(usage);
@@ -467,7 +506,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
               callback(num === 1 ? '1 file was saved' :  num+' files were saved');
             }, function(err) {
               callback('ERROR: Unable to save the files');
-            });
+            }).catch(N.reportQError);
           }
         }
       });

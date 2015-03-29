@@ -192,7 +192,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
   var deferred = Q.defer();
   var _this = this;
 
-  if(json.template.hasOwnProperty('local')) {
+  if(json.template && json.template.hasOwnProperty('local')) {
     var localTemplate = this.network.getTemplate(json.template.local);
     if(localTemplate === null) {
       debugger;
@@ -213,7 +213,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
       var merged = _.merge(localTemplate, json);
       deferred.resolve(merged);
     }
-  } else if(json.template.hasOwnProperty('remote')) {
+  } else if(json.template &&  json.template.hasOwnProperty('remote')) {
     this.network.getRemoteTemplate(json.template.remote).then(
 
       function(remoteTemplate) {

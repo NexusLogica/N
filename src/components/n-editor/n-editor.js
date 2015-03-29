@@ -19,7 +19,7 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
     scope: {
       signals: '=signals',
       ideSignals: '=ideSignals',
-      sourceFile: '=sourceFile'
+      edit: '=edit'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'nEditor', $scope, $element, $attrs);
@@ -48,12 +48,20 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
         }
       });
 
-      if($scope.sourceFile) {
-        $scope.editor.setValue($scope.sourceFile.file.getText());
+      if($scope.edit) {
+        if($scope.edit.source.type === 'source-file') {
+          $scope.editor.setValue($scope.edit.source.getText());
 
-        $scope.sourceFile.signals.save.add(function() {
-          $scope.sourceFile.file.updateText($scope.editor.getValue());
-        });
+          $scope.edit.signals.save.add(function () {
+            $scope.sourceFile.file.updateText($scope.editor.getValue());
+          });
+        } else if($scope.edit.source.type === 'compiled') {
+          var text = JSON.stringify(
+            $scope.edit.source.output,
+            function(key, value) { if(typeof value === 'function') { return value.toString(); } return value; },
+            2);
+          $scope.editor.setValue(text);
+        }
       }
     }
   };

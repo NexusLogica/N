@@ -18,10 +18,11 @@ All Rights Reserved.
  * @constructor
  */
 N.SourceFile = function() {
+  this.type = 'source-file';
   this.text = '';
   this.dirty = false;
   this.path = '';
-  this.guid = 'guid'+N.generateUUID().replace(/-/g, '');
+  this.guid = 'guid'+N.generateUUID();
 };
 
 /**
