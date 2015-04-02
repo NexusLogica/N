@@ -77,13 +77,29 @@ N.Template = function(imports, func) {
 };
 
 /***
+ * For use in compiling N JSON template functions.
+ * @method N.Template
+ * @param argStringArray
+ * @param functionText
+ * @returns {FactoryFunction}
+ */
+N.ConnectionTemplate = function(imports, func) {
+  return { imports: imports, loadedImports: {}, func: func };
+};
+
+/***
  * @method N.compileTemplateFunction
  * @param {string} templateText
  * @returns {Obj, Function} - Returns
  */
 N.compileTemplateFunction = function(templateText) {
-  var templateFunction = new Function('return '+templateText);
-  return templateFunction();
+  try {
+    var templateFunction = new Function('return '+templateText);
+    return templateFunction();
+  } catch(err) {
+    console.log('ERROR: N.compileTemplateFunction: '+err.description);
+    console.log('       Stack trace:\n'+err.stack);
+  }
 };
 
 /**

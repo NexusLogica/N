@@ -35,7 +35,7 @@ N.Neuron = function(network) {
   this.compartmentsByName = {};
   this.network    = network;
   this.validationMessages = [];
-}
+};
 
 /**
  * Returns the object type.
@@ -44,7 +44,7 @@ N.Neuron = function(network) {
  */
 N.Neuron.prototype.getType = function() {
   return N.Type.Neuron;
-}
+};
 
 /**
  * Get the full path of the neuron.
@@ -53,7 +53,7 @@ N.Neuron.prototype.getType = function() {
  */
 N.Neuron.prototype.getPath = function() {
   return this.network.getPath()+':'+this.name;
-}
+};
 
 /**
  * Set the network.
@@ -63,7 +63,7 @@ N.Neuron.prototype.getPath = function() {
 N.Neuron.prototype.setNetwork = function(network) {
   this.network = network;
   return this;
-}
+};
 
 /**
  * Set the name.
@@ -73,7 +73,7 @@ N.Neuron.prototype.setNetwork = function(network) {
 N.Neuron.prototype.setName = function(name) {
   this.name = name;
   return this;
-}
+};
 
 /**
  * Add a compartment to the neuron.
@@ -85,19 +85,19 @@ N.Neuron.prototype.addCompartment = function(compartment) {
   this.compartments.push(compartment);
   this.compartmentsByName[compartment.name] = compartment;
   return compartment;
-}
+};
 
 N.Neuron.prototype.getCompartmentByIndex = function(index) {
   return this.compartments[index];
-}
+};
 
 N.Neuron.prototype.getCompartmentByName = function(name) {
   return this.compartmentsByName[name];
-}
+};
 
 N.Neuron.prototype.getNumCompartments = function() {
   return this.compartments.length;
-}
+};
 
 /**
  * Calls each child compartment telling it to connect to any other compartment it requires communication with.
@@ -108,7 +108,7 @@ N.Neuron.prototype.connectCompartments = function() {
   for(var i=0; i<num; i++) {
     this.compartments[i].connectToCompartments();
   }
-}
+};
 
 /***
  * Update the compartment values.
@@ -120,7 +120,7 @@ N.Neuron.prototype.update = function(time) {
   for(var i=0; i<num; i++) {
     this.compartments[i].update(time);
   }
-}
+};
 
 /***
  * Clears any stored data from a previous simulation. Does not clear input data.
@@ -131,7 +131,7 @@ N.Neuron.prototype.clear = function() {
   for(var i=0; i<num; i++) {
     this.compartments[i].clear();
   }
-}
+};
 
 /**
  * Validates the neuron. Warns if there are no compartments.
@@ -153,7 +153,7 @@ N.Neuron.prototype.validate = function(report) {
       report.error(this.compartments[i].getPath(), 'The compartment of type '+this.compartments[i].className+' threw an exception when validating.');
     }
   }
-}
+};
 
 /**
  * Load a neuron from a JSON object. Note that if the JSON object has a 'template' member then this is loaded from first.
@@ -186,7 +186,7 @@ N.Neuron.prototype.loadFrom = function(json) {
     }
   ).catch(N.reportQError);
   return deferred.promise;
-}
+};
 
 N.Neuron.prototype.loadTemplate = function(json) {
   var deferred = Q.defer();
@@ -218,7 +218,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
 
       function(remoteTemplate) {
         if(remoteTemplate.template) {
-          this.loadTemplate(remoteTemplate).then(
+          _this.loadTemplate(remoteTemplate).then(
             function(childMerged) {
               var merged = _.merge(childMerged, json);
               deferred.resolve(merged);
@@ -232,7 +232,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
         }
       }, function(status) {
         debugger;
-        this.routeErrorMsg('ERROR: Unable to find remote template "'+json.template.remote.url+'/'+json.template.remote.id+'"');
+        _this.routeErrorMsg('ERROR: Unable to find remote template "'+json.template.remote.url+'/'+json.template.remote.id+'"');
         deferred.reject(status);
       }
     ).catch(N.reportQError);
@@ -241,7 +241,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
   }
 
   return deferred.promise;
-}
+};
 
 /**
  * Load all of the neuron's compartments from a JSON object.
@@ -260,7 +260,7 @@ N.Neuron.prototype.loadCompartments = function(json) {
   }
 
   return Q.all(promises);
-}
+};
 
 /**
  * Create and load a compartment from a JSON object.
@@ -287,7 +287,7 @@ N.Neuron.prototype.createCompartment = function(json) {
     }
   ).catch(N.reportQError);
   return deferred.promise;
-}
+};
 
 N.Neuron.prototype.initialize = function() {
   for(var i in this.compartments) {
@@ -296,19 +296,18 @@ N.Neuron.prototype.initialize = function() {
       compartment.initialize();
     }
   }
-}
+};
 
 N.Neuron.prototype.toData = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
-  return str;
-}
+  return JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
+};
 
 N.Neuron.prototype.fromData = function(json) {
 
-}
+};
 
 N.Neuron.prototype.routeErrorMsg = function(errMsg) {
   this.validationMessages.push(errMsg);
   N.log(errMsg);
   return errMsg;
-}
+};

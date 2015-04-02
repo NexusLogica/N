@@ -141,15 +141,15 @@ N.Comp.SignalSource = function(neuron, name) {
     signals:[{
       name: 'main', propName: 'outputStore'
     }]
-  }
+  };
   N.Comp.initializeCompartment(this);
-}
+};
 
 N.Comp.extend(N.Comp.SignalSource);
 
 N.Comp.SignalSource.prototype.setSignal = function(outputName, signal) {
   this.signal = signal;
-}
+};
 
 /**
  * Upates the output value of the compartment. The output value is from the signal object.
@@ -163,7 +163,7 @@ N.Comp.SignalSource.prototype.update = function(t) {
   }
   this.outputStore.appendData(t, this.output);
   return this.output;
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
@@ -171,7 +171,7 @@ N.Comp.SignalSource.prototype.update = function(t) {
  */
 N.Comp.SignalSource.prototype.clear = function() {
   this.outputStore.clear();
-}
+};
 
 N.Comp.SignalSource.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
@@ -192,12 +192,12 @@ N.Comp.SignalSource.prototype.validate = function(report) {
   if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
 }
 
-  //*****************
-  //* N.Comp.Output *
-  //*****************
+  //**********************
+  //* N.Comp.InputSource *
+  //**********************
 
-N.Comp.Output = function(neuron, name) {
-  this.className   = 'N.Comp.Output';
+N.Comp.InputSource = function(neuron, name) {
+  this.className   = 'N.Comp.InputSource';
   this.name        = name;
   this.category    = 'Output';
 
@@ -219,13 +219,13 @@ N.Comp.Output = function(neuron, name) {
   N.Comp.initializeCompartment(this);
 };
 
-N.Comp.extend(N.Comp.Output);
+N.Comp.extend(N.Comp.InputSource);
 
-N.Comp.Output.prototype.addInput = function(input) {
+N.Comp.InputSource.prototype.addInput = function(input) {
   this.input = input;
 };
 
-N.Comp.Output.prototype.update = function(t) {
+N.Comp.InputSource.prototype.update = function(t) {
   var main = this.outputLogic.sources.main;
   this.output = main.compartment.getOutputAt(t-main.delay);
   this.outputStore.appendData(t, this.output);
@@ -236,7 +236,7 @@ N.Comp.Output.prototype.update = function(t) {
  * Clears stored data from previous simulations. Does not clear input data.
  * @method clear
  */
-N.Comp.Output.prototype.clear = function() {
+N.Comp.InputSource.prototype.clear = function() {
   this.outputStore.clear();
 };
 
@@ -245,7 +245,7 @@ N.Comp.Output.prototype.clear = function() {
  * @method Validate
  * @param report
  */
-N.Comp.Output.prototype.validate = function(report) {
+N.Comp.InputSource.prototype.validate = function(report) {
   if(!this.outputLogic) {
     report.error(this.getPath(), 'The OutputLogic object is not set.');
   } else if(!this.outputLogic.outputFunc) {
@@ -259,18 +259,18 @@ N.Comp.Output.prototype.validate = function(report) {
   if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
 };
 
-  //********************
-  //* N.Comp.InputSink *
-  //********************
+  //*********************
+  //* N.Comp.OutputSink *
+  //*********************
 /**
  * A component that acts as an end sink. It should have inputs but no outputs.
- * @class N.Comp.InputSink
+ * @class N.Comp.OutputSink
  * @param neuron
  * @param name
  * @constructor
  */
-N.Comp.InputSink = function(neuron, name) {
-  this.className   = 'N.Comp.InputSink';
+N.Comp.OutputSink = function(neuron, name) {
+  this.className   = 'N.Comp.OutputSink';
   this.name        = name;
   this.category    = 'Output';
 
@@ -286,17 +286,17 @@ N.Comp.InputSink = function(neuron, name) {
     signals:[{
       name: 'main', propName: 'outputStore'
     }]
-  }
+  };
   N.Comp.initializeCompartment(this);
-}
+};
 
-N.Comp.extend(N.Comp.InputSink);
+N.Comp.extend(N.Comp.OutputSink);
 
-N.Comp.InputSink.prototype.addInput = function(input) {
+N.Comp.OutputSink.prototype.addInput = function(input) {
   this.input = input;
-}
+};
 
-N.Comp.InputSink.prototype.update = function(t) {
+N.Comp.OutputSink.prototype.update = function(t) {
   var len = this.inputConnections.length;
   this.output = 0.0;
   for(var i=0; i<len; i++) {
@@ -304,27 +304,27 @@ N.Comp.InputSink.prototype.update = function(t) {
   }
   this.outputStore.appendData(t, this.output);
   return this.output;
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
  * @method clear
  */
-N.Comp.InputSink.prototype.clear = function() {
+N.Comp.OutputSink.prototype.clear = function() {
   this.outputStore.clear();
-}
+};
 
 /**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
  * @method Validate
  * @param report
  */
-N.Comp.InputSink.prototype.validate = function(report) {
+N.Comp.OutputSink.prototype.validate = function(report) {
   if(this.getNumInputConnections()  === 0) { report.warning(this.getPath(), 'The input sink has no input connections.'); }
   if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input only component has output connections.'); }
 }
 
-N.Comp.InputSink.prototype.loadFrom = function(json) {
+N.Comp.OutputSink.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
   for(var i in json) {
     this[i] = json[i];

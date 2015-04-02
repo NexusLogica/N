@@ -36,7 +36,7 @@ N.Connection = function(network) {
   this.delay          = N.timeStep;
   this.category       = 'Excitatory'; // or 'Inhibitory', 'Spine', 'GapJunction'
   this.validationMessages = [];
-}
+};
 
 /**
  * Returns the object type.
@@ -45,7 +45,7 @@ N.Connection = function(network) {
  */
 N.Connection.prototype.getType = function() {
   return N.Type.Connection;
-}
+};
 
 /**
  * Returns the object type.
@@ -54,7 +54,7 @@ N.Connection.prototype.getType = function() {
  */
 N.Connection.prototype.getPath = function() {
   return this.path;
-}
+};
 
 /**
  * Attach to the source and sink compartments.
@@ -69,17 +69,17 @@ N.Connection.prototype.connect = function() {
     }
   }
   return this;
-}
+};
 
 /**
  * Updates the connection output.
  * @method update
- * @param {Real} t The time of the update.
+ * @param {float} t The time of the update.
  */
 N.Connection.prototype.update = function(t) {
   this.output = this.gain*this.source.getOutputAt(t-this.delay);
   this.outputStore.appendData(t, this.output);
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
@@ -88,7 +88,7 @@ N.Connection.prototype.update = function(t) {
 N.Connection.prototype.clear = function() {
   this.output = 0.0;
   this.outputStore.clear();
-}
+};
 
 
 /**
@@ -103,7 +103,7 @@ N.Connection.prototype.validate = function(report) {
 
   if(!this.source) { report.warning(this.getPath(), 'The connection has no source.'); }
   if(!this.sink)   { report.warning(this.getPath(), 'The connection has no sink.'); }
-}
+};
 
 /**
  * Load a connection from a JSON object. Note that if the JSON object has a 'Template' member then this is loaded from first.
@@ -133,4 +133,4 @@ N.Connection.prototype.loadFrom = function(json) {
   }
 
   return this;
-}
+};

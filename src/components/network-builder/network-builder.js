@@ -120,17 +120,20 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       var Compiler = function() {
 
-        var buildOut = function(root, self, imports) {
-          if(self.build) {
-            for(var i=0; i<self.build.length; i++) {
-              var command = self.build[i];
-              var template = imports[command.id];
+        var buildOut = function(context) {
+          if(context.self.build) {
+            for(var i=0; i<context.self.build.length; i++) {
+              var command = context.self.build[i];
+              var template = context.imports[command.template];
               if(!template) {
-                return { description: 'Import id '+command.id+'not found'}
+                return { description: 'Import template '+command.template+'not found'}
               }
-              var args = [].concat(root, self, imports, this, command.args);
+              context.compiler = this;
+              var args = [].concat(context, command.args);
               template.func.apply(this, args);
             }
+
+            delete context.self.build;
           }
         };
 
@@ -158,7 +161,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           var compiler = Compiler();
           var config = {};
           var root = rootTemplate.loadedImports.$$root;
-          root.func(config, config, root.loadedImports, compiler);
+          root.func({ root: config, self: config, imports: root.loadedImports, compiler: compiler });
           deferred.resolve(config);
         }, function(err) {
           deferred.reject(err);
@@ -166,22 +169,21 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         return deferred.promise;
       };
 
-      $scope.buildFromFile = function(sourceFile) {
+      $scope.buildFromJSON = function(config) {
         var deferred = Q.defer();
-        $scope.compile(sourceFile).then(function(config) {
-          // Template compiling is complete, now build the object.
-          if (!config.className) {
-            deferred.reject({description: 'No className entry - could not build object'});
-            return;
-          }
+        if (!config.className) {
+          deferred.reject({description: 'No className entry - could not build object'});
+          return;
+        }
 
-          var nObject = N.newN(config.className);
-          nObject.loadFrom(config).then(function () {
-            deferred.resolve(nObject);
-          }, function (status) {
-            deferred.reject(status);
-          }).catch(N.reportQError);
-        });
+        var nObject = N.newN(config.className);
+
+        nObject.loadFrom(config).then(function () {
+          deferred.resolve(nObject);
+        }, function (status) {
+          deferred.reject(status);
+        }).catch(N.reportQError);
+
         return deferred.promise;
       };
 
@@ -375,8 +377,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             } else if(args.length === 1) {
 
               if(args[0].indexOf('$') === 0) {
-                var key = args[0].substr(1);
-                var obj = $scope.variables[key];
+                var obj = $scope.variables[args[0]];
                 if(obj) {
                   if(obj.type === 'compiled') {
                     $scope.editorPanel.addEditor(obj);
@@ -461,19 +462,46 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       $scope.shell.setCommandHandler('build', {
         exec: function (cmd, args, callback) {
-          var usage = 'Usage: build [source-file-path] [output-object-name]';
+          var usage = 'Usage: build [source-file-path | environment-variable] [output-object-name]';
 
           if (args.length === 2) {
-            var filePath = $scope.makeFullPath(args[0]);
             var outputName = args[1];
 
-            $scope.buildFromFile(filePath).then(function(network) {
-              $scope.variables[outputName] = network;
-              callback('Build successful');
-            }, function(err) {
-              callback('ERROR: Unable to build network: '+err.description);
-            }).catch(N.reportQError);
+            if(args[0].indexOf('$') === 0) {
+              var obj = $scope.variables[args[0]];
+              if(!obj) {
+                callback('Unable to find variable ' + args[0]);
+                return;
+              }
+              if(obj.type !== 'compiled') {
+                callback('Variable ' + args[0] + ' is of type "' + obj.type + '", not of type compiled');
+                return;
+              }
+              var config = obj.output;
 
+              $scope.buildFromJSON(config).then(function(network) {
+                $scope.variables[outputName] = network;
+                callback('Build successful');
+              }, function(err) {
+                callback('ERROR: Unable to build network: '+err.description);
+              }).catch(N.reportQError);
+
+            } else {
+              var filePath = $scope.makeFullPath(args[0]);
+              $scope.loadFile(filePath).then(function (sourceFile) {
+                var config = JSON.parse(sourceFile.getText());
+
+                $scope.buildFromJSON(config).then(function(network) {
+                  $scope.variables[outputName] = network;
+                  callback('Build successful');
+                }, function(err) {
+                  callback('ERROR: Unable to build network: '+err.description);
+                }).catch(N.reportQError);
+
+              }, function (err) {
+                callback('ERROR: Unable to load file "' + filePath + '": ' + err.description);
+              }).catch(N.reportQError);
+            }
           } else {
             callback(usage);
           }
