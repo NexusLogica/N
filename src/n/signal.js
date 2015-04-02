@@ -30,7 +30,6 @@ N.DISCRETE = 2;
  * @class AnalogSignal
  * @constructor
  * @param {String} name
- * @param {String} shortName
  */
 
 N.AnalogSignal = function(name) {
@@ -45,23 +44,23 @@ N.AnalogSignal = function(name) {
   this.maxLimit   = 100.0;
 
   this.clear();
-}
+};
 
 /**
  * Returns the minimum and maximum values in the signal.
  * @method GetRange
- * @returns {{Min: Real, Max: Real}}
+ * @returns {{min: float, max: float}}
  */
 N.AnalogSignal.prototype.getRange = function() {
   return { 'min': this.min, 'max': this.max };
-}
+};
 
 /**
  * Returns the value at a certain time. If the time is before the begining of the signal data then the value of the
  * first element is returned. If it is after the end then the last value is returned. Values between times are linearly interpolated between them.
  * @method GetValue
  * @param time
- * @returns {Real} The value.
+ * @returns {float} The value.
  */
 N.AnalogSignal.prototype.getValue = function(time) {
   var t = time-this.start;
@@ -89,21 +88,21 @@ N.AnalogSignal.prototype.getValue = function(time) {
     debugger;
   }
   return value;
-}
+};
 
 /**
  * Returns the time at a given index.
  * @method getTimeByIndex
  * @param index
- * @returns {Real} Returns the time or 'undefined' if the index is out of range.
+ * @returns {float} Returns the time or 'undefined' if the index is out of range.
  */
 N.AnalogSignal.prototype.getTimeByIndex = function(index) {
   return this.times[index];
-}
+};
 
 N.AnalogSignal.prototype.getValueByIndex = function(index) {
   return this.values[index];
-}
+};
 
 N.AnalogSignal.prototype.appendData = function(time, value) {
   if(_.isNaN(value)) {
@@ -131,14 +130,14 @@ N.AnalogSignal.prototype.appendData = function(time, value) {
   else if(value < this.min) {
     this.min = value;
   }
-}
+};
 
 N.AnalogSignal.prototype.appendDataArray = function(dataArray) {
   for(var i=0; i<dataArray.length; i++) {
     var dataSet = dataArray[i];
     this.appendData(dataSet.t, dataSet.v);
   }
-}
+};
 
 /***
  * Clears the array data and any derived numeric values (such as max and min).
@@ -154,7 +153,7 @@ N.AnalogSignal.prototype.clear = function() {
   this.min        = 0.0;
   this.max        = 0.0;
   return this;
-}
+};
 
 N.AnalogSignal.prototype.getIndexBeforeTime = function(t) {
   var i = this.finder.find(t, this.times);
@@ -165,11 +164,11 @@ N.AnalogSignal.prototype.getIndexBeforeTime = function(t) {
     return this.times.length-1;
   }
   return i;
-}
+};
 
 N.AnalogSignal.prototype.getNumSamples = function() {
   return this.values.length;
-}
+};
 
 N.AnalogSignal.prototype.average = function() {
   if(this.times.length < 2) {
@@ -190,9 +189,8 @@ N.AnalogSignal.prototype.average = function() {
     tPrev = t;
     vPrev = v;
   }
-  var avg = sum/(tPrev-t0);
-  return avg;
-}
+  return sum/(tPrev-t0);
+};
 
 /**
  * Writes the signal data to the log.
@@ -203,7 +201,7 @@ N.AnalogSignal.prototype.writeToLog = function() {
   for(var i=0; i<this.times.length; i++) {
     N.log(_.str.sprintf('    t:%d  v:%5.3f', this.times[i], this.values[i]));
   }
-}
+};
 
 N.AnalogSignal.prototype.avgAbsDeviation = function(otherSignal) {
   var tMinSelf = this.times[0];
@@ -217,7 +215,7 @@ N.AnalogSignal.prototype.avgAbsDeviation = function(otherSignal) {
     return 0.0;
   }
   return this.avgAbsDeviationWithInterval(otherSignal, tMin, tMax);
-}
+};
 
 N.AnalogSignal.prototype.avgAbsDeviationWithInterval = function(otherSignal, tMin, tMax) {
   var sum = 0.0;
@@ -228,14 +226,12 @@ N.AnalogSignal.prototype.avgAbsDeviationWithInterval = function(otherSignal, tMi
     sum += Math.abs(vDiff)*(N.timeStep);
     t += N.timeStep;
   }
-  var dev = sum/(tMax-tMin+ N.timeStep);
-  return dev;
-}
+  return sum/(tMax-tMin+ N.timeStep);
+};
 
 N.AnalogSignal.prototype.toJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === 'finder' ? undefined : v); });
-  return str;
-}
+  return JSON.stringify(this, function(k, v) { return (k === 'finder' ? undefined : v); });
+};
 
   //******************
   //* DiscreteSignal *
@@ -245,7 +241,6 @@ N.AnalogSignal.prototype.toJSON = function() {
  * A discrete signal class.
  * @class DiscreteSignal
  * @param name
- * @param shortName
  * @constructor
  */
 N.DiscreteSignal = function(name) {
@@ -266,7 +261,7 @@ N.DiscreteSignal = function(name) {
   this.minLimit   = 0.0;
   this.maxLimit   = 1.0;
   this.unit       = 'State';
-}
+};
 
 N.DiscreteSignal.BISTATE = 1;
 N.DiscreteSignal.TRISTATE = 2;
@@ -274,17 +269,17 @@ N.DiscreteSignal.TRISTATE = 2;
 N.DiscreteSignal.prototype.setStateType = function(stateType) {
   this.stateType = stateType;
   this.minLimit = (stateType === N.DiscreteSignal.BISTATE ? 0.0 : -1.0);
-}
+};
 
 N.DiscreteSignal.prototype.getRange = function() {
   return { 'min': this.min, 'max': this.max };
-}
+};
 
 /**
  * Get the value of the signal at a given time.
  * @method GetValue
- * @param {Real} time
- * @returns {Real}
+ * @param {float} time
+ * @returns {float}
  */
 N.DiscreteSignal.prototype.getValue = function(time) {
   var t = time-this.start;
@@ -298,15 +293,15 @@ N.DiscreteSignal.prototype.getValue = function(time) {
   if(i < 0) { i = 0; }
   if(i >= this.times.length) { i = this.times.length-1; }
   return this.values[i];
-}
+};
 
 N.DiscreteSignal.prototype.getTimeByIndex = function(index) {
   return this.times[index];
-}
+};
 
 N.DiscreteSignal.prototype.getValueByIndex = function(index) {
   return this.values[index];
-}
+};
 
 N.DiscreteSignal.prototype.getIndexBeforeTime = function(t) {
   var i = this.finder.find(t, this.times);
@@ -317,7 +312,7 @@ N.DiscreteSignal.prototype.getIndexBeforeTime = function(t) {
     return this.times.length-1;
   }
   return i;
-}
+};
 
 N.DiscreteSignal.prototype.appendData = function(time, newState) {
   this.times.push(time);
@@ -344,18 +339,18 @@ N.DiscreteSignal.prototype.appendData = function(time, newState) {
   else if(newState < this.min) {
     this.min = newState;
   }
-}
+};
 
 N.DiscreteSignal.prototype.appendDataArray = function(dataArray) {
   for(var i=0; i<dataArray.length; i++) {
     var dataSet = dataArray[i];
     this.appendData(dataSet.t, dataSet.v);
   }
-}
+};
 
 N.DiscreteSignal.prototype.getNumSamples = function() {
   return this.values.length;
-}
+};
 
 N.DiscreteSignal.prototype.average = function() {
   if(this.times.length < 2) {
@@ -376,9 +371,8 @@ N.DiscreteSignal.prototype.average = function() {
     tPrev = t;
     vPrev = v;
   }
-  var avg = sum/(tPrev-t0);
-  return avg;
-}
+  return sum/(tPrev-t0);
+};
 
 N.DiscreteSignal.prototype.avgAbsDeviation = function(otherSignal) {
   var tMinSelf = this.times[0];
@@ -392,7 +386,7 @@ N.DiscreteSignal.prototype.avgAbsDeviation = function(otherSignal) {
     return 0.0;
   }
   return this.avgAbsDeviationWithInterval(otherSignal, tMin, tMax);
-}
+};
 
 N.DiscreteSignal.prototype.avgAbsDeviationWithInterval = function(otherSignal, tMin, tMax) {
   var sum = 0.0;
@@ -403,14 +397,12 @@ N.DiscreteSignal.prototype.avgAbsDeviationWithInterval = function(otherSignal, t
     sum += Math.abs(vDiff)*(N.timeStep);
     t += N.timeStep;
   }
-  var dev = sum/(tMax-tMin+2*N.timeStep);
-  return dev;
-}
+  return sum/(tMax-tMin+2*N.timeStep);
+};
 
 N.DiscreteSignal.prototype.toJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === 'finder' ? undefined : v); });
-  return str;
-}
+  return JSON.stringify(this, function(k, v) { return (k === 'finder' ? undefined : v); });
+};
 
 /**
  * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
@@ -429,7 +421,7 @@ N.DiscreteSignal.prototype.loadFrom = function(json) {
   }
 
   return this;
-}
+};
 
 /**
  * This is the N signal global functions.
@@ -440,14 +432,15 @@ N.Signal = N.Signal || {};
 /**
  * Creates a discrete square wave signal consisting of down and up parts. The length of down, up, the amplitude and offsets are all configurable.
  * @method CreatePulseSignal
- * @param {Real} durationOff
- * @param {Real} durationOn
- * @param {Real} signalLength
- * @param {Real} offset
- * @param {Real} amplitude
- * @param {Real} lowValue
- * @param {Real} startOn
- * * @returns {N.DiscreteSignal}
+ * @param {Object} conf
+ * @param {float} conf.durationOff
+ * @param {float} conf.durationOn
+ * @param {float} conf.signalLength
+ * @param {float} conf.offset
+ * @param {float} conf.amplitude
+ * @param {float} conf.lowValue
+ * @param {float} conf.startOn
+ * @returns {N.DiscreteSignal}
  */
 N.Signal.CreatePulseSignal = function(conf) {
   var durationOff       = conf.durationOff,
@@ -456,10 +449,9 @@ N.Signal.CreatePulseSignal = function(conf) {
       offset            = conf.hasOwnProperty('offset')    ? conf.offset : 0.0,
       amplitude         = conf.hasOwnProperty('amplitude') ? conf.amplitude : 1.0,
       lowValue          = conf.hasOwnProperty('lowValue')  ? conf.lowValue : 0.0,
-      startOn           = conf.hasOwnProperty('startOn')   ? conf.startOn : false
+      startOn           = conf.hasOwnProperty('startOn')   ? conf.startOn : false;
   var signal = new N.DiscreteSignal();
-  var timeOffset = offset;
-  var time = -timeOffset;
+  var time = -offset;
   var on = startOn;
 
   // Find the start time.
@@ -489,7 +481,7 @@ N.Signal.CreatePulseSignal = function(conf) {
     on = !on;
   }
   return signal;
-}
+};
 
 
 
@@ -499,11 +491,11 @@ N.Signal.CreatePulseSignal = function(conf) {
 
 N.SignalCompare = function() {
   this.tolerance = 0.01;
-}
+};
 
 N.SignalCompare.prototype.compare = function(expected, actual) {
 
-}
+};
 
 
   //*****************
@@ -523,25 +515,25 @@ N.TableSearch = function() {
   this.indexHigh = 0;
   this.ascending = true;
   this.size = 0;
-}
+};
 
 /**
  * Returns the last low index found.
- * @returns {Real}
+ * @returns {float}
  * @constructor
  */
 N.TableSearch.prototype.getIndexLow = function() {
   return this.indexLow;
-}
+};
 
 /**
  * Find the index in the array 'x' that is where the index is below xTarget and index+1 is above xTarget. If the target
  * is before the beginning of the array then it returns -1. If it is beyond the end of the array it returns x.length-1.
  *
  * @method find
- * @param {Real} xTarget
+ * @param {float} xTarget
  * @param {Array} x
- * @returns {Integer}
+ * @returns {number}
  * @constructor
  */
 N.TableSearch.prototype.find = function(xTarget, x) {
@@ -571,7 +563,7 @@ N.TableSearch.prototype.find = function(xTarget, x) {
 
   this.bisection(xTarget,x);
   return this.indexLow;
-}
+};
 
 N.TableSearch.prototype.huntUp = function(xTarget, x) {
   var increment = 1;
@@ -590,7 +582,7 @@ N.TableSearch.prototype.huntUp = function(xTarget, x) {
       break;
     }
   }
-}
+};
 
 N.TableSearch.prototype.huntDown = function(xTarget, x) {
   var increment = 1;
@@ -609,7 +601,7 @@ N.TableSearch.prototype.huntDown = function(xTarget, x) {
       break;
     }
   }
-}
+};
 
 N.TableSearch.prototype.bisection = function(xTarget, x) { // xTarget is float, x is array of floats
   while(this.indexHigh-this.indexLow !== 1) {
@@ -622,5 +614,5 @@ N.TableSearch.prototype.bisection = function(xTarget, x) { // xTarget is float, 
       this.indexHigh = indexMiddle;
     }
   }
-}
+};
 

@@ -97,7 +97,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           loader.templatesByPath[path] = {};
           $scope.loadFile(path).then(function (sourceFile) {
 
-            var configTemplate = N.compileTemplateFunction(sourceFile.getText());
+            var configTemplate = N.compileTemplateFunction(sourceFile.getText(), path);
             requestingTemplate.loadedImports[key] = configTemplate;
             loader.templatesByPath[path] = configTemplate;
 
@@ -466,6 +466,56 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
           if (args.length === 2) {
             var outputName = args[1];
+
+            if(args[0].indexOf('$') === 0) {
+              var obj = $scope.variables[args[0]];
+              if(!obj) {
+                callback('Unable to find variable ' + args[0]);
+                return;
+              }
+              if(obj.type !== 'compiled') {
+                callback('Variable ' + args[0] + ' is of type "' + obj.type + '", not of type compiled');
+                return;
+              }
+              var config = obj.output;
+
+              $scope.buildFromJSON(config).then(function(network) {
+                $scope.variables[outputName] = network;
+                callback('Build successful');
+              }, function(err) {
+                callback('ERROR: Unable to build network: '+err.description);
+              }).catch(N.reportQError);
+
+            } else {
+              var filePath = $scope.makeFullPath(args[0]);
+              $scope.loadFile(filePath).then(function (sourceFile) {
+                var config = JSON.parse(sourceFile.getText());
+
+                $scope.buildFromJSON(config).then(function(network) {
+                  $scope.variables[outputName] = network;
+                  callback('Build successful');
+                }, function(err) {
+                  callback('ERROR: Unable to build network: '+err.description);
+                }).catch(N.reportQError);
+
+              }, function (err) {
+                callback('ERROR: Unable to load file "' + filePath + '": ' + err.description);
+              }).catch(N.reportQError);
+            }
+          } else {
+            callback(usage);
+          }
+        }
+      });
+
+      $scope.shell.setCommandHandler('run', {
+        exec: function (cmd, args, callback) {
+          var usage = 'Usage: run [system-file-path] [compiled-network-env-var] [output-object-name]';
+
+          if (args.length === 3) {
+            var systemPath    = args[0];
+            var networkEnvVar = args[1];
+            var outputName    = args[2];
 
             if(args[0].indexOf('$') === 0) {
               var obj = $scope.variables[args[0]];

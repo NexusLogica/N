@@ -37,7 +37,9 @@ N.Type = {
   PiNetwork:      8,
   PiNeuron:       9,
   PiCompartment:  10,
-  PiConnection:   11
+  PiConnection:   11,
+  Input:          12,
+  Output:         13
 };
 
 /**
@@ -92,8 +94,9 @@ N.ConnectionTemplate = function(imports, func) {
  * @param {string} templateText
  * @returns {Obj, Function} - Returns
  */
-N.compileTemplateFunction = function(templateText) {
+N.compileTemplateFunction = function(templateText, identifer) {
   try {
+    N.log('Compiling '+identifer);
     var templateFunction = new Function('return '+templateText);
     return templateFunction();
   } catch(err) {

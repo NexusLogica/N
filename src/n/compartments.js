@@ -25,32 +25,32 @@ N.Comp.getTypeFunc = function() { return N.Type.compartment; }
 N.Comp.connectOutput = function(connection) {
   this.outputConnections.push(connection);
   return this;
-}
+};
 
 N.Comp.connectInput = function(connection) {
   this.inputConnections.push(connection);
   return this;
-}
+};
 
 N.Comp.getNumInputConnections = function() {
   return this.inputConnections.length;
-}
+};
 
 N.Comp.getNumOutputConnections = function() {
   return this.outputConnections.length;
-}
+};
 
 N.Comp.getPath = function() {
   return this.neuron.getPath()+'>'+this.name;
-}
+};
 
 N.Comp.addComparmentSink = function(compartment) {
   this.compartmentSinks.push(compartment);
-}
+};
 
 N.Comp.getNumComparmentSinks = function() {
   return this.compartmentSinks.length;
-}
+};
 
 N.Comp.connectToCompartments = function() {
   if(this.outputLogic) {
@@ -66,14 +66,14 @@ N.Comp.connectToCompartments = function() {
       }
     }
   }
-}
+};
 
 N.Comp.getOutputAt = function(t) {
   if(t < this.outputStore.timeMin) {
     return this.preSignalOutput;
   }
   return this.outputStore.getValue(t);
-}
+};
 
 N.Comp.loadFrom = function(json) {
   var deferred = Q.defer();
@@ -85,7 +85,7 @@ N.Comp.loadFrom = function(json) {
   }
   deferred.resolve();
   return deferred.promise;
-}
+};
 
 N.Comp.extend = function(constructorFunction) {
   constructorFunction.prototype.getType = N.Comp.getTypeFunc;
@@ -99,7 +99,7 @@ N.Comp.extend = function(constructorFunction) {
   constructorFunction.prototype.connectToCompartments = N.Comp.connectToCompartments;
   constructorFunction.prototype.getOutputAt = N.Comp.getOutputAt;
   constructorFunction.prototype.loadFrom = N.Comp.loadFrom;
-}
+};
 
 N.Comp.initializeCompartment = function(compartment) {
   compartment.outputStore = new N.AnalogSignal('outputStore', 'OS');
@@ -107,7 +107,7 @@ N.Comp.initializeCompartment = function(compartment) {
   compartment.outputConnections = [];
   compartment.compartmentSinks = [];
   compartment.preSignalOutput = 0.0;
-}
+};
 
   //***********************
   //* N.Comp.SignalSource *
@@ -184,7 +184,7 @@ N.Comp.SignalSource.prototype.loadFrom = function(json) {
   }
   deferred.resolve();
   return deferred.promise;
-}
+};
 
 N.Comp.SignalSource.prototype.validate = function(report) {
   if(!this.signal) { report.warning(this.getPath(), 'Signal object is not set.'); }
@@ -322,7 +322,7 @@ N.Comp.OutputSink.prototype.clear = function() {
 N.Comp.OutputSink.prototype.validate = function(report) {
   if(this.getNumInputConnections()  === 0) { report.warning(this.getPath(), 'The input sink has no input connections.'); }
   if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input only component has output connections.'); }
-}
+};
 
 N.Comp.OutputSink.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
@@ -331,7 +331,7 @@ N.Comp.OutputSink.prototype.loadFrom = function(json) {
   }
   deferred.resolve();
   return deferred.promise;
-}
+};
 
   //***************************
   //* N.Comp.InhibitoryOutput *
@@ -346,13 +346,13 @@ N.Comp.InhibitoryOutput = function(neuron, name) {
   this.output     = 0.0;
   this.isOutputComponent = true;
   N.Comp.initializeCompartment(this);
-}
+};
 
 N.Comp.extend(N.Comp.InhibitoryOutput);
 
 N.Comp.InhibitoryOutput.prototype.addInput = function(input) {
   this.input = input;
-}
+};
 
 N.Comp.InhibitoryOutput.prototype.update = function(t) {
   if(this.input) {
@@ -360,7 +360,7 @@ N.Comp.InhibitoryOutput.prototype.update = function(t) {
   }
   this.outputStore.appendData(t, this.output);
   return this.output;
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
@@ -368,16 +368,16 @@ N.Comp.InhibitoryOutput.prototype.update = function(t) {
  */
 N.Comp.InhibitoryOutput.prototype.clear = function() {
   this.outputStore.clear();
-}
+};
 
 N.Comp.InhibitoryOutput.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
-  for(var i in json) {
-    this[i] = json[i];
-  }
+
+  _.merge(this, json);
+
   deferred.resolve();
   return deferred.promise;
-}
+};
 
   //*****************************
   //* N.Comp.LinearSummingInput *
