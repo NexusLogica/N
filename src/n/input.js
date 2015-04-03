@@ -23,12 +23,13 @@ var N = N || {};
   //***********
 /**
  * A neuron object. This object is essentially a shell around N.Compartment objects.
- * @class Neuron
- * @param network
+ * @class N.Input
+ * @param system
  * @constructor
  */
-N.Input = function(network) {
+N.Input = function(system) {
   this.className  = 'N.Input';
+  this.system     = system;
   this.id         = N.generateUUID();
   this.category   = 'default';
   this.target     = '';
@@ -108,6 +109,7 @@ N.Input.prototype.loadFrom = function(json) {
 
       _.merge(_this, _.omit(mergedJson, ['template']));
 
+      deferred.resolve();
     }, function(status) {
       console.log('REJECT: N.Input.loadFrom[1]: '+status.errMsg);
       deferred.reject(status);
