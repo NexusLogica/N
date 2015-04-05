@@ -63,7 +63,6 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
             2);
           $scope.editor.setValue(text);
         } else if(type === 'history') {
-          debugger;
           var historyString = $scope.edit.source.output.stringify();
           $scope.editor.setValue(historyString);
         }

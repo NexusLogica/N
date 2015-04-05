@@ -26,7 +26,7 @@ var N = N || {};
 N.History = function() {
   this.className  = 'N.History';
   this.id         = null;
-  this.inputs     = [];
+  this.inputs     = {};
   this.outputs    = {};
   this.states     = {};
 };
@@ -61,7 +61,13 @@ N.History.prototype.loadFromSystem = function(system) {
  */
 N.History.prototype.stringify = function() {
   return JSON.stringify(this, function(k, v) {
-    return (k === 'finder' ? undefined : v);
+    if(k === 'finder') {
+      return undefined;
+    } else if(_.isArray(v) && (k === 'times' || k === 'values')) {
+      return '['+v.join(', ')+']';
+    } else {
+      return v;
+    }
   }, 2);
 };
 

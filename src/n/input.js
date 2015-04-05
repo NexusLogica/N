@@ -105,8 +105,8 @@ N.Input.prototype.update = function(t) {
  * @param t
  */
 N.Input.prototype.chooseIndex = function(t) {
-  if(this.currentSignalIndex < this.signal.length-2) {
-    if(this.signal[this.currentSignalIndex][0] <= t) {
+  if(this.currentSignalIndex < this.signal.length-1) {
+    if(this.signal[this.currentSignalIndex+1][0] <= t) {
       this.currentSignalIndex++;
     }
   }
