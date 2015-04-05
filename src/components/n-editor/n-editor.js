@@ -49,18 +49,23 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
       });
 
       if($scope.edit) {
-        if($scope.edit.source.type === 'source-file') {
+        var type = $scope.edit.source.type;
+        if(type === 'source-file') {
           $scope.editor.setValue($scope.edit.source.getText());
 
           $scope.edit.signals.save.add(function () {
             $scope.sourceFile.file.updateText($scope.editor.getValue());
           });
-        } else if($scope.edit.source.type === 'compiled') {
+        } else if(type === 'compiled') {
           var text = JSON.stringify(
             $scope.edit.source.output,
             function(key, value) { if(typeof value === 'function') { return value.toString(); } return value; },
             2);
           $scope.editor.setValue(text);
+        } else if(type === 'history') {
+          debugger;
+          var historyString = $scope.edit.source.output.stringify();
+          $scope.editor.setValue(historyString);
         }
       }
     }

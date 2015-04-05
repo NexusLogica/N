@@ -366,7 +366,7 @@ N.shortenName = function(longName) {
  */
 N.camelCaseToDashed = function(camelCase) {
   return camelCase.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-}
+};
 
 
 /**
@@ -377,7 +377,7 @@ N.camelCaseToDashed = function(camelCase) {
  */
 N.cleanName = function(name) {
   return name.replace(/\]\[/g, '-').replace(/\[/g, '-').replace(/\]/g, '');
-}
+};
 
 /**
  * Returns the index of the array entry with the smallest value. If the array passed in is null, undefined, or zero length the return value is -1.

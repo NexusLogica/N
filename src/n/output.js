@@ -47,6 +47,29 @@ N.Output.prototype.getType = function() {
   return N.Type.Input;
 };
 
+
+/***
+ * Returns the object type.
+ * @method connect
+ */
+N.Output.prototype.connect = function() {
+  this.targetCompartment = undefined;
+  var t = N.fromPath(this.system.network, this.target);
+  if(t.error) {
+    return t;
+  }
+  this.targetCompartment = t;
+};
+
+/***
+ * Returns the object type.
+ * @method disconnect
+ */
+N.Output.prototype.disconnect = function() {
+  this.currentPointIndex = 0;
+  this.targetCompartment = undefined;
+};
+
 /***
  * Update the compartment values.
  * @method update
@@ -80,7 +103,7 @@ N.Output.prototype.loadFrom = function(json) {
 
       _.merge(_this, _.omit(mergedJson, ['template']));
       deferred.resolve();
-      
+
     }, function(status) {
       console.log('REJECT: N.Output.loadFrom[1]: '+status.errMsg);
       deferred.reject(status);

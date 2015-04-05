@@ -229,8 +229,10 @@ N.AnalogSignal.prototype.avgAbsDeviationWithInterval = function(otherSignal, tMi
   return sum/(tMax-tMin+ N.timeStep);
 };
 
-N.AnalogSignal.prototype.toJSON = function() {
-  return JSON.stringify(this, function(k, v) { return (k === 'finder' ? undefined : v); });
+N.AnalogSignal.prototype.toJSONx = function() {
+  return JSON.stringify(this, function(k, v) {
+    return (k === 'finder' ? undefined : v);
+  });
 };
 
   //******************

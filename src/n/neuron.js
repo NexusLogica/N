@@ -139,7 +139,7 @@ N.Neuron.prototype.clear = function() {
  * @param report
  */
 N.Neuron.prototype.validate = function(report) {
-  if(this.compartments.length === 0) { report.Warning(this.getPath(), 'The neuron has no components.'); }
+  if(this.compartments.length === 0) { report.warning(this.getPath(), 'The neuron has no components.'); }
 
   for(var j in this.validationMessages) {
     report.error(this.getPath(), this.validationMessages[j]);

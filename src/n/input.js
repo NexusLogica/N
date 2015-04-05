@@ -12,7 +12,7 @@ All Rights Reserved.
 */
 'use strict';
 
-/**
+/***
  * This is the N simulator.
  * @module N
  */
@@ -21,7 +21,8 @@ var N = N || {};
   //***********
   //* N.Input *
   //***********
-/**
+
+/***
  * A neuron object. This object is essentially a shell around N.Compartment objects.
  * @class N.Input
  * @param system
@@ -34,12 +35,12 @@ N.Input = function(system) {
   this.category   = 'default';
   this.target     = '';
   this.targetCompartment = undefined;
-  this.signalPoints = [[0, 0.0]];
-  this.currentPointIndex = 0;
+  this.signal = [[0, 0.0]];
+  this.currentSignalIndex = 0;
   this.history    = new N.AnalogSignal();
 };
 
-/**
+/***
  * Returns the object type.
  * @method getType
  * @returns {N.Type.Neuron}
@@ -49,48 +50,83 @@ N.Input.prototype.getType = function() {
 };
 
 /***
- * Update the compartment values.
- * @method update
- * @param time
+ * Returns the object type.
+ * @method connect
  */
-N.Input.prototype.update = function(time) {
-  var out = 0.0;
-  // If the last point...
-  if(this.signalPoints.length === this.currentPointIndex) {
-    out = this.signalPoints[this.currentPointIndex][1];
-  } else {
+N.Input.prototype.connect = function() {
+  this.currentPointIndex = 0;
+  this.history = new N.AnalogSignal();
 
-    if(this.signalPoints[this.currentPointIndex+1][0] >= time) {
-      this.currentPointIndex++;
-      if(this.signalPoints.length === this.currentPointIndex) {
-        out = this.signalPoints[this.currentPointIndex][1];
-
-        // The logic is simpler if we just escape from here.
-        this.history.appendData(time, out);
-        this.targetCompartment.output = out;
-        return;
-      }
-    }
-
-    var p0 = this.signalPoints[this.currentPointIndex];
-    var p1 = this.signalPoints[this.currentPointIndex+1];
-    if(p0.length > 2 && p0[2] === 'i') {
-      out = (time-p0[0])/(p1[0]-p0[0])*(p1[1]-p0[1])+p0[1];
-    } else {
-      out = p0[1];
-    }
+  this.targetCompartment = undefined;
+  var t = N.fromPath(this.system.network, this.target);
+  if(t.error) {
+    return t;
   }
-  this.history.appendData(time, out);
-  this.targetCompartment.output = out;
+  this.targetCompartment = t;
 };
 
 /**
+ * Returns the object type.
+ * @method disconnect
+ */
+N.Input.prototype.disconnect = function() {
+  this.currentSignalIndex = 0;
+  this.targetCompartment = undefined;
+};
+
+/***
+ * Update the compartment values.
+ * @method update
+ * @param {float} t - time
+ */
+N.Input.prototype.update = function(t) {
+  var out = 0.0;
+  var i = this.chooseIndex(t);
+
+  if(i === this.signal.length-1) {
+    out = this.signal[i][1];
+  } else if(this.signal[i][2] === 'i') {
+    var t0 = this.signal[i][0];
+    var t1 = this.signal[i+1][0];
+    var v0 = this.signal[i][1];
+    var v1 = this.signal[i+1][1];
+    out = v0+(v1-v0)*(t-t0)/(t1-t0);
+  } else {
+    out = this.signal[i][1];
+  }
+
+  this.history.appendData(t, out);
+  this.targetCompartment.output = out;
+};
+
+/***
+ * Determine the signal index to use
+ * @method chooseIndex
+ * @param t
+ */
+N.Input.prototype.chooseIndex = function(t) {
+  if(this.currentSignalIndex < this.signal.length-2) {
+    if(this.signal[this.currentSignalIndex][0] <= t) {
+      this.currentSignalIndex++;
+    }
+  }
+  return this.currentSignalIndex;
+};
+
+/***
  * Validates the neuron. Warns if there are no compartments.
  * @method validate
  * @param report
  */
 N.Input.prototype.validate = function(report) {
-  if(this.signalPoints.length === 0) { report.Warning(this.target, 'The signal points array is zero length.'); }
+  if(this.signal.length === 0) { report.warning('Input to '+this.target, 'The signal points array is zero length.'); }
+  for(var i=0; i<this.signal.length; i++) {
+    if(i > 0) {
+      if(this.signal[i][0] <= this.signal[i-1][0]) {
+        report.error('Input to '+this.target, 'Signal time values duplicated reversed.');
+      }
+    }
+  }
 };
 
 /**

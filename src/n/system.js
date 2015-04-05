@@ -29,6 +29,8 @@ N.System = function() {
   this.name       = '';
   this.inputs     = [];
   this.outputs    = [];
+  this.startTime  = 0;
+  this.endTime    = 1000;  // default - 1 second
 };
 
 /***
@@ -49,36 +51,75 @@ N.System.prototype.addOutput = function(output) {
   this.outputs.push(output);
 };
 
+/***
+ * @method connectToNetwork
+ * @param network
+ */
+N.System.prototype.connectToNetwork = function(network) {
+  this.network = network;
+
+  _.forEach(this.inputs, function(input) {
+    input.connect();
+  });
+
+  _.forEach(this.outputs, function(output) {
+    output.connect();
+  });
+};
+
 /**
  * Runs a test.
  * @method runTest
  * @param test
  */
-N.System.prototype.runTest = function(test) {
-console.log('RUN TEST');
-  var network = this.network;
-  network.clear();
+N.System.prototype.run = function() {
+  this.network.clear();
 
-  var duration = test.duration;
-  var inc = N.timeStep;
-  var t = 0.0;
-  var maxSteps = 100000;
-  var breakAfterStep = false;
+  var duration = 100;
+  var t = 0;
 
-  for(var i=0; i<maxSteps; i++) {
-    network.update(t);
-    if(breakAfterStep) {
-      break;
+  for(var i=0; i<duration; i++) {
+    for(var j=0; j<this.inputs.length; j++) {
+      this.inputs[j].update(t);
     }
-    t += inc;
-    if(t >= duration) {
-      t = duration;
-      breakAfterStep = true;
+
+    this.network.update(t);
+
+    for(j=0; j<this.outputs.length; j++) {
+      this.outputs[j].update(t);
     }
+
+    t++;
   }
 };
 
-/**
+/***
+ * Get the history object for the previous run of the system.
+ * @method getHistory
+ */
+N.System.prototype.getHistory = function() {
+  var history = new N.History();
+  history.loadFromSystem(this);
+  return history;
+};
+
+/***
+ * Disconnect the network from the system.
+ * @method disconnect
+ */
+N.System.prototype.disconnect = function() {
+  this.network = undefined;
+
+  _.forEach(this.inputs, function(input) {
+    input.disconnect();
+  });
+
+  _.forEach(this.outputs, function(output) {
+    output.disconnect();
+  });
+};
+
+/***
  * Load a neuron from a JSON object. Note that if the JSON object has a 'template' member then this is loaded from first.
  * @method loadFrom
  * @param {JSON} json
