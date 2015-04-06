@@ -52,6 +52,8 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
         var type = $scope.edit.source.type;
         if(type === 'source-file') {
           $scope.editor.setValue($scope.edit.source.getText());
+          $scope.sourceType = 'File';
+          $scope.sourcePath = $scope.edit.source.path;
 
           $scope.edit.signals.save.add(function () {
             $scope.sourceFile.file.updateText($scope.editor.getValue());

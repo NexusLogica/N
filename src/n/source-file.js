@@ -44,11 +44,13 @@ N.SourceFile.prototype.updateText = function(text) {
 };
 
 /**
- * Sets the text. The dirty flag is set to false. See updateText for changes that set the dirty state to true.
- * @method setText
+ * Sets the path.
+ * @method setPath
+ * @param path
  */
 N.SourceFile.prototype.setPath = function(path) {
   this.path = path;
+  this.displayName = this.path.split('/').pop();
 };
 
 /**

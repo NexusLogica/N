@@ -28,6 +28,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
 
       $scope.addEditor = function(source) {
         var editor = {
+          displayShort: source.displayName,
           source: source,
           signals: {
             save: new signals.Signal()

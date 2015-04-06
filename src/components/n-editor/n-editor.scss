@@ -19,8 +19,28 @@ All Rights Reserved.
 .n-editor {
   display: block;
 
+  .info-bar {
+    height: 28px;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 6px;
+    padding-left: 12px;
+
+    background: linear-gradient(#DDDDDD, #D2D2D2);
+    border: 1px solid #BBBBBB;
+
+    >div {
+      display: inline-block;
+      margin-right: 30px;
+    }
+
+    .info-label {
+      color: #696969;
+    }
+  }
+
   .ace-editor {
-    width: 500px;
+    width: 100%;
     height: 900px;
   }
 }

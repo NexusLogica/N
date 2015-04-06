@@ -18,9 +18,26 @@ All Rights Reserved.
 
 .editors-panel {
   display: block;
+  position: relative;
 
-  .ace-editor {
-    width: 500px;
+  .tabs {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: $builder-tab-width;
+    background-color: #D6D6D6;
+    border: solid 1px #BBBBBB;
     height: 900px;
+  }
+
+  .editors-container {
+    position: absolute;
+    top: 0px;
+    left: $builder-tab-width+$builder-tab-sep;
+    width: $builder-width;
+    .editors {
+      width: $builder-width - $builder-tab-width - $builder-tab-sep;
+      position: relative;
+    }
   }
 }
