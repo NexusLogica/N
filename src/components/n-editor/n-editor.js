@@ -51,22 +51,28 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
       if($scope.edit) {
         var type = $scope.edit.source.type;
         if(type === 'source-file') {
-          $scope.editor.setValue($scope.edit.source.getText());
+          $scope.editor.setValue($scope.edit.source.getText(), -1);
           $scope.sourceType = 'File';
-          $scope.sourcePath = $scope.edit.source.path;
+          $scope.sourcePath = $scope.edit.sourcePath;
 
           $scope.edit.signals.save.add(function () {
             $scope.sourceFile.file.updateText($scope.editor.getValue());
           });
         } else if(type === 'compiled') {
+          $scope.sourceType = 'Compiled';
+          $scope.sourcePath = $scope.edit.sourcePath;
           var text = JSON.stringify(
             $scope.edit.source.output,
             function(key, value) { if(typeof value === 'function') { return value.toString(); } return value; },
             2);
-          $scope.editor.setValue(text);
+          $scope.editor.setValue(text, -1);
+          $scope.editor.setReadOnly(true);
         } else if(type === 'history') {
+          $scope.sourceType = 'System Output';
+          $scope.sourcePath = $scope.edit.sourcePath;
           var historyString = $scope.edit.source.output.stringify();
-          $scope.editor.setValue(historyString);
+          $scope.editor.setValue(historyString, -1);
+          $scope.editor.setReadOnly(true);
         }
       }
     }

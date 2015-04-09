@@ -56,6 +56,7 @@ N.Input.prototype.getType = function() {
 N.Input.prototype.connect = function() {
   this.currentPointIndex = 0;
   this.history = new N.AnalogSignal();
+  this.history.name = this.target;
 
   this.targetCompartment = undefined;
   var t = N.fromPath(this.system.network, this.target);

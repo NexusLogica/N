@@ -474,6 +474,36 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         }
       });
 
+      $scope.shell.setCommandHandler('view', {
+        exec: function (cmd, args, callback) {
+          try {
+            var usage = 'Usage: view [env-var]';
+
+            if(args.length !== 1) {
+
+              callback(usage)
+
+            } else {
+
+              if (args[0].indexOf('$') === 0) {
+                var obj = $scope.variables[args[0]];
+                if (obj) {
+                  if (obj.type === 'history') {
+                    $scope.editorPanel.addHistoryViewer(obj);
+                  }
+                  callback('');
+                } else {
+                  callback('Unable to find variable ' + args[0]);
+                }
+
+              }
+            }
+          } catch(err) {
+            callback('ERROR: '+err.stack)
+          }
+        }
+      });
+
       $scope.shell.setCommandHandler('compile', {
         exec: function (cmd, args, callback) {
           var usage = 'Usage: compile [source-file-path] [output-object-name]';
@@ -483,7 +513,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             var outputName = args[1];
 
             $scope.compile(filePath).then(function(config) {
-              $scope.variables[outputName] = { type: 'compiled', source: filePath, output: config, guid: 'guid'+N.generateUUID() };
+              $scope.variables[outputName] = { type: 'compiled', source: filePath, displayShort: outputName, output: config, guid: 'guid'+N.generateUUID() };
               callback('Compile successful');
             }, function(err) {
               callback('ERROR: Unable to compile: '+err.description);
@@ -604,7 +634,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
                   system.disconnect();
 
-                  $scope.variables[outputName] = {type: 'history', output: history, guid: 'guid' + N.generateUUID()};
+                  $scope.variables[outputName] = {type: 'history', displayShort: outputName, output: history, guid: 'guid' + N.generateUUID()};
                   callback('Run successful');
 
                 }, function (err) {

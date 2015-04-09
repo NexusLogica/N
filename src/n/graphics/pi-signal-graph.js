@@ -30,16 +30,16 @@ N.UI.SignalGraph = function() {
 
   this.traces = [];
   this.tracesById = {};
-}
+};
 
 N.UI.SignalGraph.prototype.addTraceFromSource = function(id, source, propName, additionalClasses) {
   this.tracesById[id] = { id: id, source: source, propName: propName, additionalClasses: additionalClasses };
   this.traces.push(this.tracesById[id]);
-}
+};
 
 N.UI.SignalGraph.prototype.addTrace = function(signal) {
   this.traces.push({ signal: signal});
-}
+};
 
 N.UI.SignalGraph.prototype.render = function(svgParent, size, padding) {
   this.svgParent = svgParent;
@@ -63,20 +63,24 @@ N.UI.SignalGraph.prototype.render = function(svgParent, size, padding) {
   var yOffset = 0;
   for(var i in this.traces) {
     var trace = this.traces[i];
-    trace.signalGraphic = (new N.UI.SignalTrace()).
-        addClasses([ (i % 2 ? 'even' : 'odd') ]).
-        setSignal({ source: trace.source, propName: trace.propName }).
-        render(this.group, { x: 0, y: yOffset, width: w, height: h }, new N.UI.Padding(0, 0));
+
+    trace.signalGraphic = new N.UI.SignalTrace();
+    trace.signalGraphic.addClasses([ (i % 2 ? 'even' : 'odd') ]);
+
+    // Pass in the signal, or the structure to find the signal.
+    trace.signalGraphic.setSignal(trace.source ? { source: trace.source, propName: trace.propName } : trace.signal);
+    trace.signalGraphic.render(this.group, { x: 0, y: yOffset, width: w, height: h }, new N.UI.Padding(0, 0));
+
     if(trace.additionalClasses) {
       trace.signalGraphic.addClasses(trace.additionalClasses);
     }
     yOffset += h;
   }
-}
+};
 
 N.UI.SignalGraph.prototype.updateAll = function() {
   for(var i in this.traces) {
     var trace = this.traces[i];
     trace.signalGraphic.update();
   }
-}
+};

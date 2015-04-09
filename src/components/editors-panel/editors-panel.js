@@ -29,6 +29,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
       $scope.addEditor = function(source) {
         var editor = {
           displayShort: source.displayName,
+          sourcePath: source.source,
           source: source,
           signals: {
             save: new signals.Signal()
@@ -40,6 +41,22 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         $scope.editorsByGuid[guid] = editor;
 
         var html = $compile('<n-editor class="'+guid+'" edit="editorsByGuid.'+guid+'" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></n-editor>')($scope);
+        $element.find('.editors').append(html);
+      };
+
+      $scope.addHistoryViewer = function(history) {
+        var editor = {
+          displayShort: history.displayName,
+          sourcePath: history.source,
+          source: history
+        };
+
+        var guid = editor.source.guid;
+        $scope.activeEditor = guid;
+        $scope.editorsByGuid[guid] = editor;
+
+
+        var html = $compile('<signal-viewer class="'+guid+'" history="editorsByGuid.'+guid+'" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></signal-viewer>')($scope);
         $element.find('.editors').append(html);
       };
 

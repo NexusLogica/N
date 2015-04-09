@@ -15,6 +15,7 @@ All Rights Reserved.
 @import '../../appearance/css/mixins.scss';
 @import '../../appearance/css/common.scss';
 
+$active-separator-color: #E5E5E5;
 
 .editors-panel {
   display: block;
@@ -27,7 +28,28 @@ All Rights Reserved.
     width: $builder-tab-width;
     background-color: #D6D6D6;
     border: solid 1px #BBBBBB;
-    height: 900px;
+    height: $editor-height;
+    .item-tab {
+      padding: 5px 0px 0px 5px;
+      font-size: 12px;
+      border-bottom: solid 1px #BBBBBB;
+      height: 27px;
+      &.active {
+        background-color: $active-separator-color;
+        width:$builder-tab-width;
+      }
+    }
+  }
+
+  .separator {
+    position: absolute;
+    top: 0px;
+    left: $builder-tab-width;
+    width: $builder-tab-sep;
+    background-color: $active-separator-color;
+    border-top: solid 1px #BBBBBB;
+    border-bottom: solid 1px #BBBBBB;
+    height: $editor-height;
   }
 
   .editors-container {
@@ -38,6 +60,11 @@ All Rights Reserved.
     .editors {
       width: $builder-width - $builder-tab-width - $builder-tab-sep;
       position: relative;
+      .no-editors {
+        height: $editor-height;
+        background-color: #E5E5E5;
+        border: solid 1px #BBBBBB;
+      }
     }
   }
 }

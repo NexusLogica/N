@@ -15,7 +15,7 @@ All Rights Reserved.
 @import '../../appearance/css/mixins.scss';
 @import '../../appearance/css/common.scss';
 
-.n-editor {
+.signal-viewer {
   display: block;
 
   .info-bar {
@@ -38,14 +38,10 @@ All Rights Reserved.
     }
   }
 
-  .ace-editor {
-    width: 100%;
-    height: $editor-height - $editor-status-bar-height;
-    border: 1px solid #ccc;
-  }
-  .ace-editor {
-    width: 100%;
-    height: $editor-height - $editor-status-bar-height;
-    border: 1px solid #ccc;
+  .signal-graph-container {
+    .signal-canvas {
+      width: 700px;
+      height: 700px;
+    }
   }
 }
