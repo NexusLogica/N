@@ -24,6 +24,7 @@
     "svg.js": "git://github.com/wout/svg.js.git",
     "ace": "git://github.com/ajaxorg/ace-builds",
     "signals": "git://github.com/millermedeiros/js-signals",
-    "josh": "git://github.com/sdether/josh.js"
+    "josh": "git://github.com/sdether/josh.js",
+    "bootstrap3-dialog": "git://github.com/nakupanda/bootstrap3-dialog"
   }
 }

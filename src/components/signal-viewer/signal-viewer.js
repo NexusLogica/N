@@ -24,11 +24,90 @@ angular.module('nSimulationApp').directive('signalViewer', [function() {
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'signalViewer', $scope, $element, $attrs);
 
+      $scope.sliderSignals = {
+        'onRangeChange': new signals.Signal()
+      };
 
+      $scope.sliderSignals.onRangeChange.add(function(min, max) {
+        $scope.$apply(function() {
+          $scope.signalGraphScene.setScale(min, max);
+        });
+      });
+
+      $scope.treeData = [
+        {
+          id: 'folder_1',
+          label: 'This is Folder 1',
+          inode: true,
+          open: false,
+          checkbox: false,
+          radio: false,
+          branch:[{
+            id: 'sub-item_x',
+            label: 'This is File X',
+            inode: false,
+            checkbox: true,
+            radio: false
+          }]
+        },
+        {
+          id: 'file_1',
+          label: 'This is File 1',
+          inode: false,
+          checkbox: true,
+          radio: false
+        }
+      ];
+
+      $scope.showSelectTree = function() {
+        BootstrapDialog.show({
+          title: 'Select signal traces to view',
+          message: function(dialog) {
+            var content = $('<div class="tree-container"><div class="aciTree"></div></div>');
+            content.find('.aciTree').aciTree({
+              rootData: $scope.treeData,
+              checkbox: true,
+              radio: true
+            });
+            return content;
+          },
+          buttons: [{
+            label: 'Close',
+            action: function(dialog) {
+              dialog.close();
+            }
+          }]
+        });
+      };
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
       $scope.signalGraphScene = new N.UI.SignalGraphScene();
+
+      $scope.treeData = [
+        {
+          id: 'folder_1',
+          label: 'This is Folder 1',
+          inode: true,
+          open: false,
+          checkbox: false,
+          radio: false,
+          branch:[{
+            id: 'sub-item_x',
+            label: 'This is File X',
+            inode: false,
+            checkbox: true,
+            radio: false
+          }]
+        },
+        {
+          id: 'file_1',
+          label: 'This is File 1',
+          inode: false,
+          checkbox: true,
+          radio: false
+        }
+      ];
 
       var history = $scope.history.source.output;
       var signal;

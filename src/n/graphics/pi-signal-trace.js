@@ -40,7 +40,9 @@ N.UI.SignalTrace = function() {
   this.yAtOrigin = 0.0;
   this.scale = 1.0; // Default
   this.showOrigin = true;
-}
+  this.min = 0.0;
+  this.max = 1.0;
+};
 
 N.UI.SignalTrace.prototype.setSignal = function(signal) {
   if(!_.isUndefined(signal) && signal.source) {
@@ -50,7 +52,7 @@ N.UI.SignalTrace.prototype.setSignal = function(signal) {
     this.signal = signal;
   }
   return this;
-}
+};
 
 N.UI.SignalTrace.prototype.addClasses = function(classes) {
   this.additionalClasses = this.additionalClasses || [];
@@ -61,24 +63,20 @@ N.UI.SignalTrace.prototype.addClasses = function(classes) {
     this.additionalClasses.push(classes);
   }
   return this;
-}
+};
 
 N.UI.SignalTrace.prototype.setScale = function(min, max) {
-  var num = this.signal.getNumSamples();
-  if(num > 1) {
-    var range = this.signal.getTimeByIndex(num-1)-this.signal.getTimeByIndex(0);
-    this.scale = (this.pos.width/range)/(max-min);
-    this.timeAtOrigin = range*min;
-  }
+  this.min = min;
+  this.max = max;
   this.needsRecalc = true;
-  this.render();
-}
+  this.update();
+};
 
 N.UI.SignalTrace.prototype.setAbsoluteScale = function(timeAtOrigin, scale) {
   this.timeAtOrigin = timeAtOrigin;
   this.scale = scale;
   this.needsRecalc = true;
-}
+};
 
 N.UI.SignalTrace.prototype.render = function(svgParent, pos, padding) {
   this.svgParent = svgParent;
@@ -86,6 +84,8 @@ N.UI.SignalTrace.prototype.render = function(svgParent, pos, padding) {
   this.group = this.svgParent.group().move(this.pos.x, this.pos.y).size(this.pos.width, this.pos.height).attr({ 'class': 'pi-signal-trace' });
   N.UI.svgAddClass(this.group, this.additionalClasses);
   this.background = this.group.rect(this.pos.width, this.pos.height).attr({ 'class': 'background' });
+  this.clip = this.group.rect(this.pos.width, this.pos.height);
+  this.group.clipWith(this.clip);
 
   if(this.source) {
     this.signal = this.source.source[this.source.propName];
@@ -101,10 +101,11 @@ N.UI.SignalTrace.prototype.render = function(svgParent, pos, padding) {
   if(this.needsRecalc) {
     this.needsRecalc = false;
 
-     var num = this.signal.getNumSamples();
+    var num = this.signal.getNumSamples();
     if(num > 1) {
       var range = this.signal.getTimeByIndex(num-1)-this.signal.getTimeByIndex(0);
-      this.scale = this.pos.width/range;
+      this.scale = (this.pos.width/range)/(this.max-this.min);
+      this.timeAtOrigin = range*this.min;
     }
 
     this.calculateVerticalRange();
@@ -125,7 +126,7 @@ N.UI.SignalTrace.prototype.render = function(svgParent, pos, padding) {
     this.renderNoData();
   }
   return this;
-}
+};
 
 N.UI.SignalTrace.prototype.update = function() {
   if(this.source) {
@@ -142,7 +143,8 @@ N.UI.SignalTrace.prototype.update = function() {
   var num = this.signal.getNumSamples();
   if(num > 1) {
     var range = this.signal.getTimeByIndex(num-1)-this.signal.getTimeByIndex(0);
-    this.scale = this.pos.width/range;
+    this.scale = (this.pos.width/range)/(this.max-this.min);
+    this.timeAtOrigin = range*this.min;
   }
 
   this.calculateVerticalRange();
@@ -162,7 +164,7 @@ N.UI.SignalTrace.prototype.update = function() {
     this.renderNoData();
   }
   return this;
-}
+};
 
 N.UI.SignalTrace.prototype.renderAnalogTrace = function() {
   var t = this.signal.getTimeByIndex(this.startIndex);
@@ -190,7 +192,7 @@ N.UI.SignalTrace.prototype.renderAnalogTrace = function() {
     this.path.plot(p);
 //    this.clipRect.size(this.pos.width, this.pos.height+2*extra).move(this.pos.x, this.pos.y-extra);
   }
-}
+};
 
 N.UI.SignalTrace.prototype.renderDiscreteTrace = function() {
   var t = this.signal.getTimeByIndex(this.startIndex);
@@ -258,28 +260,28 @@ N.UI.SignalTrace.prototype.renderXAxis = function() {
 N.UI.SignalTrace.prototype.timeToPixel = function(time) {
   var pixel = this.scale*(time-this.timeAtOrigin);
   return pixel;
-}
+};
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
 N.UI.SignalTrace.prototype.pixelToTime = function(pixel) {
   var time = (pixel+this.timeAtOrigin)/this.scale;
   return time;
-}
+};
 
 N.UI.SignalTrace.prototype.yToPixel = function(y) {
   var pixel = this.pos.height-(this.yScale*y+this.yClearBelowMin);
   //var pixelUp = this.yScale*y+this.yOriginPixels;
   //var pixelDown = this.pos.height - pixelUp;
   return pixel;
-}
+};
 
 // The formula is
 //   time = (pixel+timeAtOrigin-pixelOrigin)/scale
 N.UI.SignalTrace.prototype.pixelToY = function(pixel) {
   // TODO: Not implemented.
   return 0;
-}
+};
 
 N.UI.SignalTrace.prototype.calculateVerticalRange = function() {
   // TODO: Need to have a flag for when to show MaxLimit or when to show the signal max.
@@ -302,7 +304,7 @@ N.UI.SignalTrace.prototype.calculateVerticalRange = function() {
   this.yClearBelowMin = this.yScale*0.05*range;
 //  this.yOriginPixels = -this.pos.height*min/range;
 //  this.yOriginPixels = this.pos.height-this.yScale*0.05*range;
-}
+};
 
 N.UI.SignalTrace.prototype.calculateHorizontalRange = function() {
   this.startIndex = this.signal.getIndexBeforeTime(this.timeAtOrigin);
@@ -311,7 +313,7 @@ N.UI.SignalTrace.prototype.calculateHorizontalRange = function() {
   if(this.endIndex < this.signal.getNumSamples()-1) {
     this.endIndex++;
   }
-}
+};
 
 N.UI.SignalTrace.prototype.renderNoData = function() {
   if(!this.noDataText) {
@@ -320,5 +322,5 @@ N.UI.SignalTrace.prototype.renderNoData = function() {
   } else {
     this.noDataText.show();
   }
-}
+};
 

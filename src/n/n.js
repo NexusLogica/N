@@ -279,7 +279,7 @@ N.compFromPath = function(path) {
  * Returns the object pointed to by the path relative to
  * @method N.fromConnectionPaths
  * @param {N.Network} network
- * @param {String} path
+ * @param {String} paths
  * @return {Object} Returns a two components in the form { Source: .
  */
 N.fromConnectionPaths = function(network, paths) {
@@ -306,8 +306,7 @@ N.fromConnectionPaths = function(network, paths) {
  */
 N.sourceFromConnectionPath = function(path) {
   var i = path.indexOf('->');
-  var src = path.substring((path[0] === ':' ? 1 : 0), i);
-  return src;
+  return path.substring((path[0] === ':' ? 1 : 0), i);
 }
 
 /**
@@ -330,6 +329,13 @@ N.fromPathError = function(network, path, part, message) {
 N.toFixed = function(value, precision) {
   var stringValue = '0.';
   var i=0;
+  if(value === 1.0) {
+    stringValue = '1.';
+    for(i=0; i<precision; i++) {
+      stringValue += '0';
+    }
+    return stringValue;
+  }
   if(value === 0.0) {
     for(i=0; i<precision; i++) {
       stringValue += '0';
@@ -343,7 +349,7 @@ N.toFixed = function(value, precision) {
     stringValue += '0';
   }
   return stringValue;
-}
+};
 
 /**
  * Take capitals of camel case identifier and make an abbreviation, AsAnExample123 -> AAE123.
@@ -356,7 +362,7 @@ N.shortenName = function(longName) {
   var reg = /[A-Z0-9]*/g;
   var matches = longName.match(reg);
   return matches.join('');
-}
+};
 
 /**
  * Take capitals of camel case identifier and inserts a dash and makes lower case, i.e. thisString becomes this-string.
@@ -414,7 +420,7 @@ N.log = function(logText) {
  * The standard timestep for simulations - 1 millisecond
  * @type {number} Timestep
  */
-N.timeStep = 0.001;
+N.timeStep = 1;
 
 /**
  * Converts an angle in degrees to radians.

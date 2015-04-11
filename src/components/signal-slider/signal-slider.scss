@@ -1,0 +1,94 @@
+/**********************************************************************
+
+File     : signal-slider.scss
+Project  : N Simulator Library
+Purpose  : Source file for the signal-slider component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/09
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import '../../appearance/css/core.scss';
+@import '../../appearance/css/mixins.scss';
+@import '../../appearance/css/common.scss';
+
+.signal-slider {
+  display: block;
+  border: 1px #e4e4e4 solid;
+  padding: 10px 20px 10px 20px;
+  $background-color: #f8f7f5;
+
+  .range-display {
+    margin-bottom: 10px;
+    div {
+      display: inline-block;
+    }
+  }
+
+  .range-display {
+    .range-label {
+      width: 81px;
+    }
+    .range-number {
+      width:100px;
+      text-align: center;
+      border: solid 1px #cecece;
+      margin-left:7px;
+    }
+  }
+
+  .range-slider {
+    margin-bottom: 10px;
+    width: 300px;
+    outline: none;
+
+    .ui-slider-handle.ui-corner-all.ui-state-hover:hover,
+    .ui-slider-handle.ui-corner-all.ui-state-focus {
+      background-image: none;
+      background-color: $background-color;
+      outline: none;
+    }
+  }
+
+  .pan-slider {
+    width: 300px;
+    .ui-slider-handle {
+      width: 2.0em;
+      margin-left: -1.0em;
+      text-align: center;
+      outline: none;
+      >span {
+        vertical-align: top;
+      }
+      .ui-corner-all, .ui-corner-all.ui-state-focus {
+        visibility: visible;
+        background-color: $background-color;
+        margin-left: -50px;
+        width: 100px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-weight: normal;
+        color: #654b24;
+        text-align: center;
+        height: 23px;
+        background-image: none;
+        text-decoration: none;
+        outline: 0;
+      }
+
+      .ui-corner-all.ui-state-hover:hover {
+        visibility: visible;
+        background-color: $background-color;
+        text-decoration: none;
+        background-image: none;
+        color: #654b24;
+      }
+    }
+  }
+
+  .ui-widget-header {
+    background-image: none;
+  }
+}

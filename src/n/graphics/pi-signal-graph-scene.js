@@ -46,6 +46,12 @@ N.UI.SignalGraphScene.prototype.getTraceFromId = function(id) {
   return this.signalGraph.tracesById[id];
 };
 
+N.UI.SignalGraphScene.prototype.setScale = function(min, max) {
+  if(this.signalGraph) {
+    this.signalGraph.setScale(min, max);
+  }
+};
+
 /**
  * Calculates the scale that will fit the network to a given width.
  * @method scaleToFitWidth

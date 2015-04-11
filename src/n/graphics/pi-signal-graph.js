@@ -27,6 +27,7 @@ N.UI.SignalGraph = function() {
   this.y = 0;
   this.width = 100;
   this.height = 100;
+  this.separation = 10;
 
   this.traces = [];
   this.tracesById = {};
@@ -41,22 +42,27 @@ N.UI.SignalGraph.prototype.addTrace = function(signal) {
   this.traces.push({ signal: signal});
 };
 
+N.UI.SignalGraph.prototype.setScale = function(min, max) {
+  for(var i=0; i< this.traces.length; i++) {
+    this.traces[i].signalGraphic.setScale(min, max);
+  }
+};
+
 N.UI.SignalGraph.prototype.render = function(svgParent, size, padding) {
   this.svgParent = svgParent;
   this.padding = padding;
   this.width = size.width;
   this.height = size.height;
 
-  this.group = this.svgParent.group().size(this.width, this.height).attr({ 'class': 'pi-signal-graph' });
-
-  this.group.rect(this.width-this.padding.horizontal(), this.height-this.padding.vertical()).move(this.padding.left(), this.padding.top()).attr({ 'class': 'graph-background'});
+  this.group = this.svgParent.group().size(this.width, this.height).move(this.padding.left(), this.padding.top()).attr({ 'class': 'pi-signal-graph' });
+  this.group.rect(this.width-this.padding.horizontal(), this.height-this.padding.vertical()).attr({ 'class': 'graph-background'});
 
   if(this.traces.length === 0) {
     this.renderEmptyGraph();
     return;
   }
 
-  var h = Math.floor((this.height-this.padding.vertical())/this.traces.length);
+  var h = Math.floor((this.height-this.padding.vertical()-this.separation*(this.traces.length-1))/this.traces.length);
   var w = this.width-this.padding.horizontal();
 
   // Add traces
@@ -74,7 +80,7 @@ N.UI.SignalGraph.prototype.render = function(svgParent, size, padding) {
     if(trace.additionalClasses) {
       trace.signalGraphic.addClasses(trace.additionalClasses);
     }
-    yOffset += h;
+    yOffset += h+this.separation;
   }
 };
 

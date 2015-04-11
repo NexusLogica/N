@@ -27,82 +27,7 @@ All Rights Reserved.
 @import '../../components/n-editor/n-editor.scss';
 @import '../../components/editors-panel/editors-panel.scss';
 @import '../../components/signal-viewer/signal-viewer.scss';
-
-//*****************************
-// Signal graph controller
-
-.signal-graph-controls {
-  border: 1px silver solid;
-  padding: 20px;
-  $background-color: #f8f7f5;
-
-  .range-display {
-    margin-bottom: 10px;
-    div {
-      display: inline-block;
-    }
-  }
-
-  .range-display {
-    .range-label {
-      width: 81px;
-    }
-    .range-number {
-      width:100px;
-      text-align: center;
-      border: solid 1px #EEE;
-      margin-left:7px;
-    }
-  }
-
-  .pan-slider {
-    width: 200px;
-    left: 50px;
-  }
-
-  .range-slider {
-    margin-bottom: 10px;
-    width: 300px;
-    a.ui-slider-handle.ui-corner-all.ui-state-hover:hover,
-    a.ui-slider-handle.ui-corner-all.ui-state-focus {
-      background-image: none;
-      background-color: $background-color;
-      outline: 0;
-    }
-  }
-
-  .pan-slider {
-    visibility: hidden;
-    a.ui-slider-handle.ui-corner-all,
-    a.ui-slider-handle.ui-corner-all.ui-state-focus {
-      visibility: visible;
-      background-color: $background-color;
-      margin-left: -50px;
-      width: 100px;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      color: #654b24;
-      text-align: center;
-      height: 23px;
-      background-image: none;
-      text-decoration: none;
-      outline: 0;
-    }
-
-    a.ui-slider-handle.ui-corner-all.ui-state-hover:hover {
-      visibility: visible;
-      background-color: $background-color;
-      text-decoration: none;
-      background-image: none;
-      color: #654b24;
-    }
-  }
-
-  .ui-widget-header {
-    background-image: none;
-  }
-}
-
+@import '../../components/signal-slider/signal-slider.scss';
 
 //*****************************
 // Canvas
@@ -256,35 +181,3 @@ All Rights Reserved.
   }
 }
 
-//*****************************
-// Network scene
-
-.pi-connection-test {
-  .pi-network-panel {
-    .pi-canvas {
-      height: 500px;
-      padding: 0px 0px;
-    }
-
-    .pi-canvas-column {
-      .path {
-        margin: 5px 5px 5px 10px;
-        color: gray;
-        height: 20px;
-      }
-    }
-
-    .pi-network-console {
-      height: 200px;
-      border: gray 1px solid;
-      margin-left:30px;
-    }
-  }
-
-  button {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    z-index: 1000;
-  }
-}
