@@ -105,6 +105,11 @@ $controls-height: 110px;
     border: 1px solid #BBBBBB;
     padding: 8px 20px;
     .aciTree {
+      .neuron {
+        background-image: url("../../appearance/images/neuron-16x16.png");
+        background-position-x: 5px;
+        background-position-y: 2px;
+      }
       .aciTreeItem {
         height: 22px;
         label {

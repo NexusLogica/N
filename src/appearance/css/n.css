@@ -5628,6 +5628,10 @@ body {
 .bootstrap-dialog-body .tree-container {
   border: 1px solid #BBBBBB;
   padding: 8px 20px; }
+  .bootstrap-dialog-body .tree-container .aciTree .neuron {
+    background-image: url("../../appearance/images/neuron-16x16.png");
+    background-position-x: 5px;
+    background-position-y: 2px; }
   .bootstrap-dialog-body .tree-container .aciTree .aciTreeItem {
     height: 22px; }
     .bootstrap-dialog-body .tree-container .aciTree .aciTreeItem label {

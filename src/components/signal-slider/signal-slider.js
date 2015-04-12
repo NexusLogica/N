@@ -56,10 +56,10 @@ angular.module('nSimulationApp').directive('signalSlider', [function() {
 
       $scope.updateLabels = function() {
         $timeout(function() {
-          var minLabel = ($scope.maxTime-$scope.minTime)*$scope.min+$scope.minTime;
-          var maxLabel = ($scope.maxTime-$scope.minTime)*$scope.max+$scope.minTime;
-          $scope.timeMinLabel = N.toFixed(minLabel, 3);
-          $scope.timeMaxLabel = N.toFixed(maxLabel, 3);
+          var minLabel = ($scope.rangeMax-$scope.rangeMin)*$scope.min+$scope.rangeMin;
+          var maxLabel = ($scope.rangeMax-$scope.rangeMin)*$scope.max+$scope.rangeMin;
+          $scope.timeMinLabel = minLabel;
+          $scope.timeMaxLabel = maxLabel;
         });
       };
 
@@ -110,6 +110,7 @@ angular.module('nSimulationApp').directive('signalSlider', [function() {
 
       $element.find('.pan-slider a').html('Pan');
       $element.find('.pan-slider').slider('disable');
+      $scope.updateLabels();
     }
   }
 }]);

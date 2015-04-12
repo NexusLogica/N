@@ -84,6 +84,9 @@ angular.module('nSimulationApp').directive('signalViewer', [function() {
     link: function($scope, $element, $attrs, ctrl) {
       $scope.signalGraphScene = new N.UI.SignalGraphScene();
 
+      $scope.rangeMin = $scope.history.source.output.startTime;
+      $scope.rangeMax = $scope.history.source.output.endTime;
+
       $scope.treeData = [
         {
           id: 'folder_1',
@@ -96,6 +99,7 @@ angular.module('nSimulationApp').directive('signalViewer', [function() {
             id: 'sub-item_x',
             label: 'This is File X',
             inode: false,
+            icon: 'neuron',
             checkbox: true,
             radio: false
           }]
