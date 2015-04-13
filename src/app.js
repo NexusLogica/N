@@ -2,7 +2,7 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('nSimulationApp', ['ngRoute', 'ui.bootstrap.modal', 'LocalStorageModule']).
+angular.module('nSimulationApp', ['ngRoute', 'ui.bootstrap.modal', 'LocalStorageModule', 'ngSanitize']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/fieldview', { templateUrl: 'src/pages/field-viewer/field-viewer.html' });
 //    $routeProvider.when('/pi-workbench', { templateUrl: 'src/partials/pi-workbench.html' });

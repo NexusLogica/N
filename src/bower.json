@@ -13,6 +13,7 @@
     "angular": "1.2.25",
     "angular-route": "1.2.25",
     "angular-bootstrap": "0.11.2",
+    "angular-sanitize": "1.2.20",
     "bootstrap": "3.2.0",
     "angular-ui-bootstrap": "git://github.com/angular-ui/bootstrap.git",
     "angular-local-storage": "git://github.com/grevory/angular-local-storage.git",
@@ -25,6 +26,7 @@
     "ace": "git://github.com/ajaxorg/ace-builds",
     "signals": "git://github.com/millermedeiros/js-signals",
     "josh": "git://github.com/sdether/josh.js",
-    "bootstrap3-dialog": "git://github.com/nakupanda/bootstrap3-dialog"
+    "bootstrap3-dialog": "git://github.com/nakupanda/bootstrap3-dialog",
+    "toastr": "git://github.com/CodeSeven/toastr"
   }
 }

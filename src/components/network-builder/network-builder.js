@@ -230,6 +230,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           N.Http.get($scope.scriptHost+'/files').then(function(data) {
             $scope.fileSystem = data;
             $scope.cd = data;
+            $scope.loadScriptList();
           }).catch(N.reportQError);
         }
 
@@ -272,12 +273,80 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           }).catch(N.reportQError);
         }
         return deferred.promise;
-      }
+      };
+
+      $scope.loadScriptList = function() {
+        $scope.scripts = [];
+        var scriptsDir = _.find($scope.fileSystem.directories, function(d) {
+          return (d.name === 'scripts');
+        });
+
+        if(scriptsDir) {
+          for(var i = 0; i<scriptsDir.files.length; i++) {
+            var file = scriptsDir.files[i];
+            if(file.name.lastIndexOf('.sh') === file.name.length-3) {
+              var fullPath = '/scripts/'+file.name;
+              $scope.loadFile(fullPath).then(function(sourceFile) {
+                $scope.$apply(function() {
+                  var niceName = sourceFile.extractProperty('name');
+                  var description = sourceFile.extractProperty('description');
+                  $scope.scripts.push({path: fullPath, name: niceName, description: description});
+                });
+              }, function(err) {
+                console.log('ERROR: '+err.description);
+              });
+            }
+          }
+        }
+      };
+
+      $scope.scriptSelected = function(script) {
+        $scope.selectedScript = script;
+      };
+
+      $scope.runScript = function() {
+        $scope.loadFile($scope.selectedScript.path).then(function(sourceFile) {
+            var scriptRunner = new N.ShellScript($scope);
+            scriptRunner.runScript(sourceFile.text, [], { done: function(output) {
+              if(output.status === 0) {
+                $scope.showSuccessToast((output.msg && output.msg.length > 0) ? output.msg : 'Script run successfully');
+              } else {
+                $scope.showErrorToast(output.msg);
+              }
+            }}).catch(N.reportQError);
+          }
+        );
+      };
+
+      $scope.showSuccessToast = function(msg) {
+        toastr.success(msg);
+      };
+
+      $scope.showErrorToast = function(msg) {
+        toastr.warning(msg);
+      };
+
+      $scope.showTab = function(tab) {
+        $element.find('.tab-pane.active').removeClass('active');
+        $element.find(tab).addClass('active');
+      };
 
 
       }],
     link: function($scope, $element, $attrs) {
       $scope.createShell();
+      $scope.shellScript = new N.ShellScript($scope);
+
+      $scope.shell.setCommandHandler('mkdir', {
+        exec: function(cmd, args, callback) {
+          $scope.shellScript.mkdir({ args: args }, { done: function(result) {
+            callback(result.msg);
+          } });
+        },
+        completion: function(cmd, arg, line, callback) {
+          callback($scope.shell.bestMatch(arg, ['world', 'josh']))
+        }
+      });
 
       $scope.shell.setCommandHandler('host', {
         exec: function(cmd, args, callback) {
@@ -296,40 +365,11 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             }).catch(N.reportQError);
           } else {
             callback('Usage: host              returns current host name\n'+
-                     '       host [new-host]   sets the new host');
+            '       host [new-host]   sets the new host');
           }
         },
         completion: function(cmd, arg, line, callback) {
           callback($scope.shell.bestMatch(arg, ['world', 'josh']));
-        }
-      });
-
-      $scope.shell.setCommandHandler('mkdir', {
-        exec: function(cmd, args, callback) {
-          if(args.length === 1) {
-            var path = args[0];
-            var fullPath;
-            if(path.substr(0,1) === '/') {
-              fullPath = path;
-            } else {
-              fullPath = $scope.getCurrentPath()+path;
-            }
-
-            var formData = new FormData();
-            formData.append('action', 'create');
-
-            N.Http.post($scope.scriptHost+'/directory'+fullPath, formData).then(function(data) {
-              var output = 'Created: '+fullPath;
-              callback(output);
-            }, function(err) {
-              callback('Not a valid host name: '+err.httpStatusCodeDescription);
-            }).catch(N.reportQError);
-          } else {
-            callback('Usage: mkdir [path]     Makes a new directory or directories.');
-          }
-        },
-        completion: function(cmd, arg, line, callback) {
-          callback($scope.shell.bestMatch(arg, ['world', 'josh']))
         }
       });
 

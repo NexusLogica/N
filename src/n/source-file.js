@@ -69,3 +69,31 @@ N.SourceFile.prototype.getText = function() {
 N.SourceFile.prototype.setDirty = function(isDirty) {
   this.dirty = isDirty;
 };
+
+/**
+ * Get a property
+ * @method extractProperty
+ * @param key
+ * @returns {string}
+ */
+N.SourceFile.prototype.extractProperty = function(key) {
+  var regex = new RegExp('\\#\\s'+key);
+  var next = 0;
+  var property;
+  var text = this.text;
+
+  var indexOf;
+  while((indexOf = text.search(regex)) !== -1) {
+    var front = text.indexOf(':', text.indexOf(key, indexOf));
+    var end = text.indexOf('\n', indexOf+1);
+    if(property === undefined) {
+      property = $.trim(text.substring(front + 1, end));
+    } else {
+      property += ' '+$.trim(text.substring(front + 1, end));
+    }
+    text = text.substr(end);
+  }
+  return property;
+};
+
+
