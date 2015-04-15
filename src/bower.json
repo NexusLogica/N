@@ -27,6 +27,7 @@
     "signals": "git://github.com/millermedeiros/js-signals",
     "josh": "git://github.com/sdether/josh.js",
     "bootstrap3-dialog": "git://github.com/nakupanda/bootstrap3-dialog",
-    "toastr": "git://github.com/CodeSeven/toastr"
+    "toastr": "git://github.com/CodeSeven/toastr",
+    "aciTree": "git://github.com/dragosu/jquery-aciTree"
   }
 }
