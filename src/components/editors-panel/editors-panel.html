@@ -3,10 +3,6 @@
     <div class="item-tab" ng-repeat="item in editorsByGuid" ng-class="{ 'active': 'item.source.guid === activeEditor'  }"><span ng-bind="item.source.displayShort"></span></div>
   </div>
 
-  <div class="separator">
-
-  </div>
-
   <div class="editors-container">
     <div class="editors">
       <div class="no-editors" ng-hide="activeEditor !== ''"></div>

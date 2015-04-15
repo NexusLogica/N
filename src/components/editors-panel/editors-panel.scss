@@ -16,6 +16,8 @@ All Rights Reserved.
 @import '../../appearance/css/common.scss';
 
 $active-separator-color: #E5E5E5;
+$editor-background-color: #f6f6f6;
+$editor-border: #ddd;
 
 .editors-panel {
   display: block;
@@ -26,8 +28,8 @@ $active-separator-color: #E5E5E5;
     top: 0px;
     left: 0px;
     width: $builder-tab-width;
-    background-color: #D6D6D6;
-    border: solid 1px #BBBBBB;
+    background-color: $editor-background-color;
+    border: solid 1px $editor-border;
     height: $editor-height;
     .item-tab {
       padding: 5px 0px 0px 5px;
@@ -62,8 +64,8 @@ $active-separator-color: #E5E5E5;
       position: relative;
       .no-editors {
         height: $editor-height;
-        background-color: #E5E5E5;
-        border: solid 1px #BBBBBB;
+        background-color: $editor-background-color;
+        border: solid 1px $editor-border  ;
       }
     }
   }
