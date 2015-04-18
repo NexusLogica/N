@@ -1,6 +1,6 @@
 <div class="editors-panel">
   <div class="tabs">
-    <div class="item-tab" ng-repeat="item in editorsByGuid" ng-class="{ 'active': 'item.source.guid === activeEditor'  }"><span ng-bind="item.source.displayShort"></span></div>
+    <div class="item-tab" ng-click="showEditor(item)" ng-repeat="item in editorsByGuid" ng-class="{ 'active': (item.source.guid === activeEditor)  }"><span ng-bind="item.displayShort"></span></div>
   </div>
 
   <div class="editors-container">

@@ -5216,8 +5216,7 @@ body {
       border-bottom: solid 1px #BBBBBB;
       height: 27px; }
       .editors-panel .tabs .item-tab.active {
-        background-color: #e5e5e5;
-        width: 140px; }
+        background-color: white; }
   .editors-panel .separator {
     position: absolute;
     top: 0px;

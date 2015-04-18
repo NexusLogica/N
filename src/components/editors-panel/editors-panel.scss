@@ -37,8 +37,7 @@ $editor-border: #ddd;
       border-bottom: solid 1px #BBBBBB;
       height: 27px;
       &.active {
-        background-color: $active-separator-color;
-        width:$builder-tab-width;
+        background-color: white;
       }
     }
   }

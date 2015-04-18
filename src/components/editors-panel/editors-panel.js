@@ -27,13 +27,13 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
       $scope.activeEditor = '';
 
       $scope.addOutputLog = function() {
+        var guid = N.generateUUID();
         var editor = {
           displayShort: 'Output',
           sourcePath: 'Output',
-          source: null
+          source: { guid: guid }
         };
 
-        var guid = N.generateUUID();
         $scope.activeEditor = guid;
         $scope.editorsByGuid[guid] = editor;
 
@@ -61,7 +61,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
 
       $scope.addHistoryViewer = function(history) {
         var editor = {
-          displayShort: history.displayName,
+          displayShort: 'Signals',
           sourcePath: history.source,
           source: history
         };
@@ -87,6 +87,10 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         _.forEach($scope.editorsByGuid, function(editor) {
           editor.signals.save.dispatch();
         });
+      };
+
+      $scope.showEditor = function(editor) {
+        $scope.activeEditor = editor.source.guid;
       };
 
       $scope.addOutputLog();
