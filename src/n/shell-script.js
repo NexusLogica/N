@@ -60,14 +60,18 @@ N.ShellScript.prototype.runScript = function(script, scriptArgs, response) {
 
 N.ShellScript.prototype.runScriptLine = function(lines, scriptArgs, response) {
   var line = lines.shift();
-  response.log(line.join(' '));
+  response.log('$ '+line.join(' '));
 
   var method = line[0];
+  var _this = this;
   if (this[method]) {
     line.shift();
     this[method]({args: line}, response).then(function (result) {
       if(lines.length > 0) {
-        this.runScriptLine(lines, scriptArgs, response);
+        if(result.msg) {
+          response.log(result.msg);
+        }
+        _this.runScriptLine(lines, scriptArgs, response);
       } else {
         response.done(result);
       }
@@ -105,6 +109,13 @@ N.ShellScript.prototype.mkdir = function(request, response) {
 
   return deferred.promise;
 };
+
+N.ShellScript.prototype.pwd = function(request, response) {
+  var deferred = Q.defer();
+  deferred.resolve({ msg: this.scope.getCurrentPath(), status: 1 });
+  return deferred.promise;
+};
+
 
 /*
 this.scope.shell.setCommandHandler('host', {
