@@ -26,6 +26,21 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
       $scope.editorsByGuid = {};
       $scope.activeEditor = '';
 
+      $scope.addOutputLog = function() {
+        var editor = {
+          displayShort: 'Output',
+          sourcePath: 'Output',
+          source: null
+        };
+
+        var guid = N.generateUUID();
+        $scope.activeEditor = guid;
+        $scope.editorsByGuid[guid] = editor;
+
+        var html = $compile('<output-log class="'+guid+'" signals="signals" ng-show="activeEditor === \''+guid+'\'"></output-log>')($scope);
+        $element.find('.editors').append(html);
+      };
+
       $scope.addEditor = function(source) {
         var editor = {
           displayShort: source.displayName,
@@ -73,6 +88,8 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
           editor.signals.save.dispatch();
         });
       };
+
+      $scope.addOutputLog();
 
     }],
     link: function($scope, $element, $attrs, ctrl) {

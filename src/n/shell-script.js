@@ -36,7 +36,6 @@ N.ShellScript = function(scope) {
  * @return {number} - Returns 0 on success, 1 otherwise.
  */
 N.ShellScript.prototype.runScript = function(script, scriptArgs, response) {
-
   try {
     var _this = this;
     var lines = script.split('\n');
@@ -61,6 +60,8 @@ N.ShellScript.prototype.runScript = function(script, scriptArgs, response) {
 
 N.ShellScript.prototype.runScriptLine = function(lines, scriptArgs, response) {
   var line = lines.shift();
+  response.log(line.join(' '));
+
   var method = line[0];
   if (this[method]) {
     line.shift();

@@ -25,7 +25,8 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         'compartment-enter': new signals.Signal(),
         'compartment-leave': new signals.Signal(),
         'compartment-click': new signals.Signal(),
-        'input-has-focus'  : new signals.Signal()
+        'input-has-focus'  : new signals.Signal(),
+        'output-log'       : new signals.Signal()
       };
 
       $scope.getCurrentPath = function() {
@@ -311,12 +312,16 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.loadFile($scope.selectedScript.path).then(function(sourceFile) {
             var scriptRunner = new N.ShellScript($scope);
             scriptRunner.runScript(sourceFile.text, [], { done: function(output) {
-              if(output.status === 0) {
-                $scope.showSuccessToast((output.msg && output.msg.length > 0) ? output.msg : 'Script run successfully');
-              } else {
-                $scope.showErrorToast(output.msg);
+                $scope.signals['output-log'].dispatch(output.msg);
+                if(output.status === 0) {
+                  $scope.showSuccessToast((output.msg && output.msg.length > 0) ? output.msg : 'Script run successfully');
+                } else {
+                  $scope.showErrorToast(output.msg);
+                }
+              }, log: function(text) {
+                $scope.signals['output-log'].dispatch(text);
               }
-            }}).catch(N.reportQError);
+            }).catch(N.reportQError);
           }
         );
       };
