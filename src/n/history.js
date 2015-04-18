@@ -25,7 +25,7 @@ var N = N || {};
  */
 N.History = function() {
   this.className  = 'N.History';
-  this.id         = null;
+  this.id         = N.generateUUID();
   this.inputs     = {};
   this.outputs    = {};
   this.states     = {};
@@ -37,6 +37,7 @@ N.History = function() {
  * @param input
  */
 N.History.prototype.loadFromSystem = function(system) {
+  this.system = system;
   this.systemName = system.name;
   this.networkName = system.network.name;
 

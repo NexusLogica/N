@@ -312,13 +312,14 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.loadFile($scope.selectedScript.path).then(function(sourceFile) {
             var scriptRunner = new N.ShellScript($scope);
             scriptRunner.runScript(sourceFile.text, [], { done: function(output) {
-                if(!_.isEmpty(output.msg)) {
-                  $scope.signals['output-log'].dispatch(output.status === 0 ? 'success' : 'error', output.msg);
+                var msg = (output.status !== 0 && !output.msg) ? 'Exited with error code '+output.status : output.msg;
+                if(!_.isEmpty(msg)) {
+                  $scope.signals['output-log'].dispatch(output.status === 0 ? 'success' : 'error', msg);
                 }
                 if(output.status === 0) {
-                  $scope.showSuccessToast((output.msg && output.msg.length > 0) ? output.msg : 'Script run successfully');
+                  $scope.showSuccessToast((msg && msg.length > 0) ? msg : 'Script run successfully');
                 } else {
-                  $scope.showErrorToast(output.msg);
+                  $scope.showErrorToast(msg);
                 }
               }, log: function(text) {
                 $scope.signals['output-log'].dispatch('success', text);

@@ -305,16 +305,34 @@ N.ShellScript.prototype.view = function(request, response) {
     } else {
 
       if (args[0].indexOf('$') === 0) {
-        var obj = this.scope.variables[args[0]];
-        if (obj) {
-          if (obj.type === 'history') {
-            this.scope.editorPanel.addHistoryViewer(obj);
-          }
-          deferred.reject({ status: 0 });
-        } else {
-          deferred.reject({ msg: 'Unable to find variable ' + args[0], status: 1 });
+        var chain = args[0].split('.');
+        var name = chain.shift();
+        var obj = this.scope.variables[name];
+        if(!obj && !obj.output) {
+          deferred.reject({ msg: 'Unable to find variable ' + name, status: 1 });
+          return deferred.promise;
         }
 
+        if(chain.length) {
+          obj = obj.output;
+
+          while(chain.length) {
+            name = chain.shift();
+            obj = obj[name];
+            if(!obj) {
+              deferred.reject({ msg: 'Unable to find variable ' + name, status: 1 });
+              return deferred.promise;
+            }
+          }
+        }
+
+        if (obj.type === 'history' || obj.className === 'N.History') {
+          this.scope.editorPanel.addHistoryViewer(obj);
+        }
+        else if (obj.type === 'system' || obj.className === 'N.System') {
+          this.scope.editorPanel.addNetworkViewer(obj);
+        }
+        deferred.resolve({ status: 0 });
       }
     }
   } catch(err) {

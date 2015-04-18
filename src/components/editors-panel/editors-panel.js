@@ -75,6 +75,22 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         $element.find('.editors').append(html);
       };
 
+      $scope.addNetworkViewer = function(network) {
+        var editor = {
+          displayShort: network.name,
+          network: network,
+          source: { guid: network.id }
+        };
+
+        var guid = editor.source.guid;
+        $scope.activeEditor = guid;
+        $scope.editorsByGuid[guid] = editor;
+
+
+        var html = $compile('<pi-viewer class="'+guid+'" network="editorsByGuid.'+guid+'" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-viewer>')($scope);
+        $element.find('.editors').append(html);
+      };
+
       $scope.getActiveFile = function() {
         var file;
         if($scope.activeEditor) {

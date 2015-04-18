@@ -56,7 +56,7 @@ N.createInstance = function(json) {
     obj[key] = json[key];
   }
   return obj;
-}
+};
 
 /***
  * Write a stack
@@ -70,9 +70,9 @@ N.reportQError = function(error) {
 /***
  * For use in compiling N JSON template functions.
  * @method N.Template
- * @param argStringArray
- * @param functionText
- * @returns {FactoryFunction}
+ * @param imports
+ * @param func
+ * @returns {function}
  */
 N.Template = function(imports, func) {
   return { imports: imports, loadedImports: {}, func: func };
@@ -81,9 +81,9 @@ N.Template = function(imports, func) {
 /***
  * For use in compiling N JSON template functions.
  * @method N.Template
- * @param argStringArray
- * @param functionText
- * @returns {FactoryFunction}
+ * @param imports
+ * @param func
+ * @returns {function}
  */
 N.ConnectionTemplate = function(imports, func) {
   return { imports: imports, loadedImports: {}, func: func };
@@ -92,11 +92,12 @@ N.ConnectionTemplate = function(imports, func) {
 /***
  * @method N.compileTemplateFunction
  * @param {string} templateText
+ * @param {string} identifier
  * @returns {Obj, Function} - Returns
  */
-N.compileTemplateFunction = function(templateText, identifer) {
+N.compileTemplateFunction = function(templateText, identifier) {
   try {
-    N.log('Compiling '+identifer);
+    N.log('Compiling '+identifier);
     var templateFunction = new Function('return '+templateText);
     return templateFunction();
   } catch(err) {

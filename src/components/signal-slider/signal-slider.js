@@ -58,8 +58,8 @@ angular.module('nSimulationApp').directive('signalSlider', [function() {
         $timeout(function() {
           var minLabel = ($scope.rangeMax-$scope.rangeMin)*$scope.min+$scope.rangeMin;
           var maxLabel = ($scope.rangeMax-$scope.rangeMin)*$scope.max+$scope.rangeMin;
-          $scope.timeMinLabel = minLabel;
-          $scope.timeMaxLabel = maxLabel;
+          $scope.timeMinLabel = Math.floor(minLabel+0.5);
+          $scope.timeMaxLabel = Math.floor(maxLabel+0.5);
         });
       };
 

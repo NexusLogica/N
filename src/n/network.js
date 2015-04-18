@@ -24,7 +24,7 @@ All Rights Reserved.
  */
 N.Network = function(parentNetwork) {
   this.className           = 'N.Network';
-  this.id                  = null;
+  this.id                  = N.generateUUID();
   this.name                = '';
   this.category            = 'Default';
   this.neurons             = [];
@@ -38,7 +38,7 @@ N.Network = function(parentNetwork) {
   this.validationMessages  = [];
   this.random              = (parentNetwork ? parentNetwork.random : new N.Rand.RandomGenerator());
   this.display             = {};
-}
+};
 
 /**
  * Returns the object type.
@@ -47,7 +47,7 @@ N.Network = function(parentNetwork) {
  */
 N.Network.prototype.getType = function() {
   return N.Type.Network;
-}
+};
 
 /**
  * Get the full path of the network.
@@ -56,18 +56,18 @@ N.Network.prototype.getType = function() {
  */
 N.Network.prototype.getPath = function() {
   return (this.parentNetwork ? this.parentNetwork.getPath() : '/')+this.name;
-}
+};
 
 /**
  * Sets the parent network.
  * @method setParentNetwork
- * @param {N.Network} the parent network
+ * @param {N.Network} parentNetwork - The parent network
  * @returns {N.Network} Returns a reference to this network.
  */
 N.Network.prototype.setParentNetwork = function(parentNetwork) {
   this.parentNetwork = parentNetwork;
   return this;
-}
+};
 
 /**
  * Set the name.
@@ -77,7 +77,7 @@ N.Network.prototype.setParentNetwork = function(parentNetwork) {
 N.Network.prototype.setName = function(name) {
   this.name = name;
   return this;
-}
+};
 
 /**
  * Get the parent network. This call is implemented by all network, neuron, and compartment objects.
@@ -86,7 +86,7 @@ N.Network.prototype.setName = function(name) {
  */
 N.Network.prototype.getParent = function() {
   return this.parentNetwork;
-}
+};
 
 /**
  * Get the the root/top level network.
@@ -95,7 +95,7 @@ N.Network.prototype.getParent = function() {
  */
 N.Network.prototype.getRoot = function() {
   return this.parentNetwork ? this.parentNetwork.getRoot() : this;
-}
+};
 
 /**
  * Adds a child network to the network.
@@ -114,31 +114,31 @@ N.Network.prototype.addNetwork = function(network) {
   this.networksByName[network.name] = network;
   network.setParentNetwork(this);
   return network;
-}
+};
 
 /**
  * Get number of networks directly owned by this network.
  * @method getNumNetworks
- * @returns {Integer}
+ * @returns {number}
  */
 N.Network.prototype.getNumNetworks = function() {
   return this.networks.length;
-}
+};
 
 /**
  * Get a network owned by this network by index.
  * @method getNetworkByIndex
- * @param {Integer} index
+ * @param {number} index
  * @returns {N.Network}
  */
 N.Network.prototype.getNetworkByIndex = function(index) {
   return this.networks[index];
-}
+};
 
 /**
  * Get a network owned by this network given the network short string.
  * @method getNetworkByName
- * @param {String} shortName
+ * @param {String} name
  * @returns {N.Network}
  */
 N.Network.prototype.getNetworkByName = function(name) {
@@ -160,36 +160,36 @@ N.Network.prototype.addNeuron = function(neuron) {
   this.neuronsByName[neuron.name] = neuron;
   neuron.setNetwork(this);
   return neuron;
-}
+};
 
 /**
  * Get number of neurons directly owned by this network.
  * @method getNumNeurons
- * @returns {Integer}
+ * @returns {number}
  */
 N.Network.prototype.getNumNeurons = function() {
   return this.neurons.length;
-}
+};
 
 /**
  * Get a neuron owned by this network by index.
  * @method getNeuronByIndex
- * @param {Integer} index
+ * @param {number} index
  * @returns {N.Neuron}
  */
 N.Network.prototype.getNeuronByIndex = function(index) {
   return this.neurons[index];
-}
+};
 
 /**
  * Get a neuron owned by this network given the neuron short string.
  * @method getNeuronByName
- * @param {String} shortName
+ * @param {string} name
  * @returns {N.Neuron}
  */
 N.Network.prototype.getNeuronByName = function(name) {
   return this.neuronsByName[name];
-}
+};
 
 /**
  * Add a connection and connect it immmediately.
@@ -200,7 +200,7 @@ N.Network.prototype.addConnection = function(connection) {
   this.connections.push(connection);
   this.connectionsByPath[connection.getPath()] = connection;
   return connection;
-}
+};
 
 /**
  * Get the number of connections owned by this network.
@@ -209,17 +209,17 @@ N.Network.prototype.addConnection = function(connection) {
  */
 N.Network.prototype.getNumConnections = function() {
   return this.connections.length;
-}
+};
 
 /**
  * Get a connection by index
  * @method getConnectionsByIndex
- * @param {Integer} index
+ * @param {number} index
  * @returns {N.Connection}
  */
 N.Network.prototype.getConnectionsByIndex = function(index) {
   return this.connections[index];
-}
+};
 
 /**
  * Get a connection given the connection path string.
@@ -229,7 +229,7 @@ N.Network.prototype.getConnectionsByIndex = function(index) {
  */
 N.Network.prototype.getConnectionsByPath = function(path) {
   return this.connectionsByPath[path];
-}
+};
 
 /**
  * Returns the full path from the top level network to this network.
@@ -238,13 +238,13 @@ N.Network.prototype.getConnectionsByPath = function(path) {
  */
 N.Network.prototype.getFullPath = function() {
   return (this.parentNetwork ? this.parentNetwork.getFullPath() : '/') + this.name;
-}
+};
 
 N.Network.prototype.link = function() {
   this.linkReport = new N.ConfigurationReport();
   this.connect();
   return this.linkReport;
-}
+};
 
 /***
  * Link up connections and compartments.
@@ -267,23 +267,23 @@ N.Network.prototype.connect = function() {
     this.networks[i].connect();
   }
   return this;
-}
+};
 
 /**
  * Update the output of all child networks, neurons, and connections.
  * @method upate
- * @param {Real} time The time of the current simulation step.
+ * @param {float} time The time of the current simulation step.
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.update = function(time) {
   this.updateConnections(time);
   this.updateNeurons(time);
-}
+};
 
 /**
  * Update all connection outputs. This should only be called by a top level or parent network.
  * @method updateConnections
- * @param {Real} time The time of the current simulation step.
+ * @param {float} time The time of the current simulation step.
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.updateConnections = function(time) {
@@ -297,12 +297,12 @@ N.Network.prototype.updateConnections = function(time) {
     this.networks[j].updateConnections(time);
   }
   return this;
-}
+};
 
 /**
  * Update all neuron outputs. This should only be called by a top level or parent network.
  * @method updateNeurons
- * @param {Real} time The time of the current simulation step.
+ * @param {float} time The time of the current simulation step.
  * @return {Network} Returns a reference to self.
  */
 N.Network.prototype.updateNeurons = function(time) {
@@ -316,7 +316,7 @@ N.Network.prototype.updateNeurons = function(time) {
     this.networks[j].updateNeurons(time);
   }
   return this;
-}
+};
 
 /**
  * Returns the network and all neurons, compartments, and connections to the initial state. All output signal values will
@@ -340,7 +340,7 @@ N.Network.prototype.clear = function() {
     this.networks[i].clear();
   }
   return this;
-}
+};
 
 /**
  * Validates the network. Warns if there are no child networks or neurons. It will report an error if there are no networks
@@ -370,7 +370,7 @@ N.Network.prototype.validate = function(report) {
     }
   }
   return report;
-}
+};
 
 /**
  * Loads the properties of the JSON configuration to self. In doing so it creates any child neurons.
@@ -427,7 +427,7 @@ N.Network.prototype.loadFrom = function(json) {
     }
   ).catch(N.reportQError);
   return deferred.promise;
-}
+};
 
 N.Network.prototype.loadTemplate = function(json) {
   var deferred = Q.defer();
@@ -476,7 +476,7 @@ N.Network.prototype.loadNetworks = function(json) {
   }
 
   return Q.all(promises);
-}
+};
 
 N.Network.prototype.loadNeurons = function(json) {
   var promises = [];
@@ -488,7 +488,7 @@ N.Network.prototype.loadNeurons = function(json) {
   }
 
   return Q.all(promises);
-}
+};
 
 N.Network.prototype.loadConnections = function(json) {
   var promises = [];
@@ -500,7 +500,7 @@ N.Network.prototype.loadConnections = function(json) {
   }
 
   return Q.all(promises);
-}
+};
 
 N.Network.prototype.initialize = function(templateName) {
   for(var i in this.networks) {
@@ -515,7 +515,7 @@ N.Network.prototype.initialize = function(templateName) {
       connection.initialize();
     }
   }
-}
+};
 
 N.Network.prototype.getTemplate = function(templateName) {
   if(this.templates[templateName]) {
@@ -525,12 +525,12 @@ N.Network.prototype.getTemplate = function(templateName) {
     return this.parentNetwork.getTemplate(templateName);
   }
   return null;
-}
+};
 
 N.Network.prototype.getRemoteTemplate = function(remoteTemplateData) {
   var database = N.NWS.services.getDatabase(remoteTemplateData.url);
   return database.readDocumentById(remoteTemplateData.id);
-}
+};
 
 N.Network.prototype.addTemplates = function(templates) {
   for(var i in templates) {
@@ -538,10 +538,10 @@ N.Network.prototype.addTemplates = function(templates) {
     this.templates[i] = _.clone(template);
   }
   return this;
-}
+};
 
 N.Network.prototype.routeErrorMsg = function(errMsg) {
   this.validationMessages.push(errMsg);
   N.log(errMsg);
   return errMsg;
-}
+};

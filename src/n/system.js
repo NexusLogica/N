@@ -12,8 +12,6 @@ All Rights Reserved.
 */
 'use strict';
 
-var N = N || {};
-
   //************
   //* N.System *
   //************
@@ -25,7 +23,7 @@ var N = N || {};
  */
 N.System = function() {
   this.className  = 'N.System';
-  this.id         = null;
+  this.id         = N.generateUUID();
   this.name       = '';
   this.inputs     = [];
   this.outputs    = [];
@@ -57,6 +55,7 @@ N.System.prototype.addOutput = function(output) {
  */
 N.System.prototype.connectToNetwork = function(network) {
   this.network = network;
+  this.name = this.network.name;
 
   _.forEach(this.inputs, function(input) {
     input.connect();
@@ -68,9 +67,8 @@ N.System.prototype.connectToNetwork = function(network) {
 };
 
 /**
- * Runs a test.
- * @method runTest
- * @param test
+ * Runs the system.
+ * @method run
  */
 N.System.prototype.run = function() {
   this.network.clear();
@@ -239,6 +237,7 @@ N.System.prototype.loadInputsAndOutputs = function(json) {
  * This is a private internal function.
  * @method createCompartment
  * @param {JSON} json
+ * @param {string} ioType - Either 'input' or 'output'.
  * @returns { Q.promise}
  */
 N.System.prototype.createInputOutput = function(json, ioType) {
