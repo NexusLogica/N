@@ -6530,6 +6530,8 @@ body {
     padding: 5px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
     font-size: 11px; }
+  .output-log .log-line .error {
+    color: red; }
 
 .n-canvas {
   position: relative;

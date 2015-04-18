@@ -294,7 +294,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
                 $scope.$apply(function() {
                   var niceName = sourceFile.extractProperty('name');
                   var description = sourceFile.extractProperty('description');
-                  $scope.scripts.push({path: fullPath, name: niceName, description: description});
+                  $scope.scripts.push({path: sourceFile.path, name: niceName, description: description});
                 });
               }, function(err) {
                 console.log('ERROR: '+err.description);
@@ -312,14 +312,18 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.loadFile($scope.selectedScript.path).then(function(sourceFile) {
             var scriptRunner = new N.ShellScript($scope);
             scriptRunner.runScript(sourceFile.text, [], { done: function(output) {
-                $scope.signals['output-log'].dispatch(output.msg);
+                if(!_.isEmpty(output.msg)) {
+                  $scope.signals['output-log'].dispatch(output.status === 0 ? 'success' : 'error', output.msg);
+                }
                 if(output.status === 0) {
                   $scope.showSuccessToast((output.msg && output.msg.length > 0) ? output.msg : 'Script run successfully');
                 } else {
                   $scope.showErrorToast(output.msg);
                 }
               }, log: function(text) {
-                $scope.signals['output-log'].dispatch(text);
+                $scope.signals['output-log'].dispatch('success', text);
+              }, error: function(text) {
+                $scope.signals['output-log'].dispatch('error', text);
               }
             }).catch(N.reportQError);
           }

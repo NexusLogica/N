@@ -112,390 +112,417 @@ N.ShellScript.prototype.mkdir = function(request, response) {
 
 N.ShellScript.prototype.pwd = function(request, response) {
   var deferred = Q.defer();
-  deferred.resolve({ msg: this.scope.getCurrentPath(), status: 1 });
+  deferred.resolve({ msg: this.scope.getCurrentPath(), status: 0 });
   return deferred.promise;
 };
 
 
-/*
-this.scope.shell.setCommandHandler('host', {
-  exec: function(cmd, args, callback) {
-    if(args.length === 0) {
-      callback(this.scope.scriptHost || 'Script host not set');
-    } else if(args.length === 1) {
-      var host = args[0];
-      N.Http.get(host+'/files').then(function(data) {
-        this.scope.fileSystem = data;
-        this.scope.pwd = [];
-        this.scope.scriptHost = host;
-        localStorage.setItem('lastScriptHost', host);
-        callback('Setting host to: '+host);
-      }, function(err) {
-        callback('Not a valid host name: '+err.httpStatusCodeDescription);
-      }).catch(N.reportQError);
-    } else {
-      callback('Usage: host              returns current host name\n'+
-      '       host [new-host]   sets the new host');
+N.ShellScript.prototype.cd = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  var path = args[0];
+  if(path === '.') {
+    _.noop();
+  } else if(path ==='..') {
+    if(this.scope.pwd.length > 0) {
+      this.scope.pwd.pop();
     }
-  },
-  completion: function(cmd, arg, line, callback) {
-    callback(this.scope.shell.bestMatch(arg, ['world', 'josh']));
-  }
-});
+  } else {
+    var ps = path.split('/');
+    var dir = this.scope.cd;
+    var isDirName = function(d) { return (d.name === this.$$dirName); };
+    for(var i=0; i<ps.length; i++) {
+      this.$$dirName = ps[i];
+      dir = _.find(dir.directories, isDirName, this);
 
-this.scope.shell.setCommandHandler('pwd', {
-  exec: function (cmd, args, callback) {
-    callback(this.scope.getCurrentPath());
-  }
-});
-
-this.scope.shell.setCommandHandler('cd', {
-  exec: function (cmd, args, callback) {
-    var path = args[0];
-    if(path === '.') {
-      _.noop();
-    } else if(path ==='..') {
-      if(this.scope.pwd.length > 0) {
+      if(!dir) {
+        deferred.reject({ msg: 'cd: ' + this.$$dirName + ': No such directory', status: 1 });
+        return;
+      }
+    }
+    this.scope.cd = dir;
+    for(i = 0; i<ps.length; i++) {
+      if(ps[i] === '.') {
+        _.noop();
+      } else if(ps[i] === '..') {
         this.scope.pwd.pop();
-      }
-    } else {
-      var ps = path.split('/');
-      var dir = this.scope.cd;
-      for(var i=0; i<ps.length; i++) {
-        var dirName = ps[i];
-        dir = _.find(dir.directories, function(d) {
-          return (d.name === dirName);
-        });
-
-        if(!dir) {
-          callback('cd: ' + dirName + ': No such directory');
-          return;
-        }
-      }
-      this.scope.cd = dir;
-      for(i = 0; i<ps.length; i++) {
-        if(ps[i] === '.') {
-          _.noop();
-        } else if(ps[i] === '..') {
-          this.scope.pwd.pop();
-        } else {
-          this.scope.pwd.push(ps[i]);
-        }
-      }
-    }
-    callback('');
-  }
-});
-
-this.scope.shell.setCommandHandler('ls', {
-  exec: function (cmd, args, callback) {
-    var dir = this.scope.fileSystem;
-    for(var i=0; i<this.scope.pwd.length; i++) {
-      var dirName = this.scope.pwd[i];
-      dir = _.find(dir.directories, function(d) {
-        return (d.name === dirName);
-      });
-    }
-    var list = [];
-    for(var j=0; j<dir.directories.length; j++) {
-      list.push(dir.directories[j].name);
-    }
-    for(var k=0; k<dir.files.length; k++) {
-      list.push(dir.files[k].name);
-    }
-
-    list.sort();
-    var output = '';
-    _.forEach(list, function(name) { output += '<div>'+name+'</div>'; });
-    callback(output);
-  }
-});
-
-this.scope.shell.setCommandHandler('edit', {
-  exec: function (cmd, args, callback) {
-    try {
-      var usage = 'Usage: edit [-n] [filepath]';
-
-      if(args.length < 1 || args.length > 2) {
-
-        callback(usage)
-
-      } else if(args.length === 1) {
-
-        if(args[0].indexOf('$') === 0) {
-          var obj = this.scope.variables[args[0]];
-          if(obj) {
-            if(obj.type === 'compiled' || obj.type === 'history') {
-              this.scope.editorPanel.addEditor(obj);
-            }
-            callback('');
-          } else {
-            callback('Unable to find variable ' + args[0]);
-          }
-
-        } else {
-
-          var file = args[0];
-          var path = this.scope.getCurrentPath() + file;
-
-          N.Http.get(this.scope.scriptHost + '/file' + path, {
-            contentType: 'text/plain',
-            dataType: 'text'
-          }).then(function (data) {
-
-            // Add the file to the list of sources.
-            var file = new N.SourceFile();
-            file.setPath(path);
-            file.setText(data);
-            this.scope.sources.addSource(file);
-            this.scope.editorPanel.addEditor(file);
-
-            callback('File loaded');
-          }, function (err) {
-            callback('Error opening file for edit: ' + err.httpStatusCodeDescription);
-          }).catch(N.reportQError);
-        }
-
-      } else if(args.length === 2) {
-
-        if (args[0] !== '-n') {
-          callback(usage);
-          return;
-        }
-        var sourceFile = new N.SourceFile();
-        var fullPath;
-        if (args[1].indexOf('/') === 1) {
-          fullPath = args[1];
-        } else if (this.scope.pwd.length === 0) {
-          fullPath = '/' + args[1];
-        } else {
-          fullPath = this.scope.getCurrentPath() + '/' + args[1];
-        }
-
-        sourceFile.setPath(fullPath);
-        this.scope.sources.addSource(sourceFile);
-
-        this.scope.editorPanel.addEditor(sourceFile);
-        callback('');
-      }
-    } catch(err) {
-      callback('ERROR: '+err.stack)
-    }
-  }
-});
-
-this.scope.shell.setCommandHandler('view', {
-  exec: function (cmd, args, callback) {
-    try {
-      var usage = 'Usage: view [env-var]';
-
-      if(args.length !== 1) {
-
-        callback(usage)
-
       } else {
-
-        if (args[0].indexOf('$') === 0) {
-          var obj = this.scope.variables[args[0]];
-          if (obj) {
-            if (obj.type === 'history') {
-              this.scope.editorPanel.addHistoryViewer(obj);
-            }
-            callback('');
-          } else {
-            callback('Unable to find variable ' + args[0]);
-          }
-
-        }
+        this.scope.pwd.push(ps[i]);
       }
-    } catch(err) {
-      callback('ERROR: '+err.stack)
     }
   }
-});
+  deferred.resolve({ status: 0 });
+  return deferred.promise;
+};
 
-this.scope.shell.setCommandHandler('compile', {
-  exec: function (cmd, args, callback) {
-    var usage = 'Usage: compile [source-file-path] [output-object-name]';
+N.ShellScript.prototype.ls = function(request, response) {
+  var deferred = Q.defer();
 
-    if (args.length === 2) {
-      var filePath = this.scope.makeFullPath(args[0]);
-      var outputName = args[1];
+  var args = request.args;
+  var dir = this.scope.fileSystem;
+  var isDirName = function(d) { return (d.name === this.$$dirName); };
 
-      this.scope.compile(filePath).then(function(config) {
-        this.scope.variables[outputName] = { type: 'compiled', source: filePath, displayShort: outputName, output: config, guid: 'guid'+N.generateUUID() };
-        callback('Compile successful');
-      }, function(err) {
-        callback('ERROR: Unable to compile: '+err.description);
-      }).catch(N.reportQError);
+  for(var i=0; i<this.scope.pwd.length; i++) {
+    this.$$dirName = this.scope.pwd[i];
+    dir = _.find(dir.directories, isDirName, this);
+  }
+  var list = [];
+  for(var j=0; j<dir.directories.length; j++) {
+    list.push(dir.directories[j].name);
+  }
+  for(var k=0; k<dir.files.length; k++) {
+    list.push(dir.files[k].name);
+  }
 
+  list.sort();
+  var output = '';
+  _.forEach(list, function(name) { output += '<div>'+name+'</div>'; });
+  deferred.resolve({ msg: output, status: 0 });
+
+  return deferred.promise;
+};
+
+N.ShellScript.prototype.host = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  if(args.length === 0) {
+    if(this.scope.scriptHost) {
+      deferred.resolve({ msg: this.scope.scriptHost, status: 0 });
     } else {
-      callback(usage);
+      deferred.reject({ msg: 'Script host not set', status: 1 });
     }
+  } else if(args.length === 1) {
+    var host = args[0];
+    var _this = this;
+    N.Http.get(host+'/files').then(function(data) {
+      _this.scope.fileSystem = data;
+      _this.scope.pwd = [];
+      _this.scope.scriptHost = host;
+      localStorage.setItem('lastScriptHost', host);
+      deferred.resolve({ msg: 'Setting host to: '+host, status: 0 });
+    }, function(err) {
+      deferred.reject({ msg: 'Not a valid host name: '+err.httpStatusCodeDescription, status: 1 });
+    }).catch(function(err) {
+      deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+    });
+  } else {
+    deferred.reject({ msg: 'Usage: host              returns current host name\n'+
+    '       host [new-host]   sets the new host', status: 1 });
   }
-});
+  return deferred.promise;
+};
 
 
-this.scope.shell.setCommandHandler('build', {
-  exec: function (cmd, args, callback) {
-    var usage = 'Usage: build [source-file-path | environment-variable] [output-object-name]';
+N.ShellScript.prototype.edit = function(request, response) {
+  var deferred = Q.defer();
 
-    if (args.length === 2) {
-      var outputName = args[1];
+  try {
+    var args = request.args;
+    var usage = 'Usage: edit [-n] [filepath]';
+
+    if(args.length < 1 || args.length > 2) {
+
+      deferred.reject({ msg: usage, status: 1 });
+
+    } else if(args.length === 1) {
 
       if(args[0].indexOf('$') === 0) {
         var obj = this.scope.variables[args[0]];
-        if(!obj) {
-          callback('Unable to find variable ' + args[0]);
-          return;
+        if(obj) {
+          if(obj.type === 'compiled' || obj.type === 'history') {
+            this.scope.editorPanel.addEditor(obj);
+          }
+          deferred.resolve({ status: 0 });
+        } else {
+          deferred.reject({ msg: 'Unable to find variable ' + args[0], status: 1 });
         }
-        if(obj.type !== 'compiled') {
-          callback('Variable ' + args[0] + ' is of type "' + obj.type + '", not of type compiled');
-          return;
+
+      } else {
+
+        var file = args[0];
+        var path = this.scope.getCurrentPath() + file;
+
+        var _this = this;
+        N.Http.get(this.scope.scriptHost + '/file' + path, {
+          contentType: 'text/plain',
+          dataType: 'text'
+        }).then(function (data) {
+
+          // Add the file to the list of sources.
+          var file = new N.SourceFile();
+          file.setPath(path);
+          file.setText(data);
+          _this.scope.sources.addSource(file);
+          _this.scope.editorPanel.addEditor(file);
+
+          deferred.resolve({ msg: 'File loaded', status: 0 });
+        }, function (err) {
+          deferred.reject({ msg: 'Error opening file for edit: ' + err.httpStatusCodeDescription, status: 1 });
+        }).catch(function(err) {
+          deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+        });
+      }
+
+    } else if(args.length === 2) {
+
+      if (args[0] !== '-n') {
+        deferred.reject({ msg: usage, status: 1 });
+        return;
+      }
+      var sourceFile = new N.SourceFile();
+      var fullPath;
+      if (args[1].indexOf('/') === 1) {
+        fullPath = args[1];
+      } else if (this.scope.pwd.length === 0) {
+        fullPath = '/' + args[1];
+      } else {
+        fullPath = this.scope.getCurrentPath() + '/' + args[1];
+      }
+
+      sourceFile.setPath(fullPath);
+      this.scope.sources.addSource(sourceFile);
+
+      this.scope.editorPanel.addEditor(sourceFile);
+      deferred.resolve({ status: 0 });
+    }
+  } catch(err) {
+    deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+  }
+  return deferred.promise;
+};
+
+N.ShellScript.prototype.view = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  try {
+    var usage = 'Usage: view [env-var]';
+
+    if(args.length !== 1) {
+
+      deferred.reject({ msg: usage, status: 1 });
+
+    } else {
+
+      if (args[0].indexOf('$') === 0) {
+        var obj = this.scope.variables[args[0]];
+        if (obj) {
+          if (obj.type === 'history') {
+            this.scope.editorPanel.addHistoryViewer(obj);
+          }
+          deferred.reject({ status: 0 });
+        } else {
+          deferred.reject({ msg: 'Unable to find variable ' + args[0], status: 1 });
         }
-        var config = obj.output;
+
+      }
+    }
+  } catch(err) {
+    deferred.reject({ msg: 'ERROR: '+err.stack, status: 1 });
+  }
+  return deferred.promise;
+};
+
+N.ShellScript.prototype.compile = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  var usage = 'Usage: compile [source-file-path] [output-object-name]';
+
+  if (args.length === 2) {
+    var filePath = this.scope.makeFullPath(args[0]);
+    var outputName = args[1];
+
+    var _this = this;
+    this.scope.compile(filePath).then(function(config) {
+      _this.scope.variables[outputName] = { type: 'compiled', source: filePath, displayShort: outputName, output: config, guid: 'guid'+N.generateUUID() };
+      deferred.resolve({ msg: 'Compile successful', status: 0 });
+    }, function(err) {
+      deferred.reject({ msg: 'ERROR: Unable to compile: '+err.description, status: 1 });
+    }).catch(function(err) {
+      deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+    });
+
+  } else {
+    deferred.reject({ msg: usage, status: 1 });
+  }
+  return deferred.promise;
+};
+
+
+N.ShellScript.prototype.build = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  var usage = 'Usage: build [source-file-path | environment-variable] [output-object-name]';
+
+  if (args.length === 2) {
+    var outputName = args[1];
+
+    if(args[0].indexOf('$') === 0) {
+      var obj = this.scope.variables[args[0]];
+      if(!obj) {
+        deferred.reject({ msg: 'Unable to find variable ' + args[0], status: 1 });
+        return;
+      }
+      if(obj.type !== 'compiled') {
+        deferred.reject({ msg: 'Variable ' + args[0] + ' is of type "' + obj.type + '", not of type compiled', status: 1 });
+        return;
+      }
+      var config = obj.output;
+
+      var _this = this;
+      this.scope.buildFromJSON(config).then(function(builtObject) {
+        _this.scope.variables[outputName] = { type: 'object', output: builtObject, guid: 'guid'+N.generateUUID() };
+        deferred.resolve({ msg: 'Build successful', status: 0 });
+      }, function(err) {
+        deferred.reject({ msg: 'ERROR: Unable to build the object: '+err.description, status: 1 });
+      }).catch(function(err) {
+        deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+      });
+
+    } else {
+      var filePath = this.scope.makeFullPath(args[0]);
+      this.scope.loadFile(filePath).then(function (sourceFile) {
+        var config = JSON.parse(sourceFile.getText());
 
         this.scope.buildFromJSON(config).then(function(builtObject) {
           this.scope.variables[outputName] = { type: 'object', output: builtObject, guid: 'guid'+N.generateUUID() };
-          callback('Build successful');
+          deferred.resolve({ msg: 'Build successful', status: 0 });
         }, function(err) {
-          callback('ERROR: Unable to build the object: '+err.description);
-        }).catch(N.reportQError);
+          deferred.reject({ msg: 'ERROR: Unable to build object: '+err.description, status: 1 });
+        }).catch(function(err) {
+          deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+        });
 
+      }, function (err) {
+        deferred.reject({ msg: 'ERROR: Unable to load file "' + filePath + '": ' + err.description, status: 1 });
+      }).catch(function(err) {
+        deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+      });
+    }
+  } else {
+    deferred.reject({ msg: usage, status: 1 });
+  }
+  return deferred.promise;
+};
+
+N.ShellScript.prototype.run = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  var usage = 'Usage: run [compiled-system-env-var] [compiled-network-env-var] [output-object-name]';
+
+  if (args.length === 3) {
+    try {
+      var systemEnvVar = args[0];
+      var networkEnvVar = args[1];
+      var outputName = args[2];
+      var _this = this;
+
+      // Get or build the system object.
+      var systemDeferred = Q.defer();
+      var systemObj = this.scope.variables[systemEnvVar];
+      if (systemObj) {
+        systemDeferred.resolve();
       } else {
-        var filePath = this.scope.makeFullPath(args[0]);
-        this.scope.loadFile(filePath).then(function (sourceFile) {
-          var config = JSON.parse(sourceFile.getText());
+        this.scope.buildFromFile(systemEnvVar).then(function (builtSystem) {
+          systemObj = builtSystem;
+          systemDeferred.resolve();
+        }, function (err) {
+          systemDeferred.reject(err);
+        }).catch(function(err) {
+          deferred.reject({ msg: 'Unexpected error building system: '+err.description+'\n'+err.stack, status: 1 });
+        });
+      }
 
-          this.scope.buildFromJSON(config).then(function(builtObject) {
-            this.scope.variables[outputName] = { type: 'object', output: builtObject, guid: 'guid'+N.generateUUID() };
-            callback('Build successful');
-          }, function(err) {
-            callback('ERROR: Unable to build object: '+err.description);
-          }).catch(N.reportQError);
+      // On return of the system promise, get or build the network object.
+      systemDeferred.promise.then(function () {
+        var networkDeferred = Q.defer();
+
+        var networkObj = _this.scope.variables[networkEnvVar];
+        if (networkObj) {
+          networkDeferred.resolve();
+        } else {
+          _this.scope.buildFromFile(networkEnvVar).then(function (builtNetwork) {
+            networkObj = builtNetwork;
+            networkDeferred.resolve();
+          }, function (err) {
+            networkDeferred.reject(err);
+          }).catch(function (err) {
+            deferred.reject({ msg: 'Unexpected error building network: '+err.description+'\n'+err.stack, status: 1 });
+          });
+        }
+
+        // On return of the network promise, run the system with the network.
+        networkDeferred.promise.then(function () {
+
+          // Run the system.
+          var network = networkObj;
+          var system = systemObj;
+
+          system.connectToNetwork(network);
+          system.run();
+
+          var history = system.getHistory();
+
+          system.disconnect();
+
+          _this.scope.variables[outputName] = {type: 'history', displayShort: outputName, output: history, guid: 'guid' + N.generateUUID()};
+          deferred.resolve({ msg: 'Run successful', status: 0 });
 
         }, function (err) {
-          callback('ERROR: Unable to load file "' + filePath + '": ' + err.description);
-        }).catch(N.reportQError);
-      }
-    } else {
-      callback(usage);
-    }
-  }
-});
-
-this.scope.shell.setCommandHandler('run', {
-  exec: function (cmd, args, callback) {
-    var usage = 'Usage: run [compiled-system-env-var] [compiled-network-env-var] [output-object-name]';
-
-    if (args.length === 3) {
-      try {
-        var systemEnvVar = args[0];
-        var networkEnvVar = args[1];
-        var outputName = args[2];
-
-        // Get or build the system object.
-        var systemDeferred = Q.defer();
-        var systemObj = this.scope.variables[systemEnvVar];
-        if (systemObj) {
-          systemDeferred.resolve();
-        } else {
-          this.scope.buildFromFile(systemEnvVar).then(function (builtSystem) {
-            systemObj = builtSystem;
-            systemDeferred.resolve();
-          }, function (err) {
-            systemDeferred.reject(err);
-          }).catch(function (err) {
-            N.reportQError(err);
-            callback('Unexpected error building system: ' + err.description);
-          });
-        }
-
-        // On return of the system promise, get or build the network object.
-        systemDeferred.promise.then(function () {
-          var networkDeferred = Q.defer();
-
-          var networkObj = this.scope.variables[networkEnvVar];
-          if (networkObj) {
-            networkDeferred.resolve();
-          } else {
-            this.scope.buildFromFile(networkEnvVar).then(function (builtNetwork) {
-              networkObj = builtNetwork;
-              networkDeferred.resolve();
-            }, function (err) {
-              networkDeferred.reject(err);
-            }).catch(function (err) {
-              N.reportQError(err);
-              callback('Unexpected error building network: ' + err.description);
-            });
-          }
-
-          // On return of the network promise, run the system with the network.
-          networkDeferred.promise.then(function () {
-
-            // Run the system.
-            var network = networkObj;
-            var system = systemObj;
-
-            system.connectToNetwork(network);
-            system.run();
-
-            var history = system.getHistory();
-
-            system.disconnect();
-
-            this.scope.variables[outputName] = {type: 'history', displayShort: outputName, output: history, guid: 'guid' + N.generateUUID()};
-            callback('Run successful');
-
-          }, function (err) {
-            callback('Error building system: '+err.description);
-          }).catch(function (err) {
-            N.reportQError(err);
-            callback('Unexpected error building the network: ' + err.description);
-          });
-
-        }, function (callbackMsg) {
-          callback(callbackMsg);
+          deferred.reject({ msg: 'Error building system: '+err.description, status: 1 });
+        }).catch(function (err) {
+          deferred.reject({ msg: 'Unexpected error building the network: '+err.description+'\n'+err.stack, status: 1 });
         });
-      } catch(err) {
-        console.log(err.stack);
-        callback('Unexpected error: ' + err.description);
-      }
-    } else {
-      callback(usage);
-    }
-  }
-});
 
-this.scope.shell.setCommandHandler('save', {
-  exec: function (cmd, args, callback) {
-    if (args.length) {
-      var file = args[0];
-      callback('NOT IMPLEMENTED');
-    } else {
-      this.scope.editorPanel.saveAllFilesToSourceFiles();
-      var num = 0;
-      var all = [];
-      _.forEach(this.scope.sources.sourcesByGuid, function(sourceFile) {
-
-        if (sourceFile.dirty) {
-          num++;
-          var formData = new FormData();
-          formData.append('file', new Blob([sourceFile.getText()], {
-            type: 'text/plain'
-          }));
-
-          var deferred = N.Http.post(this.scope.scriptHost + '/file' + sourceFile.path, formData);
-          all.push(deferred);
-        }
+      }, function (callbackMsg) {
+        deferred.reject({ msg: callbackMsg, status: 1 });
       });
-      $.when.apply($, all).then(function() {
-        callback(num === 1 ? '1 file was saved' :  num+' files were saved');
-      }, function(err) {
-        callback('ERROR: Unable to save the files');
-      }).catch(N.reportQError);
+    } catch(err) {
+      deferred.reject({ msg: 'Unexpected error: '+err.description+'\n'+err.stack, status: 1 });
     }
+  } else {
+    deferred.reject({ msg: usage, status: 1 });
   }
-});
+  return deferred.promise;
+};
 
-*/
+N.ShellScript.prototype.save = function(request, response) {
+  var deferred = Q.defer();
+
+  var args = request.args;
+  if (args.length) {
+    var file = args[0];
+    deferred.reject({ msg: 'NOT IMPLEMENTED', status: 1 });
+  } else {
+    this.scope.editorPanel.saveAllFilesToSourceFiles();
+    var num = 0;
+    var all = [];
+    var _this = this;
+    _.forEach(this.scope.sources.sourcesByGuid, function(sourceFile) {
+
+      if (sourceFile.dirty) {
+        num++;
+        var formData = new FormData();
+        formData.append('file', new Blob([sourceFile.getText()], {
+          type: 'text/plain'
+        }));
+
+        var deferred = N.Http.post(_this.scope.scriptHost + '/file' + sourceFile.path, formData);
+        all.push(deferred);
+      }
+    });
+    $.when.apply($, all).then(function() {
+      deferred.resolve({ msg: num === 1 ? '1 file was saved' :  num+' files were saved', status: 0 });
+    }, function(err) {
+      deferred.reject({ msg: 'ERROR: Unable to save the files', status: 1 });
+    }).catch(function(err) {
+      deferred.reject({ msg: 'ERROR: '+err.description+'\n'+err.stack, status: 1 });
+    });
+  }
+  return deferred.promise;
+};

@@ -24,12 +24,12 @@ angular.module('nSimulationApp').directive('outputLog', [function() {
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
-      $scope.signals['output-log'].add(function(text) {
+      $scope.signals['output-log'].add(function(type, text) {
         var container = $element.find('.log-area');
         var date = JSON.stringify(new Date()).replace(/"/g, '');
         var lines = text.split('\n');
         for(var i=0; i<lines.length; i++) {
-          container.append('<div class="log-line">['+date+'] '+lines[i]+'</div>');
+          container.append('<div class="log-line">['+date+'] <span'+(type === 'error' ? ' class="error"': '')+'>'+lines[i]+'</div>');
         }
 
         container.scrollTop(container[0].scrollHeight);
