@@ -24,6 +24,7 @@ angular.module('nSimulationApp').directive('networkBuilderPage', [function() {
       N.NWS.WebServices.Load();
 
       $scope.panels = {};
+      $scope.shellVisible = true;
 
       $scope.$on('n-app:create-new', function(event, typeOfNew) {
         if(typeOfNew === 'workbench') {

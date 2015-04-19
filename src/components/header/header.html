@@ -5,6 +5,7 @@
         <!--<div class="n-med-title-light title" ng-bind="projectName"></div>-->
         <div class="current">Pi Simulator</div>
         <div class="menu-bar">
+          <button class="btn" ng-click="toggleShell()"><span ng-show="!shellVisible">Show shell</span><span  ng-show="shellVisible">Hide shell</span></button>
           <!--<ul class="nav nav-pills">-->
             <!--<li class="dropdown">-->
               <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
@@ -17,21 +18,21 @@
               <!--</ul>-->
             <!--</li>-->
           <!--</ul>-->
-          <ul class="nav nav-pills">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                Go to...
-                <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                <li><a tabindex="-1" href="#" ng-click="navigateTo('n')">Home</a></li>
-                <li><a tabindex="-1" href="#" ng-click="navigateTo('builder')">Builder</a></li>
-                <li><a tabindex="-1" href="#" ng-click="navigateTo('sim')">Runner</a></li>
-                <li class="divider"></li>
-                <li><a tabindex="-1" href="#" ng-click="navigateTo('administration')">Admin</a></li>
-              </ul>
-            </li>
-          </ul>
+          <!--<ul class="nav nav-pills">-->
+            <!--<li class="dropdown">-->
+              <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">-->
+                <!--Go to...-->
+                <!--<b class="caret"></b>-->
+              <!--</a>-->
+              <!--<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">-->
+                <!--<li><a tabindex="-1" href="#" ng-click="navigateTo('n')">Home</a></li>-->
+                <!--<li><a tabindex="-1" href="#" ng-click="navigateTo('builder')">Builder</a></li>-->
+                <!--<li><a tabindex="-1" href="#" ng-click="navigateTo('sim')">Runner</a></li>-->
+                <!--<li class="divider"></li>-->
+                <!--<li><a tabindex="-1" href="#" ng-click="navigateTo('administration')">Admin</a></li>-->
+              <!--</ul>-->
+            <!--</li>-->
+          <!--</ul>-->
         </div>
       </div>
     </div>

@@ -48,6 +48,10 @@ All Rights Reserved.
 
   .menu-bar {
     float: right;
+    button {
+      height: 32px;
+      margin-top: 6px;
+    }
     ul.nav.nav-pills {
       margin: 7px 5px 0px 5px;
       display: inline-block;

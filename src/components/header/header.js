@@ -17,7 +17,8 @@ angular.module('nSimulationApp').directive('header', [function() {
     restrict: 'E',
     scope: {
       currentPage: '@currentPage',
-      projectName: '@projectName'
+      projectName: '@projectName',
+      shellVisible: '=shellVisible'
     },
     templateUrl: 'src/components/header/header.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$location', function (ComponentExtensions, $scope, $element, $attrs, $location) {
@@ -25,10 +26,15 @@ angular.module('nSimulationApp').directive('header', [function() {
 
       $scope.navigateTo = function(locationName) {
         $location.path(locationName);
-      }
+      };
 
       $scope.newOf = function(newTypeOf) {
         $scope.$emit('n-app:create-new', newTypeOf);
+      };
+
+      $scope.shellVisible = true;
+      $scope.toggleShell = function() {
+        $scope.shellVisible = !$scope.shellVisible;
       }
 
     }],

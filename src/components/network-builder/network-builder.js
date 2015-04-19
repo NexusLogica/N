@@ -325,6 +325,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
                 }
                 if(output.status === 0) {
                   $scope.showSuccessToast((msg && msg.length > 0) ? msg : 'Script run successfully');
+                  $scope.shellVisible = false;
                 } else {
                   $scope.showErrorToast(msg);
                 }

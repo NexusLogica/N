@@ -995,6 +995,9 @@ body {
       background-color: #E0E0E0; }
   .header .menu-bar {
     float: right; }
+    .header .menu-bar button {
+      height: 32px;
+      margin-top: 6px; }
     .header .menu-bar ul.nav.nav-pills {
       margin: 7px 5px 0px 5px;
       display: inline-block; }
@@ -4814,7 +4817,7 @@ body {
       color: #696969; }
   .n-editor .ace-editor {
     width: 100%;
-    height: 872px;
+    height: 772px;
     border: 1px solid #ccc; }
 
 /**********************************************************************
@@ -5209,7 +5212,7 @@ body {
     width: 140px;
     background-color: #f6f6f6;
     border: solid 1px #dddddd;
-    height: 900px; }
+    height: 800px; }
     .editors-panel .tabs .item-tab {
       padding: 5px 0px 0px 5px;
       font-size: 12px;
@@ -5225,7 +5228,7 @@ body {
     background-color: #e5e5e5;
     border-top: solid 1px #BBBBBB;
     border-bottom: solid 1px #BBBBBB;
-    height: 900px; }
+    height: 800px; }
   .editors-panel .editors-container {
     position: absolute;
     top: 0px;
@@ -5235,7 +5238,7 @@ body {
       width: 1050px;
       position: relative; }
       .editors-panel .editors-container .editors .no-editors {
-        height: 900px;
+        height: 800px;
         background-color: #f6f6f6;
         border: solid 1px #dddddd; }
 
@@ -5638,7 +5641,7 @@ body {
       color: #696969; }
   .signal-viewer .signal-graph-container .signal-canvas {
     width: 1050px;
-    height: 762px; }
+    height: 662px; }
   .signal-viewer .controls {
     box-sizing: border-box;
     height: 110px;
@@ -6524,7 +6527,7 @@ body {
       color: #696969; }
   .output-log .log-area {
     width: 100%;
-    height: 872px;
+    height: 772px;
     border: 1px solid #ccc;
     padding: 5px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
@@ -6930,15 +6933,19 @@ body {
     .pi-viewer .info-bar .info-label {
       color: #696969; }
   .pi-viewer .viewer {
+    box-sizing: border-box;
     width: 100%;
-    height: 872px;
+    height: 772px;
     border: 1px solid #ccc;
-    padding: 5px 10px;
+    padding: 10px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
     font-size: 11px; }
-    .pi-viewer .viewer .canvas-container .network-canvas {
-      width: 1050px;
-      height: 872px; }
+    .pi-viewer .viewer .canvas-container {
+      box-sizing: border-box; }
+      .pi-viewer .viewer .canvas-container .network-canvas {
+        box-sizing: border-box;
+        width: 1030px;
+        height: 752px; }
 
 .n-canvas {
   position: relative;

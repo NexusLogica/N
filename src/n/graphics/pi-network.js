@@ -126,48 +126,59 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings) {
     }
   }
 
-  var rowY = 0;
-  var lastHeight = 0;
-  for(var i=0; i<this.rows.length; i++) {
-    var row = this.rows[i];
-    var rowX = 0.5*(this.width-row.width*this.scale);
-    var spacing = row.spacing;
-    var numColumns = row.cols.length;
-    rowY += 0.5*row.height+renderMappings.rowSpacing+lastHeight;
-    lastHeight = 0.5*row.height;
-
-    for(var j=0; j<numColumns; j++) {
-      var col = row.cols[j];
-      if(col.name) {
-        var neuron = this.network.getNeuronByName(col.name);
-        if(neuron) {
-          var template = this.getTemplate(renderMappings, col.groupName);
-          var radius = this.scale*(neuron.display && neuron.display.radius ? neuron.display.radius : template.radius);
-          var graphic = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
-          graphic.network = this;
-          graphic.neuronClassName = neuron.name;
-          this.neurons.push(graphic);
-          this.neuronsByName[neuron.name] = graphic;
-
-          graphic.radius = radius;
-          rowX += radius;
-          graphic.x = rowX;
-          graphic.y = rowY*this.scale;
-          graphic.row = i;
-          graphic.col = j;
-
-          graphic.render(neuron, this.group);
-
-          rowX += graphic.radius+spacing*this.scale;
-        }
-      }
+  var neuronsDisplay = this.network.display.neurons || [];
+  for(var i=0; i<neuronsDisplay.length; i++) {
+    var nd = neuronsDisplay[i];
+    var neuron = this.network.getNeuronByName(nd.name);
+    if(neuron) {
+      var template = this.getTemplate(renderMappings, neuron.name);
+      var radius = nd.radius || template.radius;
+      var graphic = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
     }
   }
+  //var rowY = 0;
+  //var lastHeight = 0;
+  //
+  //for(var i=0; i<this.rows.length; i++) {
+  //  var row = this.rows[i];
+  //  var rowX = 0.5*(this.width-row.width*this.scale);
+  //  var spacing = row.spacing;
+  //  var numColumns = row.cols.length;
+  //  rowY += 0.5*row.height+renderMappings.rowSpacing+lastHeight;
+  //  lastHeight = 0.5*row.height;
+  //
+  //  for(var j=0; j<numColumns; j++) {
+  //    var col = row.cols[j];
+  //    if(col.name) {
+  //      var neuron = this.network.getNeuronByName(col.name);
+  //      if(neuron) {
+  //        var template = this.getTemplate(renderMappings, col.groupName);
+  //        var radius = this.scale*(neuron.display && neuron.display.radius ? neuron.display.radius : template.radius);
+  //        var graphic = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
+  //        graphic.network = this;
+  //        graphic.neuronClassName = neuron.name;
+  //        this.neurons.push(graphic);
+  //        this.neuronsByName[neuron.name] = graphic;
+  //
+  //        graphic.radius = radius;
+  //        rowX += radius;
+  //        graphic.x = rowX;
+  //        graphic.y = rowY*this.scale;
+  //        graphic.row = i;
+  //        graphic.col = j;
+  //
+  //        graphic.render(neuron, this.group);
+  //
+  //        rowX += graphic.radius+spacing*this.scale;
+  //      }
+  //    }
+  //  }
+  //}
 
   this._label = this.group.plain(this.network.name).move(6, 3);
 
-  this.routeInfo = new N.UI.RouteInfo(this);
-  this.routeInfo.buildPassageInformation();
+  //this.routeInfo = new N.UI.RouteInfo(this);
+  //this.routeInfo.buildPassageInformation();
 };
 
 N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {

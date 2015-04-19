@@ -41,16 +41,19 @@ $controls-height: 0px;
   }
 
   .viewer {
+    box-sizing: border-box;
     width: 100%;
     height: $editor-height - $editor-status-bar-height;
     border: 1px solid #ccc;
-    padding: 5px 10px;
+    padding: 10px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
     font-size: 11px;
     .canvas-container {
+      box-sizing: border-box;
       .network-canvas {
-        width: $builder-width - $builder-tab-width - $builder-tab-sep;
-        height: $editor-height - $editor-status-bar-height - $controls-height;
+        box-sizing: border-box;
+        width: $builder-width - $builder-tab-width - $builder-tab-sep - 20px;
+        height: $editor-height - $editor-status-bar-height - $controls-height - 20px;
       }
     }
   }
