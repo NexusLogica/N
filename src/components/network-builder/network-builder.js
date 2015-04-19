@@ -16,7 +16,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
   return {
     restrict: 'E',
     templateUrl: 'src/components/network-builder/network-builder.html',
-    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', '$routeParams', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile, $routeParams) {
       ComponentExtensions.initialize(this, 'networkBuilder', $scope, $element, $attrs);
 
       $scope.sources = new N.Sources();
@@ -294,7 +294,14 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
                 $scope.$apply(function() {
                   var niceName = sourceFile.extractProperty('name');
                   var description = sourceFile.extractProperty('description');
-                  $scope.scripts.push({path: sourceFile.path, name: niceName, description: description});
+                  var scriptObj = { path: sourceFile.path, name: niceName, description: description };
+                  $scope.scripts.push(scriptObj);
+
+                  // If the URL parameter 'run' is defined then automatically run the script.
+                  if($routeParams.run && sourceFile.path === '/scripts/'+$routeParams.run+'.sh') {
+                    $scope.selectedScript = scriptObj;
+                    $scope.runScript();
+                  }
                 });
               }, function(err) {
                 console.log('ERROR: '+err.description);

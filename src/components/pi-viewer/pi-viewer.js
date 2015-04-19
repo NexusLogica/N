@@ -17,14 +17,18 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
     restrict: 'E',
     templateUrl: 'src/components/pi-viewer/pi-viewer.html',
     scope: {
-      signals: '=signals'
+      signals: '=signals',
+      system: '=system',
+      network: '=network'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
+      $scope.view = { scene: new N.UI.NetworkScene() };
 
+      $scope.view.scene.layout($scope.network, $scope.network.display.renderMappings);
     }
   };
 }]);

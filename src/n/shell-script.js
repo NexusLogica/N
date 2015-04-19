@@ -484,8 +484,6 @@ N.ShellScript.prototype.run = function(request, response) {
 
           var history = system.getHistory();
 
-          system.disconnect();
-
           _this.scope.variables[outputName] = {type: 'history', displayShort: outputName, output: history, guid: 'guid' + N.generateUUID()};
           deferred.resolve({ msg: 'Run successful', status: 0 });
 

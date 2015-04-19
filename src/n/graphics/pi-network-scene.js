@@ -24,7 +24,7 @@ All Rights Reserved.
 
 N.UI.NetworkScene = function() {
   this.className = 'N.UI.NetworkScene';
-  this.network = null;
+  this.networkPi = null;
   this.neurons = {};
   this.origin = 'center';
   this.scale = 100;
@@ -36,13 +36,12 @@ N.UI.NetworkScene = function() {
  *
  * @method layout
  * @param network {Object} The N.Network object to be displayed in the scene.
- * @param scalePixelsPerUnit {
- * @param position
+ * @param renderMappings
  */
 N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
-  this.network = (new N.UI.PiNetwork()).loadFrom(network.display).setNetwork(network);
+  this.networkPi = (new N.UI.PiNetwork()).loadFrom(network.display).setNetwork(network);
   this.renderMappings = renderMappings;
-  this.network.layout(this.renderMappings);
+  this.networkPi.layout(this.renderMappings);
   return this;
 };
 
@@ -50,33 +49,66 @@ N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
  * Calculates the scale that will fit the network to a given width.
  * @method scaleToFitWidth
  * @param width
- * @param paddingHoriz
- * @param paddingVert
+ * @param padding
  */
 N.UI.NetworkScene.prototype.scaleToFitWidth = function(width, padding) {
   var w = width-padding.horizontal();
-  this.scale = w/this.network.unscaledWidth;
+  this.scale = w/this.networkPi.unscaledWidth;
   this.idealContainerWidth = w;
-  this.idealContainerHeight = this.network.unscaledHeight*this.scale+padding.vertical();
-  this.network.x = padding.left();
-  this.network.y = padding.top();
+  this.idealContainerHeight = this.networkPi.unscaledHeight*this.scale+padding.vertical();
+  this.networkPi.x = padding.left();
+  this.networkPi.y = padding.top();
+};
+
+/**
+ * Calculates the scale that will fit the network within both dimensions.
+ * @method scaleToFit
+ * @param width
+ * @param height
+ * @param padding
+ */
+N.UI.NetworkScene.prototype.scaleToFit = function(width, height, padding) {
+  // Container width and height.
+  // TODO: Deal gracefully if any h or w is zero.
+  var wCtnr = width-padding.horizontal();
+  var hCtnr = height-padding.vertical();
+  var arCtnr = wCtnr/hCtnr;
+
+  var w = this.networkPi.width;
+  var h = this.networkPi.height;
+  var ar = w/h;
+
+  // Use height as the constraint.
+  if(wCtnr > ar) {
+    this.scale = hCtnr/h;
+    this.idealContainerHeight = hCtnr;
+    this.idealContainerWidth = hCtnr*ar;
+    this.networkPi.x = 0.5*(wCtnr-this.idealContainerWidth)+padding.left();
+    this.networkPi.y = padding.top();
+  } else {
+    this.scale = wCtnr/w;
+    this.idealContainerWidth = wCtnr;
+    this.idealContainerHeight = wCtnr/ar;
+    this.networkPi.x = padding.left();
+    this.networkPi.y = 0.5*(hCtnr-this.idealContainerHeight)+padding.top();
+  }
 };
 
 N.UI.NetworkScene.prototype.render = function(svgParent) {
   this.group = svgParent.group().move(this.x, this.y);
-  this.network.render(this.group, this.scale, this.renderMappings);
+  this.networkPi.render(this.group, this.scale, this.renderMappings);
 };
 
 N.UI.NetworkScene.prototype.fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.network.width/this.network.height;
+  var aspectRatioNetwork = this.networkPi.width/this.networkPi.height;
   if(aspectRatioNetwork > aspectRatioSvg) {
-    return 0.9*svgWidth/this.network.width;
+    return 0.9*svgWidth/this.networkPi.width;
   }
   else {
-    return 0.9*svgHeight/this.network.height;
+    return 0.9*svgHeight/this.networkPi.height;
   }
 };
 

@@ -73,25 +73,8 @@ N.UI.PiNetwork.prototype.addConnectionDisplay = function(name, group) {
 
 N.UI.PiNetwork.prototype.layout = function(renderMappings) {
 
-  this.networkJSON = this.createStackedLayout(renderMappings);
-  //////////// console.log('***** json='+JSON.stringify(this.networkJSON, undefined, 2));
-
-  this.rows = _.cloneDeep(this.networkJSON.rows);
-
-  var width = this.networkJSON.idealWidth;
-
-  var height = (this.rows.length > 0 ? renderMappings.rowSpacing : 0);
-  for(var k in this.rows) {
-    height += this.rows[k].height+renderMappings.rowSpacing;
-  }
-
-  for(k in this.networks) {
-    height += this.networks[k].unscaledHeight;
-    var w = this.networks[k].unscaledWidth;
-    if(w > width) {
-      width = w;
-    }
-  }
+  var width = this.network.display.width;
+  var height = this.network.display.height;
 
   this.unscaledWidth = width;
   this.unscaledHeight = (height !== 0 ? height : 0.3);

@@ -75,19 +75,25 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         $element.find('.editors').append(html);
       };
 
-      $scope.addNetworkViewer = function(network) {
+      $scope.addNetworkViewer = function(netSys) {
         var editor = {
-          displayShort: network.name,
-          network: network,
-          source: { guid: network.id }
+          displayShort: netSys.name,
+          source: { guid: netSys.id }
         };
+
+        if(netSys.className === 'N.System') {
+          editor.network = netSys.network;
+          editor.system = netSys;
+        } else {
+          editor.network = netSys;
+        }
 
         var guid = editor.source.guid;
         $scope.activeEditor = guid;
         $scope.editorsByGuid[guid] = editor;
 
 
-        var html = $compile('<pi-viewer class="'+guid+'" network="editorsByGuid.'+guid+'" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-viewer>')($scope);
+        var html = $compile('<pi-viewer class="'+guid+'" network="editorsByGuid.'+guid+'.network" system="editorsByGuid.'+guid+'.system" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-viewer>')($scope);
         $element.find('.editors').append(html);
       };
 

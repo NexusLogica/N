@@ -6936,6 +6936,9 @@ body {
     padding: 5px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
     font-size: 11px; }
+    .pi-viewer .viewer .canvas-container .network-canvas {
+      width: 1050px;
+      height: 872px; }
 
 .n-canvas {
   position: relative;
