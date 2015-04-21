@@ -23,13 +23,13 @@ N.UI.StandardNeuronTemplates = {
   Pyramidal : {
     className: 'pyramidal',
     compartments: [{
-      name: 'Body',
+      name: 'OP',
       className: 'excitatory-body',
       segments: [
         { radius: 0.425, startAngle: 115, direction: 1, facing: 1, padding: 0.06 },
         { radius: 1.00, startAngle: 65, direction: 1, facing: -1, padding: 0.06 }]
     },{
-      name: 'Proximal basal dendrites',
+      name: 'PBI',
       className: 'proximal-basal-dendrites',
       mirror: true,
       segments: [
@@ -37,21 +37,23 @@ N.UI.StandardNeuronTemplates = {
         { radius: 1.00, startAngle:  25, direction: 1, facing: -1 },
         { radius: 0.50, startAngle: 65, direction: -1, facing: 1, padding: 0.02 }]
     },{
-      name: 'Distal basal dendrites',
+      name: 'DBI',
       className: 'distal-basal-dendrites',
       mirror: true,
       segments: [
         { radius: 0.80, startAngle:  25, direction: -1, facing: 1, padding: 0.01 },
         { radius: 1.0, startAngle:  -20, direction: 1, facing: -1, padding: 0.06 }]
     },{
-      name: 'Apical dendrite distal tufts',
+      name: 'ADTI',
+      description: 'Apical dendrite distal tufts',
       className: 'apical-dendrite-distal-tufts',
       initialAngle: -160.0,
       segments: [
         { radius: 0.83, startAngle:  -160.0, direction: 1, facing: -1 },
         { radius: 1.0, startAngle:  -80.0, direction: -1, facing: 1 }]
     },{
-      name: 'Apical dendrite proximal tufts',
+      name: 'APTI',
+      description: 'Apical dendrite proximal tufts',
       className: 'apical-dendrite-proximal-tufts',
       initialAngle: -160.0,
       segments: [
@@ -59,7 +61,8 @@ N.UI.StandardNeuronTemplates = {
         { radius: 1.00,  startAngle:   -80.0, direction: 1, facing: -1 },
         { radius: 0.675, startAngle:   -45.0, direction: -1, facing: 1 } ]
     },{
-      name: 'Apical dendrite trunk',
+      name: 'ATI',
+      description: 'Apical dendrite trunk',
       className: 'apical-dendrite-trunk',
       initialAngle: -160,
       segments: [
@@ -71,7 +74,7 @@ N.UI.StandardNeuronTemplates = {
   Stellate : {
     className: 'stellate',
     compartments: [{
-      name: 'Body',
+      name: 'OP',
       className: 'excitatory-body',
       dockAngles: [ { from: 52.0, to: 80.0 }, { from: 110.0, to: 118.0 } ],
       center: { r:0.35, angle: 30 },
@@ -80,7 +83,7 @@ N.UI.StandardNeuronTemplates = {
         { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
         { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
     },{
-      name: 'Dendrites',
+      name: 'IP',
       className: 'dendrites',
       dockAngles: [ { from: 160.0, to: 400.0 } ],
       center: { r: 0.8, angle: -50 },
@@ -89,7 +92,7 @@ N.UI.StandardNeuronTemplates = {
         { radius: 0.65, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
     },{
-      name: 'Acetylcholine Receptors',
+      name: 'AR',
       className: 'acetylcholine-receptors',
       dockAngles: [ { from: 125.0, to: 145.0 } ],
       center: { r: 0.8, angle: 135 },
@@ -102,13 +105,13 @@ N.UI.StandardNeuronTemplates = {
   ExcitatoryInterneuron : {
     className: 'excitatory-interneuron',
     compartments: [{
-      name: 'Body',
+      name: 'OP',
       className: 'excitatory-body',
       segments: [
         { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
         { radius: 1.00, startAngle: 60, direction: 1, facing: -1, padding: 0.03 }]
     },{
-      name: 'Dendrites',
+      name: 'IP',
       className: 'dendrites',
       segments: [
         { radius: 0.63, startAngle: 120, direction: 1, facing: -1, padding: 0.05 },
@@ -118,14 +121,14 @@ N.UI.StandardNeuronTemplates = {
   InhibitoryInterneuron : {
     className: 'inhibitory-interneuron',
     compartments: [{
-      name: 'Body',
+      name: 'OP',
       className: 'inhibitory-body',
       dockAngles: [ { from: 35.0, to: 145.0 } ],
       segments: [
         { radius: 0.53, startAngle: 150, direction: 1, facing: 1, padding: 0.05 },
         { radius: 1.00, startAngle: 30, direction: 1, facing: -1, padding: 0.05 }]
     },{
-      name: 'Dendrites',
+      name: 'IP',
       className: 'dendrites',
       dockAngles: [ { from: 155.0, to: 380.0 } ],
       segments: [
@@ -136,7 +139,7 @@ N.UI.StandardNeuronTemplates = {
   InputSource : {
     className: 'input-source',
     compartments: [{
-      name: 'Body',
+      name: 'OP',
       className: 'excitatory-body',
       segments: [
         { outerRadius: 1.00 }]
@@ -145,7 +148,7 @@ N.UI.StandardNeuronTemplates = {
   OutputSink : {
     className: 'output-sink',
     compartments: [{
-      name: 'Input',
+      name: 'IP',
       className: 'dendrites',
       dockAngles: [ { from: 225.0, to: 315.0 } ],
       segments: [

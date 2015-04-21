@@ -260,7 +260,7 @@ N.fromPath = function(network, path) {
     }
   }
   return currentObj;
-}
+};
 
 /**
  * Returns the compartment from a path.
@@ -274,7 +274,7 @@ N.compFromPath = function(path) {
     return parts[1];
   }
   return null;
-}
+};
 
 /**
  * Returns the object pointed to by the path relative to
@@ -297,7 +297,7 @@ N.fromConnectionPaths = function(network, paths) {
     return { error: obj };
   }
   return obj;
-}
+};
 
 /**
  * Returns the connection source from a path.

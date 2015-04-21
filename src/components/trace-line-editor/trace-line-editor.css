@@ -1,0 +1,66 @@
+/**********************************************************************
+
+File     : trace-line-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the trace-line-editor component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/20
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.trace-line-editor {
+  display: block;
+  border: 1px #e4e4e4 solid;
+  padding: 10px 20px 10px 20px; }
+  .trace-line-editor .range-display {
+    margin-bottom: 10px; }
+    .trace-line-editor .range-display div {
+      display: inline-block; }
+  .trace-line-editor .range-display .range-label {
+    width: 81px; }
+  .trace-line-editor .range-display .range-number {
+    width: 100px;
+    text-align: center;
+    border: solid 1px #cecece;
+    margin-left: 7px; }
+  .trace-line-editor .range-slider {
+    margin-bottom: 10px;
+    width: 300px;
+    outline: none; }
+    .trace-line-editor .range-slider .ui-slider-handle.ui-corner-all.ui-state-hover:hover,
+    .trace-line-editor .range-slider .ui-slider-handle.ui-corner-all.ui-state-focus {
+      background-image: none;
+      background-color: #f8f7f5;
+      outline: none; }
+  .trace-line-editor .pan-slider {
+    width: 300px; }
+    .trace-line-editor .pan-slider .ui-slider-handle {
+      width: 2.0em;
+      margin-left: -1.0em;
+      text-align: center;
+      outline: none; }
+      .trace-line-editor .pan-slider .ui-slider-handle > span {
+        vertical-align: top; }
+      .trace-line-editor .pan-slider .ui-slider-handle .ui-corner-all, .trace-line-editor .pan-slider .ui-slider-handle .ui-corner-all.ui-state-focus {
+        visibility: visible;
+        background-color: #f8f7f5;
+        margin-left: -50px;
+        width: 100px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-weight: normal;
+        color: #654b24;
+        text-align: center;
+        height: 23px;
+        background-image: none;
+        text-decoration: none;
+        outline: 0; }
+      .trace-line-editor .pan-slider .ui-slider-handle .ui-corner-all.ui-state-hover:hover {
+        visibility: visible;
+        background-color: #f8f7f5;
+        text-decoration: none;
+        background-image: none;
+        color: #654b24; }
+  .trace-line-editor .ui-widget-header {
+    background-image: none; }

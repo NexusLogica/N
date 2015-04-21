@@ -11,10 +11,6 @@ All Rights Reserved.
 
 */
 
-@import '../../appearance/css/core.scss';
-@import '../../appearance/css/mixins.scss';
-@import '../../appearance/css/common.scss';
-
 $controls-height: 0px;
 
 .pi-viewer {
@@ -24,15 +20,27 @@ $controls-height: 0px;
     height: $editor-status-bar-height;
     width: 100%;
     font-size: 12px;
-    padding-top: 6px;
+    padding-top: 2px;
     padding-left: 12px;
 
     background: linear-gradient(#DDDDDD, #D2D2D2);
     border: 1px solid #BBBBBB;
+    .type {
+      vertical-align: bottom;
+    }
+
+    .btn {
+      height: 21px;
+      font-size: 13px;
+      padding: 1px 10px;
+    }
 
     >div {
       display: inline-block;
       margin-right: 30px;
+      >div {
+        display: inline-block;
+      }
     }
 
     .info-label {

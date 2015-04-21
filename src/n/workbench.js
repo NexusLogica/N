@@ -60,7 +60,6 @@ N.Workbench.prototype.addTest = function() {
  * @returns {N.WorkbenchTest}
  */
 N.Workbench.prototype.runTest = function(test) {
-console.log("RUN TEST");
   var network = this.network;
   network.clear();
 
@@ -81,7 +80,7 @@ console.log("RUN TEST");
       breakAfterStep = true;
     }
   }
-}
+};
 
 /**
  * Returns the object type.
@@ -132,7 +131,7 @@ N.Workbench.prototype.setTargets = function(targets) {
 
   // Add inputs
   return deferred.promise;
-}
+};
 
 /**
  * Adds an input sink to the input network.
@@ -149,7 +148,7 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
     template: 'N.UI.StandardNeuronTemplates.InputSource',
     radius: 0.1,
     compartmentMap : { 'Body': 'OP'  }
-  }
+  };
 
   var sourceCompartment = new N.Comp.SignalSource(source, 'OP');
   source.addCompartment(sourceCompartment);
@@ -162,7 +161,7 @@ N.Workbench.prototype.addInputSource = function(compartment, inputMeta, inputNet
   connection.path = 'Inputs:'+fullCleanName+'>OP->Targets:'+compartment.neuron.name+'>'+compartment.name+(inputMeta.name !== 'main' ? '['+inputMeta.name+']': '');
 
   this.network.addConnection(connection);
-}
+};
 
 /**
  * Adds an output sink to the output network.
@@ -179,7 +178,7 @@ N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNe
     template: 'N.UI.StandardNeuronTemplates.OutputSink',
     radius: 0.125,
     compartmentMap : { 'Input': 'IP'  }
-  }
+  };
 
   var sinkCompartment = new N.Comp.InputSink(sink, 'IP');
   sink.addCompartment(sinkCompartment);
@@ -193,7 +192,7 @@ N.Workbench.prototype.addOutputSink = function(compartment, outputMeta, outputNe
   connection.path = 'Targets:'+compartment.neuron.name+'>'+compartment.name+(outputMeta.name !== 'main' ? '['+outputMeta.name+']': '')+'->Outputs:'+fullCleanName+'>IP';
 
   this.network.addConnection(connection);
-}
+};
 
 /**
  * Creates a network.
@@ -209,4 +208,4 @@ N.Workbench.prototype.createNetwork = function() {
   config.networks.push(targetNetwork);
   config.networks.push(outputNetwork);
   return config;
-}
+};

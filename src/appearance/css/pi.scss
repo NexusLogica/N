@@ -161,6 +161,13 @@ $gap-junction-color: darken(papayawhip, 10%);
     &.acetylcholine-receptors {
       fill: darken(linen, $darker);
     }
+
+    &.highlight-component {
+      stroke-width: 2.5px;
+      stroke: lighten(black, 10%);
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
+    }
   }
 
   .callout-label {
@@ -216,6 +223,12 @@ $gap-junction-color: darken(papayawhip, 10%);
   }
 }
 
+.soften-component {
+  opacity: 0.3;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s;
+}
+
 .pi-network {
   >rect {
     stroke-width: 0.8px;
@@ -252,7 +265,6 @@ $gap-junction-color: darken(papayawhip, 10%);
 .pi-signal-graph {
   .graph-background {
     fill: lighten(gainsboro, 12%);
-    stroke: lighten(gainsboro, 7%);
   }
   .pi-signal-trace {
     .background {
@@ -313,4 +325,9 @@ $gap-junction-color: darken(papayawhip, 10%);
 
     stroke-opacity: 0.5;
   }
+}
+
+.pi-grid-point {
+  stroke: #D3D3D3;
+  stroke-width: 1.0px;
 }

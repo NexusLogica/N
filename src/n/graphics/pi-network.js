@@ -22,8 +22,8 @@ N.UI.PiNetwork = function(parentNetwork) {
   this.y = 0;
   this._set = null;
   this.scale = 100.0;
-  this.neurons = [];
-  this.neuronsByName = {};
+  this.piNeurons = [];
+  this.piNeuronsByName = {};
   this.connectionsDisplays = {};
   this.group = null;
   this.networkJSON = {};
@@ -47,7 +47,7 @@ N.UI.PiNetwork.prototype.setNetwork = function(network) {
 /**
  * Get a PiNetwork object owned by this PiNetwork object given the network name.
  * @method getNetworkByName
- * @param {String} shortName
+ * @param {String} name
  * @returns {N.UI.PiNetwork}
  */
 N.UI.PiNetwork.prototype.getNetworkByName = function(name) {
@@ -57,11 +57,11 @@ N.UI.PiNetwork.prototype.getNetworkByName = function(name) {
 /**
  * Get a PiNetwork object owned by this PiNetwork object given the network name.
  * @method getNeuronByName
- * @param {String} shortName
+ * @param {String} name
  * @returns {N.UI.PiNeuron}
  */
 N.UI.PiNetwork.prototype.getNeuronByName = function(name) {
-  return this.neuronsByName[name];
+  return this.piNeuronsByName[name];
 };
 
 N.UI.PiNetwork.prototype.addConnectionDisplay = function(name, group) {
@@ -81,10 +81,13 @@ N.UI.PiNetwork.prototype.layout = function(renderMappings) {
   return this;
 };
 
-N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings) {
+N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, signals) {
+  this.signals = signals;
 
   this.group = svgParent.group();
   this.group.translate(this.x, this.y);
+
+  var display = this.network.display;
 
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
@@ -104,7 +107,31 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings) {
     this.outerRect = this.group.rect(this.width, this.height)
       .radius(2)
       .move(this.rect.left, this.rect.top)
-      .attr({ class: 'single'});
+      .attr({
+        class: 'single',
+        'fill': display.backgroundColor ? display.backgroundColor : '#ff0000',
+        'fill-opacity': 1.0 });
+  }
+
+  var grid = this.network.display.grid;
+
+  this.spottingCircle = this.group.circle(5).attr({'stroke': '#ff0000', 'stroke-width': '2'});
+  this.spottingCircle.hide();
+
+  if(grid && grid.display) {
+    this.gridPoints = [];
+    this.gridSpacing = grid.spacing || 0.05;
+    var spacing = this.scale*this.gridSpacing;
+    this.defs = this.group.defs();
+    var spot = this.defs.circle(1.0).attr('class', 'pi-grid-point');
+    var numX = this.width/spacing;
+    var numY = this.height/spacing;
+    for(var j = 1; j<numX; j++) {
+      for(var k = 1; k<numY; k++) {
+        var pt = this.group.use(spot).move(j*spacing, k*spacing);
+        this.gridPoints.push(pt);
+      }
+    }
   }
 
   var padding = new N.UI.Padding(0, 2);
@@ -132,50 +159,24 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings) {
     var neuron = this.network.getNeuronByName(nd.name);
     if(neuron) {
       var template = this.getTemplate(renderMappings, neuron.name);
-      var radius = nd.radius || template.radius;
-      var graphic = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
+      var radius = this.scale*(nd.radius || template.radius);
+      var piNeuron = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
+      piNeuron.network = this;
+      piNeuron.neuronClassName = neuron.name;
+      this.piNeurons.push(piNeuron);
+      this.piNeuronsByName[neuron.name] = piNeuron;
+
+      piNeuron.radius = radius;
+
+      piNeuron.x = nd.x*this.scale;
+      piNeuron.y = nd.y*this.scale;
+      piNeuron.render(neuron, this.group);
     }
   }
-  //var rowY = 0;
-  //var lastHeight = 0;
-  //
-  //for(var i=0; i<this.rows.length; i++) {
-  //  var row = this.rows[i];
-  //  var rowX = 0.5*(this.width-row.width*this.scale);
-  //  var spacing = row.spacing;
-  //  var numColumns = row.cols.length;
-  //  rowY += 0.5*row.height+renderMappings.rowSpacing+lastHeight;
-  //  lastHeight = 0.5*row.height;
-  //
-  //  for(var j=0; j<numColumns; j++) {
-  //    var col = row.cols[j];
-  //    if(col.name) {
-  //      var neuron = this.network.getNeuronByName(col.name);
-  //      if(neuron) {
-  //        var template = this.getTemplate(renderMappings, col.groupName);
-  //        var radius = this.scale*(neuron.display && neuron.display.radius ? neuron.display.radius : template.radius);
-  //        var graphic = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
-  //        graphic.network = this;
-  //        graphic.neuronClassName = neuron.name;
-  //        this.neurons.push(graphic);
-  //        this.neuronsByName[neuron.name] = graphic;
-  //
-  //        graphic.radius = radius;
-  //        rowX += radius;
-  //        graphic.x = rowX;
-  //        graphic.y = rowY*this.scale;
-  //        graphic.row = i;
-  //        graphic.col = j;
-  //
-  //        graphic.render(neuron, this.group);
-  //
-  //        rowX += graphic.radius+spacing*this.scale;
-  //      }
-  //    }
-  //  }
-  //}
 
   this._label = this.group.plain(this.network.name).move(6, 3);
+
+  this.addEventHandlers();
 
   //this.routeInfo = new N.UI.RouteInfo(this);
   //this.routeInfo.buildPassageInformation();
@@ -186,6 +187,33 @@ N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
     .move(this.rect.left+padding[3], this.rect.top+padding[0])
     .back()
     .attr({ class: className});
+};
+
+N.UI.PiNetwork.prototype.addEventHandlers = function() {
+  var _this = this;
+  $(this.outerRect.node).on('mousemove', function(event) {
+  //$(this.outerRect.node).on('mouseenter mousemove click', function(event) {
+    _this.spottingCircle.show();
+    var clientRect = _this.outerRect.node.getBoundingClientRect();
+    var x = event.clientX-clientRect.left;
+    var y = event.clientY-clientRect.top;
+    if(x >= 0 && x < _this.width && y >= 0 && y < _this.height) {
+      var pos = _this.getNearestGridPoint(x, y);
+      _this.spottingCircle.move(pos.x, pos.y);
+    }
+  });
+//  $(this.outerRect.node).on('mouseleave', function(event) {
+////    _this.spottingCircle.hide();
+//  });
+//  $(this.outerRect.node).on('mouseenter', function(event) {
+////    _this.spottingCircle.show();
+//  });
+};
+
+N.UI.PiNetwork.prototype.getNearestGridPoint = function(x, y) {
+  var nx = Math.floor(x/this.scale/this.gridSpacing+0.5)*this.scale*this.gridSpacing;
+  var ny = Math.floor(y/this.scale/this.gridSpacing+0.5)*this.scale*this.gridSpacing;
+  return { x: nx, y: ny};
 };
 
 /**
@@ -336,4 +364,5 @@ N.UI.PiNetwork.prototype.getGroupNameData = function(name) {
   }
   return { name: name,  groupName: name };
 };
+
 

@@ -24,7 +24,7 @@ All Rights Reserved.
 
 N.UI.NetworkScene = function() {
   this.className = 'N.UI.NetworkScene';
-  this.networkPi = null;
+  this.piNetwork = null;
   this.neurons = {};
   this.origin = 'center';
   this.scale = 100;
@@ -39,9 +39,9 @@ N.UI.NetworkScene = function() {
  * @param renderMappings
  */
 N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
-  this.networkPi = (new N.UI.PiNetwork()).loadFrom(network.display).setNetwork(network);
+  this.piNetwork = (new N.UI.PiNetwork()).loadFrom(network.display).setNetwork(network);
   this.renderMappings = renderMappings;
-  this.networkPi.layout(this.renderMappings);
+  this.piNetwork.layout(this.renderMappings);
   return this;
 };
 
@@ -53,11 +53,11 @@ N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
  */
 N.UI.NetworkScene.prototype.scaleToFitWidth = function(width, padding) {
   var w = width-padding.horizontal();
-  this.scale = w/this.networkPi.unscaledWidth;
+  this.scale = w/this.piNetwork.unscaledWidth;
   this.idealContainerWidth = w;
-  this.idealContainerHeight = this.networkPi.unscaledHeight*this.scale+padding.vertical();
-  this.networkPi.x = padding.left();
-  this.networkPi.y = padding.top();
+  this.idealContainerHeight = this.piNetwork.unscaledHeight*this.scale+padding.vertical();
+  this.piNetwork.x = padding.left();
+  this.piNetwork.y = padding.top();
 };
 
 /**
@@ -74,8 +74,8 @@ N.UI.NetworkScene.prototype.scaleToFit = function(width, height, padding) {
   var hCtnr = height-padding.vertical();
   var arCtnr = wCtnr/hCtnr;
 
-  var w = this.networkPi.width;
-  var h = this.networkPi.height;
+  var w = this.piNetwork.width;
+  var h = this.piNetwork.height;
   var ar = w/h;
 
   // Use height as the constraint.
@@ -83,32 +83,32 @@ N.UI.NetworkScene.prototype.scaleToFit = function(width, height, padding) {
     this.scale = hCtnr/h;
     this.idealContainerHeight = hCtnr;
     this.idealContainerWidth = hCtnr*ar;
-    this.networkPi.x = 0.5*(wCtnr-this.idealContainerWidth)+padding.left();
-    this.networkPi.y = padding.top();
+    this.piNetwork.x = 0.5*(wCtnr-this.idealContainerWidth)+padding.left();
+    this.piNetwork.y = padding.top();
   } else {
     this.scale = wCtnr/w;
     this.idealContainerWidth = wCtnr;
     this.idealContainerHeight = wCtnr/ar;
-    this.networkPi.x = padding.left();
-    this.networkPi.y = 0.5*(hCtnr-this.idealContainerHeight)+padding.top();
+    this.piNetwork.x = padding.left();
+    this.piNetwork.y = 0.5*(hCtnr-this.idealContainerHeight)+padding.top();
   }
 };
 
 N.UI.NetworkScene.prototype.render = function(svgParent) {
   this.group = svgParent.group().move(this.x, this.y);
-  this.networkPi.render(this.group, this.scale, this.renderMappings);
+  this.piNetwork.render(this.group, this.scale, this.renderMappings);
 };
 
 N.UI.NetworkScene.prototype.fit = function(svgParent) {
   var svgWidth = $(svgParent.node).parent().width();
   var svgHeight = $(svgParent.node).parent().height();
   var aspectRatioSvg = svgWidth/svgHeight;
-  var aspectRatioNetwork = this.networkPi.width/this.networkPi.height;
+  var aspectRatioNetwork = this.piNetwork.width/this.piNetwork.height;
   if(aspectRatioNetwork > aspectRatioSvg) {
-    return 0.9*svgWidth/this.networkPi.width;
+    return 0.9*svgWidth/this.piNetwork.width;
   }
   else {
-    return 0.9*svgHeight/this.networkPi.height;
+    return 0.9*svgHeight/this.piNetwork.height;
   }
 };
 

@@ -1,6 +1,12 @@
 <div class="pi-viewer">
   <div class="info-bar">
-    <div class="type"><span class="info-label">Network: </span><span ng-bind="network.name"></span></div>
+    <div ng-show="activeUI === null">
+      <div class="type"><span class="info-label">Network: </span><span ng-bind="network.name"></span></div>
+      <button class="btn" ng-click="traceEdit()">Trace edit</button>
+    </div>
+    <div ng-show="activeUI === 'traceEditor'">
+      <trace-line-editor scene="view.scene"></trace-line-editor>
+    </div>
   </div>
   <div class="viewer">
     <div class="canvas-container">

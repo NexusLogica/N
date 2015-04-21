@@ -25,8 +25,12 @@ N.UI.PiNeuron = function() {
   this._set = null;
   this.neuronClassName = '';
   this.neuron = null;
-  this.compartments = {};
-  this.compartmentsById = {};
+  this.piCompartments = {};
+  this.piCompartmentsById = {};
+};
+
+N.UI.PiNeuron.prototype.getCompartmentByName = function(name) {
+  return this.piCompartments[name];
 };
 
 N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
@@ -38,8 +42,8 @@ N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
 
   var _this = this;
   var compartmentMap = (neuron.display ? neuron.display.compartmentMap : null);
-  for(var i in this.compartments) {
-    var compartment = this.compartments[i];
+  for(var i in this.piCompartments) {
+    var compartment = this.piCompartments[i];
     compartment.neuron = this;
     compartment.path = this.group.path(compartment.pathString).attr({ fill: compartment.color });
 
@@ -53,7 +57,7 @@ N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
         var compartmentObj = neuron.getCompartmentByName(neuronCompartmentName);
         compartment.setCompartmentObj(compartmentObj);
         if(compartmentObj) {
-          this.compartmentsById[compartmentObj.name] = compartment;
+          this.piCompartmentsById[compartmentObj.name] = compartment;
           compartment.compartmentObj = compartmentObj;
           this.addEventHandlers(compartment);
         }
@@ -70,8 +74,8 @@ N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
 
 N.UI.PiNeuron.prototype.drawCallouts = function(compartmentMap) {
   var r = this.radius;
-  for(var i in this.compartments) {
-    var compartment = this.compartments[i];
+  for(var i in this.piCompartments) {
+    var compartment = this.piCompartments[i];
     var pos = compartment.callout;
     var target = compartment.center;
     if(pos && target) {
@@ -126,16 +130,16 @@ N.UI.PiNeuron.prototype.getType = function() {
 
 N.UI.PiCompartment = function() {
   this.compartmentObj = null;
-}
+};
 
 N.UI.PiCompartment.prototype.getType = function() {
   return N.Type.PiCompartment;
-}
+};
 
 N.UI.PiCompartment.prototype.setCompartmentObj = function(compartmentObj) {
   this.compartmentObj = compartmentObj;
   return this;
-}
+};
 
 N.UI.PiCompartment.prototype.showConnections = function() {
   if(!this.compartmentObj) { return; }
@@ -153,7 +157,7 @@ N.UI.PiCompartment.prototype.showConnections = function() {
       }
     } while((net = net.parentNetwork));
     return null;
-  }
+  };
 
   var findTop = function(network) {
     var net = network;
@@ -171,17 +175,17 @@ N.UI.PiCompartment.prototype.showConnections = function() {
   this.routeManager.addConnections(piOutput);
   this.routeManager.render();
   return this;
-}
+};
 
 N.UI.PiCompartment.prototype.hideConnections = function() {
   return this;
-}
+};
 
 N.UI.PiCompartment.prototype.clone = function() {
   var c = new N.UI.PiCompartment();
   _.assign(c, this);
   return c;
-}
+};
 
   //************************
   //* N.UI.PiNeuronFactory *
@@ -341,7 +345,7 @@ N.UI.PiNeuronFactory = (function() {
         if(i === 'compartments') {
           var compartments = filledTemplate[i];
           for(var j in compartments) {
-            pin.compartments[j] = compartments[j].clone();
+            pin.piCompartments[j] = compartments[j].clone();
           }
         } else {
           pin[i] = _.cloneDeep(filledTemplate[i]);

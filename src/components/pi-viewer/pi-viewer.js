@@ -24,11 +24,19 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);
 
+      $scope.activeUI = null;
     }],
     link: function($scope, $element, $attrs, ctrl) {
       $scope.view = { scene: new N.UI.NetworkScene() };
 
       $scope.view.scene.layout($scope.network, $scope.network.display.renderMappings);
+
+      $scope.traceEdit = function() {
+        $scope.activeUI = 'traceEditor';
+      };
+      $scope.$on('traceLineEditor:done', function() {
+        $scope.activeUI = null;
+      });
     }
   };
 }]);
