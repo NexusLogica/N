@@ -16,7 +16,8 @@ All Rights Reserved.
   //* N.UI.PiNetwork *
   //******************
 
-N.UI.PiNetwork = function(parentNetwork) {
+N.UI.PiNetwork = function(sceneSignals, parentNetwork) {
+  this.sceneSignals = sceneSignals;
   this.parentNetwork = parentNetwork;
   this.x = 0;
   this.y = 0;
@@ -161,6 +162,8 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
       var template = this.getTemplate(renderMappings, neuron.name);
       var radius = this.scale*(nd.radius || template.radius);
       var piNeuron = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
+      piNeuron.sceneSignals = this.sceneSignals;
+      piNeuron.scale = this.scale;
       piNeuron.network = this;
       piNeuron.neuronClassName = neuron.name;
       this.piNeurons.push(piNeuron);
@@ -191,8 +194,21 @@ N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
 
 N.UI.PiNetwork.prototype.addEventHandlers = function() {
   var _this = this;
+  $(this.outerRect.node).on('click', function(event) {
+    var clientRect = _this.outerRect.node.getBoundingClientRect();
+    var x = event.clientX-clientRect.left;
+    var y = event.clientY-clientRect.top;
+    var snap = _this.getNearestGridPoint(x, y);
+
+    var s = _this.scale;
+    snap.x /= s;
+    snap.y /= s;
+    var eventData = { piNetwork: _this, network: _this.network, pos: { x: x/s, y: y/s }, snap: snap };
+    _this.sceneSignals['background-click'].dispatch(eventData);
+  });
+
+
   $(this.outerRect.node).on('mousemove', function(event) {
-  //$(this.outerRect.node).on('mouseenter mousemove click', function(event) {
     _this.spottingCircle.show();
     var clientRect = _this.outerRect.node.getBoundingClientRect();
     var x = event.clientX-clientRect.left;
@@ -202,12 +218,10 @@ N.UI.PiNetwork.prototype.addEventHandlers = function() {
       _this.spottingCircle.move(pos.x, pos.y);
     }
   });
-//  $(this.outerRect.node).on('mouseleave', function(event) {
-////    _this.spottingCircle.hide();
-//  });
-//  $(this.outerRect.node).on('mouseenter', function(event) {
-////    _this.spottingCircle.show();
-//  });
+
+  $(this.outerRect.node).on('mouseleave', function(event) {
+    _this.spottingCircle.hide();
+  });
 };
 
 N.UI.PiNetwork.prototype.getNearestGridPoint = function(x, y) {
@@ -276,7 +290,7 @@ N.UI.PiNetwork.prototype.appendNetworkToStackedLayout = function(network, render
   var networkJson = { };
 
   for(var i in network.networks) {
-    var childNetwork = (new N.UI.PiNetwork(this)).setNetwork(network.networks[i]);
+    var childNetwork = (new N.UI.PiNetwork(this.sceneSignals, this)).setNetwork(network.networks[i]);
     childNetwork.layout(renderMappings);
     this.networks.push(childNetwork);
     this.networksByName[childNetwork.network.name] = childNetwork;

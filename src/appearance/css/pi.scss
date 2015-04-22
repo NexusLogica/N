@@ -163,6 +163,7 @@ $gap-junction-color: darken(papayawhip, 10%);
     }
 
     &.highlight-component {
+      opacity: 1.0 !important;
       stroke-width: 2.5px;
       stroke: lighten(black, 10%);
       transition-property: stroke, stroke-width;
@@ -224,9 +225,13 @@ $gap-junction-color: darken(papayawhip, 10%);
 }
 
 .soften-component {
-  opacity: 0.3;
-  transition-property: stroke, stroke-width;
-  transition-duration: 0.5s;
+  .pi-neuron {
+    .compartment {
+      opacity: 0.3;
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
+    }
+  }
 }
 
 .pi-network {

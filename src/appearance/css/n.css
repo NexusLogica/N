@@ -160,6 +160,7 @@ All Rights Reserved.
   .pi-neuron .compartment.acetylcholine-receptors {
     fill: linen; }
   .pi-neuron .compartment.highlight-component {
+    opacity: 1.0 !important;
     stroke-width: 2.5px;
     stroke: #1a1a1a;
     transition-property: stroke, stroke-width;
@@ -200,7 +201,7 @@ All Rights Reserved.
 .pi-neuron.highlight .callout-label {
   display: inline; }
 
-.soften-component {
+.soften-component .pi-neuron .compartment {
   opacity: 0.3;
   transition-property: stroke, stroke-width;
   transition-duration: 0.5s; }
@@ -1435,6 +1436,8 @@ All Rights Reserved.
   .trace-line-editor .trace-label {
     display: inline-block; }
   .trace-line-editor .connection-list {
+    display: inline-block; }
+  .trace-line-editor .debug-text {
     display: inline-block; }
 
 .n-canvas {

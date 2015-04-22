@@ -24,10 +24,15 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);
 
+      $scope.sceneSignals = {
+        'component-click': new signals.Signal(),
+        'background-click': new signals.Signal()
+      };
+
       $scope.activeUI = null;
     }],
     link: function($scope, $element, $attrs, ctrl) {
-      $scope.view = { scene: new N.UI.NetworkScene() };
+      $scope.view = { scene: new N.UI.NetworkScene($scope.sceneSignals) };
 
       $scope.view.scene.layout($scope.network, $scope.network.display.renderMappings);
 

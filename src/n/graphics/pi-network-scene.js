@@ -22,7 +22,7 @@ All Rights Reserved.
  * @constructor
  */
 
-N.UI.NetworkScene = function() {
+N.UI.NetworkScene = function(sceneSignals) {
   this.className = 'N.UI.NetworkScene';
   this.piNetwork = null;
   this.neurons = {};
@@ -30,6 +30,7 @@ N.UI.NetworkScene = function() {
   this.scale = 100;
   this.x = 0;
   this.y = 0;
+  this.sceneSignals = sceneSignals;
 };
 
 /**
@@ -39,7 +40,8 @@ N.UI.NetworkScene = function() {
  * @param renderMappings
  */
 N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
-  this.piNetwork = (new N.UI.PiNetwork()).loadFrom(network.display).setNetwork(network);
+  this.piNetwork = (new N.UI.PiNetwork(this.sceneSignals)).loadFrom(network.display).setNetwork(network);
+  this.piNetwork.scale = this.scale;
   this.renderMappings = renderMappings;
   this.piNetwork.layout(this.renderMappings);
   return this;
