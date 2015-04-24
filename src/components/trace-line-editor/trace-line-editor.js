@@ -27,11 +27,11 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       $scope.stateMachine = StateMachine.create({
         initial: { state: 'Starting' },
         events: [
-          { name: 'init',             from: '*',                        to: 'Starting'       },
-          { name: 'componentClick',   from: 'Starting',                 to: 'ComponentStart' },
-          { name: 'backgroundClick',  from: 'ComponentStart',           to: 'TraceBegin'     },
-          { name: 'backgroundClick',  from: ['TraceBegin, TracePoint'], to: 'TracePoint'     },
-          { name: 'componentClick',   from: 'TracePoint',               to: 'ComponentEnd'   }
+          { name: 'init',             from: '*',                          to: 'Starting'       },
+          { name: 'componentClick',   from: 'Starting',                   to: 'ComponentStart' },
+          { name: 'backgroundClick',  from: 'ComponentStart',             to: 'TraceBegin'     },
+          { name: 'backgroundClick',  from: ['TraceBegin', 'TracePoint'], to: 'TracePoint'     },
+          { name: 'componentClick',   from: 'TracePoint',                 to: 'ComponentEnd'   }
         ],
         timeouts: [],
         callbacks: {
@@ -41,6 +41,11 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           },
           onenterTraceBegin: function() {
             $scope.debugText = $scope.stateMachine.current;
+          },
+          onenterComponentEnd: function() {
+            $scope.createPiConnection();
+            $scope.debugText = $scope.stateMachine.current;
+
           }
         }
       });
@@ -60,8 +65,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       getConnections();
 
       $scope.edit = function() {
-        var connection = $element.find('select option:selected').scope().connection;
-        var piComponents = N.fromConnectionPaths($scope.scene.piNetwork, connection.path);
+        $scope.connection = $element.find('select option:selected').scope().connection;
+        var piComponents = N.fromConnectionPaths($scope.scene.piNetwork, $scope.connection.path);
         $scope.inputComponent = piComponents.source;
         $scope.outputComponent = piComponents.sink;
         $scope.inputComponent.path.addClass('highlight-component');
@@ -73,30 +78,46 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
         $scope.sceneSignals['component-click'].add(function(event) {
           $scope.$apply(function() {
-            $scope.stateMachine.componentClick();
-            var n = event.piCompartment.neuron;
-            var s = n.scale;
-            $scope.trace = {
-              start: {
-                component: event.compartment.name,
-                center: { x: n.x/s, y: n.y/s },
-                radius: n.radius/s
-              },
-              points: []
-            };
-            $scope.debugText = 'State: '+$scope.stateMachine.current+' - '+JSON.stringify($scope.trace);
+            if($scope.stateMachine.can('componentClick')) {
+              $scope.lastX = undefined;
+              $scope.lastY = undefined;
+              var n = event.piCompartment.neuron;
+              var s = n.scale;
 
+              if($scope.stateMachine.is('Starting')) {
+                $scope.trace = {
+                  start: {
+                    component: event.compartment.name,
+                    center: {x: n.x / s, y: n.y / s},
+                    radius: n.radius / s,
+                  },
+                  points: []
+                };
+                $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify($scope.trace);
+              } else {
+                $scope.trace.end = {
+                  component: event.compartment.name,
+                  center: {x: n.x / s, y: n.y / s},
+                  radius: n.radius / s
+                }
+              }
+
+              $scope.stateMachine.componentClick();
+            }
           });
         });
 
         $scope.sceneSignals['background-click'].add(function(event) {
           $scope.$apply(function() {
-            $scope.stateMachine.backgroundClick();
-            var net = event.piNetwork;
-            var point = { network:net, pos: event.snap };
-            $scope.trace.points.push(point);
-            $scope.debugText = 'State: '+$scope.stateMachine.current+' - '+JSON.stringify(point.pos);
-
+            if(event.pos.x !== $scope.lastX || event.pos.y !== $scope.lastY) {
+              $scope.lastX = event.pos.x;
+              $scope.lastY = event.pos.y;
+              $scope.stateMachine.backgroundClick();
+              var net = event.piNetwork;
+              var point = {network: net, pos: event.snap};
+              $scope.trace.points.push(point);
+              $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify(point.pos);
+            }
           });
         });
 
@@ -104,6 +125,13 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.beginTrace = function() {
+
+      };
+
+      $scope.createPiConnection = function() {
+        var piConnection = new N.UI.PiConnection($scope.scene.piNetwork, $scope.connection);
+        piConnection.setPath($scope.trace);
+        $scope.scene.piNetwork.addConnection(piConnection);
 
       };
 

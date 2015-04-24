@@ -21,20 +21,20 @@ N.UI.PiConnectionClasses = {
   'Inhibitory' : 'pi-inhibitory-connection',
   'GapJunction': 'pi-gap-junction-connection',
   'Electrode'  : 'pi-electrode-connection'
-}
+};
 
   //*********************
   //* N.UI.PiConnection *
   //*********************
 
-N.UI.PiConnection = function(network, connection) {
-  this.network = network;        // The parent PiNetwork.
+N.UI.PiConnection = function(piNetwork, connection) {
+  this.piNetwork = piNetwork;    // The parent PiNetwork.
   this.connection = connection;  // The N.Connection object.
-}
+};
 
 N.UI.PiConnection.prototype.setPath = function(path) {
-  this.Path = path;
-}
+  this.pathMetadata = path;
+};
 
 N.UI.PiConnection.prototype.createPath = function(svgGroup, pathString) {
   this.path = svgGroup.path(pathString)
@@ -42,7 +42,47 @@ N.UI.PiConnection.prototype.createPath = function(svgGroup, pathString) {
       'fill': 'none',
       'stroke-linejoin': 'round',
       class: 'pi-connection '+N.UI.PiConnectionClasses[this.connection.category] });
-}
+};
+
+N.UI.PiConnection.prototype.render = function(svgGroup) {
+  var s = this.piNetwork.scale;
+  var pt = this.pathMetadata.points;
+  var st = this.pathMetadata.start;
+  var end = this.pathMetadata.end;
+  //: {
+  //  component: event.compartment.name,
+  //    center: {x: n.x / s, y: n.y / s},
+  //  radius: n.radius / s
+  //},
+  var dx = pt[0].pos.x-st.center.x;
+  var dy = pt[0].pos.y-st.center.y;
+  var xy = Math.sqrt(dx*dx+dy*dy);
+  var cosX = dx/xy;
+  var sinY = dy/xy;
+  console.log(this.pathMetadata);
+  var pathString = 'M'+st.center.x*s+' '+st.center.y*s+'m'+cosX*st.radius*s+' '+sinY*st.radius*s+'L'+pt[0].pos.x*s+' '+pt[0].pos.y*s;
+
+  for(var i=1; i<pt.length; i++) {
+    pathString += 'L'+pt[i].pos.x*s+' '+pt[i].pos.y*s;
+  }
+
+  var iEnd = pt.length-1;
+  var edx = pt[iEnd].pos.x-end.center.x;
+  var edy = pt[iEnd].pos.y-end.center.y;
+  var exy = Math.sqrt(edx*edx+edy*edy);
+  var ecosX = edx/exy;
+  var esinY = edy/exy;
+  var ed = end.radius-exy;
+
+  debugger;
+  pathString += 'l'+ed*ecosX*s+' '+ed*esinY*s;
+
+  this.path = svgGroup.path(pathString)
+    .attr({
+      'fill': 'none',
+      'stroke-linejoin': 'round',
+      class: 'pi-connection '+N.UI.PiConnectionClasses[this.connection.category] });
+};
 
 N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
   var scale = 1.0;
@@ -92,5 +132,4 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
     center = o.shorten(c, -r-gap).offset(-r, -r);
     svgGroup.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.connection.category] } );
   }
-
-}
+};

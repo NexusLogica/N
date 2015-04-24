@@ -26,6 +26,7 @@ N.UI.PiNetwork = function(sceneSignals, parentNetwork) {
   this.piNeurons = [];
   this.piNeuronsByName = {};
   this.connectionsDisplays = {};
+  this.piConnections = [];
   this.group = null;
   this.networkJSON = {};
   this.networks = [];
@@ -127,9 +128,11 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
     var spot = this.defs.circle(1.0).attr('class', 'pi-grid-point');
     var numX = this.width/spacing;
     var numY = this.height/spacing;
+    var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
     for(var j = 1; j<numX; j++) {
       for(var k = 1; k<numY; k++) {
         var pt = this.group.use(spot).move(j*spacing, k*spacing);
+        $(pt.node).on('click', onClickHandler);
         this.gridPoints.push(pt);
       }
     }
@@ -185,6 +188,11 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
   //this.routeInfo.buildPassageInformation();
 };
 
+N.UI.PiNetwork.prototype.addConnection = function(piConnection) {
+  this.piConnections.push(piConnection);
+  piConnection.render(this.group);
+};
+
 N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
   this.outerRect = this.group.rect(this.rect.right-this.rect.left-padding[3]-padding[1], this.rect.bottom-this.rect.top-padding[2]-padding[0])
     .move(this.rect.left+padding[3], this.rect.top+padding[0])
@@ -192,24 +200,27 @@ N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
     .attr({ class: className});
 };
 
+N.UI.PiNetwork.prototype.onBackgroundClick = function(event) {
+  var clientRect = this.outerRect.node.getBoundingClientRect();
+  var x = event.clientX-clientRect.left;
+  var y = event.clientY-clientRect.top;
+  var snap = this.getNearestGridPoint(x, y);
+
+  var s = this.scale;
+  snap.x /= s;
+  snap.y /= s;
+  var eventData = { piNetwork: this, network: this.network, pos: { x: x/s, y: y/s }, snap: snap };
+  this.sceneSignals['background-click'].dispatch(eventData);
+};
+
 N.UI.PiNetwork.prototype.addEventHandlers = function() {
   var _this = this;
-  $(this.outerRect.node).on('click', function(event) {
-    var clientRect = _this.outerRect.node.getBoundingClientRect();
-    var x = event.clientX-clientRect.left;
-    var y = event.clientY-clientRect.top;
-    var snap = _this.getNearestGridPoint(x, y);
+  var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
 
-    var s = _this.scale;
-    snap.x /= s;
-    snap.y /= s;
-    var eventData = { piNetwork: _this, network: _this.network, pos: { x: x/s, y: y/s }, snap: snap };
-    _this.sceneSignals['background-click'].dispatch(eventData);
-  });
-
+  $(this.outerRect.node).on('click', onClickHandler);
 
   $(this.outerRect.node).on('mousemove', function(event) {
-    _this.spottingCircle.show();
+    //_this.spottingCircle.show();
     var clientRect = _this.outerRect.node.getBoundingClientRect();
     var x = event.clientX-clientRect.left;
     var y = event.clientY-clientRect.top;
