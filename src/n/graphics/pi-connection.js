@@ -34,6 +34,9 @@ N.UI.PiConnection = function(piNetwork, connection) {
 
 N.UI.PiConnection.prototype.setPath = function(path) {
   this.pathMetadata = path;
+  if(this.group) {
+    this.renderPath();
+  }
 };
 
 N.UI.PiConnection.prototype.createPath = function(svgGroup, pathString) {
@@ -45,43 +48,55 @@ N.UI.PiConnection.prototype.createPath = function(svgGroup, pathString) {
 };
 
 N.UI.PiConnection.prototype.render = function(svgGroup) {
-  var s = this.piNetwork.scale;
-  var pt = this.pathMetadata.points;
-  var st = this.pathMetadata.start;
-  var end = this.pathMetadata.end;
-  //: {
-  //  component: event.compartment.name,
-  //    center: {x: n.x / s, y: n.y / s},
-  //  radius: n.radius / s
-  //},
-  var dx = pt[0].pos.x-st.center.x;
-  var dy = pt[0].pos.y-st.center.y;
-  var xy = Math.sqrt(dx*dx+dy*dy);
-  var cosX = dx/xy;
-  var sinY = dy/xy;
-  console.log(this.pathMetadata);
-  var pathString = 'M'+st.center.x*s+' '+st.center.y*s+'m'+cosX*st.radius*s+' '+sinY*st.radius*s+'L'+pt[0].pos.x*s+' '+pt[0].pos.y*s;
-
-  for(var i=1; i<pt.length; i++) {
-    pathString += 'L'+pt[i].pos.x*s+' '+pt[i].pos.y*s;
+  this.group = svgGroup;
+  if (this.pathMetadata) {
+    this.renderPath();
   }
+};
 
-  var iEnd = pt.length-1;
-  var edx = pt[iEnd].pos.x-end.center.x;
-  var edy = pt[iEnd].pos.y-end.center.y;
-  var exy = Math.sqrt(edx*edx+edy*edy);
-  var ecosX = edx/exy;
-  var esinY = edy/exy;
-  var ed = end.radius-exy;
+N.UI.PiConnection.prototype.renderPath = function() {
+  var st = this.pathMetadata.start;
+  var pt = this.pathMetadata.points;
 
-  debugger;
-  pathString += 'l'+ed*ecosX*s+' '+ed*esinY*s;
+  if(st && pt && pt.length) {
+    var s = this.piNetwork.scale;
 
-  this.path = svgGroup.path(pathString)
-    .attr({
-      'fill': 'none',
-      'stroke-linejoin': 'round',
-      class: 'pi-connection '+N.UI.PiConnectionClasses[this.connection.category] });
+    var dx = pt[0].pos.x - st.center.x;
+    var dy = pt[0].pos.y - st.center.y;
+    var xy = Math.sqrt(dx * dx + dy * dy);
+    var cosX = dx / xy;
+    var sinY = dy / xy;
+
+    var pathString = 'M' + st.center.x * s + ' ' + st.center.y * s + 'm' + cosX * st.radius * s + ' ' + sinY * st.radius * s + 'L' + pt[0].pos.x * s + ' ' + pt[0].pos.y * s;
+
+    for (var i = 1; i < pt.length; i++) {
+      pathString += 'L' + pt[i].pos.x * s + ' ' + pt[i].pos.y * s;
+    }
+
+    var end = this.pathMetadata.end;
+    if(end) {
+      var iEnd = pt.length - 1;
+      var edx = pt[iEnd].pos.x - end.center.x;
+      var edy = pt[iEnd].pos.y - end.center.y;
+      var exy = Math.sqrt(edx * edx + edy * edy);
+      var ecosX = edx / exy;
+      var esinY = edy / exy;
+      var ed = end.radius - exy;
+
+      pathString += 'l' + ed * ecosX * s + ' ' + ed * esinY * s;
+    }
+
+    if (!this.path) {
+      this.path = this.group.path(pathString)
+        .attr({
+          'fill': 'none',
+          'stroke-linejoin': 'round',
+          class: 'pi-connection ' + N.UI.PiConnectionClasses[this.connection.category]
+        });
+    } else {
+      this.path.plot(pathString);
+    }
+  }
 };
 
 N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {

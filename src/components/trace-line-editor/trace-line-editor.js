@@ -75,6 +75,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.scene.piNetwork.group.addClass('soften-component');
         $scope.stateMachine.init();
 
+        $scope.createPiConnection();
+
 
         $scope.sceneSignals['component-click'].add(function(event) {
           $scope.$apply(function() {
@@ -99,7 +101,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   component: event.compartment.name,
                   center: {x: n.x / s, y: n.y / s},
                   radius: n.radius / s
-                }
+                };
+                $scope.piConnection.setPath($scope.trace);
               }
 
               $scope.stateMachine.componentClick();
@@ -117,6 +120,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               var point = {network: net, pos: event.snap};
               $scope.trace.points.push(point);
               $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify(point.pos);
+              $scope.piConnection.setPath($scope.trace);
             }
           });
         });
@@ -129,9 +133,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.createPiConnection = function() {
-        var piConnection = new N.UI.PiConnection($scope.scene.piNetwork, $scope.connection);
-        piConnection.setPath($scope.trace);
-        $scope.scene.piNetwork.addConnection(piConnection);
+        $scope.piConnection = new N.UI.PiConnection($scope.scene.piNetwork, $scope.connection);
+        $scope.piConnection.setPath($scope.trace);
+        //piConnection.setPath($scope.trace);
+        $scope.scene.piNetwork.addConnection($scope.piConnection);
 
       };
 
