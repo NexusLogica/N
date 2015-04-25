@@ -57,33 +57,59 @@ N.UI.PiConnection.prototype.render = function(svgGroup) {
 N.UI.PiConnection.prototype.renderPath = function() {
   var st = this.pathMetadata.start;
   var pt = this.pathMetadata.points;
+  var end = this.pathMetadata.end;
 
-  if(st && pt && pt.length) {
+  if(st && ((pt && pt.length) || end)) {
     var s = this.piNetwork.scale;
+    var dx, dy, xy, cosX, sinY, pathString, edx, edy, exy, ecosX, esinY, ed;
 
-    var dx = pt[0].pos.x - st.center.x;
-    var dy = pt[0].pos.y - st.center.y;
-    var xy = Math.sqrt(dx * dx + dy * dy);
-    var cosX = dx / xy;
-    var sinY = dy / xy;
+    // If there are points then go through this path.
+    if(pt.length) {
+      dx = pt[0].pos.x - st.center.x;
+      dy = pt[0].pos.y - st.center.y;
+      xy = Math.sqrt(dx * dx + dy * dy);
+      cosX = dx / xy;
+      sinY = dy / xy;
 
-    var pathString = 'M' + st.center.x * s + ' ' + st.center.y * s + 'm' + cosX * st.radius * s + ' ' + sinY * st.radius * s + 'L' + pt[0].pos.x * s + ' ' + pt[0].pos.y * s;
+      pathString = 'M' + st.center.x * s + ' ' + st.center.y * s + 'm' + cosX * st.radius * s + ' ' + sinY * st.radius * s + 'L' + pt[0].pos.x * s + ' ' + pt[0].pos.y * s;
 
-    for (var i = 1; i < pt.length; i++) {
-      pathString += 'L' + pt[i].pos.x * s + ' ' + pt[i].pos.y * s;
+      for (var i = 1; i < pt.length; i++) {
+        pathString += 'L' + pt[i].pos.x * s + ' ' + pt[i].pos.y * s;
+      }
+
+      if (end) {
+        var iEnd = pt.length - 1;
+        edx = pt[iEnd].pos.x - end.center.x;
+        edy = pt[iEnd].pos.y - end.center.y;
+        exy = Math.sqrt(edx * edx + edy * edy);
+        ecosX = edx / exy;
+        esinY = edy / exy;
+        ed = end.radius - exy;
+
+        pathString += 'l' + ed * ecosX * s + ' ' + ed * esinY * s;
+      }
     }
 
-    var end = this.pathMetadata.end;
-    if(end) {
-      var iEnd = pt.length - 1;
-      var edx = pt[iEnd].pos.x - end.center.x;
-      var edy = pt[iEnd].pos.y - end.center.y;
-      var exy = Math.sqrt(edx * edx + edy * edy);
-      var ecosX = edx / exy;
-      var esinY = edy / exy;
-      var ed = end.radius - exy;
+    // If there is just a beginning and end then use this path.
+    else {
+      dx = end.center.x - st.center.x;
+      dy = end.center.y - st.center.y;
+      xy = Math.sqrt(dx * dx + dy * dy);
+      cosX = dx / xy;
+      sinY = dy / xy;
 
-      pathString += 'l' + ed * ecosX * s + ' ' + ed * esinY * s;
+      pathString = 'M' + st.center.x * s + ' ' + st.center.y * s + 'm' + cosX * st.radius * s + ' ' + sinY * st.radius * s;
+
+      if (end) {
+        edx = st.center.x - end.center.x;
+        edy = st.center.y - end.center.y;
+        exy = Math.sqrt(edx * edx + edy * edy);
+        ecosX = edx / exy;
+        esinY = edy / exy;
+        ed = end.radius - exy;
+
+        pathString += 'L' + ed * ecosX * s + ' ' + ed * esinY * s;
+      }
     }
 
     if (!this.path) {

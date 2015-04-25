@@ -25,7 +25,9 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
       ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);
 
       $scope.sceneSignals = {
+        'component-move': new signals.Signal(),
         'component-click': new signals.Signal(),
+        'background-move': new signals.Signal(),
         'background-click': new signals.Signal()
       };
 

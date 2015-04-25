@@ -128,10 +128,12 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
     var spot = this.defs.circle(1.0).attr('class', 'pi-grid-point');
     var numX = this.width/spacing;
     var numY = this.height/spacing;
+    var onMoveHandler = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
     var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
     for(var j = 1; j<numX; j++) {
       for(var k = 1; k<numY; k++) {
         var pt = this.group.use(spot).move(j*spacing, k*spacing);
+        $(pt.node).on('mousemove', onMoveHandler);
         $(pt.node).on('click', onClickHandler);
         this.gridPoints.push(pt);
       }
@@ -200,7 +202,27 @@ N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {
     .attr({ class: className});
 };
 
+N.UI.PiNetwork.prototype.onBackgroundMove = function(event) {
+  this.dispatchEvent('background-move', event);
+};
+
 N.UI.PiNetwork.prototype.onBackgroundClick = function(event) {
+  this.dispatchEvent('background-click', event);
+};
+
+N.UI.PiNetwork.prototype.dispatchEvent = function(name, event) {
+  var eventData = this.positionFromEvent(event);
+  eventData.piNetwork = this;
+  eventData.network = this.network;
+  this.sceneSignals[name].dispatch(eventData);
+};
+
+/***
+ * From the event information, determine the position and snap position on the network.
+ * @param event
+ * @returns {{pos: {x: number, y: number}, snap: *}}
+ */
+N.UI.PiNetwork.prototype.positionFromEvent = function(event) {
   var clientRect = this.outerRect.node.getBoundingClientRect();
   var x = event.clientX-clientRect.left;
   var y = event.clientY-clientRect.top;
@@ -209,30 +231,16 @@ N.UI.PiNetwork.prototype.onBackgroundClick = function(event) {
   var s = this.scale;
   snap.x /= s;
   snap.y /= s;
-  var eventData = { piNetwork: this, network: this.network, pos: { x: x/s, y: y/s }, snap: snap };
-  this.sceneSignals['background-click'].dispatch(eventData);
+  return { pos: { x: x/s, y: y/s }, snap: snap };
 };
 
 N.UI.PiNetwork.prototype.addEventHandlers = function() {
   var _this = this;
+  var onMoveHandler  = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
   var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
 
+  $(this.outerRect.node).on('mousemove', onMoveHandler);
   $(this.outerRect.node).on('click', onClickHandler);
-
-  $(this.outerRect.node).on('mousemove', function(event) {
-    //_this.spottingCircle.show();
-    var clientRect = _this.outerRect.node.getBoundingClientRect();
-    var x = event.clientX-clientRect.left;
-    var y = event.clientY-clientRect.top;
-    if(x >= 0 && x < _this.width && y >= 0 && y < _this.height) {
-      var pos = _this.getNearestGridPoint(x, y);
-      _this.spottingCircle.move(pos.x, pos.y);
-    }
-  });
-
-  $(this.outerRect.node).on('mouseleave', function(event) {
-    _this.spottingCircle.hide();
-  });
 };
 
 N.UI.PiNetwork.prototype.getNearestGridPoint = function(x, y) {

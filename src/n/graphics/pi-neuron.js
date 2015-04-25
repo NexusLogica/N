@@ -97,6 +97,10 @@ N.UI.PiNeuron.prototype.addEventHandlers = function(piCompartment) {
   jQuery.data(node, 'piCompartment', piCompartment);
 
   var _this = this;
+  $(node).on('mousemove', function(event) {
+    var piCompartment = $(event.target).data('piCompartment');
+    _this.sceneSignals['component-move'].dispatch({ piCompartment: piCompartment, compartment: piCompartment.compartmentObj });
+  });
   $(node).on('click', function(event) {
     var piCompartment = $(event.target).data('piCompartment');
     _this.sceneSignals['component-click'].dispatch({ piCompartment: piCompartment, compartment: piCompartment.compartmentObj });
