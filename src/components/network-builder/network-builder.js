@@ -101,18 +101,39 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           loader.templatesByPath[path] = {};
           $scope.loadFile(path).then(function (sourceFile) {
 
-            var configTemplate = N.compileTemplateFunction(sourceFile.getText(), path);
-            requestingTemplate.loadedImports[key] = configTemplate;
-            loader.templatesByPath[path] = configTemplate;
+            // This is a template file so compile and load it.
+            var srcText = sourceFile.getText();
+            if(srcText.indexOf('N.Template') !== -1 || srcText.indexOf('N.ConnectionTemplate') !== -1) {
+              try {
+                var configTemplate = N.compileTemplateFunction(srcText, path);
+                requestingTemplate.loadedImports[key] = configTemplate;
+                loader.templatesByPath[path] = configTemplate;
 
-            // Now, load the imports.
-            for (var importKey in configTemplate.imports) {
-              if (configTemplate.imports.hasOwnProperty(importKey)) {
-                $scope.loadImport(loader, configTemplate, importKey, configTemplate.imports[importKey], deferredGroup);
+                // Now, load the imports.
+                for (var importKey in configTemplate.imports) {
+                  if (configTemplate.imports.hasOwnProperty(importKey)) {
+                    $scope.loadImport(loader, configTemplate, importKey, configTemplate.imports[importKey], deferredGroup);
+                  }
+                }
+              } catch(err) {
+                console.log('ERROR: Unable to compile '+path+': '+err.description);
+                deferred.reject(err);
               }
+
+              deferred.resolve();
             }
 
-            deferred.resolve();
+            // This is (hopefully) a JSON file so just parse it.
+            else {
+              try {
+                var includeJson = JSON.parse(srcText);
+                requestingTemplate.loadedImports[key] = includeJson;
+                loader.templatesByPath[path] = includeJson;
+              } catch(err) {
+                deferred.reject(err)
+              }
+              deferred.resolve();
+            }
 
           }, function (err) {
             deferred.reject(err);
@@ -124,9 +145,23 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
       var Compiler = function() {
 
         var buildOut = function(context) {
+          if(context.self.include) {
+            for(var i=0; i<context.self.include.length; i++) {
+              var includeMetadata = context.self.include[i];
+              var include = context.imports[includeMetadata.template];
+              if(!include) {
+                return { description: 'Import template '+includeMetadata.template+'not found'}
+              }
+              if(context.self[includeMetadata.target]) {
+                _.merge(context.self[includeMetadata.target], include);
+              } else {
+                context.self[includeMetadata.target] = include;
+              }
+            }
+          }
           if(context.self.build) {
-            for(var i=0; i<context.self.build.length; i++) {
-              var command = context.self.build[i];
+            for(var j=0; j<context.self.build.length; j++) {
+              var command = context.self.build[j];
               var template = context.imports[command.template];
               if(!template) {
                 return { description: 'Import template '+command.template+'not found'}
@@ -195,6 +230,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
         $scope.compile(path).then(function(config) {
           $scope.buildFromJSON(config).then(function(nObject) {
+            nObject.sourceConfiguration = config;
             deferred.resolve(nObject);
           }, function(err) {
             deferred.reject(err);
@@ -700,6 +736,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
                 }, function (err) {
                   callback('Error building system: '+err.description);
+                  console.log('       Stack trace:\n'+err.stack);
                 }).catch(function (err) {
                   N.reportQError(err);
                   callback('Unexpected error building the network: ' + err.description);

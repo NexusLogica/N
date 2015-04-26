@@ -332,6 +332,18 @@ N.ShellScript.prototype.view = function(request, response) {
         else if (obj.type === 'system' || obj.className === 'N.System') {
           this.scope.editorPanel.addNetworkViewer(obj);
         }
+
+        // Check for a configuration JSON. It will have a className of the output but will have no functions.
+        else if (obj.className === 'N.Network' && !obj.getType) {
+          var source = {
+            displayName: 'Compiled configuration',
+            source: args[0],
+            type: 'compiled',
+            output: obj,
+            guid: obj.id || N.generateUUID()
+          }
+          this.scope.editorPanel.addEditor(source);
+        }
         deferred.resolve({ status: 0 });
       }
     }
@@ -488,6 +500,7 @@ N.ShellScript.prototype.run = function(request, response) {
           deferred.resolve({ msg: 'Run successful', status: 0 });
 
         }, function (err) {
+          console.log('Stack trace:\n'+err.stack);
           deferred.reject({ msg: 'Error building system: '+err.description, status: 1 });
         }).catch(function (err) {
           deferred.reject({ msg: 'Unexpected error building the network: '+err.description+'\n'+err.stack, status: 1 });

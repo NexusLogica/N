@@ -103,6 +103,7 @@ N.compileTemplateFunction = function(templateText, identifier) {
   } catch(err) {
     console.log('ERROR: N.compileTemplateFunction: '+err.description);
     console.log('       Stack trace:\n'+err.stack);
+    throw err;
   }
 };
 
