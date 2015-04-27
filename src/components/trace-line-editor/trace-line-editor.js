@@ -19,7 +19,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
     scope: {
       signals: '=signals',
       sceneSignals: '=sceneSignals',
-      scene: '=scene'
+      scene: '=scene',
+      scriptHost: '=scriptHost'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'traceLineEditor', $scope, $element, $attrs);
@@ -172,6 +173,21 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         //piConnection.setPath($scope.trace);
         $scope.scene.piNetwork.addConnection($scope.piConnection);
 
+      };
+
+      $scope.save = function() {
+        var display = $scope.scene.piNetwork.network.display;
+        var path = display.$$path;
+        var displayCopy = _.cloneDeep(display);
+        delete displayCopy.$$path;
+        displayCopy.connections = { blah: 'blahblah' };
+
+
+        var formData = new FormData();
+        formData.append('file', new Blob([JSON.stringify(displayCopy, undefined, 2)], {
+          type: 'text/plain'
+        }));
+        var deferred = N.Http.post($scope.scriptHost + '/file' + path, formData);
       };
 
       $scope.done = function() {

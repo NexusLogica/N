@@ -19,7 +19,8 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
     scope: {
       signals: '=signals',
       system: '=system',
-      network: '=network'
+      network: '=network',
+      scriptHost: '=scriptHost'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);

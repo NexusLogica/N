@@ -68,6 +68,10 @@ angular.module('nSimulationApp').directive('nEditor', [function() {
             2);
           $scope.editor.setValue(text, -1);
           $scope.editor.setReadOnly(true);
+
+          $scope.edit.signals.save.add(function () {
+            $scope.sourceFile.file.updateText($scope.editor.getValue());
+          });
         } else if(type === 'history') {
           $scope.sourceType = 'System Output';
           $scope.sourcePath = $scope.edit.sourcePath;

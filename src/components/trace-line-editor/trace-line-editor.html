@@ -6,7 +6,7 @@
     </select>
   </div>
   <button class="btn" ng-click="cancel()" ng-show="stateMachine.current !== 'Idle'"><Cancel></Cancel></button>
-  <button class="btn" ng-click="edit()" ng-show="stateMachine.current === 'Idle' && isDirty">Save</button>
+  <button class="btn" ng-click="save()" ng-show="stateMachine.current === 'Idle' && isDirty">Save</button>
   <button class="btn" ng-click="edit()" ng-show="stateMachine.current === 'Idle'">Edit</button>
   <button class="btn" ng-click="done()" ng-show="stateMachine.current === 'Idle'">Done</button>
   <div class="debug-text">{{debugText}}</div>

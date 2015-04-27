@@ -18,7 +18,8 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
     templateUrl: 'src/components/editors-panel/editors-panel.html',
     scope: {
       sourceFiles: '=sourceFiles',
-      signals: '=signals'
+      signals: '=signals',
+      scriptHost: '=scriptHost'
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$compile', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $compile) {
       ComponentExtensions.initialize(this, 'editorsPanel', $scope, $element, $attrs);
@@ -93,7 +94,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         $scope.editorsByGuid[guid] = editor;
 
 
-        var html = $compile('<pi-viewer class="'+guid+'" network="editorsByGuid.'+guid+'.network" system="editorsByGuid.'+guid+'.system" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-viewer>')($scope);
+        var html = $compile('<pi-viewer class="'+guid+'" network="editorsByGuid.'+guid+'.network" script-host="scriptHost" system="editorsByGuid.'+guid+'.system" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-viewer>')($scope);
         $element.find('.editors').append(html);
       };
 

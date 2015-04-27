@@ -127,6 +127,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             else {
               try {
                 var includeJson = JSON.parse(srcText);
+                includeJson.$$path = path;
                 requestingTemplate.loadedImports[key] = includeJson;
                 loader.templatesByPath[path] = includeJson;
               } catch(err) {
@@ -436,6 +437,28 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         }
       });
 
+      $scope.shell.setCommandHandler('env', {
+        exec: function (cmd, args, callback) {
+          var scriptRunner = new N.ShellScript($scope);
+          var responseText = '';
+          scriptRunner.runScript('env'+args.join(' '), [], {
+            log: function (msg) { responseText += msg; },
+            done: function (msg) { callback(responseText + msg);}
+          });
+        }
+      });
+
+      $scope.shell.setCommandHandler('view', {
+        exec: function (cmd, args, callback) {
+          var scriptRunner = new N.ShellScript($scope);
+          var responseText = '';
+          scriptRunner.runScript('view'+args.join(' '), args, {
+            log: function (msg) { responseText += msg; },
+            done: function (msg) { callback(responseText + msg);}
+          });
+        }
+      });
+
       $scope.shell.setCommandHandler('cd', {
         exec: function (cmd, args, callback) {
           var path = args[0];
@@ -571,35 +594,35 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         }
       });
 
-      $scope.shell.setCommandHandler('view', {
-        exec: function (cmd, args, callback) {
-          try {
-            var usage = 'Usage: view [env-var]';
-
-            if(args.length !== 1) {
-
-              callback(usage)
-
-            } else {
-
-              if (args[0].indexOf('$') === 0) {
-                var obj = $scope.variables[args[0]];
-                if (obj) {
-                  if (obj.type === 'history') {
-                    $scope.editorPanel.addHistoryViewer(obj);
-                  }
-                  callback('');
-                } else {
-                  callback('Unable to find variable ' + args[0]);
-                }
-
-              }
-            }
-          } catch(err) {
-            callback('ERROR: '+err.stack)
-          }
-        }
-      });
+      //$scope.shell.setCommandHandler('view', {
+      //  exec: function (cmd, args, callback) {
+      //    try {
+      //      var usage = 'Usage: view [env-var]';
+      //
+      //      if(args.length !== 1) {
+      //
+      //        callback(usage)
+      //
+      //      } else {
+      //
+      //        if (args[0].indexOf('$') === 0) {
+      //          var obj = $scope.variables[args[0]];
+      //          if (obj) {
+      //            if (obj.type === 'history') {
+      //              $scope.editorPanel.addHistoryViewer(obj);
+      //            }
+      //            callback('');
+      //          } else {
+      //            callback('Unable to find variable ' + args[0]);
+      //          }
+      //
+      //        }
+      //      }
+      //    } catch(err) {
+      //      callback('ERROR: '+err.stack)
+      //    }
+      //  }
+      //});
 
       $scope.shell.setCommandHandler('compile', {
         exec: function (cmd, args, callback) {

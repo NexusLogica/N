@@ -181,6 +181,24 @@ N.ShellScript.prototype.ls = function(request, response) {
   return deferred.promise;
 };
 
+N.ShellScript.prototype.env = function(request, response) {
+  var deferred = Q.defer();
+
+  var list = [];
+  for(var k in this.scope.variables) {
+    if(this.scope.variables.hasOwnProperty(k)) {
+      list.push(k);
+    }
+  }
+
+  list.sort();
+  var output = '';
+  _.forEach(list, function(name) { output += '<div>'+name+'</div>'; });
+  deferred.resolve({ msg: output, status: 0 });
+
+  return deferred.promise;
+};
+
 N.ShellScript.prototype.host = function(request, response) {
   var deferred = Q.defer();
 
@@ -341,7 +359,7 @@ N.ShellScript.prototype.view = function(request, response) {
             type: 'compiled',
             output: obj,
             guid: obj.id || N.generateUUID()
-          }
+          };
           this.scope.editorPanel.addEditor(source);
         }
         deferred.resolve({ status: 0 });
