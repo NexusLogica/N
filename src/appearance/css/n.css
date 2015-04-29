@@ -1384,7 +1384,7 @@ All Rights Reserved.
 .pi-viewer {
   display: block; }
   .pi-viewer .info-bar {
-    height: 28px;
+    height: 50px;
     width: 100%;
     font-size: 12px;
     padding-top: 2px;
@@ -1404,10 +1404,15 @@ All Rights Reserved.
         display: inline-block; }
     .pi-viewer .info-bar .info-label {
       color: #696969; }
+    .pi-viewer .info-bar .edit-menu {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px; }
   .pi-viewer .viewer {
     box-sizing: border-box;
     width: 100%;
-    height: 772px;
+    height: 750px;
     border: 1px solid #ccc;
     padding: 10px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
@@ -1417,7 +1422,62 @@ All Rights Reserved.
       .pi-viewer .viewer .canvas-container .network-canvas {
         box-sizing: border-box;
         width: 1030px;
-        height: 752px; }
+        height: 730px; }
+
+/**********************************************************************
+
+File     : pi-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the PI editor component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/19
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-editor {
+  display: block; }
+  .pi-editor .info-bar {
+    height: 50px;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-left: 12px;
+    background: linear-gradient(#dddddd, #d2d2d2);
+    border: 1px solid #BBBBBB; }
+    .pi-editor .info-bar .type {
+      vertical-align: bottom; }
+    .pi-editor .info-bar .btn {
+      height: 21px;
+      font-size: 13px;
+      padding: 1px 10px; }
+    .pi-editor .info-bar > div {
+      display: inline-block;
+      margin-right: 30px; }
+      .pi-editor .info-bar > div > div {
+        display: inline-block; }
+    .pi-editor .info-bar .info-label {
+      color: #696969; }
+    .pi-editor .info-bar .edit-menu {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px; }
+  .pi-editor .viewer {
+    box-sizing: border-box;
+    width: 100%;
+    height: 750px;
+    border: 1px solid #ccc;
+    padding: 10px 10px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+    font-size: 11px; }
+    .pi-editor .viewer .canvas-container {
+      box-sizing: border-box; }
+      .pi-editor .viewer .canvas-container .network-canvas {
+        box-sizing: border-box;
+        width: 1030px;
+        height: 730px; }
 
 /**********************************************************************
 
@@ -1439,6 +1499,33 @@ All Rights Reserved.
     display: inline-block; }
   .trace-line-editor .debug-text {
     display: inline-block; }
+
+/**********************************************************************
+
+File     : pi-viewer-page.scss
+Project  : N Simulator Library
+Purpose  : Source file for the PI Viewer page SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/28
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-viewer-page > .pi {
+  position: absolute;
+  left: 33px;
+  top: 15px;
+  font-size: 30px; }
+.pi-viewer-page > .message {
+  width: 400px;
+  margin: 200px auto 0px auto;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 300; }
+  .pi-viewer-page > .message > .example {
+    font-size: 20px;
+    font-weight: 300; }
 
 .n-canvas {
   position: relative;

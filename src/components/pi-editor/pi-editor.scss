@@ -1,8 +1,8 @@
 /**********************************************************************
 
-File     : pi-viewer.scss
+File     : pi-editor.scss
 Project  : N Simulator Library
-Purpose  : Source file for the output log component SCSS files.
+Purpose  : Source file for the PI editor component SCSS files.
 Revisions: Original definition by Lawrence Gunn.
            2015/04/19
 
@@ -14,7 +14,7 @@ All Rights Reserved.
 $controls-height: 0px;
 $top-bar-height: 50px;
 
-.pi-viewer {
+.pi-editor {
   display: block;
 
   .info-bar {

@@ -1,0 +1,78 @@
+/*
+Syntax error: Undefined variable: "$editor-height".
+        on line 62 of pi-editor.scss
+
+57:   }
+58: 
+59:   .viewer {
+60:     box-sizing: border-box;
+61:     width: 100%;
+62:     height: $editor-height - $top-bar-height;
+63:     border: 1px solid #ccc;
+64:     padding: 10px 10px;
+65:     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+66:     font-size: 11px;
+67:     .canvas-container {
+
+Backtrace:
+pi-editor.scss:62
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/script/variable.rb:49:in `_perform'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/script/node.rb:40:in `perform'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/script/operation.rb:73:in `_perform'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/script/node.rb:40:in `perform'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:298:in `visit_prop'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `map'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:320:in `visit_rule'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `map'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:320:in `visit_rule'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `map'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:53:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:109:in `block in visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:121:in `with_environment'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:108:in `visit_children'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `block in visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:128:in `visit_root'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/base.rb:37:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:100:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/visitors/perform.rb:7:in `visit'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/tree/root_node.rb:20:in `render'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/engine.rb:315:in `_render'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/engine.rb:262:in `render'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:362:in `update_stylesheet'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:203:in `block in update_stylesheets'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:201:in `each'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin/compiler.rb:201:in `update_stylesheets'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/plugin.rb:81:in `update_stylesheets'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:443:in `watch_or_update'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:326:in `process_result'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:41:in `parse'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/lib/sass/exec.rb:21:in `parse!'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/gems/sass-3.2.14/bin/sass:13:in `<top (required)>'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/sass:23:in `load'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/sass:23:in `<main>'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/ruby_executable_hooks:15:in `eval'
+/Users/lgunn/.rvm/gems/ruby-2.0.0-p247/bin/ruby_executable_hooks:15:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: Undefined variable: \"$editor-height\".\A         on line 62 of pi-editor.scss\A \A 57:   }\A 58: \A 59:   .viewer {\A 60:     box-sizing: border-box;\A 61:     width: 100%;\A 62:     height: $editor-height - $top-bar-height;\A 63:     border: 1px solid #ccc;\A 64:     padding: 10px 10px;\A 65:     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;\A 66:     font-size: 11px;\A 67:     .canvas-container {"; }

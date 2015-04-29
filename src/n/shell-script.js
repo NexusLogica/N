@@ -474,7 +474,8 @@ N.ShellScript.prototype.run = function(request, response) {
       if (systemObj) {
         systemDeferred.resolve();
       } else {
-        this.scope.buildFromFile(systemEnvVar).then(function (builtSystem) {
+        var compiler = new N.Compiler(this.scope.scriptHost, this.scope.sources);
+        compiler.compileAndBuild(systemEnvVar).then(function (builtSystem) {
           systemObj = builtSystem;
           systemDeferred.resolve();
         }, function (err) {
@@ -492,7 +493,8 @@ N.ShellScript.prototype.run = function(request, response) {
         if (networkObj) {
           networkDeferred.resolve();
         } else {
-          _this.scope.buildFromFile(networkEnvVar).then(function (builtNetwork) {
+          var compiler = new N.Compiler(_this.scope.scriptHost, _this.scope.sources);
+          compiler.compileAndBuild(networkEnvVar).then(function (builtNetwork) {
             networkObj = builtNetwork;
             networkDeferred.resolve();
           }, function (err) {

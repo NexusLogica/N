@@ -51,197 +51,197 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.$broadcast('network-builder:new');
       };
 
-      var DeferredRequestGroup = function() {
-        var deferred = Q.defer();
-        var active = false;
-        var numPromises = 0;
-        var rejected = false;
-
-        var begin = function() {
-          return deferred.promise;
-        };
-
-        var addPromise = function(promise) {
-          numPromises++;
-          promise.then(function() {
-            numPromises--;
-            if(numPromises === 0 && !rejected) {
-              deferred.resolve();
-            }
-          }, function(err) {
-            numPromises--;
-            rejected = true;
-            deferred.reject(err);
-          }).catch(N.reportQError);
-        };
-
-        return {
-          begin: begin,
-          addPromise: addPromise
-        }
-      };
-
-      /***
-       * Load an import.
-       * @method loadImport
-       * @param loader - This is the loader object.
-       * @param requestingTemplate - This is the instantiated template object (i.e. imports, loadedImports, function).
-       * @param key - Import key name
-       * @param path - Import path
-       * @param {DeferredRequestGroup} deferredGroup - The deferred object. Resolving the current load must be done after starting the child imports.
-       * @returns {*}
-       */
-      $scope.loadImport = function(loader, requestingTemplate, key, path, deferredGroup) {
-        var deferred = Q.defer();
-        if (loader.templatesByPath[path]) {
-          requestingTemplate.loadedImports[key] = loader.templatesByPath[path];
-          deferred.resolve();
-        } else {
-          // Block other load requests from uploading this file.
-          loader.templatesByPath[path] = {};
-          $scope.loadFile(path).then(function (sourceFile) {
-
-            // This is a template file so compile and load it.
-            var srcText = sourceFile.getText();
-            if(srcText.indexOf('N.Template') !== -1 || srcText.indexOf('N.ConnectionTemplate') !== -1) {
-              try {
-                var configTemplate = N.compileTemplateFunction(srcText, path);
-                requestingTemplate.loadedImports[key] = configTemplate;
-                loader.templatesByPath[path] = configTemplate;
-
-                // Now, load the imports.
-                for (var importKey in configTemplate.imports) {
-                  if (configTemplate.imports.hasOwnProperty(importKey)) {
-                    $scope.loadImport(loader, configTemplate, importKey, configTemplate.imports[importKey], deferredGroup);
-                  }
-                }
-              } catch(err) {
-                console.log('ERROR: Unable to compile '+path+': '+err.description);
-                deferred.reject(err);
-              }
-
-              deferred.resolve();
-            }
-
-            // This is (hopefully) a JSON file so just parse it.
-            else {
-              try {
-                var includeJson = JSON.parse(srcText);
-                includeJson.$$path = path;
-                requestingTemplate.loadedImports[key] = includeJson;
-                loader.templatesByPath[path] = includeJson;
-              } catch(err) {
-                deferred.reject(err)
-              }
-              deferred.resolve();
-            }
-
-          }, function (err) {
-            deferred.reject(err);
-          }).catch(N.reportQError);
-        }
-        deferredGroup.addPromise(deferred.promise);
-      };
-
-      var Compiler = function() {
-
-        var buildOut = function(context) {
-          if(context.self.include) {
-            for(var i=0; i<context.self.include.length; i++) {
-              var includeMetadata = context.self.include[i];
-              var include = context.imports[includeMetadata.template];
-              if(!include) {
-                return { description: 'Import template '+includeMetadata.template+'not found'}
-              }
-              if(context.self[includeMetadata.target]) {
-                _.merge(context.self[includeMetadata.target], include);
-              } else {
-                context.self[includeMetadata.target] = include;
-              }
-            }
-          }
-          if(context.self.build) {
-            for(var j=0; j<context.self.build.length; j++) {
-              var command = context.self.build[j];
-              var template = context.imports[command.template];
-              if(!template) {
-                return { description: 'Import template '+command.template+'not found'}
-              }
-              context.compiler = this;
-              var args = [].concat(context, command.args);
-              template.func.apply(this, args);
-            }
-
-            delete context.self.build;
-          }
-        };
-
-        return {
-          buildOut: buildOut
-        };
-      };
-
-      $scope.compile = function(filePath) {
-        var deferred = Q.defer();
-
-        var rootTemplate = {
-          import: { '$$root': filePath },
-          loadedImports: {},
-          func: function() {} // no-op
-        };
-        var loader = { templatesByPath: {} };
-
-        var deferredGroup = DeferredRequestGroup();
-        var promise = deferredGroup.begin();
-
-        $scope.loadImport(loader, rootTemplate, '$$root', filePath, deferredGroup);
-
-        promise.then(function() {
-          var compiler = Compiler();
-          var config = {};
-          var root = rootTemplate.loadedImports.$$root;
-          root.func({ root: config, self: config, imports: root.loadedImports, compiler: compiler });
-          deferred.resolve(config);
-        }, function(err) {
-          deferred.reject(err);
-        }).catch(N.reportQError);
-        return deferred.promise;
-      };
-
-      $scope.buildFromJSON = function(config) {
-        var deferred = Q.defer();
-        if (!config.className) {
-          deferred.reject({description: 'No className entry - could not build object'});
-          return;
-        }
-
-        var nObject = N.newN(config.className);
-
-        nObject.loadFrom(config).then(function () {
-          deferred.resolve(nObject);
-        }, function (status) {
-          deferred.reject(status);
-        }).catch(N.reportQError);
-
-        return deferred.promise;
-      };
-
-      $scope.buildFromFile = function(path) {
-        var deferred = Q.defer();
-
-        $scope.compile(path).then(function(config) {
-          $scope.buildFromJSON(config).then(function(nObject) {
-            nObject.sourceConfiguration = config;
-            deferred.resolve(nObject);
-          }, function(err) {
-            deferred.reject(err);
-          });
-        }, function(err) {
-          deferred.reject(err);
-        });
-
-        return deferred.promise;
-      };
+      //var DeferredRequestGroup = function() {
+      //  var deferred = Q.defer();
+      //  var active = false;
+      //  var numPromises = 0;
+      //  var rejected = false;
+      //
+      //  var begin = function() {
+      //    return deferred.promise;
+      //  };
+      //
+      //  var addPromise = function(promise) {
+      //    numPromises++;
+      //    promise.then(function() {
+      //      numPromises--;
+      //      if(numPromises === 0 && !rejected) {
+      //        deferred.resolve();
+      //      }
+      //    }, function(err) {
+      //      numPromises--;
+      //      rejected = true;
+      //      deferred.reject(err);
+      //    }).catch(N.reportQError);
+      //  };
+      //
+      //  return {
+      //    begin: begin,
+      //    addPromise: addPromise
+      //  }
+      //};
+      //
+      ///***
+      // * Load an import.
+      // * @method loadImport
+      // * @param loader - This is the loader object.
+      // * @param requestingTemplate - This is the instantiated template object (i.e. imports, loadedImports, function).
+      // * @param key - Import key name
+      // * @param path - Import path
+      // * @param {DeferredRequestGroup} deferredGroup - The deferred object. Resolving the current load must be done after starting the child imports.
+      // * @returns {*}
+      // */
+      //$scope.loadImport = function(loader, requestingTemplate, key, path, deferredGroup) {
+      //  var deferred = Q.defer();
+      //  if (loader.templatesByPath[path]) {
+      //    requestingTemplate.loadedImports[key] = loader.templatesByPath[path];
+      //    deferred.resolve();
+      //  } else {
+      //    // Block other load requests from uploading this file.
+      //    loader.templatesByPath[path] = {};
+      //    $scope.loadFile(path).then(function (sourceFile) {
+      //
+      //      // This is a template file so compile and load it.
+      //      var srcText = sourceFile.getText();
+      //      if(srcText.indexOf('N.Template') !== -1 || srcText.indexOf('N.ConnectionTemplate') !== -1) {
+      //        try {
+      //          var configTemplate = N.compileTemplateFunction(srcText, path);
+      //          requestingTemplate.loadedImports[key] = configTemplate;
+      //          loader.templatesByPath[path] = configTemplate;
+      //
+      //          // Now, load the imports.
+      //          for (var importKey in configTemplate.imports) {
+      //            if (configTemplate.imports.hasOwnProperty(importKey)) {
+      //              $scope.loadImport(loader, configTemplate, importKey, configTemplate.imports[importKey], deferredGroup);
+      //            }
+      //          }
+      //        } catch(err) {
+      //          console.log('ERROR: Unable to compile '+path+': '+err.description);
+      //          deferred.reject(err);
+      //        }
+      //
+      //        deferred.resolve();
+      //      }
+      //
+      //      // This is (hopefully) a JSON file so just parse it.
+      //      else {
+      //        try {
+      //          var includeJson = JSON.parse(srcText);
+      //          includeJson.$$path = path;
+      //          requestingTemplate.loadedImports[key] = includeJson;
+      //          loader.templatesByPath[path] = includeJson;
+      //        } catch(err) {
+      //          deferred.reject(err)
+      //        }
+      //        deferred.resolve();
+      //      }
+      //
+      //    }, function (err) {
+      //      deferred.reject(err);
+      //    }).catch(N.reportQError);
+      //  }
+      //  deferredGroup.addPromise(deferred.promise);
+      //};
+      //
+      //var Compiler = function() {
+      //
+      //  var buildOut = function(context) {
+      //    if(context.self.include) {
+      //      for(var i=0; i<context.self.include.length; i++) {
+      //        var includeMetadata = context.self.include[i];
+      //        var include = context.imports[includeMetadata.template];
+      //        if(!include) {
+      //          return { description: 'Import template '+includeMetadata.template+'not found'}
+      //        }
+      //        if(context.self[includeMetadata.target]) {
+      //          _.merge(context.self[includeMetadata.target], include);
+      //        } else {
+      //          context.self[includeMetadata.target] = include;
+      //        }
+      //      }
+      //    }
+      //    if(context.self.build) {
+      //      for(var j=0; j<context.self.build.length; j++) {
+      //        var command = context.self.build[j];
+      //        var template = context.imports[command.template];
+      //        if(!template) {
+      //          return { description: 'Import template '+command.template+'not found'}
+      //        }
+      //        context.compiler = this;
+      //        var args = [].concat(context, command.args);
+      //        template.func.apply(this, args);
+      //      }
+      //
+      //      delete context.self.build;
+      //    }
+      //  };
+      //
+      //  return {
+      //    buildOut: buildOut
+      //  };
+      //};
+      //
+      //$scope.compile = function(filePath) {
+      //  var deferred = Q.defer();
+      //
+      //  var rootTemplate = {
+      //    import: { '$$root': filePath },
+      //    loadedImports: {},
+      //    func: function() {} // no-op
+      //  };
+      //  var loader = { templatesByPath: {} };
+      //
+      //  var deferredGroup = DeferredRequestGroup();
+      //  var promise = deferredGroup.begin();
+      //
+      //  $scope.loadImport(loader, rootTemplate, '$$root', filePath, deferredGroup);
+      //
+      //  promise.then(function() {
+      //    var compiler = Compiler();
+      //    var config = {};
+      //    var root = rootTemplate.loadedImports.$$root;
+      //    root.func({ root: config, self: config, imports: root.loadedImports, compiler: compiler });
+      //    deferred.resolve(config);
+      //  }, function(err) {
+      //    deferred.reject(err);
+      //  }).catch(N.reportQError);
+      //  return deferred.promise;
+      //};
+      //
+      //$scope.buildFromJSON = function(config) {
+      //  var deferred = Q.defer();
+      //  if (!config.className) {
+      //    deferred.reject({description: 'No className entry - could not build object'});
+      //    return;
+      //  }
+      //
+      //  var nObject = N.newN(config.className);
+      //
+      //  nObject.loadFrom(config).then(function () {
+      //    deferred.resolve(nObject);
+      //  }, function (status) {
+      //    deferred.reject(status);
+      //  }).catch(N.reportQError);
+      //
+      //  return deferred.promise;
+      //};
+      //
+      //$scope.buildFromFile = function(path) {
+      //  var deferred = Q.defer();
+      //
+      //  $scope.compile(path).then(function(config) {
+      //    $scope.buildFromJSON(config).then(function(nObject) {
+      //      nObject.sourceConfiguration = config;
+      //      deferred.resolve(nObject);
+      //    }, function(err) {
+      //      deferred.reject(err);
+      //    });
+      //  }, function(err) {
+      //    deferred.reject(err);
+      //  });
+      //
+      //  return deferred.promise;
+      //};
 
       $scope.setCdFromPwd = function() {
         $scope.cd = $scope.fileSystem;
@@ -710,7 +710,8 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
               if (systemObj) {
                 systemDeferred.resolve();
               } else {
-                $scope.buildFromFile(systemEnvVar).then(function (builtSystem) {
+                var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
+                compiler.compileAndBuild(systemEnvVar).then(function (builtSystem) {
                   systemObj = builtSystem;
                   systemDeferred.resolve();
                 }, function (err) {
@@ -729,7 +730,8 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
                 if (networkObj) {
                   networkDeferred.resolve();
                 } else {
-                  $scope.buildFromFile(networkEnvVar).then(function (builtNetwork) {
+                  var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
+                  compiler.compileAndBuild(networkEnvVar).then(function (builtNetwork) {
                     networkObj = builtNetwork;
                     networkDeferred.resolve();
                   }, function (err) {

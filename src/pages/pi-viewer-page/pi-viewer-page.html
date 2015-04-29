@@ -1,0 +1,12 @@
+<div class="pi-viewer-page">
+  <pi-viewer ng-show="scriptPath.length" script="scriptPath"></pi-viewer>
+  <div class="pi" ng-hide="scriptPath.length">
+    Pi Simulator
+  </div>
+  <div class="message" ng-hide="scriptPath.length">
+    Please specify a script path<br/>
+    <div class="example">
+    http://host/viewer?source=[script-path]
+    </div>
+  </div>
+</div>

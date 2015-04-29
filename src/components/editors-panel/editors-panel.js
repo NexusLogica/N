@@ -94,7 +94,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         $scope.editorsByGuid[guid] = editor;
 
 
-        var html = $compile('<pi-viewer class="'+guid+'" network="editorsByGuid.'+guid+'.network" script-host="scriptHost" system="editorsByGuid.'+guid+'.system" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-viewer>')($scope);
+        var html = $compile('<pi-editor class="'+guid+'" network="editorsByGuid.'+guid+'.network" script-host="scriptHost" system="editorsByGuid.'+guid+'.system" file-signals="editor.signals" ide-signals="signals" ng-show="activeEditor === \''+guid+'\'"></pi-editor>')($scope);
         $element.find('.editors').append(html);
       };
 

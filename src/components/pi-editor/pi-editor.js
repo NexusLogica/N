@@ -1,6 +1,6 @@
 /**********************************************************************
 
-File     : pi-viewer.js
+File     : pi-editor.js
 Project  : N Simulator Library
 Purpose  : Source file for Pi network and neuron viewer component.
 Revisions: Original definition by Lawrence Gunn.
@@ -12,15 +12,14 @@ All Rights Reserved.
 */
 'use strict';
 
-angular.module('nSimulationApp').directive('piViewer', [function() {
+angular.module('nSimulationApp').directive('piEditor', [function() {
   return {
     restrict: 'E',
-    templateUrl: 'src/components/pi-viewer/pi-viewer.html',
-    scope: {
-      scriptPath: '=scriptPath'
-    },
+    templateUrl: 'src/components/pi-editor/pi-editor.html',
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
-      ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);
+      ComponentExtensions.initialize(this, 'piEditor', $scope, $element, $attrs);
+
+
 
       $scope.sceneSignals = {
         'component-move': new signals.Signal(),
@@ -29,6 +28,7 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
         'background-click': new signals.Signal()
       };
 
+      $scope.activeUI = null;
     }],
     link: function($scope, $element, $attrs, ctrl) {
       $scope.view = { scene: new N.UI.NetworkScene($scope.sceneSignals) };
