@@ -213,21 +213,21 @@ N.Network.prototype.getNumConnections = function() {
 
 /**
  * Get a connection by index
- * @method getConnectionsByIndex
+ * @method getConnectionByIndex
  * @param {number} index
  * @returns {N.Connection}
  */
-N.Network.prototype.getConnectionsByIndex = function(index) {
+N.Network.prototype.getConnectionByIndex = function(index) {
   return this.connections[index];
 };
 
 /**
  * Get a connection given the connection path string.
- * @method getConnectionsByPath
+ * @method getConnectionByPath
  * @param {String} path
  * @returns {N.Connection}
  */
-N.Network.prototype.getConnectionsByPath = function(path) {
+N.Network.prototype.getConnectionByPath = function(path) {
   return this.connectionsByPath[path];
 };
 
@@ -495,8 +495,8 @@ N.Network.prototype.loadConnections = function(json) {
   for(var i in json) {
     var connectionJson = json[i];
     var connection = N.newN(connectionJson.className || 'N.Connection', this);
-    this.addConnection(connection);
     promises.push(connection.loadFrom(connectionJson));
+    this.addConnection(connection);
   }
 
   return Q.all(promises);

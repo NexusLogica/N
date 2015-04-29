@@ -107,7 +107,7 @@
       network.Update(i);
     }
 
-    var cn1n2 = network.GetConnectionsByPath(':N1>OP->:N2>IP');
+    var cn1n2 = network.getConnectionByPath(':N1>OP->:N2>IP');
     var cn1n2Signal = cn1n2.OutputStore;
     equal(cn1n2Signal.GetNumSamples(), 100, 'Number of N1->N2 input samples stored');
     QUnit.assert.near(cn1n2Signal.Average(), 0.45, 0.02, 'Average output of connection N1 to N2');

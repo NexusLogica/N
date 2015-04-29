@@ -109,7 +109,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   center: {x: n.x / s, y: n.y / s},
                   radius: n.radius / s
                 };
-                $scope.piConnection.setPath($scope.trace);
+                $scope.piConnection.setRoute($scope.trace);
                 $scope.trace = undefined;
                 $scope.isDirty = true;
               }
@@ -129,7 +129,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               var point = { pos: event.snap};
               $scope.trace.points.push(point);
               $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify(point.pos);
-              $scope.piConnection.setPath($scope.trace);
+              $scope.piConnection.setRoute($scope.trace);
             }
           });
         });
@@ -144,7 +144,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               center: {x: n.x / s, y: n.y / s},
               radius: n.radius / s
             };
-            $scope.piConnection.setPath(traceCopy);
+            $scope.piConnection.setRoute(traceCopy);
           }
         });
 
@@ -156,7 +156,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
             var point = { pos: event.snap };
             var traceCopy = _.cloneDeep($scope.trace);
             traceCopy.points.push(point);
-            $scope.piConnection.setPath(traceCopy);
+            $scope.piConnection.setRoute(traceCopy);
           }
         });
 
@@ -169,8 +169,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
       $scope.createPiConnection = function() {
         $scope.piConnection = new N.UI.PiConnection($scope.scene.piNetwork, $scope.connection);
-        $scope.piConnection.setPath($scope.trace);
-        //piConnection.setPath($scope.trace);
+        $scope.piConnection.setRoute($scope.trace);
+        //piConnection.setRoute($scope.trace);
         $scope.scene.piNetwork.addConnection($scope.piConnection);
 
       };
@@ -180,7 +180,13 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         var path = display.$$path;
         var displayCopy = _.cloneDeep(display);
         delete displayCopy.$$path;
-        displayCopy.connections = { blah: 'blahblah' };
+
+        var connections = $scope.scene.piNetwork.piConnections;
+        var connectionJson = {};
+        _.forEach(connections, function(piConnection) {
+          connectionJson[piConnection.getPath()] = piConnection.toJson();
+        });
+        displayCopy.connections = connectionJson;
 
 
         var formData = new FormData();

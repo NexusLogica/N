@@ -25,8 +25,7 @@ N.UI.PiNetwork = function(sceneSignals, parentNetwork) {
   this.scale = 100.0;
   this.piNeurons = [];
   this.piNeuronsByName = {};
-  this.connectionsDisplays = {};
-  this.piConnections = [];
+  this.piConnections = {};
   this.group = null;
   this.networkJSON = {};
   this.networks = [];
@@ -64,13 +63,6 @@ N.UI.PiNetwork.prototype.getNetworkByName = function(name) {
  */
 N.UI.PiNetwork.prototype.getNeuronByName = function(name) {
   return this.piNeuronsByName[name];
-};
-
-N.UI.PiNetwork.prototype.addConnectionDisplay = function(name, group) {
-  if(this.connectionsDisplays.hasOwnProperty(name)) {
-    this.connectionsDisplays[name].remove();
-  }
-  this.connectionsDisplays[name] = group;
 };
 
 N.UI.PiNetwork.prototype.layout = function(renderMappings) {
@@ -182,6 +174,17 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
     }
   }
 
+  for(var path in this.network.display.connections) {
+    var piConnectionJson = this.network.display.connections[path];
+    var connection = this.network.getConnectionByPath(path);
+    if(connection) {
+      var piConnection = new N.UI.PiConnection(this, connection);
+      piConnection.fromJson(piConnectionJson);
+      this.piConnections[path] = piConnection;
+      piConnection.render(this.group);
+    }
+  }
+
   this._label = this.group.plain(this.network.name).move(6, 3);
 
   this.addEventHandlers();
@@ -191,7 +194,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
 };
 
 N.UI.PiNetwork.prototype.addConnection = function(piConnection) {
-  this.piConnections.push(piConnection);
+  this.piConnections[piConnection.connection.getPath()] =piConnection;
   piConnection.render(this.group);
 };
 
