@@ -71,28 +71,28 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
 
       var watchDomChanges = function() {
 
-        $scope.inWatchDom = false;
-        // Create an observer instance and get callbacks
-
-        var observer = new MutationObserver(function(mutations)  {
-          if(!$scope.inWatchDom) {
-            $scope.inWatchDom = true;
-            mutations.forEach(function (mutation) {
-              console.log(mutation.type);
-              //$scope.setUpdateRequired(true);
-              $scope.inWatchDom = false;
-            });
-          }
-        });
-
-        // configuration of the observer:
-        var config = {attributes: true, childList: true, characterData: true, subtree: true };
-
-        // pass in the target node, as well as the observer options
-        observer.observe($element.find('pi-canvas').get(0), config);
-
-        // later, you can stop observing
-        //////////observer.disconnect();
+        //$scope.inWatchDom = false;
+        //// Create an observer instance and get callbacks
+        //
+        //var observer = new MutationObserver(function(mutations)  {
+        //  if(!$scope.inWatchDom) {
+        //    $scope.inWatchDom = true;
+        //    mutations.forEach(function (mutation) {
+        //      console.log(mutation.type);
+        //      //$scope.setUpdateRequired(true);
+        //      $scope.inWatchDom = false;
+        //    });
+        //  }
+        //});
+        //
+        //// configuration of the observer:
+        //var config = {attributes: true, childList: true, characterData: true, subtree: true };
+        //
+        //// pass in the target node, as well as the observer options
+        //observer.observe($element.find('pi-canvas').get(0), config);
+        //
+        //// later, you can stop observing
+        ////////////observer.disconnect();
       };
 
 

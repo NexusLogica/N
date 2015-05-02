@@ -22,9 +22,12 @@ N.UI = N.UI || {};
 N.UI.StandardNeuronTemplates = {
   Pyramidal : {
     className: 'pyramidal',
+    labelFontSize: 0.07,
+    compartmentLabelFontSize: 0.05,
     compartments: [{
       name: 'OP',
       className: 'excitatory-body',
+      labelCenter: { r:0.94, angle: 107 },
       segments: [
         { radius: 0.425, startAngle: 115, direction: 1, facing: 1, padding: 0.06 },
         { radius: 1.00, startAngle: 65, direction: 1, facing: -1, padding: 0.06 }]
@@ -32,6 +35,7 @@ N.UI.StandardNeuronTemplates = {
       name: 'PBI',
       className: 'proximal-basal-dendrites',
       mirror: true,
+      labelCenter: { r:0.95, angle: 60 },
       segments: [
         { radius: 0.75, startAngle:  -20, direction: 1, facing: -1, padding: 0.06 },
         { radius: 1.00, startAngle:  25, direction: 1, facing: -1 },
@@ -40,6 +44,7 @@ N.UI.StandardNeuronTemplates = {
       name: 'DBI',
       className: 'distal-basal-dendrites',
       mirror: true,
+      labelCenter: { r:0.95, angle: 21 },
       segments: [
         { radius: 0.80, startAngle:  25, direction: -1, facing: 1, padding: 0.01 },
         { radius: 1.0, startAngle:  -20, direction: 1, facing: -1, padding: 0.06 }]
@@ -48,6 +53,7 @@ N.UI.StandardNeuronTemplates = {
       description: 'Apical dendrite distal tufts',
       className: 'apical-dendrite-distal-tufts',
       initialAngle: -160.0,
+      labelCenter: { r:0.95, angle: 275 },
       segments: [
         { radius: 0.83, startAngle:  -160.0, direction: 1, facing: -1 },
         { radius: 1.0, startAngle:  -80.0, direction: -1, facing: 1 }]
@@ -56,6 +62,7 @@ N.UI.StandardNeuronTemplates = {
       description: 'Apical dendrite proximal tufts',
       className: 'apical-dendrite-proximal-tufts',
       initialAngle: -160.0,
+      labelCenter: { r:0.95, angle: 311 },
       segments: [
         { radius: 0.80,  startAngle:  -160.0, direction: 1, facing: -1 },
         { radius: 1.00,  startAngle:   -80.0, direction: 1, facing: -1 },
@@ -65,6 +72,7 @@ N.UI.StandardNeuronTemplates = {
       description: 'Apical dendrite trunk',
       className: 'apical-dendrite-trunk',
       initialAngle: -160,
+      labelCenter: { r:0.94, angle: 336 },
       segments: [
         { radius: 0.6375, startAngle: -160.0, direction: 1, facing: -1 },
         { radius: 1.000,  startAngle:  -45.0, direction: 1, facing: -1 },
@@ -74,7 +82,7 @@ N.UI.StandardNeuronTemplates = {
   Stellate : {
     className: 'stellate',
     labelFontSize: 0.07,
-    compartmentLabelFontSize: 0.06,
+    compartmentLabelFontSize: 0.05,
     compartments: [{
       name: 'OP',
       className: 'excitatory-body',
