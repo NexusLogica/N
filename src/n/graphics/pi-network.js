@@ -107,31 +107,6 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
         'fill-opacity': 1.0 });
   }
 
-  var grid = this.network.display.grid;
-
-  this.spottingCircle = this.group.circle(5).attr({'stroke': '#ff0000', 'stroke-width': '2'});
-  this.spottingCircle.hide();
-
-  if(grid && grid.display) {
-    this.gridPoints = [];
-    this.gridSpacing = grid.spacing || 0.05;
-    var spacing = this.scale*this.gridSpacing;
-    this.defs = this.group.defs();
-    var spot = this.defs.circle(1.0).attr('class', 'pi-grid-point');
-    var numX = this.width/spacing;
-    var numY = this.height/spacing;
-    var onMoveHandler = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
-    var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
-    for(var j = 1; j<numX; j++) {
-      for(var k = 1; k<numY; k++) {
-        var pt = this.group.use(spot).move(j*spacing, k*spacing);
-        $(pt.node).on('mousemove', onMoveHandler);
-        $(pt.node).on('click', onClickHandler);
-        this.gridPoints.push(pt);
-      }
-    }
-  }
-
   var padding = new N.UI.Padding(0, 2);
   var y = 0.0;
   for(var ii in this.networks) {
@@ -185,12 +160,52 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, renderMappings, sig
     }
   }
 
-  this._label = this.group.plain(this.network.name).move(6, 3);
+  this._label = this.group.plain(this.network.name).move(6, 3).attr('font-size', display.labelFontSize*this.scale);
 
   this.addEventHandlers();
 
   //this.routeInfo = new N.UI.RouteInfo(this);
   //this.routeInfo.buildPassageInformation();
+};
+
+/***
+ * Show the grid.
+ */
+N.UI.PiNetwork.prototype.showGrid = function() {
+
+  var grid = this.network.display.grid;
+
+  if(this.gridGroup) {
+    this.gridGroup.show();
+  }
+  else if(grid) {
+    this.gridPoints = [];
+    this.gridSpacing = grid.spacing || 0.05;
+    var spacing = this.scale*this.gridSpacing;
+    this.gridGroup = this.group.group();
+    this.defs = this.group.defs();
+    var spot = this.defs.circle(1.0).attr('class', 'pi-grid-point');
+    var numX = this.width/spacing;
+    var numY = this.height/spacing;
+    var onMoveHandler = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
+    var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
+    for(var j = 1; j<numX; j++) {
+      for(var k = 1; k<numY; k++) {
+        var pt = this.gridGroup.use(spot).move(j*spacing, k*spacing);
+        $(pt.node).on('mousemove', onMoveHandler);
+        $(pt.node).on('click', onClickHandler);
+        this.gridPoints.push(pt);
+      }
+    }
+  }
+};
+/***
+ * Show the grid.
+ */
+N.UI.PiNetwork.prototype.hideGrid = function() {
+  if(this.gridGroup) {
+    this.gridGroup.hide();
+  }
 };
 
 N.UI.PiNetwork.prototype.addConnection = function(piConnection) {

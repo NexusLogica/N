@@ -262,10 +262,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         });
         $scope.shell.activate();
 
-        $scope.scriptHost = localStorage.getItem('lastScriptHost');
-        if(!$scope.scriptHost) {
-          $scope.scriptHost = N.Configuration.DEFAULT_NETWORK_REPOSITORY;
-        }
+        $scope.scriptHost = N.getScriptHost();
 
         if($scope.scriptHost) {
           N.Http.get($scope.scriptHost+'/files').then(function(data) {

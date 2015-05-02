@@ -35,6 +35,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
           source: { guid: guid }
         };
 
+        editor.guid = guid;
         $scope.activeEditor = guid;
         $scope.editorsByGuid[guid] = editor;
 
@@ -53,6 +54,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         };
 
         var guid = editor.source.guid;
+        editor.guid = guid;
         $scope.activeEditor = guid;
         $scope.editorsByGuid[guid] = editor;
 
@@ -68,6 +70,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
         };
 
         var guid = editor.source.guid;
+        editor.guid = guid;
         $scope.activeEditor = guid;
         $scope.editorsByGuid[guid] = editor;
 
@@ -89,7 +92,8 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
           editor.network = netSys;
         }
 
-        var guid = editor.source.guid;
+        var guid = 'guid'+editor.source.guid;
+        editor.guid = guid;
         $scope.activeEditor = guid;
         $scope.editorsByGuid[guid] = editor;
 
@@ -113,7 +117,7 @@ angular.module('nSimulationApp').directive('editorsPanel', [function() {
       };
 
       $scope.showEditor = function(editor) {
-        $scope.activeEditor = editor.source.guid;
+        $scope.activeEditor = editor.guid;
       };
 
       $scope.addOutputLog();

@@ -36,7 +36,7 @@ N.NWS.Database = function() {
 /**
  * Creates and initializes a database.
  * @method create
- * @returns {{status: boolean, errMsg: string}}
+ * @returns {{status: boolean, description: string}}
  */
 N.NWS.Database.prototype.create = function(url, name, description, userInfo) {
   this.url = url;
@@ -70,22 +70,22 @@ N.NWS.Database.prototype.create = function(url, name, description, userInfo) {
             var initializer = new N.NWS.InitialData();
             initializer.writeToDb(_this).then(
               function() {
-                deferred.resolve( { status: true, errMsg: '' } );
+                deferred.resolve( { status: true, description: '' } );
               }, function(status) {
                 deferred.reject(status);
               }
             ).catch(N.reportQError);
           },
           function(error) {
-            deferred.reject( { status: false, errMsg: 'Unable to write indentifier doc: '+error.responseJSON.reason } );
+            deferred.reject( { status: false, description: 'Unable to write indentifier doc: '+error.responseJSON.reason } );
           }
         ).catch(N.reportQError);
       } else {
-        deferred.reject( { status: false, errMsg: '' } );
+        deferred.reject( { status: false, description: '' } );
       }
     },
     function(error) {
-      deferred.reject( { status: false, errMsg: error.responseJSON.reason } );
+      deferred.reject( { status: false, description: error.responseJSON.reason } );
     }
   ).catch(N.reportQError);
   return deferred.promise;

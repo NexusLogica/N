@@ -41,7 +41,7 @@ angular.module('nSimulationApp').directive('administration', [function() {
                 },
                 function(status) { // failure
                   $scope.$apply(function() {
-                    $scope.formMessage = 'Database can not be accessed: '+status.errMsg.textStatus;
+                    $scope.formMessage = 'Database can not be accessed: '+status.description.textStatus;
                     $scope.createDbForm.databaseurl.$setValidity('administrationDb', false);
                   });
                 }
@@ -79,7 +79,7 @@ angular.module('nSimulationApp').directive('administration', [function() {
           },
           function(status) { // failure
             $scope.$apply(function() {
-              $scope.formMessage = 'Database could not be created: '+status.errMsg;
+              $scope.formMessage = 'Database could not be created: '+status.description;
             });
           }
         );
@@ -106,7 +106,7 @@ angular.module('nSimulationApp').directive('administration', [function() {
               },
               function(status) {
                 $scope.$apply(function() {
-                  $scope.formMessage = 'Database could not be deleted: '+status.errMsg;
+                  $scope.formMessage = 'Database could not be deleted: '+status.description;
                 });
               }
             );

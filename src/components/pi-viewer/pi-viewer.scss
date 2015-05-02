@@ -11,14 +11,11 @@ All Rights Reserved.
 
 */
 
-$controls-height: 0px;
-$top-bar-height: 50px;
-
 .pi-viewer {
   display: block;
 
   .info-bar {
-    height: $top-bar-height;
+//    height: $top-bar-height;
     width: 100%;
     font-size: 12px;
     padding-top: 2px;
@@ -59,17 +56,27 @@ $top-bar-height: 50px;
   .viewer {
     box-sizing: border-box;
     width: 100%;
-    height: $editor-height - $top-bar-height;
+    min-height: 300px;
+    height: 100%;
+//    height: $editor-height - $top-bar-height;
     border: 1px solid #ccc;
     padding: 10px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
     font-size: 11px;
     .canvas-container {
+      position: absolute;
+      top:0px;
+      bottom:0px;
       box-sizing: border-box;
+      width: 100%;
       .network-canvas {
         box-sizing: border-box;
-        width: $builder-width - $builder-tab-width - $builder-tab-sep - 20px;
-        height: $editor-height - $top-bar-height - $controls-height - 20px;
+        width: 100%;
+        position: absolute;
+        top:0px;
+        bottom:0px;
+//        width: $builder-width - $builder-tab-width - $builder-tab-sep - 20px;
+//        height: $editor-height - $top-bar-height - $controls-height - 20px;
       }
     }
   }

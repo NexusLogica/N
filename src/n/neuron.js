@@ -176,12 +176,12 @@ N.Neuron.prototype.loadFrom = function(json) {
           console.log('RESOLVE: N.Neuron.loadFrom[0]: '+_this.name);
           deferred.resolve();
         }, function(status) {
-          console.log('REJECT: N.Neuron.loadFrom[0]: '+status.errMsg);
+          console.log('REJECT: N.Neuron.loadFrom[0]: '+status.description);
           deferred.reject(status);
         }
       ).catch(N.reportQError);
     }, function(status) {
-      console.log('REJECT: N.Neuron.loadFrom[1]: '+status.errMsg);
+      console.log('REJECT: N.Neuron.loadFrom[1]: '+status.description);
       deferred.reject(status);
     }
   ).catch(N.reportQError);
@@ -196,7 +196,7 @@ N.Neuron.prototype.loadTemplate = function(json) {
     var localTemplate = this.network.getTemplate(json.template.local);
     if(localTemplate === null) {
       debugger;
-      deferred.reject({ success: false, errMsg: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
+      deferred.reject({ success: false, description: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
       return deferred.promise;
     }
 
@@ -274,7 +274,7 @@ N.Neuron.prototype.createCompartment = function(json) {
   var _this = this;
   var compartment = N.newN(json.className, this);
   if(!compartment) {
-    deferred.reject({ errMsg: this.routeErrorMsg('ERROR: Unable to create compartment "'+json+'"') });
+    deferred.reject({ description: this.routeErrorMsg('ERROR: Unable to create compartment "'+json+'"') });
     return deferred.promise;
   }
   compartment.loadFrom(json).then(
@@ -306,8 +306,8 @@ N.Neuron.prototype.fromData = function(json) {
 
 };
 
-N.Neuron.prototype.routeErrorMsg = function(errMsg) {
-  this.validationMessages.push(errMsg);
-  N.log(errMsg);
-  return errMsg;
+N.Neuron.prototype.routeErrorMsg = function(description) {
+  this.validationMessages.push(description);
+  N.log(description);
+  return description;
 };

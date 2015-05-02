@@ -437,7 +437,7 @@ N.Network.prototype.loadTemplate = function(json) {
     if(json.template.hasOwnProperty('local')) {
       var localTemplate = this.getTemplate(json.template.local);
       if(localTemplate === null) {
-        deferred.reject({ success: false, errMsg: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
+        deferred.reject({ success: false, description: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
         return deferred.promise;
       }
       if(localTemplate.template) {
@@ -540,8 +540,8 @@ N.Network.prototype.addTemplates = function(templates) {
   return this;
 };
 
-N.Network.prototype.routeErrorMsg = function(errMsg) {
-  this.validationMessages.push(errMsg);
-  N.log(errMsg);
-  return errMsg;
+N.Network.prototype.routeErrorMsg = function(description) {
+  this.validationMessages.push(description);
+  N.log(description);
+  return description;
 };

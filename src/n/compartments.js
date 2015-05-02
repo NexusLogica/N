@@ -190,7 +190,7 @@ N.Comp.SignalSource.prototype.validate = function(report) {
   if(!this.signal) { report.warning(this.getPath(), 'Signal object is not set.'); }
   if(this.getNumInputConnections() !== 0) { report.warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
   if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
-}
+};
 
   //**********************
   //* N.Comp.InputSource *
@@ -333,7 +333,74 @@ N.Comp.OutputSink.prototype.loadFrom = function(json) {
   return deferred.promise;
 };
 
-  //***************************
+//*****************
+//* N.Comp.Output *
+//*****************
+
+N.Comp.Output = function(neuron, name) {
+  this.className   = 'N.Comp.Output';
+  this.name        = name;
+  this.category    = 'Output';
+
+  this.neuron      = neuron;
+  this.output      = 0.0;
+  this.IsOutputComponent = true;
+  this.outputLogic = null;
+  this.ioMetaData = {
+    inputs:[{
+      name: 'main', propName: 'inputConnections'
+    }],
+    outputs:[{
+      name: 'main', propName: 'outputConnections'
+    }],
+    signals:[{
+      name: 'main', propName: 'outputStore'
+    }]
+  };
+  N.Comp.initializeCompartment(this);
+};
+
+N.Comp.extend(N.Comp.Output);
+
+N.Comp.Output.prototype.addInput = function(input) {
+  this.input = input;
+};
+
+N.Comp.Output.prototype.update = function(t) {
+  var main = this.outputLogic.sources.main;
+  this.output = main.compartment.getOutputAt(t-main.delay);
+  this.outputStore.appendData(t, this.output);
+  return this.output;
+};
+
+/***
+ * Clears stored data from previous simulations. Does not clear input data.
+ * @method clear
+ */
+N.Comp.Output.prototype.clear = function() {
+  this.outputStore.clear();
+};
+
+/**
+ * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
+ * @method Validate
+ * @param report
+ */
+N.Comp.Output.prototype.validate = function(report) {
+  if(!this.outputLogic) {
+    report.error(this.getPath(), 'The OutputLogic object is not set.');
+  } else if(!this.outputLogic.outputFunc) {
+    report.error(this.getPath(), 'The OutputLogic\'s outputFunc is not set.');
+  }
+  else {
+    this.outputLogic.outputFunc.validate(this, report);
+  }
+
+  if(this.getNumInputConnections()  !== 0) { report.warning(this.getPath(), 'Input connections to the output signal are ignored.'); }
+  if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
+}
+
+//***************************
   //* N.Comp.InhibitoryOutput *
   //***************************
 
@@ -439,7 +506,7 @@ N.Comp.LinearSummingInput.prototype.update = function(t) {
  */
 N.Comp.LinearSummingInput.prototype.clear = function() {
   this.outputStore.clear();
-}
+};
 
 /**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
@@ -450,7 +517,7 @@ N.Comp.LinearSummingInput.prototype.validate = function(report) {
   if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input component has output connections.'); }
   if(this.getNumInputConnections() === 0) { report.warning(this.getPath(), 'The input component has no input connections.'); }
   if(this.getNumComparmentSinks() === 0)   { report.warning(this.getPath(), 'The input component has no compartmental listeners.'); }
-}
+};
 
 N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
@@ -459,12 +526,12 @@ N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
   }
   deferred.resolve();
   return deferred.promise;
-}
+};
 
 N.Comp.LinearSummingInput.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
-}
+};
 
   //**********************
   //* N.Comp.SignalInput *
@@ -487,7 +554,7 @@ N.Comp.SignalInput = function(neuron, name) {
   this.signalInput = null;
   this.sum         = 0.0;
   N.Comp.initializeCompartment(this);
-}
+};
 
 N.Comp.extend(N.Comp.SignalInput);
 
@@ -499,14 +566,14 @@ N.Comp.extend(N.Comp.SignalInput);
  */
 N.Comp.SignalInput.prototype.setSignal = function(outputName, signal) {
   this.signalInput = signal;
-}
+};
 
 N.Comp.SignalInput.prototype.updateInput = function(t) {
   if(this.signalInput) {
     this.sum = this.signalInput.getValue(t);
   }
   return this.sum;
-}
+};
 
 /**
  * Validates the compartment.
@@ -517,7 +584,7 @@ N.Comp.SignalInput.prototype.validate = function(report) {
   if(this.getNumInputConnections() !== 0)  { report.warning(this.getPath(), 'The component does not use input connections.'); }
   if(this.getNumComparmentSinks() === 0)   { report.warning(this.getPath(), 'The component has no compartmental listeners.'); }
   if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
-}
+};
 
 N.Comp.SignalInput.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
@@ -529,12 +596,12 @@ N.Comp.SignalInput.prototype.loadFrom = function(json) {
   }
   deferred.resolve();
   return deferred.promise;
-}
+};
 
 N.Comp.SignalInput.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
-}
+};
 
   //*****************************
   //* N.Comp.AcetylcholineInput *
@@ -556,13 +623,13 @@ N.Comp.AcetylcholineInput = function(neuron, name) {
   this.sum         = 0.0;
   this.connections = [];
   N.Comp.initializeCompartment(this);
-}
+};
 
 N.Comp.extend(N.Comp.AcetylcholineInput);
 
 N.Comp.AcetylcholineInput.prototype.connect = function(connection) {
   this.connections.push(connection);
-}
+};
 
 N.Comp.AcetylcholineInput.prototype.sumInputs = function(t) {
   var len = this.connections.length;
@@ -571,7 +638,7 @@ N.Comp.AcetylcholineInput.prototype.sumInputs = function(t) {
     this.sum += this.connections[i].getOutput();
   }
   return this.sum;
-}
+};
 
 /**
  * Updates the output of the compartment.
@@ -581,7 +648,7 @@ N.Comp.AcetylcholineInput.prototype.sumInputs = function(t) {
  */
 N.Comp.AcetylcholineInput.prototype.update = function(t) {
   this.outputStore.appendData(t, this.sumInputs());
-}
+};
 
 /***
  * Clears stored data from previous simulations. Does not clear input data.
@@ -589,7 +656,7 @@ N.Comp.AcetylcholineInput.prototype.update = function(t) {
  */
 N.Comp.AcetylcholineInput.prototype.clear = function() {
   this.outputStore.clear();
-}
+};
 
 /**
  * Validates the output compartment. Reports an error of there is no output Warns if there are no compartments.
@@ -600,7 +667,7 @@ N.Comp.AcetylcholineInput.prototype.validate = function(report) {
   if(this.getNumInputConnections() === 0) { report.warning(this.getPath(), 'The input component has no input connections.'); }
   if(this.getNumComparmentSinks() === 0) { report.warning(this.getPath(), 'The input component has no compartmental listeners.'); }
   if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The input component has output connections.'); }
-}
+};
 
 N.Comp.AcetylcholineInput.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
@@ -609,9 +676,9 @@ N.Comp.AcetylcholineInput.prototype.loadFrom = function(json) {
   }
   deferred.resolve();
   return deferred.promise;
-}
+};
 
 N.Comp.AcetylcholineInput.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
-}
+};

@@ -42,6 +42,14 @@ N.Type = {
   Output:         13
 };
 
+N.Top    = 1;
+N.Middle = 2;
+N.Bottom = 3;
+
+N.Left    = 1;
+N.Center  = 2;
+N.Right   = 3;
+
 /**
  * Create an instance of a object from the json, where json.className is the name of the object and all properties
  * of the json object will be copied into the new object.
@@ -406,7 +414,24 @@ N.indexOfMin = function(array) {
     }
   }
   return minIndex;
-}
+};
+
+/***
+ * Get the host for the server for network, neuron, and system files and scripts. This will be of the form http://something.example.com/ or
+ * possibly with a port, so http://something.example.com:3054/
+ * @method N.getScriptHost
+ * @return {string} - The host.
+ */
+N.getScriptHost = function() {
+  var scriptHost = localStorage.getItem('lastScriptHost');
+  if (!scriptHost) {
+    scriptHost = N.Configuration.DEFAULT_NETWORK_REPOSITORY;
+  }
+  if(scriptHost.lastIndexOf('/') === scriptHost.length-1) {
+    scriptHost = scriptHost.substr(0, scriptHost.length-1);
+  }
+  return scriptHost;
+};
 
 /**
  * Write to the system console (or some log, if overridden).
@@ -464,6 +489,34 @@ N.generateUUID = function() {
   return uuid;
 };
 
+N.DrawSvgText = function(text, group, size, x, y, horizontalAlign, verticalAlign) {
+  //N.Top    = 1;
+  //N.Middle = 2;
+  //N.Bottom = 3;
+  //
+  //N.Left    = 1;
+  //N.Center  = 2;
+  //N.Right   = 3;
+  var textNode = group.plain(text).attr('font-size', size);
+  var box = textNode.bbox();
+
+  var moveX = x;
+  if(horizontalAlign === N.Center) {
+    moveX -= 0.5*box.width;
+  } else if(horizontalAlign === N.Left) {
+    moveX -= box.width;
+  }
+
+  var moveY = y;
+  if(verticalAlign === N.Middle) {
+    moveY -= 0.5*box.height;
+  } else if(verticalAlign === N.Bottom) {
+    moveY -= box.height;
+  }
+
+  textNode.move(moveX, moveY);
+  return textNode;
+};
 
 /**
  * The ConfigurationReport holds lists of errors and warnings related to the system configuration. Errors are issues

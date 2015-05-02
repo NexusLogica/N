@@ -105,7 +105,7 @@ N.Output.prototype.loadFrom = function(json) {
       deferred.resolve();
 
     }, function(status) {
-      console.log('REJECT: N.Output.loadFrom[1]: '+status.errMsg);
+      console.log('REJECT: N.Output.loadFrom[1]: '+status.description);
       deferred.reject(status);
     }
   ).catch(N.reportQError);
@@ -120,7 +120,7 @@ N.Output.prototype.loadTemplate = function(json) {
     var localTemplate = this.network.getTemplate(json.template.local);
     if(localTemplate === null) {
       debugger;
-      deferred.reject({ success: false, errMsg: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
+      deferred.reject({ success: false, description: this.routeErrorMsg('ERROR: Unable to find local template "'+json.template.local+'"') });
       return deferred.promise;
     }
 
@@ -175,8 +175,8 @@ N.Output.prototype.fromData = function(json) {
 
 };
 
-N.Output.prototype.routeErrorMsg = function(errMsg) {
-  this.validationMessages.push(errMsg);
-  N.log(errMsg);
-  return errMsg;
+N.Output.prototype.routeErrorMsg = function(description) {
+  this.validationMessages.push(description);
+  N.log(description);
+  return description;
 };

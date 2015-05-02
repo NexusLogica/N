@@ -58,6 +58,11 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
     }],
     link: function ($scope, $element, $attrs, ctrl) {
 
+      $scope.$on('traceLineEditor:begin', function() {
+        getConnections();
+        $scope.scene.piNetwork.showGrid();
+      });
+
       var getConnections = function() {
         $scope.connections = [];
         var connections = $scope.scene.piNetwork.network.connections;
@@ -66,8 +71,6 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           $scope.connections.push(connections[i]);
         }
       };
-
-      getConnections();
 
       $scope.edit = function() {
         $scope.connection = $element.find('select option:selected').scope().connection;
@@ -198,6 +201,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
       $scope.done = function() {
         $scope.$emit('traceLineEditor:done');
+        $scope.scene.piNetwork.hideGrid();
         $scope.inputComponent.path.removeClass('highlight-component');
         $scope.outputComponent.path.removeClass('highlight-component');
         $scope.scene.piNetwork.group.removeClass('soften-component');

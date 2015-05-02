@@ -152,7 +152,7 @@ All Rights Reserved.
 .pi-network > text {
   fill: gray;
   stroke: none;
-  font-size: 14px;
+  //font-size: 14px;
   font-family: "Raleway", sans-serif;
   text-anchor: start;
   alignment-baseline: hanging; }

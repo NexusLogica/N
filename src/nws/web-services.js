@@ -39,7 +39,7 @@ N.NWS.WebServices = function() {
 /**
  * Returns the associated database.
  * @method getDatabase
- * @returns {{status: boolean, errMsg: string}}
+ * @returns {{status: boolean, description: string}}
  */
 N.NWS.WebServices.prototype.getDatabase = function(url) {
   if(this.databasesByUrl[url]) {
@@ -81,7 +81,7 @@ N.NWS.WebServices.prototype.createDatabase = function(url, name, description, us
 /**
  * Returns the minimum and maximum values in the signal.
  * @method deleteDatabase
- * @returns {{status: boolean, errMsg: string}}
+ * @returns {{status: boolean, description: string}}
  */
 N.NWS.WebServices.prototype.deleteDatabase = function(url, name) {
   var http =  new N.Http();
@@ -95,13 +95,13 @@ N.NWS.WebServices.prototype.deleteDatabase = function(url, name) {
   http.delete(dbUrl).then(
     function(data) {
       if(data.ok === true) {
-        deferred.resolve( { status: true, errMsg: '' } );
+        deferred.resolve( { status: true, description: '' } );
       } else {
-        deferred.reject( { status: false, errMsg: error.responseJSON.reason } );
+        deferred.reject( { status: false, description: error.responseJSON.reason } );
       }
     },
     function(error) {
-      deferred.reject( { status: false, errMsg: error.responseJSON.reason } );
+      deferred.reject( { status: false, description: error.responseJSON.reason } );
     }
   ).catch(N.reportQError);
   return deferred.promise;
@@ -110,7 +110,7 @@ N.NWS.WebServices.prototype.deleteDatabase = function(url, name) {
 /**
  * Returns the minimum and maximum values in the signal.
  * @method canConnectToDB
- * @returns {{canAccess: Boolean, errMsg: String}}
+ * @returns {{canAccess: Boolean, description: String}}
  */
 N.NWS.WebServices.canConnectToDB = function(dbUrl) {
   var deferred = Q.defer();
@@ -119,13 +119,13 @@ N.NWS.WebServices.canConnectToDB = function(dbUrl) {
   http.get(dbUrl).then(
     function(data) {
       if(data.hasOwnProperty('couchdb')) {
-        deferred.resolve( { canAccess: true, errMsg: '' } );
+        deferred.resolve( { canAccess: true, description: '' } );
       } else {
-        deferred.reject( { canAccess: false, errMsg: 'Url is reachable but is not a CouchDB' } );
+        deferred.reject( { canAccess: false, description: 'Url is reachable but is not a CouchDB' } );
       }
     },
     function(error) {
-      deferred.reject( { canAccess: false, errMsg: error } );
+      deferred.reject( { canAccess: false, description: error } );
     }
   ).catch(N.reportQError);
   return deferred.promise;
