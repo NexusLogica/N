@@ -112,6 +112,16 @@ $gap-junction-color: darken(papayawhip, 10%);
 }
 
 .pi-neuron {
+  .pi-neuron-name {
+    stroke: #666;
+    fill: #666;
+  }
+  .pi-compartment-name {
+    stroke: #666;
+    fill: #666;
+    letter-spacing: 0.1em;
+    font-weight: 100;
+  }
   .compartment {
     stroke: lighten(black, 60%);
     stroke-width: 1.75px;

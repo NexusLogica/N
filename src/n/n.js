@@ -489,7 +489,19 @@ N.generateUUID = function() {
   return uuid;
 };
 
-N.DrawSvgText = function(text, group, size, x, y, horizontalAlign, verticalAlign) {
+/***
+ * Draw text
+ * @method drawSvgText
+ * @param text
+ * @param group
+ * @param size
+ * @param x
+ * @param y
+ * @param horizontalAlign
+ * @param verticalAlign
+ * @returns {object} - returns an SVG.JS text object.
+ */
+N.drawSvgText = function(text, group, size, x, y, horizontalAlign, verticalAlign) {
   //N.Top    = 1;
   //N.Middle = 2;
   //N.Bottom = 3;
@@ -503,7 +515,7 @@ N.DrawSvgText = function(text, group, size, x, y, horizontalAlign, verticalAlign
   var moveX = x;
   if(horizontalAlign === N.Center) {
     moveX -= 0.5*box.width;
-  } else if(horizontalAlign === N.Left) {
+  } else if(horizontalAlign === N.Right) {
     moveX -= box.width;
   }
 

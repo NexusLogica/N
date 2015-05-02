@@ -132,7 +132,7 @@ N.Comp.SignalSource = function(neuron, name) {
   this.neuron     = neuron;
   this.signal     = null;
   this.output     = 0.0;
-  this.IsOutputComponent = true;
+  this.isOutputCompartment = true;
   this.ioMetaData = {
     inputs:[],
     outputs:[{
@@ -203,7 +203,7 @@ N.Comp.InputSource = function(neuron, name) {
 
   this.neuron      = neuron;
   this.output      = 0.0;
-  this.IsOutputComponent = true;
+  this.isOutputCompartment = true;
   this.outputLogic = null;
   this.ioMetaData = {
     inputs:[{
@@ -276,7 +276,7 @@ N.Comp.OutputSink = function(neuron, name) {
 
   this.neuron      = neuron;
   this.output      = 0.0;
-  this.isOutputComponent = true;
+  this.isOutputCompartment = false;
   this.outputLogic = null;
   this.ioMetaData = {
     inputs:[{
@@ -344,7 +344,7 @@ N.Comp.Output = function(neuron, name) {
 
   this.neuron      = neuron;
   this.output      = 0.0;
-  this.IsOutputComponent = true;
+  this.isOutputCompartment = true;
   this.outputLogic = null;
   this.ioMetaData = {
     inputs:[{
@@ -400,7 +400,7 @@ N.Comp.Output.prototype.validate = function(report) {
   if(this.getNumOutputConnections() === 0) { report.warning(this.getPath(), 'The output component has no output connections.'); }
 }
 
-//***************************
+//*****************************
   //* N.Comp.InhibitoryOutput *
   //***************************
 
@@ -411,7 +411,7 @@ N.Comp.InhibitoryOutput = function(neuron, name) {
 
   this.neuron     = neuron;
   this.output     = 0.0;
-  this.isOutputComponent = true;
+  this.isOutputCompartment = true;
   N.Comp.initializeCompartment(this);
 };
 
@@ -458,6 +458,7 @@ N.Comp.LinearSummingInput = function(neuron, name) {
   this.neuron     = neuron;
   this.sum         = 0.0;
   this.connections = [];
+  this.isOutputCompartment = false;
   this.ioMetaData = {
     inputs:[
       { name: 'main', propName: 'inputConnections' }
@@ -529,34 +530,34 @@ N.Comp.LinearSummingInput.prototype.loadFrom = function(json) {
 };
 
 N.Comp.LinearSummingInput.prototype.toJSON = function() {
-  var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
-  return str;
+  return JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
 };
 
-  //**********************
-  //* N.Comp.SignalInput *
-  //**********************
+  //***********************
+  //* N.Comp.SignalSource *
+  //***********************
 
 /**
  * A compartment that has, as its output, a signal object.
  *
- * @class Comp.SignalInput
+ * @class Comp.SignalSource
  * @param neuron
  * @param name
  * @constructor
  */
-N.Comp.SignalInput = function(neuron, name) {
-  this.className   = 'N.Comp.SignalInput';
+N.Comp.SignalSource = function(neuron, name) {
+  this.className   = 'N.Comp.SignalSource';
   this.name       = name;
   this.category   = 'Input';
 
   this.neuron     = neuron;
   this.signalInput = null;
   this.sum         = 0.0;
+  this.isOutputCompartment = true;
   N.Comp.initializeCompartment(this);
 };
 
-N.Comp.extend(N.Comp.SignalInput);
+N.Comp.extend(N.Comp.SignalSource);
 
 /**
  * Sets the signal.
@@ -564,11 +565,11 @@ N.Comp.extend(N.Comp.SignalInput);
  * @param {N.Signal} signal
  * @constructor
  */
-N.Comp.SignalInput.prototype.setSignal = function(outputName, signal) {
+N.Comp.SignalSource.prototype.setSignal = function(outputName, signal) {
   this.signalInput = signal;
 };
 
-N.Comp.SignalInput.prototype.updateInput = function(t) {
+N.Comp.SignalSource.prototype.updateInput = function(t) {
   if(this.signalInput) {
     this.sum = this.signalInput.getValue(t);
   }
@@ -580,13 +581,13 @@ N.Comp.SignalInput.prototype.updateInput = function(t) {
  * @method Validate
  * @param report
  */
-N.Comp.SignalInput.prototype.validate = function(report) {
+N.Comp.SignalSource.prototype.validate = function(report) {
   if(this.getNumInputConnections() !== 0)  { report.warning(this.getPath(), 'The component does not use input connections.'); }
   if(this.getNumComparmentSinks() === 0)   { report.warning(this.getPath(), 'The component has no compartmental listeners.'); }
   if(this.getNumOutputConnections() !== 0) { report.warning(this.getPath(), 'The component has output connections. It is an not intended as an output component (but can be used that way)'); }
 };
 
-N.Comp.SignalInput.prototype.loadFrom = function(json) {
+N.Comp.SignalSource.prototype.loadFrom = function(json) {
   var deferred = Q.defer();
   for(var i in json) {
     if(i === 'signalInput') {
@@ -598,7 +599,7 @@ N.Comp.SignalInput.prototype.loadFrom = function(json) {
   return deferred.promise;
 };
 
-N.Comp.SignalInput.prototype.toJSON = function() {
+N.Comp.SignalSource.prototype.toJSON = function() {
   var str = JSON.stringify(this, function(k, v) { return (k === '_finder' ? undefined : v); });
   return str;
 };
@@ -618,6 +619,7 @@ N.Comp.AcetylcholineInput = function(neuron, name) {
   this.className   = 'N.Comp.LinearSummingInput';
   this.name       = name;
   this.category   = 'Input';
+  this.isOutputCompartment = false;
 
   this.neuron     = neuron;
   this.sum         = 0.0;

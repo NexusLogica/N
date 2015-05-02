@@ -36,14 +36,18 @@ N.UI.PiNeuron.prototype.getCompartmentByName = function(name) {
 N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
   this.neuron = neuron;
   this.group = svgParent.group();
+  var scale = this.network.scale;
+
   var classNameFull = 'pi-neuron';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
   this.group.attr({ class: classNameFull });
 
+  var compartment;
   for(var i in this.piCompartments) {
-    var compartment = this.piCompartments[i];
+    compartment = this.piCompartments[i];
     compartment.neuron = this;
     compartment.path = this.group.path(compartment.pathString).attr({ fill: compartment.color });
+    console.log("***"+compartment.pathString);
 
     var compartmentClassName = 'compartment';
     if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
@@ -60,6 +64,31 @@ N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
       }
     }
   }
+
+  var radiusScaling = this.radius/this.scale;
+
+  // Draw labels last so they show up on top.
+  for(var j in this.piCompartments) {
+    compartment = this.piCompartments[j];
+
+    if (compartment.hasOwnProperty('labelCenter')) {
+      var r = compartment.labelCenter.r*radiusScaling*scale;
+      var theta = N.rad(compartment.labelCenter.angle);
+      var arc = N.rad(180);
+      var path = 'M '+r*Math.cos(theta)+' '+r*Math.sin(theta)+' A '+r+' '+r+' 0 1 0 '+r*Math.cos(theta+arc)+' '+r*Math.sin(theta+arc);
+      N.drawSvgText(
+        compartment.name,
+        this.group,
+        this.compartmentLabelFontSize * scale,
+        0,
+        0,
+        N.Left,
+        N.Bottom).addClass('pi-compartment-name')
+        .path(path);
+    }
+  }
+
+  N.drawSvgText(neuron.name, this.group, this.labelFontSize*scale, 0, 0, N.Center, N.Middle).addClass('pi-neuron-name');
 
   this.drawCallouts();
 
@@ -191,8 +220,9 @@ N.UI.PiNeuronFactory = (function() {
   var factories = {};
 
   function createPiNeuron(templateName, radius) {
-    var decaRadius = parseInt(radius, 10);
-    if(decaRadius === 0) { decaRadius = 10; }
+    var decaRadius = radius;
+    //var decaRadius = parseInt(radius, 10);
+    //if(decaRadius === 0) { decaRadius = 10; }
 
     var factory = (factories[templateName] ? factories[templateName][decaRadius] : null);
     if(!factory) {
@@ -335,6 +365,8 @@ N.UI.PiNeuronFactory = (function() {
         buildFromTemplate();
       }
       var pin = new N.UI.PiNeuron();
+      pin.labelFontSize = template.labelFontSize;
+      pin.compartmentLabelFontSize = template.compartmentLabelFontSize;
 
       for(var i in filledTemplate) {
         if(i === 'compartments') {

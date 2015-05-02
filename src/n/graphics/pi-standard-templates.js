@@ -73,12 +73,15 @@ N.UI.StandardNeuronTemplates = {
   },
   Stellate : {
     className: 'stellate',
+    labelFontSize: 0.07,
+    compartmentLabelFontSize: 0.06,
     compartments: [{
       name: 'OP',
       className: 'excitatory-body',
       dockAngles: [ { from: 52.0, to: 80.0 }, { from: 110.0, to: 118.0 } ],
       center: { r:0.35, angle: 30 },
       callout: { r: 1.4, angle: 30 },
+      labelCenter: { r:0.94, angle: 114 },
       segments: [
         { radius: 0.55, startAngle: 120, direction: 1, facing: 1, padding: 0.03 },
         { radius: 1.00, startAngle: 50, direction: 1, facing: -1, padding: 0.03 }]
@@ -88,6 +91,7 @@ N.UI.StandardNeuronTemplates = {
       dockAngles: [ { from: 160.0, to: 400.0 } ],
       center: { r: 0.8, angle: -50 },
       callout: { r: 1.4, angle: -50 },
+      labelCenter: { r:0.94, angle: 42 },
       segments: [
         { radius: 0.65, startAngle: 150, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle: 410, direction: -1, facing: 1, padding: 0.05 }]
@@ -97,6 +101,7 @@ N.UI.StandardNeuronTemplates = {
       dockAngles: [ { from: 125.0, to: 145.0 } ],
       center: { r: 0.8, angle: 135 },
       callout: { r: 1.4, angle: 145 },
+      labelCenter: { r:0.94, angle: 144 },
       segments: [
         { radius: 0.65, startAngle:  120, direction: 1, facing: -1, padding: 0.05 },
         { radius: 1.00, startAngle:  150, direction: -1, facing: 1, padding: 0.03 }]

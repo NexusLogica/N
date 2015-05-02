@@ -130,6 +130,14 @@ All Rights Reserved.
     stroke: #d07ad0;
     fill: #d07ad0; }
 
+.pi-neuron .pi-neuron-name {
+  stroke: #666;
+  fill: #666; }
+.pi-neuron .pi-compartment-name {
+  stroke: #666;
+  fill: #666;
+  letter-spacing: 0.1em;
+  font-weight: 100; }
 .pi-neuron .compartment {
   stroke: #999999;
   stroke-width: 1.75px;
