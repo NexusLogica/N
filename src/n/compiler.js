@@ -66,7 +66,11 @@ N.Compiler.prototype.compile = function(filePath) {
     var config = {};
     var root = rootTemplate.loadedImports.$$root;
     root.func({ root: config, self: config, imports: root.loadedImports, compiler: compiler });
-    deferred.resolve(config);
+    if(config.networks && config.networks.length === 1) {
+      deferred.resolve(config.networks[0]);
+    } else {
+      deferred.resolve(config);
+    }
   }, function(err) {
     deferred.reject(err);
   }).catch(N.reportQError);

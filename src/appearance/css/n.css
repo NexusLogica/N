@@ -132,7 +132,8 @@ All Rights Reserved.
 
 .pi-neuron .pi-neuron-name {
   stroke: #666;
-  fill: #666; }
+  fill: #666;
+  font-weight: 100; }
 .pi-neuron .pi-compartment-name {
   stroke: #666;
   fill: #666;
