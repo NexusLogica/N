@@ -42,9 +42,9 @@ N.UI.WorkbenchScene = function() {
  * @param scalePixelsPerUnit {
  * @param position
  */
-N.UI.WorkbenchScene.prototype.layout = function(workbench, renderMappings) {
+N.UI.WorkbenchScene.prototype.layout = function(workbench) {
   this.workbench = workbench;
-  this.networkScene = (new N.UI.NetworkScene()).layout(workbench.network, renderMappings);
+  this.networkScene = (new N.UI.NetworkScene()).layout(workbench.network);
   this.signalGraphScene = (new N.UI.SignalGraphScene());
 
   var traceStyle = { inputs: 'pi-workbench-inputs', targets: 'pi-workbench-targets', outputs: 'pi-workbench-outputs' };

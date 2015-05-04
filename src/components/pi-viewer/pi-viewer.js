@@ -53,7 +53,7 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
               }
 
               $scope.view = {scene: new N.UI.NetworkScene($scope.sceneSignals)};
-              $scope.view.scene.layout($scope.network, $scope.network.display.renderMappings);
+              $scope.view.scene.layout($scope.network);
             });
           }, function(err) {
             $scope.$apply(function() {

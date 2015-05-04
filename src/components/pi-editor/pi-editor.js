@@ -36,7 +36,7 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
     }],
     link: function($scope, $element, $attrs, ctrl) {
       $scope.view = { scene: new N.UI.NetworkScene($scope.sceneSignals) };
-      $scope.view.scene.layout($scope.network, $scope.network.display.renderMappings);
+      $scope.view.scene.layout($scope.network);
 
       $scope.traceEdit = function() {
         $scope.activeUI = 'traceEditor';

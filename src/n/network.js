@@ -396,8 +396,6 @@ N.Network.prototype.loadFrom = function(json) {
         function() {
           _this.loadNeurons(json.neurons || []).then(
             function() {
-              deferred.resolve();
-
               _this.loadConnections(json.connections || []).then(
                 function() {
 

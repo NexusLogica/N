@@ -37,13 +37,12 @@ N.UI.NetworkScene = function(sceneSignals) {
  *
  * @method layout
  * @param network {Object} The N.Network object to be displayed in the scene.
- * @param renderMappings
+ * @return {N.UI.NetworkScene} this
  */
-N.UI.NetworkScene.prototype.layout = function(network, renderMappings) {
+N.UI.NetworkScene.prototype.layout = function(network) {
   this.piNetwork = (new N.UI.PiNetwork(this.sceneSignals)).loadFrom(network.display).setNetwork(network);
   this.piNetwork.scale = this.scale;
-  this.renderMappings = renderMappings;
-  this.piNetwork.layout(this.renderMappings);
+  this.piNetwork.layout();
   return this;
 };
 
@@ -98,7 +97,7 @@ N.UI.NetworkScene.prototype.scaleToFit = function(width, height, padding) {
 
 N.UI.NetworkScene.prototype.render = function(svgParent) {
   this.group = svgParent.group().move(this.x, this.y);
-  this.piNetwork.render(this.group, this.scale, this.renderMappings);
+  this.piNetwork.render(this.group, this.scale);
 };
 
 N.UI.NetworkScene.prototype.fit = function(svgParent) {
