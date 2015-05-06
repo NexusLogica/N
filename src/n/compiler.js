@@ -65,7 +65,7 @@ N.Compiler.prototype.compile = function(filePath) {
     var compiler = new N.Compiler.RecursiveCompiler();
     var config = {};
     var root = rootTemplate.loadedImports.$$root;
-    root.func({ root: config, self: config, imports: root.loadedImports, compiler: compiler });
+    root.func({ root: config, self: config, loadedImports: root.loadedImports, imports:[], compiler: compiler });
     if(config.networks && config.networks.length === 1) {
       deferred.resolve(config.networks[0]);
     } else {
@@ -114,12 +114,12 @@ N.Compiler.prototype.build = function(config) {
 N.Compiler.prototype.loadImport = function(loader, requestingTemplate, key, path, deferredGroup) {
   var deferred = Q.defer();
   var _this = this;
-  if (loader.templatesByPath[path]) {
+  if (loader.templatesByPath[path] && !loader.templatesByPath[path].hasOwnProperty('$$unloaded')) {
     requestingTemplate.loadedImports[key] = loader.templatesByPath[path];
     deferred.resolve();
   } else {
     // Block other load requests from uploading this file.
-    loader.templatesByPath[path] = {};
+    loader.templatesByPath[path] = { $$unloaded: true };
     this.loadFile(path).then(function (sourceFile) {
 
       // This is a template file so compile and load it.
@@ -206,9 +206,11 @@ N.Compiler.RecursiveCompiler.prototype.buildOut = function(context) {
   if(context.self.include) {
     for(var i=0; i<context.self.include.length; i++) {
       var includeMetadata = context.self.include[i];
-      var include = context.imports[includeMetadata.template];
+//////////////////////      debugger;
+      var include = context.loadedImports[includeMetadata.template];
       if(!include) {
-        return { description: 'Import template '+includeMetadata.template+'not found'}
+        N.log('ERROR: Import include '+includeMetadata.template+' not found');
+        return { description: 'Import include '+includeMetadata.template+' not found'}
       }
       if(context.self[includeMetadata.target]) {
         _.merge(context.self[includeMetadata.target], include);
@@ -220,12 +222,22 @@ N.Compiler.RecursiveCompiler.prototype.buildOut = function(context) {
   if(context.self.build) {
     for(var j=0; j<context.self.build.length; j++) {
       var command = context.self.build[j];
-      var template = context.imports[command.template];
+      var template = context.loadedImports[command.template];
       if(!template) {
+        N.log('ERROR: Import template '+command.template+' not found');
         return { description: 'Import template '+command.template+'not found'}
       }
       context.compiler = this;
-      var args = [].concat(context, command.args);
+
+
+      var childContext = {
+        compiler: context.compiler,
+        loadedImports: template.loadedImports,
+        imports: template.imports,
+        root: context.root,
+        self: context.self };
+      var args = [].concat(childContext, command.args);
+      //var args = [].concat(context, command.args);
       template.func.apply(this, args);
     }
 

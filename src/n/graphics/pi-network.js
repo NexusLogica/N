@@ -16,9 +16,9 @@ All Rights Reserved.
   //* N.UI.PiNetwork *
   //******************
 
-N.UI.PiNetwork = function(sceneSignals, parentNetwork) {
+N.UI.PiNetwork = function(sceneSignals, parentPiNetwork) {
   this.sceneSignals = sceneSignals;
-  this.parentNetwork = parentNetwork;
+  this.parentPiNetwork = parentPiNetwork;
   this.x = 0;
   this.y = 0;
   this._set = null;
@@ -90,21 +90,31 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
   this.scale = scale;
 
   // If no
-  if(!this.parentNetwork) {
+  //if(!this.parentPiNetwork) {
     this.width = this.scale*(_.isUndefined(this.width) ? this.unscaledWidth : this.width);
-  }
+  //}
   this.height = this.scale*(_.isUndefined(this.height) ? this.unscaledHeight : this.height);
 
   this.rect = { left: 0, top: 0, right: this.width, bottom: this.height };
 
-  if(this.drawBorder) {
-    this.outerRect = this.group.rect(this.width, this.height)
-      .radius(2)
-      .move(this.rect.left, this.rect.top)
-      .attr({
-        class: 'single',
-        'fill': display.backgroundColor ? display.backgroundColor : '#ff0000',
-        'fill-opacity': 1.0 });
+  this.outerRect = this.group.rect(this.width, this.height)
+    .radius(2)
+    .move(this.rect.left, this.rect.top)
+    .attr({
+      class: 'single',
+      'fill': this.backgroundColor ? this.backgroundColor : '#ff0000',
+      'fill-opacity': 1.0 });
+
+  if(!this.parentPiNetwork) {
+    this.outerRect.attr( {
+      'stroke-width': '1px',
+      'stroke': '#BBBBBB'
+    })
+  } else {
+    this.outerRect.attr( {
+      'stroke-width': '1px',
+      'stroke': '#E0E0E0'
+    })
   }
 
   var padding = new N.UI.Padding(0, 2);
@@ -119,12 +129,16 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
       continue;
     } else {
 
-      var piNetwork = (new N.UI.PiNetwork(this.sceneSignals)).loadFrom(network.display).setNetwork(network);
+      var piNetwork = (new N.UI.PiNetwork(this.sceneSignals, this)).loadFrom(network.display).setNetwork(network);
       piNetwork.scale = this.scale;
       piNetwork.layout();
 
       this.piNetworks.push(piNetwork);
       this.piNetworksByName[networkName] = piNetwork;
+
+      piNetwork.x = this.networks[ii].x*this.scale;
+      piNetwork.y = this.networks[ii].y*this.scale;
+      piNetwork.backgroundColor = this.networks[ii].backgroundColor;
 
       piNetwork.render(this.group, this.scale, this.signals);
 
@@ -272,12 +286,14 @@ N.UI.PiNetwork.prototype.positionFromEvent = function(event) {
 };
 
 N.UI.PiNetwork.prototype.addEventHandlers = function() {
-  var _this = this;
-  var onMoveHandler  = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
-  var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
+  if(!this.parentPiNetwork) {
+    var _this = this;
+    var onMoveHandler = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
+    var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
 
-  $(this.outerRect.node).on('mousemove', onMoveHandler);
-  $(this.outerRect.node).on('click', onClickHandler);
+    $(this.outerRect.node).on('mousemove', onMoveHandler);
+    $(this.outerRect.node).on('click', onClickHandler);
+  }
 };
 
 N.UI.PiNetwork.prototype.getNearestGridPoint = function(x, y) {

@@ -246,13 +246,6 @@ $gap-junction-color: darken(papayawhip, 10%);
 }
 
 .pi-network {
-  >rect {
-    stroke-width: 0.8px;
-    stroke: lighten(gray, 15%);
-    fill: lighten(#FCF8F2, 1.5%);
-    fill: #FDFDFD;
-  }
-
   >text {
     fill: gray;
     stroke: none;
