@@ -12,7 +12,7 @@ All Rights Reserved.
 */
 
 $controls-height: 0px;
-$top-bar-height: 50px;
+$top-bar-height: 70px;
 
 .pi-editor {
   display: block;
@@ -26,15 +26,19 @@ $top-bar-height: 50px;
 
     background: linear-gradient(#DDDDDD, #D2D2D2);
     border: 1px solid #BBBBBB;
+
+    >div {
+      width: 100%;
+    }
     .type {
       vertical-align: bottom;
     }
 
-    .btn {
-      height: 21px;
-      font-size: 13px;
-      padding: 1px 10px;
-    }
+//    .btn {
+//      height: 21px;
+//      font-size: 13px;
+//      padding: 1px 10px;
+//    }
 
     >div {
       display: inline-block;

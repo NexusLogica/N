@@ -56,7 +56,7 @@ N.Right   = 3;
  *
  * @method N.createInstance
  * @param {JSON} json
- * @returns {DeferredObject}
+ * @returns {object} - The instantiated object.
  */
 N.createInstance = function(json) {
   var obj = N.newN(json.className);
@@ -122,7 +122,7 @@ N.compileTemplateFunction = function(templateText, identifier) {
  * @method N.newN
  * @param {string} className (Mandatory)  - A classname in the form 'N.First.Second.Class', hence N.Neuron, N.UI.PiNeuron...
  * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
- * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
+ * @return {Object} A deferred object used for attaching done and fail callbacks
  */
 N.newN = function(className) {
   var parts = className.split('.');
@@ -161,14 +161,14 @@ N.newN = function(className) {
     }
   }
   return null;
-}
+};
 
 /**
  * Returns an existing object from a path.
  * @method N.getN
  * @param {string} className (Mandatory)  - A path string in the form 'N.First.Second.SomeJson'.
  * @param {...*} args (Optional) - Arguments to be passed to contructor. Can be zero, one, or more.
- * @return {DeferredObject} A deferred object used for attaching done and fail callbacks
+ * @return {object} - The ojbect at the path.
  */
 N.getN = function(className) {
   var parts = className.split('.');
@@ -184,7 +184,7 @@ N.getN = function(className) {
     return objObject;
   }
   return null;
-}
+};
 
 /**
  * Returns the object pointed to by the path relative to
@@ -290,7 +290,7 @@ N.compFromPath = function(path) {
  * @method N.fromConnectionPaths
  * @param {N.Network} network
  * @param {String} paths
- * @return {Object} Returns a two components in the form { Source: .
+ * @return {Object} Returns a two components in the form { source: connectionSource, sink: connectionSink }.
  */
 N.fromConnectionPaths = function(network, paths) {
   var parts = paths.split(/->/);
@@ -317,7 +317,7 @@ N.fromConnectionPaths = function(network, paths) {
 N.sourceFromConnectionPath = function(path) {
   var i = path.indexOf('->');
   return path.substring((path[0] === ':' ? 1 : 0), i);
-}
+};
 
 /**
  * Returns the connection sink from a path.
@@ -329,12 +329,12 @@ N.sinkFromConnectionPath = function(path) {
   var i = path.indexOf('->');
   var sink = path.substring((path[i+2] === ':' ? i+3 : i+2));
   return sink;
-}
+};
 
 N.fromPathError = function(network, path, part, message) {
   N.log('Path Error: '+message);
   return { error: { message: message, network: network, path: path, part: part } };
-}
+};
 
 N.toFixed = function(value, precision) {
   var stringValue = '0.';
@@ -377,7 +377,7 @@ N.shortenName = function(longName) {
 /**
  * Take capitals of camel case identifier and inserts a dash and makes lower case, i.e. thisString becomes this-string.
  * @method camelCaseToDashed
- * @param camelCaseName
+ * @param camelCase
  * @returns {string}
  */
 N.camelCaseToDashed = function(camelCase) {
@@ -399,7 +399,7 @@ N.cleanName = function(name) {
  * Returns the index of the array entry with the smallest value. If the array passed in is null, undefined, or zero length the return value is -1.
  * @method N.indexOfMin
  * @param {Array} array
- * @returns {Integer}
+ * @returns {num}
  */
 N.indexOfMin = function(array) {
   if(!array || array.length === 0) { return -1; }
@@ -441,7 +441,7 @@ N.getScriptHost = function() {
 N.log = function(logText) {
   window.console.log(logText);
   return logText;
-}
+};
 
 /**
  * The standard timestep for simulations - 1 millisecond
@@ -453,20 +453,20 @@ N.timeStep = 1;
  * Converts an angle in degrees to radians.
  *
  * @method N.rad
- * @param {Real} angle Angle in degrees
- * @return {Real} Angle in radians
+ * @param {float} angleDegrees Angle in degrees
+ * @return {float} Angle in radians
  *
  */
 N.rad = function(angleDegrees) {
   return Math.PI*angleDegrees/180;
-}
+};
 
 /**
  * Converts an angle in radians to degrees.
  *
  * @method N.deg
- * @param {Real} angle Angle in radians
- * @return {Real} Angle in degrees
+ * @param {float} angleRadians Angle in radians
+ * @return {float} Angle in degrees
  *
  */
 N.deg = function(angleRadians) {
@@ -578,7 +578,7 @@ N.ConfigurationReport.prototype.writeToLog = function(title) {
     for(var i=0; i<numErr; i++) { N.log('    Error['+this.errors[i].path+']: '+this.errors[i].message); }
     for(i=0; i<numWarn; i++)   { N.log('    Warning['+this.warnings[i].path+']: '+this.warnings[i].message); }
   }
-}
+};
 
 /**
  * Dictionary for holding globally accessible objects.

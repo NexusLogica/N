@@ -47,7 +47,6 @@ N.UI.PiNeuron.prototype.render = function(neuron, svgParent) {
     compartment = this.piCompartments[i];
     compartment.neuron = this;
     compartment.path = this.group.path(compartment.pathString).attr({ fill: compartment.color });
-    console.log("***"+compartment.pathString);
 
     var compartmentClassName = 'compartment';
     if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }

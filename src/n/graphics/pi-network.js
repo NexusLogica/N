@@ -81,8 +81,6 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
   this.group = svgParent.group();
   this.group.translate(this.x, this.y);
 
-  var display = this.network.display;
-
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
   this.group.attr({ class: classNameFull });
@@ -105,23 +103,22 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
       'fill': this.backgroundColor ? this.backgroundColor : '#ff0000',
       'fill-opacity': 1.0 });
 
-  if(!this.parentPiNetwork) {
+  if(this.drawBorder) {
     this.outerRect.attr( {
       'stroke-width': '1px',
-      'stroke': '#BBBBBB'
-    })
-  } else {
-    this.outerRect.attr( {
-      'stroke-width': '1px',
-      'stroke': '#E0E0E0'
+      'stroke': (this.borderColor ? this.borderColor : '#BBBBBB')
     })
   }
+
+  // Create this now to produce proper z-indexing.
+  this.gridGroup = this.group.group();
 
   var padding = new N.UI.Padding(0, 2);
   var y = 0.0;
   this.networks = this.networks || [];
   for(var ii=0; ii<this.networks.length; ii++) {
-    var networkName = this.networks[ii].name;
+    var netConfig = this.networks[ii];
+    var networkName = netConfig.name;
 
     var network = this.network.getNetworkByName(networkName);
     if (!network) {
@@ -136,9 +133,12 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
       this.piNetworks.push(piNetwork);
       this.piNetworksByName[networkName] = piNetwork;
 
-      piNetwork.x = this.networks[ii].x*this.scale;
-      piNetwork.y = this.networks[ii].y*this.scale;
-      piNetwork.backgroundColor = this.networks[ii].backgroundColor;
+      piNetwork.x = netConfig.x*this.scale;
+      piNetwork.y = netConfig.y*this.scale;
+      piNetwork.backgroundColor = netConfig.backgroundColor;
+      piNetwork.drawBorder = false;
+      piNetwork.labelFontSize = this.labelFontSize;
+
 
       piNetwork.render(this.group, this.scale, this.signals);
 
@@ -182,8 +182,8 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
     }
   }
 
-  for(var path in this.network.display.connections) {
-    var piConnectionJson = this.network.display.connections[path];
+  for(var path in this.connections) {
+    var piConnectionJson = this.connections[path];
     var connection = this.network.getConnectionByPath(path);
     if(connection) {
       var piConnection = new N.UI.PiConnection(this, connection);
@@ -193,7 +193,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
     }
   }
 
-  this._label = this.group.plain(this.network.name).move(6, 3).attr('font-size', display.labelFontSize*this.scale);
+  this._label = this.group.plain(this.network.name).move(6, 3).attr('font-size', this.labelFontSize*this.scale);
 
   this.addEventHandlers();
 
@@ -208,14 +208,13 @@ N.UI.PiNetwork.prototype.showGrid = function() {
 
   var grid = this.network.display.grid;
 
-  if(this.gridGroup) {
+  if(this.gridPoints) {
     this.gridGroup.show();
   }
   else if(grid) {
     this.gridPoints = [];
     this.gridSpacing = grid.spacing || 0.05;
     var spacing = this.scale*this.gridSpacing;
-    this.gridGroup = this.group.group();
     this.defs = this.group.defs();
     var spot = this.defs.circle(1.0).attr('class', 'pi-grid-point');
     var numX = this.width/spacing;

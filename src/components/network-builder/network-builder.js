@@ -140,9 +140,11 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
                   $scope.scripts.push(scriptObj);
 
                   // If the URL parameter 'run' is defined then automatically run the script.
-                  if($routeParams.run && sourceFile.path === '/scripts/'+$routeParams.run+'.sh') {
-                    $scope.selectedScript = scriptObj;
-                    $scope.runScript();
+                  if($routeParams.run) {
+                    if(sourceFile.path === '/scripts/'+$routeParams.run+'.sh') {
+                      $scope.selectedScript = scriptObj;
+                      $scope.runScript();
+                    }
                   }
                 });
               }, function(err) {
@@ -155,6 +157,34 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       $scope.scriptSelected = function(script) {
         $scope.selectedScript = script;
+      };
+
+      $scope.initializePage = function() {
+        if ($routeParams.src) {
+          $scope.srcPath = $routeParams.src;
+          buildNetwork();
+        }
+      };
+
+      var buildNetwork = function() {
+        $scope.scriptHost = !_.isEmpty($scope.parentScriptHost) ? $scope.parentScriptHost : N.getScriptHost();
+        $scope.sources = $scope.parentSources || new N.Sources();
+
+        var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
+        compiler.compileAndBuild($scope.srcPath).then(function(builtObj) {
+          $scope.$apply(function() {
+            $scope.shellVisible = false;
+            $scope.editorPanel.addNetworkViewer(builtObj);
+          });
+        }, function(err) {
+          $scope.$apply(function() {
+            $scope.errorText = ('An error occurred building the network: ' + err.description).split('\n').join('<br/>');
+          });
+        }).catch(function(err) {
+          $scope.$apply(function() {
+            $scope.errorText = ('An error occurred building the network: ' + err.description + '\n' + err.stack).split('\n').join('<br/>');
+          });
+        });
       };
 
       $scope.runScript = function() {
@@ -197,6 +227,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
 
       }],
     link: function($scope, $element, $attrs) {
+
       $scope.createShell();
       $scope.shellScript = new N.ShellScript($scope);
 
@@ -399,36 +430,6 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         }
       });
 
-      //$scope.shell.setCommandHandler('view', {
-      //  exec: function (cmd, args, callback) {
-      //    try {
-      //      var usage = 'Usage: view [env-var]';
-      //
-      //      if(args.length !== 1) {
-      //
-      //        callback(usage)
-      //
-      //      } else {
-      //
-      //        if (args[0].indexOf('$') === 0) {
-      //          var obj = $scope.variables[args[0]];
-      //          if (obj) {
-      //            if (obj.type === 'history') {
-      //              $scope.editorPanel.addHistoryViewer(obj);
-      //            }
-      //            callback('');
-      //          } else {
-      //            callback('Unable to find variable ' + args[0]);
-      //          }
-      //
-      //        }
-      //      }
-      //    } catch(err) {
-      //      callback('ERROR: '+err.stack)
-      //    }
-      //  }
-      //});
-
       $scope.shell.setCommandHandler('compile', {
         exec: function (cmd, args, callback) {
           var usage = 'Usage: compile [source-file-path] [output-object-name]';
@@ -615,6 +616,8 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
           }
         }
       });
+
+      $scope.initializePage();
 
     }
   };

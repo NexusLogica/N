@@ -1008,6 +1008,8 @@ All Rights Reserved.
         height: 800px;
         background-color: #f6f6f6;
         border: solid 1px #dddddd; }
+  .editors-panel .editors-container.no-tabs-container {
+    width: 1200px; }
 
 /**********************************************************************
 
@@ -1268,19 +1270,17 @@ All Rights Reserved.
 .pi-editor {
   display: block; }
   .pi-editor .info-bar {
-    height: 50px;
+    height: 70px;
     width: 100%;
     font-size: 12px;
     padding-top: 2px;
     padding-left: 12px;
     background: linear-gradient(#dddddd, #d2d2d2);
     border: 1px solid #BBBBBB; }
+    .pi-editor .info-bar > div {
+      width: 100%; }
     .pi-editor .info-bar .type {
       vertical-align: bottom; }
-    .pi-editor .info-bar .btn {
-      height: 21px;
-      font-size: 13px;
-      padding: 1px 10px; }
     .pi-editor .info-bar > div {
       display: inline-block;
       margin-right: 30px; }
@@ -1296,7 +1296,7 @@ All Rights Reserved.
   .pi-editor .viewer {
     box-sizing: border-box;
     width: 100%;
-    height: 750px;
+    height: 730px;
     border: 1px solid #ccc;
     padding: 10px 10px;
     font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
@@ -1306,7 +1306,7 @@ All Rights Reserved.
       .pi-editor .viewer .canvas-container .network-canvas {
         box-sizing: border-box;
         width: 1030px;
-        height: 730px; }
+        height: 710px; }
 
 /**********************************************************************
 
@@ -1321,13 +1321,23 @@ All Rights Reserved.
 
 */
 .trace-line-editor {
-  display: block; }
-  .trace-line-editor .trace-label {
-    display: inline-block; }
+  display: block;
+  padding: 5px 8px; }
+  .trace-line-editor .btn {
+    background-color: white;
+    border: 1px solid black; }
+  .trace-line-editor .status {
+    display: inline-block;
+    font-size: 16px; }
   .trace-line-editor .connection-list {
     display: inline-block; }
   .trace-line-editor .debug-text {
     display: inline-block; }
+  .trace-line-editor .float-right {
+    float: right; }
+    .trace-line-editor .float-right .buttons {
+      text-align: right;
+      margin-bottom: 2px; }
 
 /**********************************************************************
 

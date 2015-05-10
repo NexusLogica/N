@@ -64,4 +64,8 @@ $editor-border: #ddd;
       }
     }
   }
+
+  .editors-container.no-tabs-container {
+    width: $builder-width;
+  }
 }

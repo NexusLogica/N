@@ -13,9 +13,16 @@ All Rights Reserved.
 
 .trace-line-editor {
   display: block;
+  padding: 5px 8px;
 
-  .trace-label {
+  .btn {
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .status {
     display: inline-block;
+    font-size: 16px;
   }
   .connection-list {
     display: inline-block;
@@ -23,5 +30,13 @@ All Rights Reserved.
 
   .debug-text {
     display: inline-block;
+  }
+
+  .float-right {
+    float: right;
+    .buttons {
+      text-align: right;
+      margin-bottom: 2px;
+    }
   }
 }

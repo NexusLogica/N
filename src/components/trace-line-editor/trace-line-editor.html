@@ -1,13 +1,11 @@
 <div>
-  <div class="trace-label">Trace editor:</div>
-  <div class="connection-list">
-    <select>
-      <option ng-repeat="connection in connections" value="{{connection.path}}">{{connection.path}}</option>
-    </select>
+  <div class="status">Select compartment to begin the trace</div>
+
+  <div class="float-right">
+    <div class="buttons">
+      <button class="btn" ng-click="save()" ng-enabled="stateMachine.current === 'Idle' && isDirty">Save</button>
+      <button class="btn" ng-click="done()" ng-show="stateMachine.current === 'Idle'">Close</button>
+    </div>
+    <div><input type="checkbox"><span class="check-text">&nbsp;Show only un-traced connection compartments</span></div>
   </div>
-  <button class="btn" ng-click="cancel()" ng-show="stateMachine.current !== 'Idle'"><Cancel></Cancel></button>
-  <button class="btn" ng-click="save()" ng-show="stateMachine.current === 'Idle' && isDirty">Save</button>
-  <button class="btn" ng-click="edit()" ng-show="stateMachine.current === 'Idle'">Edit</button>
-  <button class="btn" ng-click="done()" ng-show="stateMachine.current === 'Idle'">Done</button>
-  <div class="debug-text">{{debugText}}</div>
 </div>

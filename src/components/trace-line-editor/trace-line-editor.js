@@ -28,9 +28,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       $scope.isDirty = false;
 
       $scope.stateMachine = StateMachine.create({
-        initial: { state: 'Idle' },
+        initial: { state: 'Starting' },
         events: [
-          { name: 'idle',             from: '*',                          to: 'Idle'           },
           { name: 'init',             from: '*',                          to: 'Starting'       },
           { name: 'componentClick',   from: 'Starting',                   to: 'ComponentStart' },
           { name: 'backgroundClick',  from: 'ComponentStart',             to: 'TraceBegin'     },
@@ -66,10 +65,27 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       var getConnections = function() {
         $scope.connections = [];
         var connections = $scope.scene.piNetwork.network.connections;
+        getConnectionsForNetwork($scope.scene.piNetwork.network);
+      };
 
+      var getConnectionsForNetwork = function(network) {
+        var connections = network.connections;
         for(var i=0; i<connections.length; i++) {
-          $scope.connections.push(connections[i]);
+          var connection = connections[i];
+          var split = N.fromConnectionPaths(connection.getPath());
+          var connectionData = {
+            network: network,
+            path: connection,
+            source: split.source,
+            sink: split.sink,
+            obj: connection
+            };
+          $scope.connections.push();
         }
+
+        _.forEach(network.networks, function(n) {
+          getConnectionsForNetwork(n);
+        });
       };
 
       $scope.edit = function() {
