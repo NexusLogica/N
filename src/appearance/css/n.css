@@ -133,12 +133,14 @@ All Rights Reserved.
 .pi-neuron .pi-neuron-name {
   stroke: #666;
   fill: #666;
-  font-weight: 100; }
+  font-weight: 100;
+  font-family: "Roboto Condensed", sans-serif; }
 .pi-neuron .pi-compartment-name {
   stroke: #666;
   fill: #666;
   letter-spacing: 0.1em;
-  font-weight: 100; }
+  font-weight: 100;
+  font-family: "Roboto Condensed", sans-serif; }
 .pi-neuron .compartment {
   stroke: #999999;
   stroke-width: 1.75px;
@@ -178,7 +180,7 @@ All Rights Reserved.
   stroke: #666;
   fill: #666;
   font-weight: 100;
-  font-family: "Raleway", sans-serif;
+  font-family: "Roboto Condensed", sans-serif;
   font-size: 6px;
   text-anchor: middle;
   alignment-baseline: middle;
@@ -214,11 +216,13 @@ All Rights Reserved.
   opacity: 0.3;
   transition-property: stroke, stroke-width;
   transition-duration: 0.5s; }
+.soften-component .pi-compartment-name {
+  opacity: 0.3; }
 
 .pi-network > text {
   fill: gray;
   stroke: none;
-  font-family: "Raleway", sans-serif;
+  font-family: "Roboto Condensed", sans-serif;
   text-anchor: start;
   alignment-baseline: hanging; }
 .pi-network .background-light-tan-even {
@@ -242,7 +246,7 @@ All Rights Reserved.
 .pi-signal-graph .pi-signal-trace .no-data {
   stroke: none;
   fill: #e8e8e8;
-  font-family: "Raleway", sans-serif;
+  font-family: "Roboto Condensed", sans-serif;
   font-size: 25px;
   text-anchor: middle; }
 
@@ -1071,7 +1075,7 @@ All Rights Reserved.
 .pi-signal-graph .pi-signal-trace .no-data {
   stroke: none;
   fill: #e8e8e8;
-  font-family: "Raleway", sans-serif;
+  font-family: "Roboto Condensed", sans-serif;
   font-size: 25px;
   text-anchor: middle; }
 

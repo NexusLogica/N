@@ -33,6 +33,13 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
       };
 
       $scope.activeUI = null;
+
+      $scope.autoShowTraceEditor = function () {
+        $timeout(function () {
+          $scope.traceEdit();
+        }, 100);
+      };
+
     }],
     link: function($scope, $element, $attrs, ctrl) {
       $scope.view = { scene: new N.UI.NetworkScene($scope.sceneSignals) };
@@ -45,6 +52,8 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
       $scope.$on('traceLineEditor:done', function() {
         $scope.activeUI = null;
       });
+
+      //$scope.autoShowTraceEditor();
     }
   };
 }]);

@@ -46,12 +46,21 @@ N.UI.PiConnection.prototype.setRoute = function(route) {
   }
 };
 
+/***
+ * Get the category of the connection (excitatory, inhibitory, gap junction,...)
+ * @method getCategory
+ * @return {string} - The category string, or if no connection object, the default.
+ */
+N.UI.PiConnection.prototype.getCategory = function() {
+  return (this.connection ? this.connection.category : this.defaultCategory);
+};
+
 N.UI.PiConnection.prototype.createRoute = function(svgGroup, pathString) {
   this.path = svgGroup.path(pathString)
     .attr({
       'fill': 'none',
       'stroke-linejoin': 'round',
-      class: 'pi-connection '+N.UI.PiConnectionClasses[this.connection.category] });
+      class: 'pi-connection '+N.UI.PiConnectionClasses[this.getCategory()] });
 };
 
 N.UI.PiConnection.prototype.render = function(svgGroup) {
@@ -124,7 +133,7 @@ N.UI.PiConnection.prototype.renderRoute = function() {
         .attr({
           'fill': 'none',
           'stroke-linejoin': 'round',
-          class: 'pi-connection ' + N.UI.PiConnectionClasses[this.connection.category]
+          class: 'pi-connection ' + N.UI.PiConnectionClasses[this.getCategory()]
         });
     } else {
       this.path.plot(routeString);
@@ -139,7 +148,9 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
   var o = endInfo.endNeuronOuter;
   var angle = Math.atan2(o.y-c.y, o.x-c.x);
 
-  if(this.connection.category === 'Spine') {
+  var category = this.getCategory();
+
+  if(category === 'Spine') {
     w2 = 2.25*scale;
     h2 = 1.5*scale;
     centerDist = c.distance(o)+h2+w2+gap;
@@ -150,9 +161,9 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
         'l-'+(2*h2)+' 0'+
         'a'+w2+' '+w2+' 0 1 0 0 '+(2*w2)+
         'l'+(2*h2)+' 0';
-    svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.connection.category] } );
+    svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
-  else if(this.connection.category === 'GapJunction') {
+  else if(category === 'GapJunction') {
     var w = 9.0*scale;
     var h = 2.0*scale;
     var cornerDist = c.distance(o)+gap+0.5;
@@ -162,9 +173,9 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
         'l0 -'+w+
         'l-'+h+' 0'+
         'l0 '+w;
-    svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.connection.category] } );
+    svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
-  else if(this.connection.category === 'Electrode') {
+  else if(category === 'Electrode') {
     w2 = 2.25*scale;
     h2 = 6*scale;
     centerDist = c.distance(o)+gap;
@@ -173,12 +184,12 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
         'l'+h2+' '+w2+
         'l0 -'+(2*w2)+
         'l-'+h2+' '+w2;
-    svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.connection.category] } );
+    svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
   else {
     var r = 3.0*scale;
     center = o.shorten(c, -r-gap).offset(-r, -r);
-    svgGroup.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[this.connection.category] } );
+    svgGroup.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
 };
 

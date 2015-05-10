@@ -28,7 +28,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       $scope.isDirty = false;
 
       $scope.stateMachine = StateMachine.create({
-        initial: { state: 'Starting' },
+        initial: { state: 'Init' },
         events: [
           { name: 'init',             from: '*',                          to: 'Starting'       },
           { name: 'componentClick',   from: 'Starting',                   to: 'ComponentStart' },
@@ -39,8 +39,12 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         ],
         timeouts: [],
         callbacks: {
-          onenterComponentStart: function() {
+          onenterStarting: function() {
             $scope.beginTrace();
+            $scope.start();
+            $scope.debugText = $scope.stateMachine.current;
+          },
+          onenterComponentStart: function() {
             $scope.debugText = $scope.stateMachine.current;
           },
           onenterTraceBegin: function() {
@@ -58,6 +62,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
     link: function ($scope, $element, $attrs, ctrl) {
 
       $scope.$on('traceLineEditor:begin', function() {
+        $scope.scene.piNetwork.group.addClass('soften-component');
         getConnections();
         $scope.scene.piNetwork.showGrid();
       });
@@ -65,42 +70,45 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       var getConnections = function() {
         $scope.connections = [];
         var connections = $scope.scene.piNetwork.network.connections;
-        getConnectionsForNetwork($scope.scene.piNetwork.network);
+        getConnectionsForNetwork($scope.scene.piNetwork);
+
+        $scope.stateMachine.init();
       };
 
-      var getConnectionsForNetwork = function(network) {
-        var connections = network.connections;
+      var getConnectionsForNetwork = function(piNetwork) {
+        var connections = piNetwork.network.connections;
         for(var i=0; i<connections.length; i++) {
           var connection = connections[i];
-          var split = N.fromConnectionPaths(connection.getPath());
+          var split = N.fromConnectionPaths(piNetwork, connection.getPath());
           var connectionData = {
-            network: network,
+            piNetwork: piNetwork,
             path: connection,
-            source: split.source,
-            sink: split.sink,
+            piSource: split.source,
+            piSink: split.sink,
             obj: connection
-            };
-          $scope.connections.push();
+          };
+          $scope.connections.push(connectionData);
         }
 
-        _.forEach(network.networks, function(n) {
+        _.forEach(piNetwork.piNetworks, function(n) {
           getConnectionsForNetwork(n);
         });
       };
 
-      $scope.edit = function() {
-        $scope.connection = $element.find('select option:selected').scope().connection;
-        var piComponents = N.fromConnectionPaths($scope.scene.piNetwork, $scope.connection.path);
-        $scope.inputComponent = piComponents.source;
-        $scope.outputComponent = piComponents.sink;
-        $scope.inputComponent.path.addClass('highlight-component');
-        $scope.outputComponent.path.addClass('highlight-component');
+      var highlightStartableCompartments = function() {
+        $scope.highlighted = [];
+        _.forEach($scope.connections, function(connection) {
+          connection.piSource.path.addClass('highlight-component');
+          connection.piSink.path.addClass('highlight-component');
+          $scope.highlighted.push(connection.piSource);
+          $scope.highlighted.push(connection.piSink);
+        });
+      };
 
-        $scope.scene.piNetwork.group.addClass('soften-component');
+      $scope.start = function() {
+        $scope.inputComponent = undefined;
+        $scope.outputComponent = undefined;
         $scope.stateMachine.init();
-
-        $scope.createPiConnection();
-
 
         $scope.sceneSignals['component-click'].add(function(event) {
           $scope.$apply(function() {
@@ -113,6 +121,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               var s = n.scale;
 
               if($scope.stateMachine.is('Starting')) {
+                $scope.createPiConnection();
                 $scope.trace = {
                   start: {
                     component: event.compartment.name,
@@ -183,15 +192,14 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.beginTrace = function() {
-
+        highlightStartableCompartments();
       };
 
       $scope.createPiConnection = function() {
-        $scope.piConnection = new N.UI.PiConnection($scope.scene.piNetwork, $scope.connection);
+        // Create in the top level network and move it downward later if need be.
+        $scope.piConnection = new N.UI.PiConnection($scope.scene.piNetwork);
         $scope.piConnection.setRoute($scope.trace);
-        //piConnection.setRoute($scope.trace);
         $scope.scene.piNetwork.addConnection($scope.piConnection);
-
       };
 
       $scope.save = function() {

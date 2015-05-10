@@ -11,7 +11,8 @@ All Rights Reserved.
 
 */
 
-$secondary-font: "Raleway", sans-serif;
+//$secondary-font: "Raleway", sans-serif;
+$secondary-font: 'Roboto Condensed', sans-serif;
 
 .pi-canvas {
   display: block;
@@ -116,12 +117,14 @@ $gap-junction-color: darken(papayawhip, 10%);
     stroke: #666;
     fill: #666;
     font-weight: 100;
+    font-family: $secondary-font;
   }
   .pi-compartment-name {
     stroke: #666;
     fill: #666;
     letter-spacing: 0.1em;
     font-weight: 100;
+    font-family: $secondary-font;
   }
   .compartment {
     stroke: lighten(black, 60%);
@@ -242,6 +245,10 @@ $gap-junction-color: darken(papayawhip, 10%);
       transition-property: stroke, stroke-width;
       transition-duration: 0.5s;
     }
+  }
+
+  .pi-compartment-name {
+    opacity: 0.3;
   }
 }
 
