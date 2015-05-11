@@ -97,15 +97,16 @@ All Rights Reserved.
   stroke: wheat; }
 
 .pi-connection {
-  stroke-width: 1.75; }
+  stroke-width: 3.25; }
   .pi-connection.pi-excitatory-connection {
-    stroke: gainsboro; }
+    stroke: darkseagreen; }
   .pi-connection.pi-inhibitory-connection {
-    stroke: #ffdae0; }
+    stroke: #E9967A; }
   .pi-connection.pi-spine-connection {
     stroke: #b3e0f2; }
   .pi-connection.pi-gap-junction-connection {
     stroke: #ffdca2;
+    stroke: #EEAEEE;
     stroke-width: 1.5; }
   .pi-connection.pi-electrode-connection {
     stroke: #d07ad0;
@@ -218,6 +219,9 @@ All Rights Reserved.
   transition-duration: 0.5s; }
 .soften-component .pi-compartment-name {
   opacity: 0.3; }
+
+.pointer-transparent {
+  pointer-events: none; }
 
 .pi-network > text {
   fill: gray;

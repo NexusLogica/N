@@ -66,19 +66,20 @@ $electrode-color: darken(plum, 10%);
 $gap-junction-color: darken(papayawhip, 10%);
 
 .pi-connection {
-  stroke-width: 1.75;
+  stroke-width: 3.25;
 
   &.pi-excitatory-connection {
-    stroke: gainsboro
+    stroke: darkseagreen;
   }
   &.pi-inhibitory-connection {
-    stroke: lighten(pink, 5%);
+    stroke: #E9967A;
   }
   &.pi-spine-connection {
     stroke: lighten(skyblue, 10%);
   }
   &.pi-gap-junction-connection {
     stroke: $gap-junction-color;
+    stroke: #EEAEEE;
     stroke-width: 1.5;
   }
   &.pi-electrode-connection {
@@ -250,6 +251,10 @@ $gap-junction-color: darken(papayawhip, 10%);
   .pi-compartment-name {
     opacity: 0.3;
   }
+}
+
+.pointer-transparent {
+  pointer-events: none;
 }
 
 .pi-network {

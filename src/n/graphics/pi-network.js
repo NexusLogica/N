@@ -31,6 +31,7 @@ N.UI.PiNetwork = function(sceneSignals, parentPiNetwork) {
   this.piNetworks = [];
   this.piNetworksByName = {};
   this.drawBorder = true;
+  this.gridSpacing = 0.05;
 };
 
 /**
@@ -117,7 +118,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
 
   var padding = new N.UI.Padding(0, 2);
   var y = 0.0;
-  var patternSize = 0.1*this.scale;
+  var patternSize = this.gridSpacing*this.scale;
 
   this.networks = this.networks || [];
   for(var ii=0; ii<this.networks.length; ii++) {
@@ -146,7 +147,10 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
       piNetwork.$$backgroundPattern = this.group.pattern(patternSize, patternSize, function(add) {
         add.rect(patternSize, patternSize).fill(backgroundColor);
       });
-      this.group.rect(this.width, piNetwork.height*this.scale).move(0.0, piNetwork.y).fill(piNetwork.$$backgroundPattern);
+      this.group.rect(this.width, piNetwork.height*this.scale)
+        .move(0.0, piNetwork.y)
+        .fill(piNetwork.$$backgroundPattern)
+        .addClass('pointer-transparent');
 
       piNetwork.render(this.group, this.scale, this.signals);
     }
@@ -192,7 +196,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
 };
 
 N.UI.PiNetwork.prototype.createBackgroundPattern = function() {
-  var patternSize = 0.1*this.scale;
+  var patternSize = this.gridSpacing*this.scale;
   var _this = this;
   this.backgroundPattern = this.group.pattern(patternSize, patternSize, function(add) {
     add.rect(patternSize, patternSize).fill(_this.backgroundColor);
@@ -203,7 +207,7 @@ N.UI.PiNetwork.prototype.createBackgroundPattern = function() {
  * Show the grid.
  */
 N.UI.PiNetwork.prototype.showGrid = function() {
-  var patternSize = 0.1*this.scale;
+  var patternSize = this.gridSpacing*this.scale;
   var _this = this;
   this.backgroundPattern.update(function(add) {
     add.rect(patternSize, patternSize).fill(_this.backgroundColor);
@@ -221,8 +225,16 @@ N.UI.PiNetwork.prototype.showGrid = function() {
  * Show the grid.
  */
 N.UI.PiNetwork.prototype.hideGrid = function() {
+  var patternSize = this.gridSpacing*this.scale;
+  var _this = this;
   this.backgroundPattern.update(function(add) {
-//    add.circle(0.02*_this.scale).center(0.0, 0.0).fill('#CCCCCC');
+    add.rect(patternSize, patternSize).fill(_this.backgroundColor);
+  });
+
+  _.forEach(this.piNetworks, function(piNetwork) {
+    piNetwork.$$backgroundPattern.update(function(add) {
+      add.rect(patternSize, patternSize).fill(piNetwork.backgroundColor);
+    });
   });
 };
 

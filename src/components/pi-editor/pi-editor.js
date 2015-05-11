@@ -49,11 +49,11 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
         $scope.activeUI = 'traceEditor';
         $scope.$broadcast('traceLineEditor:begin');
       };
-      $scope.$on('traceLineEditor:done', function() {
+      $scope.$on('traceLineEditor:closing', function() {
         $scope.activeUI = null;
       });
 
-      //$scope.autoShowTraceEditor();
+      $scope.autoShowTraceEditor();
     }
   };
 }]);

@@ -1,10 +1,10 @@
 <div>
-  <div class="status">Select compartment to begin the trace</div>
+  <div class="status" ng-bind="statusMessage"></div>
 
   <div class="float-right">
     <div class="buttons">
       <button class="btn" ng-click="save()" ng-enabled="stateMachine.current === 'Idle' && isDirty">Save</button>
-      <button class="btn" ng-click="done()" ng-show="stateMachine.current === 'Idle'">Close</button>
+      <button class="btn" ng-click="close()">Close</button>
     </div>
     <div><input type="checkbox"><span class="check-text">&nbsp;Show only un-traced connection compartments</span></div>
   </div>

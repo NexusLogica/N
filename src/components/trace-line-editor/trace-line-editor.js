@@ -26,6 +26,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       ComponentExtensions.initialize(this, 'traceLineEditor', $scope, $element, $attrs);
 
       $scope.isDirty = false;
+      $scope.statusMessage = 'Select compartment to begin the trace';
 
       $scope.stateMachine = StateMachine.create({
         initial: { state: 'Init' },
@@ -35,7 +36,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           { name: 'backgroundClick',  from: 'ComponentStart',             to: 'TraceBegin'     },
           { name: 'componentClick',   from: 'ComponentStart',             to: 'ComponentEnd'   },
           { name: 'backgroundClick',  from: ['TraceBegin', 'TracePoint'], to: 'TracePoint'     },
-          { name: 'componentClick',   from: ['TraceBegin', 'TracePoint'], to: 'ComponentEnd'   }
+          { name: 'componentClick',   from: ['TraceBegin', 'TracePoint'], to: 'ComponentEnd'   },
+          { name: 'idle',             from: '*',                          to: 'Idle'   }
         ],
         timeouts: [],
         callbacks: {
@@ -105,6 +107,15 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         });
       };
 
+      var removeAllHighlights = function() {
+        if($scope.highlighted) {
+          _.forEach($scope.highlighted, function (comp) {
+            comp.path.removeClass('highlight-component');
+          });
+          $scope.highlighted = undefined;
+        }
+      };
+
       $scope.start = function() {
         $scope.inputComponent = undefined;
         $scope.outputComponent = undefined;
@@ -118,14 +129,22 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               $scope.lastSnapX = undefined;
               $scope.lastSnapY = undefined;
               var n = event.piCompartment.neuron;
+              var x = n.x;
+              var y = n.y;
+              if(n.network.parentPiNetwork) {
+                x += n.network.x;
+                y += n.network.y;
+              }
               var s = n.scale;
+              x /= s;
+              y /= s;
 
               if($scope.stateMachine.is('Starting')) {
                 $scope.createPiConnection();
                 $scope.trace = {
                   start: {
                     component: event.compartment.name,
-                    center: {x: n.x / s, y: n.y / s},
+                    center: {x: x, y: y },
                     radius: n.radius / s
                   },
                   points: []
@@ -134,7 +153,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               } else {
                 $scope.trace.end = {
                   component: event.compartment.name,
-                  center: {x: n.x / s, y: n.y / s},
+                  center: {x: x, y: y },
                   radius: n.radius / s
                 };
                 $scope.piConnection.setRoute($scope.trace);
@@ -163,29 +182,34 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         });
 
         $scope.sceneSignals['component-move'].add(function(event) {
-          if($scope.trace) {
-            var n = event.piCompartment.neuron;
-            var s = n.scale;
-            var traceCopy = _.cloneDeep($scope.trace);
-            traceCopy.end = {
-              component: event.compartment.name,
-              center: {x: n.x / s, y: n.y / s},
-              radius: n.radius / s
-            };
-            $scope.piConnection.setRoute(traceCopy);
-          }
+          $scope.$apply(function() {
+            if ($scope.trace) {
+              var n = event.piCompartment.neuron;
+              var s = n.scale;
+              var traceCopy = _.cloneDeep($scope.trace);
+              traceCopy.end = {
+                component: event.compartment.name,
+                center: {x: n.x / s, y: n.y / s},
+                radius: n.radius / s
+              };
+              $scope.piConnection.setRoute(traceCopy);
+            }
+          });
         });
 
         $scope.sceneSignals['background-move'].add(function(event) {
-          if($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
-            $scope.lastSnapX = event.snap.x;
-            $scope.lastSnapY = event.snap.y;
-            var net = event.piNetwork;
-            var point = { pos: event.snap };
-            var traceCopy = _.cloneDeep($scope.trace);
-            traceCopy.points.push(point);
-            $scope.piConnection.setRoute(traceCopy);
-          }
+          $scope.$apply(function() {
+            $scope.statusMessage = 'Snap = ' + event.snap.x + ',' + event.snap.y;
+            if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
+              $scope.lastSnapX = event.snap.x;
+              $scope.lastSnapY = event.snap.y;
+              var net = event.piNetwork;
+              var point = {pos: event.snap};
+              var traceCopy = _.cloneDeep($scope.trace);
+              traceCopy.points.push(point);
+              $scope.piConnection.setRoute(traceCopy);
+            }
+          });
         });
 
         $scope.debugText = '';
@@ -223,12 +247,12 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         var deferred = N.Http.post($scope.scriptHost + '/file' + path, formData);
       };
 
-      $scope.done = function() {
-        $scope.$emit('traceLineEditor:done');
+      $scope.close = function() {
         $scope.scene.piNetwork.hideGrid();
-        $scope.inputComponent.path.removeClass('highlight-component');
-        $scope.outputComponent.path.removeClass('highlight-component');
+        $scope.$emit('traceLineEditor:closing');
+        removeAllHighlights();
         $scope.scene.piNetwork.group.removeClass('soften-component');
+        $scope.stateMachine.idle();
       };
     }
   }
