@@ -75,7 +75,7 @@ $gap-junction-color: darken(papayawhip, 10%);
     stroke: #E9967A;
   }
   &.pi-spine-connection {
-    stroke: lighten(skyblue, 10%);
+    stroke: #73B2D9;
   }
   &.pi-gap-junction-connection {
     stroke: $gap-junction-color;
@@ -88,20 +88,18 @@ $gap-junction-color: darken(papayawhip, 10%);
   }
 }
 .pi-connection-end {
-  stroke: powderblue;
-  stroke-width: 1.5;
+  stroke-width: 2.0;
   fill: white;
-  stroke: lighten(black, 60%);
 
   &.pi-excitatory-connection {
-    stroke: gainsboro
+    stroke: darkseagreen;
   }
   &.pi-inhibitory-connection {
     stroke: lighten(pink, 5%);
     fill: lighten(pink, 8%);
   }
   &.pi-spine-connection {
-    stroke: lighten(skyblue, 10%);
+    stroke: #73B2D9;
   }
   &.pi-gap-junction-connection {
     stroke: $gap-junction-color;

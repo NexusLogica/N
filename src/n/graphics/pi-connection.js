@@ -47,6 +47,18 @@ N.UI.PiConnection.prototype.setRoute = function(route) {
 };
 
 /***
+ * Sets the connection object. Used by UI builders to create a PiConnection without a connection because the end is unknown for a time.
+ * @method setConnection
+ * @param connection
+ */
+N.UI.PiConnection.prototype.setConnection = function(connection) {
+  this.connection = connection;
+  if(this.path) {
+    this.path.attr({ class: 'pi-connection ' + N.UI.PiConnectionClasses[this.getCategory()] });
+  }
+};
+
+/***
  * Get the category of the connection (excitatory, inhibitory, gap junction,...)
  * @method getCategory
  * @return {string} - The category string, or if no connection object, the default.
@@ -74,6 +86,7 @@ N.UI.PiConnection.prototype.renderRoute = function() {
   var st = this.route.start;
   var pt = this.route.points;
   var end = this.route.end;
+  var endPt;
 
   if(st && ((pt && pt.length) || end)) {
     var s = this.piNetwork.scale;
@@ -100,9 +113,13 @@ N.UI.PiConnection.prototype.renderRoute = function() {
         exy = Math.sqrt(edx * edx + edy * edy);
         ecosX = edx / exy;
         esinY = edy / exy;
-        ed = end.radius - exy;
+        ed = (end.radius+2/s) - exy;
+        endPt = { x: (ed*ecosX)*s, y: (ed*esinY)*s };
 
-        routeString += 'l' + ed * ecosX * s + ' ' + ed * esinY * s;
+        routeString += 'l' + endPt.x + ' ' + endPt.y;
+
+        endPt.x = (end.center.x+end.radius*ecosX)*s;
+        endPt.y = (end.center.y+end.radius*esinY)*s;
       }
     }
 
@@ -128,6 +145,13 @@ N.UI.PiConnection.prototype.renderRoute = function() {
       }
     }
 
+    if(end) {
+      this.createEnd(this.group, {
+        endNeuronCenter: new N.UI.Vector(end.center.x*s, end.center.y*s),
+        endNeuronOuter: new N.UI.Vector(endPt.x, endPt.y)
+      });
+    }
+
     if (!this.path) {
       this.path = this.group.path(routeString)
         .attr({
@@ -135,6 +159,9 @@ N.UI.PiConnection.prototype.renderRoute = function() {
           'stroke-linejoin': 'round',
           class: 'pi-connection ' + N.UI.PiConnectionClasses[this.getCategory()]
         });
+      if(!this.connection) {
+        this.path.addClass('pointer-transparent');
+      }
     } else {
       this.path.plot(routeString);
     }
@@ -142,17 +169,18 @@ N.UI.PiConnection.prototype.renderRoute = function() {
 };
 
 N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
-  var scale = 1.0;
+  var scale = this.piNetwork.scale;
   var center, w2, h2, centerDist, routeString, gap = 1.50;
   var c = endInfo.endNeuronCenter;
   var o = endInfo.endNeuronOuter;
   var angle = Math.atan2(o.y-c.y, o.x-c.x);
 
   var category = this.getCategory();
+  //category = 'Spine';
 
   if(category === 'Spine') {
-    w2 = 2.25*scale;
-    h2 = 1.5*scale;
+    w2 = 0.01*2.25*scale;
+    h2 = 0.01*1.5*scale;
     centerDist = c.distance(o)+h2+w2+gap;
     routeString = 'M'+c.x+' '+c.y+
         'm'+centerDist+' 0'+
@@ -187,7 +215,7 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
     svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
   else {
-    var r = 3.0*scale;
+    var r = 0.02*scale;
     center = o.shorten(c, -r-gap).offset(-r, -r);
     svgGroup.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }

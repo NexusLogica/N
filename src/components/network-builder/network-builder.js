@@ -438,7 +438,9 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
             var filePath = $scope.makeFullPath(args[0]);
             var outputName = args[1];
 
-            $scope.compile(filePath).then(function(config) {
+            var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
+
+            compiler.compile(filePath).then(function(config) {
               $scope.variables[outputName] = { type: 'compiled', source: filePath, displayShort: outputName, output: config, guid: 'guid'+N.generateUUID() };
               callback('Compile successful');
             }, function(err) {

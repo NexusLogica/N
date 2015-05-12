@@ -103,7 +103,7 @@ All Rights Reserved.
   .pi-connection.pi-inhibitory-connection {
     stroke: #E9967A; }
   .pi-connection.pi-spine-connection {
-    stroke: #b3e0f2; }
+    stroke: #73B2D9; }
   .pi-connection.pi-gap-junction-connection {
     stroke: #ffdca2;
     stroke: #EEAEEE;
@@ -113,17 +113,15 @@ All Rights Reserved.
     stroke-width: 1.5; }
 
 .pi-connection-end {
-  stroke: powderblue;
-  stroke-width: 1.5;
-  fill: white;
-  stroke: #999999; }
+  stroke-width: 2.0;
+  fill: white; }
   .pi-connection-end.pi-excitatory-connection {
-    stroke: gainsboro; }
+    stroke: darkseagreen; }
   .pi-connection-end.pi-inhibitory-connection {
     stroke: #ffdae0;
     fill: #ffe9ed; }
   .pi-connection-end.pi-spine-connection {
-    stroke: #b3e0f2; }
+    stroke: #73B2D9; }
   .pi-connection-end.pi-gap-junction-connection {
     stroke: #ffdca2;
     fill: #ffdca2; }
@@ -1337,6 +1335,8 @@ All Rights Reserved.
   .trace-line-editor .status {
     display: inline-block;
     font-size: 16px; }
+    .trace-line-editor .status.error-msg {
+      color: red; }
   .trace-line-editor .connection-list {
     display: inline-block; }
   .trace-line-editor .debug-text {
