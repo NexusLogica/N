@@ -55,6 +55,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
             $scope.piConnection = undefined;
             $scope.stateMachine.idle();
             $scope.debugText = $scope.stateMachine.current;
+
+            $timeout(function() {
+              $scope.stateMachine.init();
+            }, 500);
           }
         }
       });
@@ -151,7 +155,18 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   },
                   points: []
                 };
-                $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify($scope.trace);
+
+                if(event.compartment.category === 'Output') {
+                  var px = x;
+                  var py = y+n.radius/s+0.1;
+                  //$scope.lastX = px;
+                  $scope.lastSnapX = px;
+                  $scope.lastSnapY = py;
+                  //$scope.lastY = py;
+                  $scope.trace.points.push({ pos: { x: px, y: py } });
+                }
+
+                $scope.piConnection.setRoute($scope.trace);
               } else {
                 var endPath = event.compartment.getPath();
                 if(endPath === $scope.trace.start.component) {
@@ -160,12 +175,14 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                 } else {
 
                   // Find the other connection.
+                  var isReversed = false;
                   var found = _.find($scope.connections, function(connection) {
                     var srcPath = connection.source.getPath();
                     var snkPath = connection.sink.getPath();
                     if($scope.trace.start.component === srcPath && endPath === snkPath) {
                       return true;
                     } else if($scope.trace.start.component === snkPath && endPath === srcPath) {
+                      isReversed = true;
                       return true;
                     }
                     return false;
@@ -177,12 +194,21 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   }
 
                   $scope.piConnection.setConnection(found.connection);
-
                   $scope.trace.end = {
                     component: event.compartment.getPath(),
                     center: {x: x, y: y},
                     radius: n.radius / s
                   };
+
+                  // If the user started the connection on the sink compartment we will need to reverse it.
+                  if(isReversed) {
+                    var end = $scope.trace.start;
+                    $scope.trace.start = $scope.trace.end;
+                    $scope.trace.end = end;
+
+                    $scope.trace.points.reverse();
+                  }
+
                   $scope.piConnection.setRoute($scope.trace);
                   $scope.trace = undefined;
                   $scope.isDirty = true;
@@ -211,13 +237,21 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
         $scope.sceneSignals['component-move'].add(function(event) {
           $scope.$apply(function() {
-            if ($scope.trace) {
+            if ($scope.trace) {// && $scope.stateMachine.current !== 'ComponentStart') {
+
               var n = event.piCompartment.neuron;
               var s = n.scale;
+              var x = n.x;
+              var y = n.y;
+              if(n.network.parentPiNetwork) {
+                x += n.network.x;
+                y += n.network.y;
+              }
+
               var traceCopy = _.cloneDeep($scope.trace);
               traceCopy.end = {
                 component: event.compartment.name,
-                center: {x: n.x / s, y: n.y / s},
+                center: {x: x / s, y: y / s},
                 radius: n.radius / s
               };
               $scope.piConnection.setRoute(traceCopy);

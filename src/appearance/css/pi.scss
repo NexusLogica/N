@@ -100,6 +100,7 @@ $gap-junction-color: darken(papayawhip, 10%);
   }
   &.pi-spine-connection {
     stroke: #73B2D9;
+    fill: #73B2D9;
   }
   &.pi-gap-junction-connection {
     stroke: $gap-junction-color;

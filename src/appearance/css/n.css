@@ -121,7 +121,8 @@ All Rights Reserved.
     stroke: #ffdae0;
     fill: #ffe9ed; }
   .pi-connection-end.pi-spine-connection {
-    stroke: #73B2D9; }
+    stroke: #73B2D9;
+    fill: #73B2D9; }
   .pi-connection-end.pi-gap-junction-connection {
     stroke: #ffdca2;
     fill: #ffdca2; }
