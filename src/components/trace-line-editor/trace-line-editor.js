@@ -103,9 +103,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         });
       };
 
-      var highlightStartableCompartments = function() {
+      var highlightStartableCompartments = function(connectionList) {
+        var connections = connectionList || $scope.connections;
         $scope.highlighted = [];
-        _.forEach($scope.connections, function(connection) {
+        _.forEach(connections, function(connection) {
           connection.piSource.path.addClass('highlight-component');
           connection.piSink.path.addClass('highlight-component');
           $scope.highlighted.push(connection.piSource);
@@ -128,6 +129,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.stateMachine.init();
 
         $scope.sceneSignals['component-click'].add(function(event) {
+          var isReversed, found;
           $scope.$apply(function() {
             if($scope.stateMachine.can('componentClick')) {
               $scope.lastX = undefined;
@@ -146,6 +148,25 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               y /= s;
 
               if($scope.stateMachine.is('Starting')) {
+                var connectionHalfPath = event.compartment.getPath();
+
+                var matches = [];
+                _.forEach($scope.connections, function(connection) {
+                  var srcPath = connection.source.getPath();
+                  var snkPath = connection.sink.getPath();
+                  if(connectionHalfPath === srcPath || connectionHalfPath === snkPath) {
+                    matches.push(connection);
+                  }
+                });
+
+                if(!matches.length) {
+                  $scope.setMessage('That compartment does not connect to any other compartments.', 'error');
+                  return;
+                }
+
+                removeAllHighlights();
+                highlightStartableCompartments(matches);
+
                 $scope.createPiConnection();
                 $scope.trace = {
                   start: {
@@ -156,6 +177,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   points: []
                 };
 
+                // Find the other connection.
                 if(event.compartment.category === 'Output') {
                   var px = x;
                   var py = y+n.radius/s+0.1;
@@ -167,6 +189,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                 }
 
                 $scope.piConnection.setRoute($scope.trace);
+                $scope.stateMachine.componentClick();
               } else {
                 var endPath = event.compartment.getPath();
                 if(endPath === $scope.trace.start.component) {
@@ -212,10 +235,9 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   $scope.piConnection.setRoute($scope.trace);
                   $scope.trace = undefined;
                   $scope.isDirty = true;
+                  $scope.stateMachine.componentClick();
                 }
               }
-
-              $scope.stateMachine.componentClick();
             }
           });
         });
@@ -261,7 +283,6 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
         $scope.sceneSignals['background-move'].add(function(event) {
           $scope.$apply(function() {
-            $scope.setMessage('Snap = ' + event.snap.x + ',' + event.snap.y);
             if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
               $scope.lastSnapX = event.snap.x;
               $scope.lastSnapY = event.snap.y;
