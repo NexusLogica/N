@@ -43,6 +43,7 @@ N.UI.PiNetwork = function(sceneSignals, parentPiNetwork) {
  */
 N.UI.PiNetwork.prototype.setNetwork = function(network) {
   this.network = network;
+  this.name = this.network.name;
   return this;
 };
 
@@ -64,6 +65,24 @@ N.UI.PiNetwork.prototype.getNetworkByName = function(name) {
  */
 N.UI.PiNetwork.prototype.getNeuronByName = function(name) {
   return this.piNeuronsByName[name];
+};
+
+/**
+ * Get the parent network. This call is implemented by all network, neuron, and compartment objects.
+ * @method getParent
+ * @returns {Object} The parent network object or null if there is none.
+ */
+N.UI.PiNetwork.prototype.getParent = function() {
+  return this.parentPiNetwork;
+};
+
+/**
+ * Get the the root/top level network.
+ * @method getRoot
+ * @returns {N.Network} The root network object or self if this is the root.
+ */
+N.UI.PiNetwork.prototype.getRoot = function() {
+  return this.parentPiNetwork ? this.parentPiNetwork.getRoot() : this;
 };
 
 N.UI.PiNetwork.prototype.layout = function() {
@@ -245,6 +264,15 @@ N.UI.PiNetwork.prototype.addConnection = function(piConnection) {
     this.annonymousConnection = piConnection;
   }
   piConnection.render(this.group);
+};
+
+N.UI.PiNetwork.prototype.removeConnection = function(piConnection) {
+  if(this.annonymousConnection === piConnection) {
+    this.annonymousConnection = null;
+  } else {
+    _.remove(this.piConnections, piConnection);
+  }
+  piConnection.remove();
 };
 
 N.UI.PiNetwork.prototype.renderBackground = function(className, padding) {

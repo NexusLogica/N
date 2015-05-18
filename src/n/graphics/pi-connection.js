@@ -82,6 +82,17 @@ N.UI.PiConnection.prototype.render = function(svgGroup) {
   }
 };
 
+N.UI.PiConnection.prototype.remove = function() {
+  if(this.path) {
+    this.path.remove();
+    this.path = undefined;
+  }
+  if(this.endPath) {
+    this.endPath.remove();
+    this.endPath = undefined;
+  }
+};
+
 N.UI.PiConnection.prototype.renderRoute = function() {
   var st = this.route.start;
   var pt = this.route.points;
@@ -150,7 +161,7 @@ N.UI.PiConnection.prototype.renderRoute = function() {
     }
 
     if(end) {
-      this.createEnd(this.group, {
+      this.createEnd({
         endNeuronCenter: new N.UI.Vector(end.center.x*s, end.center.y*s),
         endNeuronOuter: new N.UI.Vector(endPt.x, endPt.y)
       });
@@ -172,7 +183,7 @@ N.UI.PiConnection.prototype.renderRoute = function() {
   }
 };
 
-N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
+N.UI.PiConnection.prototype.createEnd = function(endInfo) {
   var scale = this.piNetwork.scale;
   var center, w2, h2, centerDist, routeString, gap = 1.50;
   var c = endInfo.endNeuronCenter;
@@ -192,7 +203,7 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
         'l-'+(2*h2)+' 0'+
         'a'+w2+' '+w2+' 0 1 0 0 '+(2*w2)+
         'l'+(2*h2)+' 0';
-    this.endPath = svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
   else if(category === 'GapJunction') {
     var w = 9.0*scale;
@@ -204,7 +215,7 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
         'l0 -'+w+
         'l-'+h+' 0'+
         'l0 '+w;
-    this.endPath = svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
   else if(category === 'Electrode') {
     w2 = 2.25*scale;
@@ -215,12 +226,12 @@ N.UI.PiConnection.prototype.createEnd = function(svgGroup, endInfo) {
         'l'+h2+' '+w2+
         'l0 -'+(2*w2)+
         'l-'+h2+' '+w2;
-    this.endPath = svgGroup.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
   else {
     var r = 0.02*scale;
     center = o.shorten(c, -r-gap).offset(-r, -r);
-    this.endPath = svgGroup.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
 };
 

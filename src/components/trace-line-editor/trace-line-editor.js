@@ -26,6 +26,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       ComponentExtensions.initialize(this, 'traceLineEditor', $scope, $element, $attrs);
 
       $scope.isDirty = false;
+      $scope.connectionsToSave = [];
 
       $scope.stateMachine = StateMachine.create({
         initial: { state: 'Init' },
@@ -123,6 +124,33 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         }
       };
 
+      var getOtherNetworkConnections = function() {
+        var other = [];
+
+      };
+
+      /***
+       * When completing a trace it then becomes clear
+       * @method offsetTrace
+       * @param x - the x amount to offset the trace
+       * @param y - the y amount
+       */
+      var offsetTrace = function(x, y) {
+        var pts = $scope.trace.points;
+        for(var i=0; i<pts.length; i++) {
+          var pos = pts[i].pos;
+          pos.x -= x;
+          pos.y -= y;
+        }
+
+        var c = $scope.trace.start.center;
+        c.x -= x;
+        c.y -= y;
+        c = $scope.trace.end.center;
+        c.x -= x;
+        c.y -= y;
+      };
+
       $scope.start = function() {
         $scope.inputComponent = undefined;
         $scope.outputComponent = undefined;
@@ -139,6 +167,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               var n = event.piCompartment.neuron;
               var x = n.x;
               var y = n.y;
+
+              // TODO: Loop through parents adding x,y each time.
               if(n.network.parentPiNetwork) {
                 x += n.network.x;
                 y += n.network.y;
@@ -190,7 +220,9 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
                 $scope.piConnection.setRoute($scope.trace);
                 $scope.stateMachine.componentClick();
+
               } else {
+                // This is the save path.
                 var endPath = event.compartment.getPath();
                 if(endPath === $scope.trace.start.component) {
                   $scope.setMessage('You can not reconnect to the same compartment.', 'error');
@@ -216,7 +248,6 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                     return;
                   }
 
-                  $scope.piConnection.setConnection(found.connection);
                   $scope.trace.end = {
                     component: event.compartment.getPath(),
                     center: {x: x, y: y},
@@ -232,7 +263,34 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                     $scope.trace.points.reverse();
                   }
 
-                  $scope.piConnection.setRoute($scope.trace);
+                  var offsetX = 0;
+                  var offsetY = 0;
+                  // TODO: Fix this for networks deeper than the top piNetwork.
+                  var connectionsPiNetwork;
+                  if(found.connection.network !== $scope.scene.piNetwork.network) {
+                    var connectionsNetworkPath = found.connection.network.getPath();
+                    connectionsPiNetwork = N.fromPath($scope.scene.piNetwork, connectionsNetworkPath);
+
+                    // Get the offset of x,y.
+                    offsetX = connectionsPiNetwork.x / s;
+                    offsetY = connectionsPiNetwork.y / s;
+                  }
+
+                  $scope.piConnection.setConnection(found.connection);
+
+
+                  if(connectionsPiNetwork) {
+                    $scope.scene.piNetwork.removeConnection($scope.piConnection);
+
+                    offsetTrace(offsetX, offsetY);
+
+                    $scope.piConnection.setRoute($scope.trace);
+                    $scope.piConnection.remove();
+                    connectionsPiNetwork.addConnection($scope.piConnection);
+                  } else {
+                    $scope.piConnection.setRoute($scope.trace);
+                  }
+
                   $scope.trace = undefined;
                   $scope.isDirty = true;
                   $scope.stateMachine.componentClick();
@@ -310,6 +368,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.save = function() {
+        var connectionsToMove = getOtherNetworkConnections();
+
         var display = $scope.scene.piNetwork.network.display;
         var path = display.$$path;
         var displayCopy = _.cloneDeep(display);

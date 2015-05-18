@@ -138,13 +138,13 @@ N.newN = function(className) {
     try {
       // Create but allow for passing of arguments
       // Found here http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply
-      var temp = function(){}; // temporary constructor
+      var Temp = function(){}; // temporary constructor
 
       // Give the Temp constructor the Constructor's prototype
-      temp.prototype = objConstructor.prototype;
+      Temp.prototype = objConstructor.prototype;
 
       // Create a new instance
-      var inst = new temp();
+      var inst = new Temp();
 
       // Call the original Constructor with the temp
       // instance as its context (i.e. its 'this' value)
@@ -205,6 +205,15 @@ N.fromPath = function(network, path) {
   var currentObj = network;
   if (parts[0].charAt(0) === '/') {
     currentObj = network.getRoot();
+
+    // Deal with the root name. Hence /COL/L4a:N>C, we need to verify the name and remove it from the path array.
+    var rootName = currentObj.name;
+    var expectedRootName = parts[0].substr(1);
+    if(rootName !== expectedRootName) {
+      return N.fromPathError(network, path, parts[1], 'Root network name is incorrect: "'+rootName+'" expected "'+expectedRootName+'"');
+    }
+
+    parts.shift();
   }
 
   for(var i in parts) {

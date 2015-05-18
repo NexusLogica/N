@@ -55,7 +55,7 @@ N.Network.prototype.getType = function() {
  * @returns {string}
  */
 N.Network.prototype.getPath = function() {
-  return (this.parentNetwork ? this.parentNetwork.getPath() : '/')+this.name;
+  return (this.parentNetwork ? this.parentNetwork.getPath()+'/' : '/')+this.name;
 };
 
 /**
