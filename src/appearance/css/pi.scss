@@ -93,6 +93,7 @@ $gap-junction-color: darken(papayawhip, 10%);
 
   &.pi-excitatory-connection {
     stroke: darkseagreen;
+    fill: darkseagreen;
   }
   &.pi-inhibitory-connection {
     stroke: lighten(pink, 5%);

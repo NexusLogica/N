@@ -116,7 +116,8 @@ All Rights Reserved.
   stroke-width: 2.0;
   fill: white; }
   .pi-connection-end.pi-excitatory-connection {
-    stroke: darkseagreen; }
+    stroke: darkseagreen;
+    fill: darkseagreen; }
   .pi-connection-end.pi-inhibitory-connection {
     stroke: #ffdae0;
     fill: #ffe9ed; }

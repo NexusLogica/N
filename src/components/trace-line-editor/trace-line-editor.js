@@ -277,18 +277,21 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   }
 
                   $scope.piConnection.setConnection(found.connection);
-
+                  $scope.scene.piNetwork.removeConnection($scope.piConnection);
 
                   if(connectionsPiNetwork) {
-                    $scope.scene.piNetwork.removeConnection($scope.piConnection);
 
                     offsetTrace(offsetX, offsetY);
 
                     $scope.piConnection.setRoute($scope.trace);
                     $scope.piConnection.remove();
                     connectionsPiNetwork.addConnection($scope.piConnection);
+                    connectionsPiNetwork.$$isDirty = true;
                   } else {
+                    // It was removed as anonymous and now is a proper connection.
+                    $scope.scene.piNetwork.addConnection($scope.piConnection);
                     $scope.piConnection.setRoute($scope.trace);
+                    $scope.scene.piNetwork.$$isDirty = true;
                   }
 
                   $scope.trace = undefined;
@@ -368,14 +371,16 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.save = function() {
-        var connectionsToMove = getOtherNetworkConnections();
+        $scope.saveNetwork($scope.scene.piNetwork);
+      };
 
-        var display = $scope.scene.piNetwork.network.display;
+      $scope.saveNetwork = function(piNetwork) {
+        var display = piNetwork.network.display;
         var path = display.$$path;
         var displayCopy = _.cloneDeep(display);
         delete displayCopy.$$path;
 
-        var connections = $scope.scene.piNetwork.piConnections;
+        var connections = piNetwork.piConnections;
         var connectionJson = {};
         _.forEach(connections, function(piConnection) {
           connectionJson[piConnection.getPath()] = piConnection.toJson();
@@ -388,6 +393,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           type: 'text/plain'
         }));
         var deferred = N.Http.post($scope.scriptHost + '/file' + path, formData);
+
+        for(var i=0; i<piNetwork.piNetworks.length; i++) {
+          $scope.saveNetwork(piNetwork.piNetworks[i]);
+        }
       };
 
       $scope.close = function() {
