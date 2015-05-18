@@ -93,21 +93,21 @@
     connectionSink.loadFrom({ Path: ':N2>OP->:N3>IS', Gain: 1.5, Delay: 2 });
     network.AddConnection(connectionSink);
 
-    var linkReport = network.Link();
+    var linkReport = network.link();
     equal(linkReport.Warnings.length, 0, 'Expect one link warnings');
     equal(linkReport.Errors.length, 0, 'Expect no link errors');
     linkReport.WriteToLog('Link report');
 
-    var report = network.Validate(new N.ConfigurationReport());
-    equal(report.Warnings.length, 0, 'Expect one warning');
-    equal(report.Errors.length, 0, 'Expect no errors');
+    var report = network.validate(new N.ConfigurationReport());
+    equal(report.warnings.length, 0, 'Expect one warning');
+    equal(report.errors.length, 0, 'Expect no errors');
     report.WriteToLog('Configuration report');
 
     for(var i=0; i<cycles; i++) {
       network.Update(i);
     }
 
-    var cn1n2 = network.GetConnectionsByPath(':N1>OP->:N2>IP');
+    var cn1n2 = network.getConnectionByPath(':N1>OP->:N2>IP');
     var cn1n2Signal = cn1n2.OutputStore;
     equal(cn1n2Signal.GetNumSamples(), 100, 'Number of N1->N2 input samples stored');
     QUnit.assert.near(cn1n2Signal.Average(), 0.45, 0.02, 'Average output of connection N1 to N2');

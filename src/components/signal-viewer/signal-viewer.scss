@@ -1,0 +1,121 @@
+/**********************************************************************
+
+File     : signal-viewer.scss
+Project  : N Simulator Library
+Purpose  : Source file for the signal-viewer component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/21
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+$controls-height: 110px;
+
+.signal-viewer {
+  display: block;
+
+  .info-bar {
+    height: $editor-status-bar-height;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 6px;
+    padding-left: 12px;
+
+    background: linear-gradient(#DDDDDD, #D2D2D2);
+    border: 1px solid #BBBBBB;
+
+    >div {
+      display: inline-block;
+      margin-right: 30px;
+    }
+
+    .info-label {
+      color: #696969;
+    }
+  }
+
+  .signal-graph-container {
+    .signal-canvas {
+      width: $builder-width - $builder-tab-width - $builder-tab-sep;
+      height: $editor-height - $editor-status-bar-height - $controls-height;
+    }
+  }
+
+  .controls {
+    box-sizing: border-box;
+    height: $controls-height;
+    width: 100%;
+    padding: 10px 10px;
+    border-right: solid 1px #BBBBBB;
+    .signal-chooser {
+      display: inline-block;
+      box-sizing: border-box;
+      border: 1px #e4e4e4 solid;
+      padding: 10px 20px 10px 20px;
+      $background-color: #f8f7f5;
+      width: 675px;
+      height: 89px;
+    }
+    .signal-slider {
+      display: inline-block;
+      width: 350px;
+      vertical-align: top;
+    }
+  }
+}
+
+.pi-signal-graph {
+  .graph-background {
+    fill: lighten(gainsboro, 12%);
+  }
+  .pi-signal-trace {
+    .background {
+      fill: papayawhip;
+      stroke: #c0c0c0;
+    }
+    &.even {
+      .background {
+        fill: lighten(papayawhip, 6%);
+      }
+    }
+    &.odd {
+      .background {
+        fill: lighten(papayawhip, 5%);
+      }
+    }
+
+    .no-data {
+      stroke: none;
+      fill: #e8e8e8;
+      font-family: $secondary-font;
+      font-size: 25px;
+      text-anchor: middle;
+    }
+  }
+}
+
+.bootstrap-dialog-body {
+  .tree-container {
+    border: 1px solid #BBBBBB;
+    padding: 8px 20px;
+    .aciTree {
+      .neuron {
+        background-image: url("../../appearance/images/neuron-16x16.png");
+        background-position-x: 5px;
+        background-position-y: 2px;
+      }
+      .aciTreeItem {
+        height: 22px;
+        label {
+          display: inline;
+          max-width: none;
+          margin-bottom: 0px;
+          font-weight: normal;
+        }
+      }
+    }
+  }
+}
+

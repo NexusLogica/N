@@ -1,0 +1,11 @@
+<div>
+  <div class="status" ng-bind="statusMessage" ng-class="{ 'error-msg': statusMessageType === 'error'}"></div>
+
+  <div class="float-right">
+    <div class="buttons">
+      <button class="btn" ng-click="save()" ng-enabled="stateMachine.current === 'Idle' && isDirty">Save</button>
+      <button class="btn" ng-click="close()">Close</button>
+    </div>
+    <div><input type="checkbox"><span class="check-text">&nbsp;Show only un-traced connection compartments</span></div>
+  </div>
+</div>

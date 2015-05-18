@@ -1,0 +1,15 @@
+<div class="signal-viewer">
+  <div class="info-bar">
+    <div class="type"><span class="info-label">Type: </span><span ng-bind="sourceType"></span></div>
+    <div class="path"><span class="info-label">Path: </span><span ng-bind="sourcePath"></span></div>
+  </div>
+  <div class="controls">
+    <div class="signal-chooser">
+      <button class="btn" ng-click="showSelectTree()">Select</button>
+    </div>
+    <signal-slider signals="sliderSignals" range-min="rangeMin" range-max="rangeMax"></signal-slider>
+  </div>
+  <div class="signal-graph-container">
+    <pi-canvas class="signal-canvas" pi-scene="signalGraphScene" pi-fit-width pi-padding="10" pi-trace-view canvas-origin="upper-left"></pi-canvas>
+  </div>
+</div>

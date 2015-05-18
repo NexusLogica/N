@@ -1,0 +1,99 @@
+/**********************************************************************
+
+File     : header.scss
+Project  : N Simulator Library
+Purpose  : Source file for header component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.header {
+  padding: 0px 0px 0px 0px;
+  background-color: $color-dark;
+
+  .title {
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: top;
+    margin-top:23px;
+  }
+
+  .current {
+    color: $color-med;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 4px;
+    margin-right: 20px;
+    font-size:30px;
+  }
+
+  .dropdown-toggle {
+    color: $text-color;
+    background-color: #E0E0E0;
+    height: 33px;
+    padding: 7px 15px;
+    &:hover {
+      color: $text-color;
+      background-color: #E0E0E0;
+    }
+  }
+
+  .menu-bar {
+    float: right;
+    button {
+      height: 32px;
+      margin-top: 6px;
+    }
+    ul.nav.nav-pills {
+      margin: 7px 5px 0px 5px;
+      display: inline-block;
+    }
+  }
+}
+
+//*****************************
+// Tabs
+
+.main-tabs-container {
+  margin-top: 10px;
+}
+
+.main-tabs-container .nav {
+  margin-bottom: 0px;
+}
+
+.main-tabs-container .nav-tabs>li {
+  position: relative;
+}
+
+.main-tabs-container .nav-tabs>li.active a {
+  background-color: $color-space;
+}
+
+.main-tabs-container .nav-tabs>li a {
+  max-width: 100px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 23px;
+}
+
+.main-tabs-container .nav-tabs>li div {
+  top: 8px;
+  right: 9px;
+  position: absolute;
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  color: $color-med;
+}
+
+.main-tabs-container .nav-tabs>li div:hover {
+  color: $color-dark;
+  cursor: pointer;
+}
+

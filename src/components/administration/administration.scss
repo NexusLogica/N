@@ -1,0 +1,63 @@
+/**********************************************************************
+
+File     : administration.scss
+Project  : N Simulator Library
+Purpose  : Source file for administration component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.administration {
+  .admin-row {
+    width:90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  a {
+    font-family: $primary-font;
+    font-weight: 300;
+    font-size: 18px;
+  }
+
+  .section-title {
+    @include title-base;
+    font-weight: normal;
+    font-size: $font-size-med;
+    color: $color-darkest;
+    margin-bottom:8px;
+  }
+
+  .welcome {
+    margin-top: 20px;
+  }
+
+  .database-admin-links {
+    margin-top: 15px;
+    .links {
+      margin-left:25px;
+    }
+  }
+
+  .database-current {
+    margin-top: 40px;
+    table {
+      thead {
+        tr {
+          th {
+            text-align: center;
+          }
+        }
+        .description { width: 350px; }
+        .host        { width: 150px; }
+        .name        { width: 150px; }
+        .accessible  { width: 50px; }
+      }
+    }
+  }
+
+}

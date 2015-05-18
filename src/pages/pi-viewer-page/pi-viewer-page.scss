@@ -1,0 +1,33 @@
+/**********************************************************************
+
+File     : pi-viewer-page.scss
+Project  : N Simulator Library
+Purpose  : Source file for the PI Viewer page SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/28
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.pi-viewer-page {
+
+  >.pi {
+    position:absolute;
+    left:33px;
+    top:15px;
+    font-size: 30px;
+  }
+  >.message {
+    width: 400px;
+    margin: 200px auto 0px auto;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 300;
+    >.example {
+      font-size: 20px;
+      font-weight: 300;
+    }
+  }
+}

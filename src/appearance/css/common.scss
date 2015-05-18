@@ -1,0 +1,180 @@
+/**********************************************************************
+
+File     : common.scss
+Project  : N Simulator Library
+Purpose  : CSS file for Pi neurons and other graphic elements.
+Revisions: Original definition by Lawrence Gunn.
+           2014/02/26
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.n-large-title {
+  @include title-base;
+  font-size: $font-size-large;
+  color: $color-darkest;
+}
+
+.n-large-title-light {
+  @extend .n-large-title;
+  color: $color-body;
+}
+
+.n-med-title {
+  @include title-base;
+  font-weight: normal;
+  font-size: $font-size-med;
+  color: $color-darkest;
+}
+
+.n-med-title-light {
+  @extend .n-med-title;
+  color: $color-body;
+}
+
+.n-small-title {
+  @include title-base;
+  font-size: $font-size-avg;
+  padding-bottom: $padding-med;
+}
+
+//****************************
+// Scrollbars in webkit on OS-X. They disappear...
+ul::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background-color: $color-light-gray;
+}
+
+ul::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: lighten($color-med-dark, 40%);
+}
+
+//*****************************
+// Inputs
+.form-vertical input {
+  display: block;
+}
+
+//*****************************
+// Page
+body {
+  background-color: $color-body;
+
+  .placeholder {
+    color: $text-color-light;
+  }
+}
+
+.fadex {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+.fadex.ng-enter,
+.fadex.ng-leave {
+    -webkit-transition: all 2s ease;
+    -moz-transition: all 2s ease;
+    -o-transition: all 2s ease;
+    transition: all 2s ease;
+}
+.fadex.ng-enter {
+    opacity: 0;
+}
+.fadex.ng-enter {
+    top: 100%;
+}
+.fadex.ng-enter-active {
+    top: 0;
+}
+.fadex.ng-leave {
+    top: 0;
+}
+.fadex.ng-leave-active {
+    top: -100%;
+}/*.fadex.ng-enter-active {
+    opacity: 1;
+}
+.fadex.ng-leave {
+    opacity: 1;
+}
+.fadex.ng-leave-active {
+    opacity: 0;
+}
+*/
+.n-component {
+  background-color: $color-space;
+  border: $color-light 1px solid;
+  border-top-style: none;
+  border-radius: 0px 0px 5px 5px;
+  padding-top: $padding-med;
+}
+
+.n-alert {
+  display: none;
+  width: 400px;
+  background-color: $color-dialog;
+  border-color: $color-med-dark;
+  -webkit-box-shadow: $drop-shadow;
+  -moz-box-shadow: $drop-shadow;
+  box-shadow: $drop-shadow;
+}
+
+.pi-error {
+  border-color: $color-error;
+}
+
+.pi-body {
+  .modal-dialog {
+    .modal-header {
+      padding: 4px 12px;
+    }
+    .modal-body {
+      padding: 10px 12px;
+    }
+    .modal-footer {
+      border-top: none;
+      padding: 10px 12px;
+    }
+  }
+}
+
+.item-set {
+  margin-bottom: 8px;
+  height: 20px;
+  .item-label {
+    text-align: right;
+  }
+}
+
+.footer-message {
+  width: 335px;
+  text-align: left;
+  margin-top:14px;
+  float: left;
+  color: $text-color;
+  &.success {
+    color: dodgerblue;
+  }
+  &.error {
+    color: #FA1E20;
+  }
+}
+
+.tooltip.top {
+  .tooltip-inner {
+    background-color: #ffa500;
+    color: white;
+  }
+
+  .tooltip-arrow {
+    border-top-color: #ffa500;
+  }
+}

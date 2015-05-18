@@ -1,0 +1,353 @@
+/**********************************************************************
+
+File     : pi.scss
+Project  : N Simulator Library
+Purpose  : CSS file for Pi neurons and other graphic elements.
+Revisions: Original definition by Lawrence Gunn.
+           2014/02/26
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+//$secondary-font: "Raleway", sans-serif;
+$secondary-font: 'Roboto Condensed', sans-serif;
+
+.pi-canvas {
+  display: block;
+  $svg-opacity: 0.03;
+  border: 1px solid lightgray;
+  fill: lighten(floralwhite, 2%);
+  rx: 20;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
+  -moz-box-shadow:    5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
+  box-shadow:         5px 5px 15px 0px rgba(15, 15, 13, $svg-opacity);
+
+  svg {
+    .axis {
+      stroke: silver;
+      stroke-width: 0.5;
+    }
+
+    text {
+      alignment-baseline: hanging;
+
+    }
+  }
+}
+
+.blah {
+  stroke: lightskyeblue;
+  stroke: darkgray;
+  stroke: darkseagreen;
+  stroke: gainsboro;
+  stroke: lavendar;
+  stroke: lightblue;
+  stroke: lightcoral;
+  stroke: lightgray;
+  stroke: lightpink;
+  stroke: lightsteelblue;
+  stroke: mistyrose;
+  stroke: moccasin;
+  stroke: papayawhip;
+  stroke: peachpuff;
+  stroke: pink;
+  stroke: powderblue;
+  stroke: skyblue;
+  stroke: thistle;
+  stroke: wheat;
+}
+
+$darker: 0%;
+$inactiveFill: #F6F6F6;
+
+$electrode-color: darken(plum, 10%);
+$gap-junction-color: darken(papayawhip, 10%);
+
+.pi-connection {
+  stroke-width: 3.25;
+
+  &.pi-excitatory-connection {
+    stroke: darkseagreen;
+  }
+  &.pi-inhibitory-connection {
+    stroke: #E9967A;
+  }
+  &.pi-spine-connection {
+    stroke: #73B2D9;
+  }
+  &.pi-gap-junction-connection {
+    stroke: $gap-junction-color;
+    stroke: #EEAEEE;
+    stroke-width: 1.5;
+  }
+  &.pi-electrode-connection {
+    stroke: $electrode-color;
+    stroke-width: 1.5;
+  }
+}
+.pi-connection-end {
+  stroke-width: 2.0;
+  fill: white;
+
+  &.pi-excitatory-connection {
+    stroke: darkseagreen;
+    fill: darkseagreen;
+  }
+  &.pi-inhibitory-connection {
+    stroke: lighten(pink, 5%);
+    fill: lighten(pink, 8%);
+  }
+  &.pi-spine-connection {
+    stroke: #73B2D9;
+    fill: #73B2D9;
+  }
+  &.pi-gap-junction-connection {
+    stroke: $gap-junction-color;
+    fill: $gap-junction-color;
+  }
+  &.pi-electrode-connection {
+    stroke: $electrode-color;
+    fill: $electrode-color;
+  }
+}
+
+.pi-neuron {
+  .pi-neuron-name {
+    stroke: #666;
+    fill: #666;
+    font-weight: 100;
+    font-family: $secondary-font;
+  }
+  .pi-compartment-name {
+    stroke: #666;
+    fill: #666;
+    letter-spacing: 0.1em;
+    font-weight: 100;
+    font-family: $secondary-font;
+  }
+  .compartment {
+    stroke: lighten(black, 60%);
+    stroke-width: 1.75px;
+    stroke-linejoin: round;
+    transition-property: stroke, stroke-width;
+    transition-duration: 0.5s;
+
+    &.selected {
+      stroke-width: 2.25px;
+      stroke: lighten(black, 20%);
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
+    }
+
+    &.excitatory-body {
+      fill: lighten(lightblue, 12%);
+    }
+
+    &.inhibitory-body {
+      fill: darken(bisque, $darker);
+    }
+
+    &.proximal-basal-dendrites {
+      fill: darken(#F1EFE2, $darker);
+    }
+
+    &.distal-basal-dendrites {
+      fill: darken(#F5EBDB, $darker);
+    }
+
+    &.apical-dendrite-distal-tufts {
+      fill: darken(#AFD3EF, $darker);
+    }
+
+    &.apical-dendrite-proximal-tufts {
+      fill: darken(#D6E8F5, $darker);
+    }
+
+    &.apical-dendrite-trunk {
+      fill: darken(#EBF4FA, $darker);
+    }
+
+    &.dendrites {
+      fill: lighten(lightsteelblue, 13%);
+    }
+
+    &.acetylcholine-receptors {
+      fill: darken(linen, $darker);
+    }
+
+    &.highlight-component {
+      opacity: 1.0 !important;
+      stroke-width: 2.5px;
+      stroke: lighten(black, 10%);
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
+    }
+  }
+
+  .callout-label {
+    stroke: #666;
+    fill: #666;
+    font-weight: 100;
+    font-family: $secondary-font;
+    font-size: 6px;
+    text-anchor: middle;
+    alignment-baseline: middle;
+    dominant-baseline: central;
+    fill-opacity: 0;
+    stroke-opacity: 0;
+    //transition-property: stroke-opacity, fill-opacity;
+    //transition-duration: 1s;
+  }
+
+  .callout-line {
+    stroke: #666;
+    fill: #666;
+    fill-opacity: 0;
+    stroke-opacity: 0;
+    //transition-property: stroke-opacity, fill-opacity;
+    //transition-duration: 1.5s;
+  }
+
+  &.highlight {
+    .compartment {
+      stroke-width: 2.5px;
+      stroke: lighten(black, 10%);
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
+    }
+
+    .callout-label {
+      display:inline;
+      fill-opacity: 1;
+      stroke-opacity: 1;
+      transition-property: stroke-opacity, fill-opacity;
+      transition-duration: 2.5s;
+    }
+    .callout-line {
+      display:inline;
+      fill-opacity: 1;
+      stroke-opacity: 0.5;
+      transition-property: stroke-opacity, fill-opacity;
+      transition-duration: 3.0s;
+    }
+  }
+
+  &.highlight .callout-label {
+    display:inline;
+  }
+}
+
+.soften-component {
+  .pi-neuron {
+    .compartment {
+      opacity: 0.3;
+      transition-property: stroke, stroke-width;
+      transition-duration: 0.5s;
+    }
+  }
+
+  .pi-compartment-name {
+    opacity: 0.3;
+  }
+}
+
+.pointer-transparent {
+  pointer-events: none;
+}
+
+.pi-network {
+  >text {
+    fill: gray;
+    stroke: none;
+    font-family: $secondary-font;
+    text-anchor: start;
+    alignment-baseline: hanging;
+  }
+
+  .background-light-tan-even {
+    fill: #fdfcfb;
+    stroke: none;
+  }
+
+  .background-light-tan-odd {
+    fill: #faf7f4;
+    stroke: none;
+  }
+
+  .network-separator {
+    stroke-width: 1px;
+    stroke: lighten(gainsboro, 7%);
+  }
+}
+
+.pi-signal-graph {
+  .graph-background {
+    fill: lighten(gainsboro, 12%);
+  }
+  .pi-signal-trace {
+    .background {
+      fill: papayawhip;
+    }
+    &.even {
+      .background {
+        fill: lighten(papayawhip, 6%);
+      }
+    }
+    &.odd {
+      .background {
+        fill: lighten(papayawhip, 5%);
+      }
+    }
+
+    .no-data {
+      stroke: none;
+      fill: #e8e8e8;
+      font-family: $secondary-font;
+      font-size: 25px;
+      text-anchor: middle;
+    }
+  }
+}
+
+.pi-grid {
+  >rect {
+    stroke-width: 1.4px;
+    stroke: #f4f4f4;
+    fill: lighten(#FCF8F2, 1.5%);
+    fill: #FDFDFD;
+  }
+
+  .grid-dot {
+    fill: blue;
+    fill: none;
+  }
+
+  .grid-path-line {
+    stroke: #dddddd;
+    fill: none;
+    stroke-width: 2px;
+    stroke-linejoin: bevel;
+  }
+
+  .grid-circle {
+    stroke: lighten(black, 60%);
+    stroke-width: 1.75px;
+    stroke-linejoin: round;
+    fill: lighten(lightblue, 12%);
+  }
+
+  .block-edge {
+    fill: none;
+    stroke: red;
+      stroke: none;
+
+    stroke-opacity: 0.5;
+  }
+}
+
+.pi-grid-point {
+  stroke: #D3D3D3;
+  stroke-width: 1.0px;
+}

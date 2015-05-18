@@ -1,0 +1,45 @@
+/**********************************************************************
+
+File     : trace-line-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the trace-line-editor component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/20
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.trace-line-editor {
+  display: block;
+  padding: 5px 8px;
+
+  .btn {
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .status {
+    display: inline-block;
+    font-size: 16px;
+    &.error-msg {
+      color: red;
+    }
+  }
+  .connection-list {
+    display: inline-block;
+  }
+
+  .debug-text {
+    display: inline-block;
+  }
+
+  .float-right {
+    float: right;
+    .buttons {
+      text-align: right;
+      margin-bottom: 2px;
+    }
+  }
+}

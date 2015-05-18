@@ -1,0 +1,55 @@
+/**********************************************************************
+
+File     : field-viewer-settings.scss
+Project  : N Simulator Library
+Purpose  : Source file for the field viewer panel component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.grid-slider {
+  display: block;
+  text-align: left;
+
+  .svg-container {
+    width: 250px;
+    height: 250px;
+    border: silver 1px solid;
+    @include auto-center();
+    margin-bottom: 20px;
+    pointer-events: all;
+
+    .selection-rect {
+      stroke: black;
+      stroke-width: 2px;
+      pointer-events: all;
+      fill: none;
+    }
+
+    .hint-text-title {
+      fill: gray;
+      stroke: none;
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .hint-text-detail {
+      fill: gray;
+      stroke: none;
+      font-size: 10px;
+      pointer-events: none;
+    }
+  }
+
+  .horizontal-slider-container {
+    text-align: center;
+    .slider {
+      @include auto-center();
+      display: block;
+      width: 250px;
+    }
+  }
+}

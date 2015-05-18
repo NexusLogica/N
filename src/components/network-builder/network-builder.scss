@@ -1,0 +1,183 @@
+/**********************************************************************
+
+File     : network-builder.scss
+Project  : N Simulator Library
+Purpose  : Source file for header component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/21
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+$width: 1200px;
+$shell-height: 200px;
+$top-color: #f6f6f6;
+$top-tab-height: 28px;
+$top-border: #ddd;
+$run-list-height: 180px;
+
+.network-builder {
+  display: block;
+  position: relative;
+  width: $width;
+  margin: 10px auto auto auto;
+
+  .left-panel, .right-panel {
+    position: absolute;
+    top: 0px;
+  }
+
+  .left-panel {
+    left: 0px;
+    width: 595px;
+  }
+  .right-panel {
+    right: 0px;
+    width: 595px;
+  }
+
+  .top-panel {
+    box-sizing: border-box;
+    left: 0px;
+    width: $width;
+    height: $shell-height+$top-tab-height;
+    margin-bottom: 11px;
+    .nav-tabs > li.active > a {
+      background-color: $top-color;
+    }
+    .nav > li > a {
+      padding: 3px 15px;
+    }
+    .run-panel {
+      height: $shell-height;
+      width: 100%;
+      background-color: $top-color;
+      border: 1px solid $top-border;
+      border-top: transparent;
+      padding: 10px 15px;
+      vertical-align: top;
+
+      .select-list {
+        height: $run-list-height;
+        display: inline-block;
+        .select-label {
+          font-weight: 200;
+          margin-bottom: 4px;
+        }
+        .list-group {
+          width: 400px;
+          height: 155px;
+          overflow-y: scroll;
+          margin-bottom: 0px;
+          .list-group-item {
+            padding: 4px 8px;
+
+            &:first-child {
+              border-top-left-radius: 0px;
+              border-top-right-radius: 0px;
+            }
+            &:last-child {
+              border-bottom-left-radius: 0px;
+              border-bottom-right-radius: 0px;
+            }
+            .item-heading {
+              font-weight: normal;
+              margin-top: 4px;
+              margin-bottom: 4px;
+            }
+            .item-text {
+              font-weight: 100;
+              margin: 0px 0px;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+
+      .about {
+        vertical-align: top;
+        display: inline-block;
+        height: $run-list-height;
+        border: 1px solid $top-border;
+        width: 753px;
+        padding: 10px 10px;
+        margin-left: 10px;
+
+        .description {
+          border: 1px solid #EEEEEE;
+          background-color: #F2F2F2;
+          padding: 8px 10px;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+  .bottom-panel {
+    box-sizing: border-box;
+    left: 0px;
+    width: $width;
+    min-height: 500px;
+    margin-bottom: 20px;
+  }
+
+  .new-open {
+    width: 400px;
+    height: 200px;
+    margin: 200px auto auto auto;
+    text-align: center;
+
+    button {
+      display: inline-block;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+  }
+
+  .pi-workbench {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 800px;
+  }
+
+  .editor-container {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 595px;
+    height: 800px;
+    .ace-editor {
+      width: 595px;
+      border: 1px solid #5b5d59;
+    }
+  }
+
+  #network-build-shell {
+    position: relative;
+    width: 100%;
+    height: $shell-height;
+    background-color: $top-color;
+    color: black;
+    padding: 12px 12px;
+    font-family: 'Anonymous Pro', 'Andale Mono', 'Menlo';
+    font-size: 12px;
+    line-height: 16px;
+    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: 1px solid $top-border;
+    border-top: transparent;
+    code {
+      color: darkgray;
+    }
+    strong {
+      color: lightcoral;
+    }
+    .prompt {
+      color: darkgray;
+    }
+  }
+}

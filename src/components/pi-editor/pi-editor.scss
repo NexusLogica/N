@@ -1,0 +1,81 @@
+/**********************************************************************
+
+File     : pi-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the PI editor component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/19
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+$controls-height: 0px;
+$top-bar-height: 70px;
+
+.pi-editor {
+  display: block;
+
+  .info-bar {
+    height: $top-bar-height;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-left: 12px;
+
+    background: linear-gradient(#DDDDDD, #D2D2D2);
+    border: 1px solid #BBBBBB;
+
+    >div {
+      width: 100%;
+    }
+    .type {
+      vertical-align: bottom;
+    }
+
+//    .btn {
+//      height: 21px;
+//      font-size: 13px;
+//      padding: 1px 10px;
+//    }
+
+    >div {
+      display: inline-block;
+      margin-right: 30px;
+      >div {
+        display: inline-block;
+      }
+    }
+
+    .info-label {
+      color: #696969;
+    }
+
+    .edit-menu {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+  }
+
+  .viewer {
+    box-sizing: border-box;
+    width: 100%;
+    height: $editor-height - $top-bar-height;
+    border: 1px solid #ccc;
+    padding: 10px 10px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+    font-size: 11px;
+    .canvas-container {
+      box-sizing: border-box;
+      .network-canvas {
+        box-sizing: border-box;
+        width: $builder-width - $builder-tab-width - $builder-tab-sep - 20px;
+        height: $editor-height - $top-bar-height - $controls-height - 20px;
+      }
+    }
+  }
+
+}

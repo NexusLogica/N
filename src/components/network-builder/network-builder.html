@@ -1,0 +1,44 @@
+<div>
+
+  <div class="dev-env">
+    <div class="top-panel" role="tabpanel" ng-show="shellVisible">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#" ng-click="showTab('#auto-run')" aria-controls="auto-run" role="tab" data-toggle="tab">Run</a></li>
+        <li role="presentation"><a href="#" ng-click="showTab('#network-build-shell')"  aria-controls="network-build-shell" role="tab" data-toggle="tab">Shell</a></li>
+      </ul>
+      <div class="shell tab-content">
+        <div role="tabpanel" class="tab-pane active" id="auto-run">
+          <div class="run-panel">
+            <div class="select-list">
+              <div class="select-label">
+                Select a project to run:
+              </div>
+              <div class="list-group">
+                <a href="#" class="list-group-item" ng-class="{ 'active': item === selectedScript }" ng-repeat="item in scripts">
+                  <h5 class="item-heading" ng-click="scriptSelected(item)" ng-bind="item.name"></h5>
+                </a>
+              </div>
+            </div>
+            <div class="about">
+              <div>
+                <button class="btn btn-primary" ng-click="runScript()" ng-disabled="!selectedScript">Run</button>
+              </div>
+              <div class="description" ng-bind-html="selectedScript.description">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="network-build-shell">
+          <div id="network-build-shell-view">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-panel">
+      <editors-panel expose-to-parent="editorPanel" signals="signals" source-files="sourceFiles" script-host="scriptHost">
+      </editors-panel>
+    </div>
+  </div>
+
+</div>

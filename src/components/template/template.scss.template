@@ -1,0 +1,16 @@
+/**********************************************************************
+
+File     : [template].scss
+Project  : N Simulator Library
+Purpose  : Source file for the [template] component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/01/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.[template] {
+  display: block;
+}

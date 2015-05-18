@@ -1,0 +1,1476 @@
+/**********************************************************************
+
+File     : n.scss
+Project  : N Simulator Library
+Purpose  : Source file for a top level SCSS/CSS file for including other SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/01/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : core.scss
+Project  : N Simulator Library
+Purpose  : Source file for a core SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+input::-webkit-input-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input::-moz-placeholder {
+  color: #dddddd; }
+
+input:-ms-input-placeholder {
+  color: #dddddd; }
+
+.hidden {
+  display: none; }
+
+/**********************************************************************
+
+File     : mixins.scss
+Project  : N Simulator Library
+Purpose  : Source file for a mixin SCSS/CSS file.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+/**********************************************************************
+
+File     : pi.scss
+Project  : N Simulator Library
+Purpose  : CSS file for Pi neurons and other graphic elements.
+Revisions: Original definition by Lawrence Gunn.
+           2014/02/26
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-canvas {
+  display: block;
+  border: 1px solid lightgray;
+  fill: #fffdfa;
+  rx: 20;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03); }
+  .pi-canvas svg .axis {
+    stroke: silver;
+    stroke-width: 0.5; }
+  .pi-canvas svg text {
+    alignment-baseline: hanging; }
+
+.blah {
+  stroke: lightskyeblue;
+  stroke: darkgray;
+  stroke: darkseagreen;
+  stroke: gainsboro;
+  stroke: lavendar;
+  stroke: lightblue;
+  stroke: lightcoral;
+  stroke: lightgray;
+  stroke: lightpink;
+  stroke: lightsteelblue;
+  stroke: mistyrose;
+  stroke: moccasin;
+  stroke: papayawhip;
+  stroke: peachpuff;
+  stroke: pink;
+  stroke: powderblue;
+  stroke: skyblue;
+  stroke: thistle;
+  stroke: wheat; }
+
+.pi-connection {
+  stroke-width: 3.25; }
+  .pi-connection.pi-excitatory-connection {
+    stroke: darkseagreen; }
+  .pi-connection.pi-inhibitory-connection {
+    stroke: #E9967A; }
+  .pi-connection.pi-spine-connection {
+    stroke: #73B2D9; }
+  .pi-connection.pi-gap-junction-connection {
+    stroke: #ffdca2;
+    stroke: #EEAEEE;
+    stroke-width: 1.5; }
+  .pi-connection.pi-electrode-connection {
+    stroke: #d07ad0;
+    stroke-width: 1.5; }
+
+.pi-connection-end {
+  stroke-width: 2.0;
+  fill: white; }
+  .pi-connection-end.pi-excitatory-connection {
+    stroke: darkseagreen;
+    fill: darkseagreen; }
+  .pi-connection-end.pi-inhibitory-connection {
+    stroke: #ffdae0;
+    fill: #ffe9ed; }
+  .pi-connection-end.pi-spine-connection {
+    stroke: #73B2D9;
+    fill: #73B2D9; }
+  .pi-connection-end.pi-gap-junction-connection {
+    stroke: #ffdca2;
+    fill: #ffdca2; }
+  .pi-connection-end.pi-electrode-connection {
+    stroke: #d07ad0;
+    fill: #d07ad0; }
+
+.pi-neuron .pi-neuron-name {
+  stroke: #666;
+  fill: #666;
+  font-weight: 100;
+  font-family: "Roboto Condensed", sans-serif; }
+.pi-neuron .pi-compartment-name {
+  stroke: #666;
+  fill: #666;
+  letter-spacing: 0.1em;
+  font-weight: 100;
+  font-family: "Roboto Condensed", sans-serif; }
+.pi-neuron .compartment {
+  stroke: #999999;
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
+  .pi-neuron .compartment.selected {
+    stroke-width: 2.25px;
+    stroke: #333333;
+    transition-property: stroke, stroke-width;
+    transition-duration: 0.5s; }
+  .pi-neuron .compartment.excitatory-body {
+    fill: #dceef4; }
+  .pi-neuron .compartment.inhibitory-body {
+    fill: bisque; }
+  .pi-neuron .compartment.proximal-basal-dendrites {
+    fill: #f1efe2; }
+  .pi-neuron .compartment.distal-basal-dendrites {
+    fill: #f5ebdb; }
+  .pi-neuron .compartment.apical-dendrite-distal-tufts {
+    fill: #afd3ef; }
+  .pi-neuron .compartment.apical-dendrite-proximal-tufts {
+    fill: #d6e8f5; }
+  .pi-neuron .compartment.apical-dendrite-trunk {
+    fill: #ebf4fa; }
+  .pi-neuron .compartment.dendrites {
+    fill: #dfe7f2; }
+  .pi-neuron .compartment.acetylcholine-receptors {
+    fill: linen; }
+  .pi-neuron .compartment.highlight-component {
+    opacity: 1.0 !important;
+    stroke-width: 2.5px;
+    stroke: #1a1a1a;
+    transition-property: stroke, stroke-width;
+    transition-duration: 0.5s; }
+.pi-neuron .callout-label {
+  stroke: #666;
+  fill: #666;
+  font-weight: 100;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 6px;
+  text-anchor: middle;
+  alignment-baseline: middle;
+  dominant-baseline: central;
+  fill-opacity: 0;
+  stroke-opacity: 0; }
+.pi-neuron .callout-line {
+  stroke: #666;
+  fill: #666;
+  fill-opacity: 0;
+  stroke-opacity: 0; }
+.pi-neuron.highlight .compartment {
+  stroke-width: 2.5px;
+  stroke: #1a1a1a;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
+.pi-neuron.highlight .callout-label {
+  display: inline;
+  fill-opacity: 1;
+  stroke-opacity: 1;
+  transition-property: stroke-opacity, fill-opacity;
+  transition-duration: 2.5s; }
+.pi-neuron.highlight .callout-line {
+  display: inline;
+  fill-opacity: 1;
+  stroke-opacity: 0.5;
+  transition-property: stroke-opacity, fill-opacity;
+  transition-duration: 3.0s; }
+.pi-neuron.highlight .callout-label {
+  display: inline; }
+
+.soften-component .pi-neuron .compartment {
+  opacity: 0.3;
+  transition-property: stroke, stroke-width;
+  transition-duration: 0.5s; }
+.soften-component .pi-compartment-name {
+  opacity: 0.3; }
+
+.pointer-transparent {
+  pointer-events: none; }
+
+.pi-network > text {
+  fill: gray;
+  stroke: none;
+  font-family: "Roboto Condensed", sans-serif;
+  text-anchor: start;
+  alignment-baseline: hanging; }
+.pi-network .background-light-tan-even {
+  fill: #fdfcfb;
+  stroke: none; }
+.pi-network .background-light-tan-odd {
+  fill: #faf7f4;
+  stroke: none; }
+.pi-network .network-separator {
+  stroke-width: 1px;
+  stroke: #eeeeee; }
+
+.pi-signal-graph .graph-background {
+  fill: #fbfbfb; }
+.pi-signal-graph .pi-signal-trace .background {
+  fill: papayawhip; }
+.pi-signal-graph .pi-signal-trace.even .background {
+  fill: #fffbf4; }
+.pi-signal-graph .pi-signal-trace.odd .background {
+  fill: #fff9ef; }
+.pi-signal-graph .pi-signal-trace .no-data {
+  stroke: none;
+  fill: #e8e8e8;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 25px;
+  text-anchor: middle; }
+
+.pi-grid > rect {
+  stroke-width: 1.4px;
+  stroke: #f4f4f4;
+  fill: #fdfbf8;
+  fill: #FDFDFD; }
+.pi-grid .grid-dot {
+  fill: blue;
+  fill: none; }
+.pi-grid .grid-path-line {
+  stroke: #dddddd;
+  fill: none;
+  stroke-width: 2px;
+  stroke-linejoin: bevel; }
+.pi-grid .grid-circle {
+  stroke: #999999;
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  fill: #dceef4; }
+.pi-grid .block-edge {
+  fill: none;
+  stroke: red;
+  stroke: none;
+  stroke-opacity: 0.5; }
+
+.pi-grid-point {
+  stroke: #D3D3D3;
+  stroke-width: 1.0px; }
+
+/**********************************************************************
+
+File     : common.scss
+Project  : N Simulator Library
+Purpose  : CSS file for Pi neurons and other graphic elements.
+Revisions: Original definition by Lawrence Gunn.
+           2014/02/26
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.n-large-title, .n-large-title-light {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 40px;
+  color: #153450; }
+
+.n-large-title-light {
+  color: #fffefd; }
+
+.n-med-title, .n-med-title-light {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-weight: normal;
+  font-size: 22px;
+  color: #153450; }
+
+.n-med-title-light {
+  color: #fffefd; }
+
+.n-small-title {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-size: 16px;
+  padding-bottom: 20px; }
+
+ul::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  background-color: #f8f8f8; }
+
+ul::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: #c1d5e3; }
+
+.form-vertical input {
+  display: block; }
+
+body {
+  background-color: #fffefd; }
+  body .placeholder {
+    color: #cccccc; }
+
+.fadex {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%; }
+
+.fadex.ng-enter,
+.fadex.ng-leave {
+  -webkit-transition: all 2s ease;
+  -moz-transition: all 2s ease;
+  -o-transition: all 2s ease;
+  transition: all 2s ease; }
+
+.fadex.ng-enter {
+  opacity: 0; }
+
+.fadex.ng-enter {
+  top: 100%; }
+
+.fadex.ng-enter-active {
+  top: 0; }
+
+.fadex.ng-leave {
+  top: 0; }
+
+.fadex.ng-leave-active {
+  top: -100%; }
+
+ /*.fadex.ng-enter-active {
+    opacity: 1;
+}
+.fadex.ng-leave {
+    opacity: 1;
+}
+.fadex.ng-leave-active {
+    opacity: 0;
+}
+*/
+.n-component {
+  background-color: #fefbf7;
+  border: #f4d6bc 1px solid;
+  border-top-style: none;
+  border-radius: 0px 0px 5px 5px;
+  padding-top: 20px; }
+
+.n-alert {
+  display: none;
+  width: 400px;
+  background-color: #fdf8f2;
+  border-color: #447294;
+  -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2); }
+
+.pi-error {
+  border-color: #eb881e; }
+
+.pi-body .modal-dialog .modal-header {
+  padding: 4px 12px; }
+.pi-body .modal-dialog .modal-body {
+  padding: 10px 12px; }
+.pi-body .modal-dialog .modal-footer {
+  border-top: none;
+  padding: 10px 12px; }
+
+.item-set {
+  margin-bottom: 8px;
+  height: 20px; }
+  .item-set .item-label {
+    text-align: right; }
+
+.footer-message {
+  width: 335px;
+  text-align: left;
+  margin-top: 14px;
+  float: left;
+  color: black; }
+  .footer-message.success {
+    color: dodgerblue; }
+  .footer-message.error {
+    color: #FA1E20; }
+
+.tooltip.top .tooltip-inner {
+  background-color: #ffa500;
+  color: white; }
+.tooltip.top .tooltip-arrow {
+  border-top-color: #ffa500; }
+
+/**********************************************************************
+
+File     : header.scss
+Project  : N Simulator Library
+Purpose  : Source file for header component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.header {
+  padding: 0px 0px 0px 0px;
+  background-color: #294052; }
+  .header .title {
+    display: inline-block;
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 23px; }
+  .header .current {
+    color: #8fbcdb;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 4px;
+    margin-right: 20px;
+    font-size: 30px; }
+  .header .dropdown-toggle {
+    color: black;
+    background-color: #E0E0E0;
+    height: 33px;
+    padding: 7px 15px; }
+    .header .dropdown-toggle:hover {
+      color: black;
+      background-color: #E0E0E0; }
+  .header .menu-bar {
+    float: right; }
+    .header .menu-bar button {
+      height: 32px;
+      margin-top: 6px; }
+    .header .menu-bar ul.nav.nav-pills {
+      margin: 7px 5px 0px 5px;
+      display: inline-block; }
+
+.main-tabs-container {
+  margin-top: 10px; }
+
+.main-tabs-container .nav {
+  margin-bottom: 0px; }
+
+.main-tabs-container .nav-tabs > li {
+  position: relative; }
+
+.main-tabs-container .nav-tabs > li.active a {
+  background-color: #fefbf7; }
+
+.main-tabs-container .nav-tabs > li a {
+  max-width: 100px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 23px; }
+
+.main-tabs-container .nav-tabs > li div {
+  top: 8px;
+  right: 9px;
+  position: absolute;
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  color: #8fbcdb; }
+
+.main-tabs-container .nav-tabs > li div:hover {
+  color: #294052;
+  cursor: pointer; }
+
+/**********************************************************************
+
+File     : administration.scss
+Project  : N Simulator Library
+Purpose  : Source file for administration component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.administration .admin-row {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto; }
+.administration a {
+  font-family: "Raleway", sans-serif;
+  font-weight: 300;
+  font-size: 18px; }
+.administration .section-title {
+  font-weight: 100;
+  font-size: 22px;
+  font-family: "Raleway", sans-serif;
+  color: #294052;
+  font-weight: normal;
+  font-size: 22px;
+  color: #153450;
+  margin-bottom: 8px; }
+.administration .welcome {
+  margin-top: 20px; }
+.administration .database-admin-links {
+  margin-top: 15px; }
+  .administration .database-admin-links .links {
+    margin-left: 25px; }
+.administration .database-current {
+  margin-top: 40px; }
+  .administration .database-current table thead tr th {
+    text-align: center; }
+  .administration .database-current table thead .description {
+    width: 350px; }
+  .administration .database-current table thead .host {
+    width: 150px; }
+  .administration .database-current table thead .name {
+    width: 150px; }
+  .administration .database-current table thead .accessible {
+    width: 50px; }
+
+/**********************************************************************
+
+File     : dialog.scss
+Project  : N Simulator Library
+Purpose  : Source file for dialog component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-dialog .modal-footer {
+  margin-top: 15px;
+  padding: 19px 20px 0px 20px; }
+
+.pi-dialog.create-database-dialog {
+  max-width: 650px; }
+
+.pi-dialog.delete-database-dialog .modal-wrap {
+  width: 640px; }
+.pi-dialog.delete-database-dialog .dropdown .btn {
+  text-align: left;
+  width: 560px; }
+.pi-dialog.delete-database-dialog .item-set {
+  margin-top: 10px; }
+  .pi-dialog.delete-database-dialog .item-set .item-label {
+    display: inline-block;
+    width: 60px; }
+  .pi-dialog.delete-database-dialog .item-set .item-value {
+    margin-left: 10px;
+    display: inline-block;
+    width: 450px; }
+.pi-dialog.delete-database-dialog .well {
+  margin-top: 10px; }
+.pi-dialog.delete-database-dialog .footer-message {
+  width: 310px; }
+
+/**********************************************************************
+
+File     : pi-canvas3d.scss
+Project  : N Simulator Library
+Purpose  : Source file for the pi-canvas-3d component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/01/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-canvas3d {
+  display: block;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+  border: solid 1px #8fbcdb; }
+  .pi-canvas3d .render-target {
+    width: 700px;
+    height: 500px; }
+
+/**********************************************************************
+
+File     : field-viewer-panel.scss
+Project  : N Simulator Library
+Purpose  : Source file for the field viewer panel component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.field-viewer-panel {
+  margin-top: 50px;
+  display: block;
+  text-align: center; }
+  .field-viewer-panel .field-viewer-settings, .field-viewer-panel .pi-canvas3d {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 10px;
+    margin-right: 10px; }
+
+/**********************************************************************
+
+File     : field-viewer-settings.scss
+Project  : N Simulator Library
+Purpose  : Source file for the field viewer panel component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.field-viewer-settings {
+  display: block;
+  text-align: left; }
+  .field-viewer-settings .field-select {
+    padding: 10px;
+    width: 500px;
+    -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+    border: solid 1px #8fbcdb;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    vertical-align: middle;
+    margin-bottom: 10px; }
+    .field-viewer-settings .field-select .dropdown {
+      margin-left: 10px;
+      display: inline-block; }
+  .field-viewer-settings .field-settings {
+    padding: 10px;
+    width: 500px;
+    -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+    border: solid 1px #8fbcdb;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    margin-bottom: 10px; }
+  .field-viewer-settings .view-settings {
+    padding: 10px;
+    width: 500px;
+    -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+    border: solid 1px #8fbcdb;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px; }
+
+/**********************************************************************
+
+File     : field-viewer-settings.scss
+Project  : N Simulator Library
+Purpose  : Source file for the field viewer panel component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.grid-slider {
+  display: block;
+  text-align: left; }
+  .grid-slider .svg-container {
+    width: 250px;
+    height: 250px;
+    border: silver 1px solid;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    pointer-events: all; }
+    .grid-slider .svg-container .selection-rect {
+      stroke: black;
+      stroke-width: 2px;
+      pointer-events: all;
+      fill: none; }
+    .grid-slider .svg-container .hint-text-title {
+      fill: gray;
+      stroke: none;
+      font-size: 14px;
+      pointer-events: none; }
+    .grid-slider .svg-container .hint-text-detail {
+      fill: gray;
+      stroke: none;
+      font-size: 10px;
+      pointer-events: none; }
+  .grid-slider .horizontal-slider-container {
+    text-align: center; }
+    .grid-slider .horizontal-slider-container .slider {
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      width: 250px; }
+
+/**********************************************************************
+
+File     : network-builder.scss
+Project  : N Simulator Library
+Purpose  : Source file for header component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/21
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.network-builder {
+  display: block;
+  position: relative;
+  width: 1200px;
+  margin: 10px auto auto auto; }
+  .network-builder .left-panel, .network-builder .right-panel {
+    position: absolute;
+    top: 0px; }
+  .network-builder .left-panel {
+    left: 0px;
+    width: 595px; }
+  .network-builder .right-panel {
+    right: 0px;
+    width: 595px; }
+  .network-builder .top-panel {
+    box-sizing: border-box;
+    left: 0px;
+    width: 1200px;
+    height: 228px;
+    margin-bottom: 11px; }
+    .network-builder .top-panel .nav-tabs > li.active > a {
+      background-color: #f6f6f6; }
+    .network-builder .top-panel .nav > li > a {
+      padding: 3px 15px; }
+    .network-builder .top-panel .run-panel {
+      height: 200px;
+      width: 100%;
+      background-color: #f6f6f6;
+      border: 1px solid #dddddd;
+      border-top: transparent;
+      padding: 10px 15px;
+      vertical-align: top; }
+      .network-builder .top-panel .run-panel .select-list {
+        height: 180px;
+        display: inline-block; }
+        .network-builder .top-panel .run-panel .select-list .select-label {
+          font-weight: 200;
+          margin-bottom: 4px; }
+        .network-builder .top-panel .run-panel .select-list .list-group {
+          width: 400px;
+          height: 155px;
+          overflow-y: scroll;
+          margin-bottom: 0px; }
+          .network-builder .top-panel .run-panel .select-list .list-group .list-group-item {
+            padding: 4px 8px; }
+            .network-builder .top-panel .run-panel .select-list .list-group .list-group-item:first-child {
+              border-top-left-radius: 0px;
+              border-top-right-radius: 0px; }
+            .network-builder .top-panel .run-panel .select-list .list-group .list-group-item:last-child {
+              border-bottom-left-radius: 0px;
+              border-bottom-right-radius: 0px; }
+            .network-builder .top-panel .run-panel .select-list .list-group .list-group-item .item-heading {
+              font-weight: normal;
+              margin-top: 4px;
+              margin-bottom: 4px; }
+            .network-builder .top-panel .run-panel .select-list .list-group .list-group-item .item-text {
+              font-weight: 100;
+              margin: 0px 0px;
+              font-size: 12px; }
+      .network-builder .top-panel .run-panel .about {
+        vertical-align: top;
+        display: inline-block;
+        height: 180px;
+        border: 1px solid #dddddd;
+        width: 753px;
+        padding: 10px 10px;
+        margin-left: 10px; }
+        .network-builder .top-panel .run-panel .about .description {
+          border: 1px solid #EEEEEE;
+          background-color: #F2F2F2;
+          padding: 8px 10px;
+          margin-top: 10px; }
+  .network-builder .bottom-panel {
+    box-sizing: border-box;
+    left: 0px;
+    width: 1200px;
+    min-height: 500px;
+    margin-bottom: 20px; }
+  .network-builder .new-open {
+    width: 400px;
+    height: 200px;
+    margin: 200px auto auto auto;
+    text-align: center; }
+    .network-builder .new-open button {
+      display: inline-block;
+      margin-left: 20px;
+      margin-right: 20px; }
+  .network-builder .pi-workbench {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 800px; }
+  .network-builder .editor-container {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 595px;
+    height: 800px; }
+    .network-builder .editor-container .ace-editor {
+      width: 595px;
+      border: 1px solid #5b5d59; }
+  .network-builder #network-build-shell {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background-color: #f6f6f6;
+    color: black;
+    padding: 12px 12px;
+    font-family: 'Anonymous Pro', 'Andale Mono', 'Menlo';
+    font-size: 12px;
+    line-height: 16px;
+    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: 1px solid #dddddd;
+    border-top: transparent; }
+    .network-builder #network-build-shell code {
+      color: darkgray; }
+    .network-builder #network-build-shell strong {
+      color: lightcoral; }
+    .network-builder #network-build-shell .prompt {
+      color: darkgray; }
+
+/**********************************************************************
+
+File     : pi-workbench.scss
+Project  : N Simulator Library
+Purpose  : Source file for PI workbench component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/09/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-workbench {
+  display: block;
+  position: relative; }
+  .pi-workbench .console {
+    min-height: 250px;
+    padding: 0px 0px;
+    -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+    box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+    border: solid 1px #8fbcdb;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px; }
+    .pi-workbench .console .top-header {
+      border-bottom: 1px solid #d9d9d9;
+      padding: 10px 10px 10px 10px;
+      height: 54px; }
+      .pi-workbench .console .top-header .btn {
+        display: inline-block; }
+        .pi-workbench .console .top-header .btn.dropdown-toggle {
+          width: 260px;
+          text-align: left; }
+        .pi-workbench .console .top-header .btn.new-test {
+          float: right; }
+      .pi-workbench .console .top-header .dropdown {
+        display: inline-block; }
+      .pi-workbench .console .top-header .no-tests {
+        display: inline-block;
+        color: #cccccc;
+        margin-top: 6px; }
+  .pi-workbench .pi-hover-path {
+    margin: 6px 0px; }
+    .pi-workbench .pi-hover-path span {
+      display: inline-block;
+      font: "Raleway", sans-serif;
+      color: #888888; }
+    .pi-workbench .pi-hover-path .action {
+      min-width: 60px;
+      color: #cccccc; }
+    .pi-workbench .pi-hover-path .path.showing {
+      opacity: 1;
+      transition: all 0.5s ease;
+      -webkit-transition: all 0.5s ease; }
+    .pi-workbench .pi-hover-path .path.blank {
+      opacity: 0;
+      transition: all 0.5s ease;
+      -webkit-transition: all 0.5s ease; }
+
+/**********************************************************************
+
+File     : n-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the [template] component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/21
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.n-editor {
+  display: block; }
+  .n-editor .info-bar {
+    height: 28px;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 6px;
+    padding-left: 12px;
+    background: linear-gradient(#dddddd, #d2d2d2);
+    border: 1px solid #BBBBBB; }
+    .n-editor .info-bar > div {
+      display: inline-block;
+      margin-right: 30px; }
+    .n-editor .info-bar .info-label {
+      color: #696969; }
+  .n-editor .ace-editor {
+    width: 100%;
+    height: 772px;
+    border: 1px solid #ccc; }
+
+/**********************************************************************
+
+File     : editors-panel.scss
+Project  : N Simulator Library
+Purpose  : Source file for the editors-panel component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/24
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.editors-panel {
+  display: block;
+  position: relative; }
+  .editors-panel .tabs {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 140px;
+    background-color: #f6f6f6;
+    border: solid 1px #dddddd;
+    height: 800px; }
+    .editors-panel .tabs .item-tab {
+      padding: 5px 0px 0px 5px;
+      font-size: 12px;
+      border-bottom: solid 1px #BBBBBB;
+      height: 27px; }
+      .editors-panel .tabs .item-tab.active {
+        background-color: white; }
+  .editors-panel .separator {
+    position: absolute;
+    top: 0px;
+    left: 140px;
+    width: 10px;
+    background-color: #e5e5e5;
+    border-top: solid 1px #BBBBBB;
+    border-bottom: solid 1px #BBBBBB;
+    height: 800px; }
+  .editors-panel .editors-container {
+    position: absolute;
+    top: 0px;
+    left: 150px;
+    width: 1200px; }
+    .editors-panel .editors-container .editors {
+      width: 1050px;
+      position: relative; }
+      .editors-panel .editors-container .editors .no-editors {
+        height: 800px;
+        background-color: #f6f6f6;
+        border: solid 1px #dddddd; }
+  .editors-panel .editors-container.no-tabs-container {
+    width: 1200px; }
+
+/**********************************************************************
+
+File     : signal-viewer.scss
+Project  : N Simulator Library
+Purpose  : Source file for the signal-viewer component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/03/21
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.signal-viewer {
+  display: block; }
+  .signal-viewer .info-bar {
+    height: 28px;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 6px;
+    padding-left: 12px;
+    background: linear-gradient(#dddddd, #d2d2d2);
+    border: 1px solid #BBBBBB; }
+    .signal-viewer .info-bar > div {
+      display: inline-block;
+      margin-right: 30px; }
+    .signal-viewer .info-bar .info-label {
+      color: #696969; }
+  .signal-viewer .signal-graph-container .signal-canvas {
+    width: 1050px;
+    height: 662px; }
+  .signal-viewer .controls {
+    box-sizing: border-box;
+    height: 110px;
+    width: 100%;
+    padding: 10px 10px;
+    border-right: solid 1px #BBBBBB; }
+    .signal-viewer .controls .signal-chooser {
+      display: inline-block;
+      box-sizing: border-box;
+      border: 1px #e4e4e4 solid;
+      padding: 10px 20px 10px 20px;
+      width: 675px;
+      height: 89px; }
+    .signal-viewer .controls .signal-slider {
+      display: inline-block;
+      width: 350px;
+      vertical-align: top; }
+
+.pi-signal-graph .graph-background {
+  fill: #fbfbfb; }
+.pi-signal-graph .pi-signal-trace .background {
+  fill: papayawhip;
+  stroke: #c0c0c0; }
+.pi-signal-graph .pi-signal-trace.even .background {
+  fill: #fffbf4; }
+.pi-signal-graph .pi-signal-trace.odd .background {
+  fill: #fff9ef; }
+.pi-signal-graph .pi-signal-trace .no-data {
+  stroke: none;
+  fill: #e8e8e8;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 25px;
+  text-anchor: middle; }
+
+.bootstrap-dialog-body .tree-container {
+  border: 1px solid #BBBBBB;
+  padding: 8px 20px; }
+  .bootstrap-dialog-body .tree-container .aciTree .neuron {
+    background-image: url("../../appearance/images/neuron-16x16.png");
+    background-position-x: 5px;
+    background-position-y: 2px; }
+  .bootstrap-dialog-body .tree-container .aciTree .aciTreeItem {
+    height: 22px; }
+    .bootstrap-dialog-body .tree-container .aciTree .aciTreeItem label {
+      display: inline;
+      max-width: none;
+      margin-bottom: 0px;
+      font-weight: normal; }
+
+/**********************************************************************
+
+File     : signal-slider.scss
+Project  : N Simulator Library
+Purpose  : Source file for the signal-slider component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/09
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.signal-slider {
+  display: block;
+  border: 1px #e4e4e4 solid;
+  padding: 10px 20px 10px 20px; }
+  .signal-slider .range-display {
+    margin-bottom: 10px; }
+    .signal-slider .range-display div {
+      display: inline-block; }
+  .signal-slider .range-display .range-label {
+    width: 81px; }
+  .signal-slider .range-display .range-number {
+    width: 100px;
+    text-align: center;
+    border: solid 1px #cecece;
+    margin-left: 7px; }
+  .signal-slider .range-slider {
+    margin-bottom: 10px;
+    width: 300px;
+    outline: none; }
+    .signal-slider .range-slider .ui-slider-handle.ui-corner-all.ui-state-hover:hover,
+    .signal-slider .range-slider .ui-slider-handle.ui-corner-all.ui-state-focus {
+      background-image: none;
+      background-color: #f8f7f5;
+      outline: none; }
+  .signal-slider .pan-slider {
+    width: 300px; }
+    .signal-slider .pan-slider .ui-slider-handle {
+      width: 2.0em;
+      margin-left: -1.0em;
+      text-align: center;
+      outline: none; }
+      .signal-slider .pan-slider .ui-slider-handle > span {
+        vertical-align: top; }
+      .signal-slider .pan-slider .ui-slider-handle .ui-corner-all, .signal-slider .pan-slider .ui-slider-handle .ui-corner-all.ui-state-focus {
+        visibility: visible;
+        background-color: #f8f7f5;
+        margin-left: -50px;
+        width: 100px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-weight: normal;
+        color: #654b24;
+        text-align: center;
+        height: 23px;
+        background-image: none;
+        text-decoration: none;
+        outline: 0; }
+      .signal-slider .pan-slider .ui-slider-handle .ui-corner-all.ui-state-hover:hover {
+        visibility: visible;
+        background-color: #f8f7f5;
+        text-decoration: none;
+        background-image: none;
+        color: #654b24; }
+  .signal-slider .ui-widget-header {
+    background-image: none; }
+
+/**********************************************************************
+
+File     : output-log.scss
+Project  : N Simulator Library
+Purpose  : Source file for the output log component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/19
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.output-log {
+  display: block; }
+  .output-log .info-bar {
+    height: 28px;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 6px;
+    padding-left: 12px;
+    background: linear-gradient(#dddddd, #d2d2d2);
+    border: 1px solid #BBBBBB; }
+    .output-log .info-bar > div {
+      display: inline-block;
+      margin-right: 30px; }
+    .output-log .info-bar .info-label {
+      color: #696969; }
+  .output-log .log-area {
+    width: 100%;
+    height: 772px;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+    font-size: 11px; }
+  .output-log .log-line .error {
+    color: red; }
+
+/**********************************************************************
+
+File     : pi-viewer.scss
+Project  : N Simulator Library
+Purpose  : Source file for the output log component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/19
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-viewer {
+  display: block; }
+  .pi-viewer .info-bar {
+    width: 100%;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-left: 12px;
+    background: linear-gradient(#dddddd, #d2d2d2);
+    border: 1px solid #BBBBBB; }
+    .pi-viewer .info-bar .type {
+      vertical-align: bottom; }
+    .pi-viewer .info-bar .btn {
+      height: 21px;
+      font-size: 13px;
+      padding: 1px 10px; }
+    .pi-viewer .info-bar > div {
+      display: inline-block;
+      margin-right: 30px; }
+      .pi-viewer .info-bar > div > div {
+        display: inline-block; }
+    .pi-viewer .info-bar .info-label {
+      color: #696969; }
+    .pi-viewer .info-bar .edit-menu {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px; }
+  .pi-viewer .viewer {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 300px;
+    height: 100%;
+    border: 1px solid #ccc;
+    padding: 10px 10px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+    font-size: 11px; }
+    .pi-viewer .viewer .canvas-container {
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      box-sizing: border-box;
+      width: 100%; }
+      .pi-viewer .viewer .canvas-container .network-canvas {
+        box-sizing: border-box;
+        width: 100%;
+        position: absolute;
+        top: 0px;
+        bottom: 0px; }
+
+/**********************************************************************
+
+File     : pi-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the PI editor component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/19
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-editor {
+  display: block; }
+  .pi-editor .info-bar {
+    height: 70px;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-left: 12px;
+    background: linear-gradient(#dddddd, #d2d2d2);
+    border: 1px solid #BBBBBB; }
+    .pi-editor .info-bar > div {
+      width: 100%; }
+    .pi-editor .info-bar .type {
+      vertical-align: bottom; }
+    .pi-editor .info-bar > div {
+      display: inline-block;
+      margin-right: 30px; }
+      .pi-editor .info-bar > div > div {
+        display: inline-block; }
+    .pi-editor .info-bar .info-label {
+      color: #696969; }
+    .pi-editor .info-bar .edit-menu {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px; }
+  .pi-editor .viewer {
+    box-sizing: border-box;
+    width: 100%;
+    height: 730px;
+    border: 1px solid #ccc;
+    padding: 10px 10px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+    font-size: 11px; }
+    .pi-editor .viewer .canvas-container {
+      box-sizing: border-box; }
+      .pi-editor .viewer .canvas-container .network-canvas {
+        box-sizing: border-box;
+        width: 1030px;
+        height: 710px; }
+
+/**********************************************************************
+
+File     : trace-line-editor.scss
+Project  : N Simulator Library
+Purpose  : Source file for the trace-line-editor component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/20
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.trace-line-editor {
+  display: block;
+  padding: 5px 8px; }
+  .trace-line-editor .btn {
+    background-color: white;
+    border: 1px solid black; }
+  .trace-line-editor .status {
+    display: inline-block;
+    font-size: 16px; }
+    .trace-line-editor .status.error-msg {
+      color: red; }
+  .trace-line-editor .connection-list {
+    display: inline-block; }
+  .trace-line-editor .debug-text {
+    display: inline-block; }
+  .trace-line-editor .float-right {
+    float: right; }
+    .trace-line-editor .float-right .buttons {
+      text-align: right;
+      margin-bottom: 2px; }
+
+/**********************************************************************
+
+File     : pi-viewer-page.scss
+Project  : N Simulator Library
+Purpose  : Source file for the PI Viewer page SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/28
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+.pi-viewer-page > .pi {
+  position: absolute;
+  left: 33px;
+  top: 15px;
+  font-size: 30px; }
+.pi-viewer-page > .message {
+  width: 400px;
+  margin: 200px auto 0px auto;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 300; }
+  .pi-viewer-page > .message > .example {
+    font-size: 20px;
+    font-weight: 300; }
+
+.n-canvas {
+  position: relative;
+  display: block;
+  width: 602px;
+  height: 402px;
+  border: solid 1px #DDD; }
+
+.row.pi-network-test {
+  margin-bottom: 50px; }
+
+.row.pi-neuron-test {
+  margin-bottom: 50px; }
+
+.pi-network-panel .pi-canvas {
+  height: 200px;
+  padding: 0px 0px; }
+.pi-network-panel .pi-canvas-column .path {
+  margin: 5px 5px 5px 10px;
+  color: gray;
+  height: 20px; }
+.pi-network-panel .pi-network-console {
+  height: 200px;
+  border: gray 1px solid;
+  margin-left: 30px; }
+
+.pi-neuron-panel .pi-canvas {
+  height: 250px;
+  padding: 0px 0px; }
+.pi-neuron-panel .pi-neuron-console {
+  height: 250px;
+  border: gray 1px solid;
+  margin-left: 30px; }
+
+.pi-workbench-panel .console {
+  min-height: 250px;
+  padding: 0px 0px;
+  -webkit-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  -moz-box-shadow: 5px 5px 15px 0px rgba(15, 15, 13, 0.03);
+  box-shadow: 1px 1px 20px 6px rgba(15, 15, 13, 0.03);
+  border: solid 1px #8fbcdb;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px; }
+  .pi-workbench-panel .console .top-header {
+    border-bottom: 1px solid #d9d9d9;
+    padding: 10px 10px 10px 10px;
+    height: 54px; }
+    .pi-workbench-panel .console .top-header .btn {
+      display: inline-block; }
+      .pi-workbench-panel .console .top-header .btn.dropdown-toggle {
+        width: 260px;
+        text-align: left; }
+      .pi-workbench-panel .console .top-header .btn.new-test {
+        float: right; }
+    .pi-workbench-panel .console .top-header .dropdown {
+      display: inline-block; }
+    .pi-workbench-panel .console .top-header .no-tests {
+      display: inline-block;
+      color: #cccccc;
+      margin-top: 6px; }
+
+.pi-workbench-test-panel {
+  padding: 10px 10px; }
+  .pi-workbench-test-panel .signal-inputs table thead tr th {
+    text-align: center; }
+  .pi-workbench-test-panel .signal-inputs table thead .input {
+    width: 150px; }
+  .pi-workbench-test-panel .signal-inputs table thead .type {
+    width: 65px; }
+  .pi-workbench-test-panel .signal-inputs table thead .start {
+    width: 60px; }
+  .pi-workbench-test-panel .signal-inputs table thead .duration {
+    width: 60px; }
+  .pi-workbench-test-panel .signal-inputs table thead .amplitude {
+    width: 75px; }
+  .pi-workbench-test-panel .signal-inputs table thead .offset {
+    width: 65px; }
+  .pi-workbench-test-panel .properties .name {
+    font-size: 15px;
+    font-weight: bold; }
+  .pi-workbench-test-panel .properties .edit {
+    float: right;
+    font-size: 15px;
+    margin-right: 20px; }
+  .pi-workbench-test-panel .properties .duration {
+    margin-top: 5px; }
+  .pi-workbench-test-panel .input-type-form {
+    margin-top: 15px;
+    border-top: 1px solid #eeeeee;
+    padding-top: 15px; }
+  .pi-workbench-test-panel .run-test {
+    margin-top: 15px;
+    border-top: 1px solid #eeeeee;
+    padding-top: 15px;
+    margin-top: 12px;
+    padding-left: 3px; }
+  .pi-workbench-test-panel .add-input-signal {
+    float: right; }

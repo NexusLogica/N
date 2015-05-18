@@ -1,0 +1,28 @@
+<div class="pi-editor">
+  <div class="info-bar">
+    <div ng-show="activeUI === null">
+      <div class="type"><span class="info-label">Network: </span><span ng-bind="network.name"></span></div>
+      <ul class="edit-menu nav nav-pills">
+        <li class="dropdown">
+          <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#">
+          Edit
+          <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            <li><a tabindex="-1" href="#" ng-click="traceEdit()">Edit connection routes</a></li>
+            <li><a tabindex="-1" href="#" ng-click="newOf('workbench')">Workbench...</a></li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+    <div ng-show="activeUI === 'traceEditor'">
+      <trace-line-editor scene="view.scene" scene-signals="sceneSignals" script-host="scriptHost"></trace-line-editor>
+    </div>
+  </div>
+  <div class="viewer">
+    <div class="canvas-container">
+      <pi-canvas class="network-canvas" pi-scene="view.scene" pi-padding="10" pi-trace-view canvas-origin="upper-left"></pi-canvas>
+    </div>
+  </div>
+</div>

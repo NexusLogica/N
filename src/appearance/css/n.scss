@@ -1,0 +1,188 @@
+/**********************************************************************
+
+File     : n.scss
+Project  : N Simulator Library
+Purpose  : Source file for a top level SCSS/CSS file for including other SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2014/01/01
+
+Copyright (c) 2014 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+@import 'core.scss';
+@import 'mixins.scss';
+@import 'pi.scss';
+@import 'common.scss';
+@import '../../components/header/header.scss';
+@import '../../components/administration/administration.scss';
+@import '../../components/dialog/dialog.scss';
+@import '../../components/pi-canvas3d/pi-canvas3d.scss';
+@import '../../components/field-viewer-panel/field-viewer-panel.scss';
+@import '../../components/field-viewer-settings/field-viewer-settings.scss';
+@import '../../components/grid-slider/grid-slider.scss';
+@import '../../components/network-builder/network-builder.scss';
+@import '../../components/pi-workbench/pi-workbench.scss';
+@import '../../components/n-editor/n-editor.scss';
+@import '../../components/editors-panel/editors-panel.scss';
+@import '../../components/signal-viewer/signal-viewer.scss';
+@import '../../components/signal-slider/signal-slider.scss';
+@import '../../components/output-log/output-log.scss';
+@import '../../components/pi-viewer/pi-viewer.scss';
+@import '../../components/pi-editor/pi-editor.scss';
+@import '../../components/trace-line-editor/trace-line-editor.scss';
+@import '../../pages/pi-viewer-page/pi-viewer-page.scss';
+
+//*****************************
+// Canvas
+
+.n-canvas {
+  position: relative;
+  display: block;
+  width: 602px;
+  height: 402px;
+  border: solid 1px #DDD;
+}
+
+.row.pi-network-test {
+  margin-bottom:50px;
+}
+
+.row.pi-neuron-test {
+  margin-bottom:50px;
+}
+
+//*****************************
+// Network scene
+
+.pi-network-panel {
+  .pi-canvas {
+    height: 200px;
+    padding: 0px 0px;
+  }
+
+  .pi-canvas-column {
+    .path {
+      margin: 5px 5px 5px 10px;
+      color: gray;
+      height: 20px;
+    }
+  }
+
+  .pi-network-console {
+    height: 200px;
+    border: gray 1px solid;
+    margin-left:30px;
+  }
+}
+
+//*****************************
+// Neuron scene
+
+.pi-neuron-panel {
+  .pi-canvas {
+    height: 250px;
+    padding: 0px 0px;
+  }
+
+  .pi-neuron-console {
+    height: 250px;
+    border: gray 1px solid;
+    margin-left:30px;
+  }
+}
+
+  //*****************************
+  // Workbench scene
+
+.pi-workbench-panel {
+  .console {
+    min-height: 250px;
+    padding: 0px 0px;
+    @include panel-border();
+
+    .top-header {
+      border-bottom: 1px solid lighten($text-color-light, 5%);
+      padding: 10px 10px 10px 10px;
+      height: 54px;
+
+      .btn {
+        display: inline-block;
+        &.dropdown-toggle {
+          width: 260px;
+          text-align: left;
+        }
+        &.new-test {
+          float: right;
+        }
+      }
+      .dropdown {
+        display: inline-block;
+      }
+      .no-tests {
+        display: inline-block;
+        color: $text-color-light;
+        margin-top: 6px;
+      }
+    }
+  }
+}
+
+.pi-workbench-test-panel {
+  padding: 10px 10px;
+
+.signal-inputs {
+  table {
+    thead {
+      tr {
+        th {
+          text-align: center;
+        }
+      }
+      .input     { width: 150px; }
+      .type      { width: 65px; }
+      .start     { width: 60px; }
+      .duration  { width: 60px; }
+      .amplitude { width: 75px; }
+      .offset    { width: 65px; }
+    }
+  }
+}
+  .properties {
+
+    .name {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .edit {
+      float: right;
+      font-size: 15px;
+      margin-right: 20px;
+    }
+
+    .duration {
+      margin-top:5px;
+    }
+  }
+
+  .properties-edit {
+
+  }
+
+  .input-type-form {
+    @include separator-border();
+  }
+
+  .run-test {
+    @include separator-border();
+    margin-top:12px;
+    padding-left: 3px;
+  }
+
+  .add-input-signal {
+    float: right;
+  }
+}
+

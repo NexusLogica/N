@@ -5,3 +5,4 @@ logs/*
 .sass-cache
 src/lib/bower_components
 src/npm-debug.log
+node_modules/

@@ -1,0 +1,51 @@
+/**********************************************************************
+
+File     : output-log.scss
+Project  : N Simulator Library
+Purpose  : Source file for the output log component SCSS files.
+Revisions: Original definition by Lawrence Gunn.
+           2015/04/19
+
+Copyright (c) 2015 by Lawrence Gunn
+All Rights Reserved.
+
+*/
+
+.output-log {
+  display: block;
+
+  .info-bar {
+    height: $editor-status-bar-height;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 6px;
+    padding-left: 12px;
+
+    background: linear-gradient(#DDDDDD, #D2D2D2);
+    border: 1px solid #BBBBBB;
+
+    >div {
+      display: inline-block;
+      margin-right: 30px;
+    }
+
+    .info-label {
+      color: #696969;
+    }
+  }
+
+  .log-area {
+    width: 100%;
+    height: $editor-height - $editor-status-bar-height;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+    font-size: 11px;
+  }
+
+  .log-line {
+    .error {
+      color: red;
+    }
+  }
+}
