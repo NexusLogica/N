@@ -206,6 +206,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
       piConnection.fromJson(piConnectionJson);
       this.piConnections[path] = piConnection;
       piConnection.render(this.group);
+      piConnection.setSceneSignals(this.sceneSignals);
     }
   }
 
@@ -286,6 +287,14 @@ N.UI.PiNetwork.prototype.onBackgroundMove = function(event) {
   this.dispatchEvent('background-move', event);
 };
 
+N.UI.PiNetwork.prototype.onBackgroundMouseDown = function(event) {
+  this.dispatchEvent('background-mouse-down', event);
+};
+
+N.UI.PiNetwork.prototype.onBackgroundMouseUp = function(event) {
+  this.dispatchEvent('background-mouse-up', event);
+};
+
 N.UI.PiNetwork.prototype.onBackgroundClick = function(event) {
   this.dispatchEvent('background-click', event);
 };
@@ -318,9 +327,13 @@ N.UI.PiNetwork.prototype.addEventHandlers = function() {
   if(!this.parentPiNetwork) {
     var _this = this;
     var onMoveHandler = N.UI.PiNetwork.prototype.onBackgroundMove.bind(this);
+    var onMouseDownHandler = N.UI.PiNetwork.prototype.onBackgroundMouseDown.bind(this);
+    var onMouseUpHandler = N.UI.PiNetwork.prototype.onBackgroundMouseUp.bind(this);
     var onClickHandler = N.UI.PiNetwork.prototype.onBackgroundClick.bind(this);
 
     $(this.outerRect.node).on('mousemove', onMoveHandler);
+    $(this.outerRect.node).on('mousedown', onMouseDownHandler);
+    $(this.outerRect.node).on('mouseup',   onMouseUpHandler);
     $(this.outerRect.node).on('click', onClickHandler);
   }
 };

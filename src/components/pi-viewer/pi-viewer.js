@@ -27,7 +27,12 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
       $scope.sceneSignals = {
         'component-move': new signals.Signal(),
         'component-click': new signals.Signal(),
+        'connection-enter': new signals.Signal(),
+        'connection-leave': new signals.Signal(),
+        'connection-click': new signals.Signal(),
         'background-move': new signals.Signal(),
+        'background-mouse-down': new signals.Signal(),
+        'background-mouse-up': new signals.Signal(),
         'background-click': new signals.Signal()
       };
 

@@ -23,6 +23,14 @@ N.UI.PiConnectionClasses = {
   'Electrode'  : 'pi-electrode-connection'
 };
 
+N.UI.PiConnectionEndLengths = {
+  'Excitatory' : 0.04,
+  'Spine'      : 0.075,
+  'Inhibitory' : 0.02,
+  'GapJunction': 0.02,
+  'Electrode'  : 0.02
+};
+
   //*********************
   //* N.UI.PiConnection *
   //*********************
@@ -44,6 +52,11 @@ N.UI.PiConnection.prototype.setRoute = function(route) {
   if(this.group) {
     this.renderRoute();
   }
+};
+
+N.UI.PiConnection.prototype.setSceneSignals = function(sceneSignals) {
+  this.sceneSignals = sceneSignals;
+  this.addEventHandlers();
 };
 
 /***
@@ -82,6 +95,24 @@ N.UI.PiConnection.prototype.render = function(svgGroup) {
   }
 };
 
+N.UI.PiConnection.prototype.addClass = function(className) {
+  if(this.path) {
+    this.path.addClass(className);
+  }
+  if(this.endPath) {
+    this.endPath.addClass(className);
+  }
+};
+
+N.UI.PiConnection.prototype.removeClass = function(className) {
+  if(this.path) {
+    this.path.removeClass(className);
+  }
+  if(this.endPath) {
+    this.endPath.removeClass(className);
+  }
+};
+
 N.UI.PiConnection.prototype.remove = function() {
   if(this.path) {
     this.path.remove();
@@ -97,6 +128,7 @@ N.UI.PiConnection.prototype.renderRoute = function() {
   var st = this.route.start;
   var pt = this.route.points;
   var end = this.route.end;
+  var endLength = N.UI.PiConnectionEndLengths[this.getCategory()];
   var endPt;
 
   if(this.endPath) {
@@ -129,10 +161,12 @@ N.UI.PiConnection.prototype.renderRoute = function() {
         ecosX = edx / exy;
         esinY = edy / exy;
         ed = (end.radius+2/s) - exy;
+
+        var edLong = (end.radius+endLength+2/s) - exy;
+        var endPtLong = { x: (edLong*ecosX)*s, y: (edLong*esinY)*s };
+        routeString += 'l' + endPtLong.x + ' ' + endPtLong.y;
+
         endPt = { x: (ed*ecosX)*s, y: (ed*esinY)*s };
-
-        routeString += 'l' + endPt.x + ' ' + endPt.y;
-
         endPt.x = (end.center.x+end.radius*ecosX)*s;
         endPt.y = (end.center.y+end.radius*esinY)*s;
       }
@@ -233,6 +267,61 @@ N.UI.PiConnection.prototype.createEnd = function(endInfo) {
     center = o.shorten(c, -r-gap).offset(-r, -r);
     this.endPath = this.group.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
   }
+};
+
+N.UI.PiConnection.prototype.addEventHandlers = function() {
+  var onMouseEnter = N.UI.PiConnection.prototype.onMouseEnter.bind(this);
+  var onMouseLeave = N.UI.PiConnection.prototype.onMouseLeave.bind(this);
+  var onClick      = N.UI.PiConnection.prototype.onClick.bind(this);
+
+  if(this.path) {
+    $(this.path.node).on('mouseenter', onMouseEnter);
+    $(this.path.node).on('mouseleave', onMouseLeave);
+    $(this.path.node).on('click', onClick);
+  }
+};
+
+N.UI.PiConnection.prototype.onMouseEnter = function(event) {
+  this.dispatchMouseEvent('connection-enter', event);
+};
+
+N.UI.PiConnection.prototype.onMouseLeave = function(event) {
+  this.dispatchMouseEvent('connection-leave', event);
+};
+
+N.UI.PiConnection.prototype.onClick = function(event) {
+  this.dispatchMouseEvent('connection-click', event);
+};
+
+N.UI.PiConnection.prototype.dispatchMouseEvent = function(name, event) {
+  var eventData = this.positionFromEvent(event);
+  eventData.piConnection = this;
+  eventData.piNetwork = this.piNetwork;
+  this.sceneSignals[name].dispatch(eventData);
+};
+
+/***
+ * From the event information, determine the position and snap position on the network.
+ * @param event
+ * @returns {{pos: {x: number, y: number}, snap: *}}
+ */
+N.UI.PiConnection.prototype.positionFromEvent = function(event) {
+  var clientRect = this.path.node.getBoundingClientRect();
+  var x = event.clientX-clientRect.left;
+  var y = event.clientY-clientRect.top;
+  var snap = this.getNearestGridPoint(x, y);
+
+  var s = this.scale;
+  snap.x /= s;
+  snap.y /= s;
+  return { pos: { x: x/s, y: y/s }, snap: snap };
+};
+
+N.UI.PiConnection.prototype.getNearestGridPoint = function(x, y) {
+  var gridSpacing = this.piNetwork.gridSpacing;
+  var nx = Math.floor(x/this.scale/gridSpacing+0.5)*this.scale*gridSpacing;
+  var ny = Math.floor(y/this.scale/gridSpacing+0.5)*this.scale*gridSpacing;
+  return { x: nx, y: ny};
 };
 
 N.UI.PiConnection.prototype.toJson = function() {

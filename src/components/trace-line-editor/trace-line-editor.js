@@ -31,13 +31,21 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       $scope.stateMachine = StateMachine.create({
         initial: { state: 'Init' },
         events: [
-          { name: 'init',             from: '*',                          to: 'Starting'       },
-          { name: 'componentClick',   from: 'Starting',                   to: 'ComponentStart' },
-          { name: 'backgroundClick',  from: 'ComponentStart',             to: 'TraceBegin'     },
-          { name: 'componentClick',   from: 'ComponentStart',             to: 'ComponentEnd'   },
-          { name: 'backgroundClick',  from: ['TraceBegin', 'TracePoint'], to: 'TracePoint'     },
-          { name: 'componentClick',   from: ['TraceBegin', 'TracePoint'], to: 'ComponentEnd'   },
-          { name: 'idle',             from: '*',                          to: 'Idle'   }
+          { name: 'init',                from: '*',                          to: 'Starting'       },
+          { name: 'componentClick',      from: 'Starting',                   to: 'ComponentStart' },
+          { name: 'backgroundClick',     from: 'ComponentStart',             to: 'TraceBegin'     },
+          { name: 'componentClick',      from: 'ComponentStart',             to: 'ComponentEnd'   },
+          { name: 'backgroundClick',     from: ['TraceBegin', 'TracePoint'], to: 'TracePoint'     },
+          { name: 'componentClick',      from: ['TraceBegin', 'TracePoint'], to: 'ComponentEnd'   },
+          { name: 'idle',                from: '*',                          to: 'Idle'           },
+
+          { name: 'connectionClick',     from: 'Starting',                   to: 'EditStart'      },
+          { name: 'backgroundMouseMove', from: 'EditStart',                  to: 'EditMove'       },
+          { name: 'backgroundMouseUp',   from: 'EditMove',                   to: 'EditEnd'        },
+
+          { name: 'backgroundMouseUp',   from: 'EditStart',                  to: 'EditSelect'     },
+          { name: 'keyEnter',            from: 'EditStart',                  to: 'EditEnd'        },
+          { name: 'keyDelete',           from: 'EditSelect',                 to: 'EditEnd'        }
         ],
         timeouts: [],
         callbacks: {
@@ -79,6 +87,20 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         getConnectionsForNetwork($scope.scene.piNetwork);
 
         $scope.stateMachine.init();
+      };
+
+      var beginConnectionHighlight = function(piConnection) {
+        $scope.scene.piNetwork.group.addClass('soften-connection');
+        $scope.highlightedPiConnection = piConnection;
+        piConnection.addClass('highlight');
+      };
+
+      var endConnectionHighlight = function() {
+        $scope.scene.piNetwork.group.removeClass('soften-connection');
+        if ($scope.highlightedPiConnection) {
+          $scope.highlightedPiConnection.removeClass('highlight');
+          $scope.highlightedPiConnection = undefined;
+        }
       };
 
       var getConnectionsForNetwork = function(piNetwork) {
@@ -156,207 +178,260 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.outputComponent = undefined;
         $scope.stateMachine.init();
 
-        $scope.sceneSignals['component-click'].add(function(event) {
-          var isReversed, found;
-          $scope.$apply(function() {
-            if($scope.stateMachine.can('componentClick')) {
-              $scope.lastX = undefined;
-              $scope.lastY = undefined;
-              $scope.lastSnapX = undefined;
-              $scope.lastSnapY = undefined;
-              var n = event.piCompartment.neuron;
-              var x = n.x;
-              var y = n.y;
+        $scope.sceneSignals['component-click'].add($scope.onComponentClick);
+        $scope.sceneSignals['background-click'].add($scope.onBackgroundClick);
+        $scope.sceneSignals['component-move'].add($scope.onComponentMove);
+        $scope.sceneSignals['background-move'].add($scope.onBackgroundMove);
+        $scope.sceneSignals['connection-enter'].add($scope.onConnectionEnter);
+        $scope.sceneSignals['connection-leave'].add($scope.onConnectionLeave);
+        $scope.sceneSignals['connection-click'].add($scope.onConnectionClick);
+        $(document).on('keyup', $scope.onDocumentKeyUp);
 
-              // TODO: Loop through parents adding x,y each time.
-              if(n.network.parentPiNetwork) {
-                x += n.network.x;
-                y += n.network.y;
-              }
-              var s = n.scale;
-              x /= s;
-              y /= s;
+        $scope.debugText = '';
+      };
 
-              if($scope.stateMachine.is('Starting')) {
-                var connectionHalfPath = event.compartment.getPath();
+      $scope.onComponentClick =  function(event) {
+        var isReversed, found;
+        $scope.$apply(function() {
+          if($scope.stateMachine.can('componentClick')) {
+            $scope.lastX = undefined;
+            $scope.lastY = undefined;
+            $scope.lastSnapX = undefined;
+            $scope.lastSnapY = undefined;
+            var n = event.piCompartment.neuron;
+            var x = n.x;
+            var y = n.y;
 
-                var matches = [];
-                _.forEach($scope.connections, function(connection) {
-                  var srcPath = connection.source.getPath();
-                  var snkPath = connection.sink.getPath();
-                  if(connectionHalfPath === srcPath || connectionHalfPath === snkPath) {
-                    matches.push(connection);
-                  }
-                });
+            // TODO: Loop through parents adding x,y each time.
+            if(n.network.parentPiNetwork) {
+              x += n.network.x;
+              y += n.network.y;
+            }
+            var s = n.scale;
+            x /= s;
+            y /= s;
 
-                if(!matches.length) {
-                  $scope.setMessage('That compartment does not connect to any other compartments.', 'error');
-                  return;
+            if($scope.stateMachine.is('Starting')) {
+              var connectionHalfPath = event.compartment.getPath();
+
+              var matches = [];
+              _.forEach($scope.connections, function(connection) {
+                var srcPath = connection.source.getPath();
+                var snkPath = connection.sink.getPath();
+                if(connectionHalfPath === srcPath || connectionHalfPath === snkPath) {
+                  matches.push(connection);
                 }
+              });
 
-                removeAllHighlights();
-                highlightStartableCompartments(matches);
+              if(!matches.length) {
+                $scope.setMessage('That compartment does not connect to any other compartments.', 'error');
+                return;
+              }
 
-                $scope.createPiConnection();
-                $scope.trace = {
-                  start: {
-                    component: event.compartment.getPath(),
-                    center: {x: x, y: y },
-                    radius: n.radius / s
-                  },
-                  points: []
-                };
+              removeAllHighlights();
+              highlightStartableCompartments(matches);
+
+              $scope.createPiConnection();
+              $scope.trace = {
+                start: {
+                  component: event.compartment.getPath(),
+                  center: {x: x, y: y },
+                  radius: n.radius / s
+                },
+                points: []
+              };
+
+              // Find the other connection.
+              if(event.compartment.category === 'Output') {
+                var px = x;
+                var py = y+n.radius/s+0.1;
+                //$scope.lastX = px;
+                $scope.lastSnapX = px;
+                $scope.lastSnapY = py;
+                //$scope.lastY = py;
+                $scope.trace.points.push({ pos: { x: px, y: py } });
+              }
+
+              $scope.piConnection.setRoute($scope.trace);
+              $scope.stateMachine.componentClick();
+
+            } else {
+              // This is the save path.
+              var endPath = event.compartment.getPath();
+              if(endPath === $scope.trace.start.component) {
+                $scope.setMessage('You can not reconnect to the same compartment.', 'error');
+                return;
+              } else {
 
                 // Find the other connection.
-                if(event.compartment.category === 'Output') {
-                  var px = x;
-                  var py = y+n.radius/s+0.1;
-                  //$scope.lastX = px;
-                  $scope.lastSnapX = px;
-                  $scope.lastSnapY = py;
-                  //$scope.lastY = py;
-                  $scope.trace.points.push({ pos: { x: px, y: py } });
-                }
+                var isReversed = false;
+                var found = _.find($scope.connections, function(connection) {
+                  var srcPath = connection.source.getPath();
+                  var snkPath = connection.sink.getPath();
+                  if($scope.trace.start.component === srcPath && endPath === snkPath) {
+                    return true;
+                  } else if($scope.trace.start.component === snkPath && endPath === srcPath) {
+                    isReversed = true;
+                    return true;
+                  }
+                  return false;
+                });
 
-                $scope.piConnection.setRoute($scope.trace);
-                $scope.stateMachine.componentClick();
-
-              } else {
-                // This is the save path.
-                var endPath = event.compartment.getPath();
-                if(endPath === $scope.trace.start.component) {
-                  $scope.setMessage('You can not reconnect to the same compartment.', 'error');
+                if(!found) {
+                  $scope.setMessage('That compartment does not connect to the initial one selected.', 'error');
                   return;
-                } else {
-
-                  // Find the other connection.
-                  var isReversed = false;
-                  var found = _.find($scope.connections, function(connection) {
-                    var srcPath = connection.source.getPath();
-                    var snkPath = connection.sink.getPath();
-                    if($scope.trace.start.component === srcPath && endPath === snkPath) {
-                      return true;
-                    } else if($scope.trace.start.component === snkPath && endPath === srcPath) {
-                      isReversed = true;
-                      return true;
-                    }
-                    return false;
-                  });
-
-                  if(!found) {
-                    $scope.setMessage('That compartment does not connect to the initial one selected.', 'error');
-                    return;
-                  }
-
-                  $scope.trace.end = {
-                    component: event.compartment.getPath(),
-                    center: {x: x, y: y},
-                    radius: n.radius / s
-                  };
-
-                  // If the user started the connection on the sink compartment we will need to reverse it.
-                  if(isReversed) {
-                    var end = $scope.trace.start;
-                    $scope.trace.start = $scope.trace.end;
-                    $scope.trace.end = end;
-
-                    $scope.trace.points.reverse();
-                  }
-
-                  var offsetX = 0;
-                  var offsetY = 0;
-                  // TODO: Fix this for networks deeper than the top piNetwork.
-                  var connectionsPiNetwork;
-                  if(found.connection.network !== $scope.scene.piNetwork.network) {
-                    var connectionsNetworkPath = found.connection.network.getPath();
-                    connectionsPiNetwork = N.fromPath($scope.scene.piNetwork, connectionsNetworkPath);
-
-                    // Get the offset of x,y.
-                    offsetX = connectionsPiNetwork.x / s;
-                    offsetY = connectionsPiNetwork.y / s;
-                  }
-
-                  $scope.piConnection.setConnection(found.connection);
-                  $scope.scene.piNetwork.removeConnection($scope.piConnection);
-
-                  if(connectionsPiNetwork) {
-
-                    offsetTrace(offsetX, offsetY);
-
-                    $scope.piConnection.setRoute($scope.trace);
-                    $scope.piConnection.remove();
-                    connectionsPiNetwork.addConnection($scope.piConnection);
-                    connectionsPiNetwork.$$isDirty = true;
-                  } else {
-                    // It was removed as anonymous and now is a proper connection.
-                    $scope.scene.piNetwork.addConnection($scope.piConnection);
-                    $scope.piConnection.setRoute($scope.trace);
-                    $scope.scene.piNetwork.$$isDirty = true;
-                  }
-
-                  $scope.trace = undefined;
-                  $scope.isDirty = true;
-                  $scope.stateMachine.componentClick();
                 }
+
+                $scope.trace.end = {
+                  component: event.compartment.getPath(),
+                  center: {x: x, y: y},
+                  radius: n.radius / s
+                };
+
+                // If the user started the connection on the sink compartment we will need to reverse it.
+                if(isReversed) {
+                  var end = $scope.trace.start;
+                  $scope.trace.start = $scope.trace.end;
+                  $scope.trace.end = end;
+
+                  $scope.trace.points.reverse();
+                }
+
+                var offsetX = 0;
+                var offsetY = 0;
+                // TODO: Fix this for networks deeper than the top piNetwork.
+                var connectionsPiNetwork;
+                if(found.connection.network !== $scope.scene.piNetwork.network) {
+                  var connectionsNetworkPath = found.connection.network.getPath();
+                  connectionsPiNetwork = N.fromPath($scope.scene.piNetwork, connectionsNetworkPath);
+
+                  // Get the offset of x,y.
+                  offsetX = connectionsPiNetwork.x / s;
+                  offsetY = connectionsPiNetwork.y / s;
+                }
+
+                $scope.piConnection.setConnection(found.connection);
+                $scope.scene.piNetwork.removeConnection($scope.piConnection);
+
+                if(connectionsPiNetwork) {
+
+                  offsetTrace(offsetX, offsetY);
+
+                  $scope.piConnection.setRoute($scope.trace);
+                  $scope.piConnection.remove();
+                  connectionsPiNetwork.addConnection($scope.piConnection);
+                  connectionsPiNetwork.$$isDirty = true;
+                } else {
+                  // It was removed as anonymous and now is a proper connection.
+                  $scope.scene.piNetwork.addConnection($scope.piConnection);
+                  $scope.piConnection.setRoute($scope.trace);
+                  $scope.scene.piNetwork.$$isDirty = true;
+                }
+
+                $scope.trace = undefined;
+                $scope.isDirty = true;
+                $scope.stateMachine.componentClick();
               }
             }
-          });
+          }
         });
+      };
 
-        $scope.sceneSignals['background-click'].add(function(event) {
-          $scope.$apply(function() {
-            if(event.snap.x !== $scope.lastX || event.snap.y !== $scope.lastY) {
+      $scope.onBackgroundClick = function(event) {
+        $scope.$apply(function() {
+          if($scope.stateMachine.can('backgroundClick')) {
+            if (event.snap.x !== $scope.lastX || event.snap.y !== $scope.lastY) {
               $scope.lastX = event.snap.x;
               $scope.lastY = event.snap.y;
               $scope.stateMachine.backgroundClick();
               var net = event.piNetwork;
-              var point = { pos: event.snap};
+              var point = {pos: event.snap};
               $scope.trace.points.push(point);
               $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify(point.pos);
               $scope.piConnection.setRoute($scope.trace);
             }
-          });
+          }
         });
+      };
 
-        $scope.sceneSignals['component-move'].add(function(event) {
-          $scope.$apply(function() {
-            if ($scope.trace) {// && $scope.stateMachine.current !== 'ComponentStart') {
+      $scope.onDocumentKeyUp = function(event) {
+        $scope.$apply(function() {
+          var k = event.keyCode;
+          if(event.keyCode === 13) {
+            if($scope.stateMachine.can('keyEnter')) {
+              $scope.$apply(function() {
+                endConnectionHighlight();
+                $scope.stateMachine.keyEnter();
 
-              var n = event.piCompartment.neuron;
-              var s = n.scale;
-              var x = n.x;
-              var y = n.y;
-              if(n.network.parentPiNetwork) {
-                x += n.network.x;
-                y += n.network.y;
-              }
 
-              var traceCopy = _.cloneDeep($scope.trace);
-              traceCopy.end = {
-                component: event.compartment.name,
-                center: {x: x / s, y: y / s},
-                radius: n.radius / s
-              };
-              $scope.piConnection.setRoute(traceCopy);
+
+
+
+              });
             }
-          });
+          }
         });
+      };
 
-        $scope.sceneSignals['background-move'].add(function(event) {
-          $scope.$apply(function() {
-            if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
-              $scope.lastSnapX = event.snap.x;
-              $scope.lastSnapY = event.snap.y;
-              var net = event.piNetwork;
-              var point = {pos: event.snap};
-              var traceCopy = _.cloneDeep($scope.trace);
-              traceCopy.points.push(point);
-              $scope.piConnection.setRoute(traceCopy);
+      $scope.onComponentMove = function(event) {
+        $scope.$apply(function() {
+          if ($scope.trace) {// && $scope.stateMachine.current !== 'ComponentStart') {
+
+            var n = event.piCompartment.neuron;
+            var s = n.scale;
+            var x = n.x;
+            var y = n.y;
+            if(n.network.parentPiNetwork) {
+              x += n.network.x;
+              y += n.network.y;
             }
-          });
-        });
 
-        $scope.debugText = '';
+            var traceCopy = _.cloneDeep($scope.trace);
+            traceCopy.end = {
+              component: event.compartment.name,
+              center: {x: x / s, y: y / s},
+              radius: n.radius / s
+            };
+            $scope.piConnection.setRoute(traceCopy);
+          }
+        });
+      };
+
+      $scope.onBackgroundMove = function(event) {
+        $scope.$apply(function() {
+          if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
+            $scope.lastSnapX = event.snap.x;
+            $scope.lastSnapY = event.snap.y;
+            var net = event.piNetwork;
+            var point = {pos: event.snap};
+            var traceCopy = _.cloneDeep($scope.trace);
+            traceCopy.points.push(point);
+            $scope.piConnection.setRoute(traceCopy);
+          }
+        });
+      };
+
+      $scope.onConnectionClick = function(eventData) {
+        $scope.$apply(function() {
+          if($scope.stateMachine.can('connectionClick')) {
+            beginConnectionHighlight(eventData.piConnection);
+            $scope.stateMachine.connectionClick();
+          }
+        });
+      };
+
+      $scope.onConnectionEnter = function(eventData) {
+        $scope.$apply(function() {
+          beginConnectionHighlight(eventData.piConnection);
+        });
+      };
+
+      $scope.onConnectionLeave = function(eventData) {
+        $scope.$apply(function() {
+          if($scope.stateMachine.current !== 'EditStart' && $scope.stateMachine.current !== 'EditSelect') {
+            endConnectionHighlight();
+          }
+        });
       };
 
       $scope.beginTrace = function() {
@@ -404,6 +479,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.$emit('traceLineEditor:closing');
         removeAllHighlights();
         $scope.scene.piNetwork.group.removeClass('soften-component');
+        $scope.scene.piNetwork.group.removeClass('soften-connection');
         $scope.stateMachine.idle();
       };
 
