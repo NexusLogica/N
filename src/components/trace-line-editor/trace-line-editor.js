@@ -39,11 +39,12 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           { name: 'componentClick',      from: ['TraceBegin', 'TracePoint'], to: 'ComponentEnd'   },
           { name: 'idle',                from: '*',                          to: 'Idle'           },
 
-          { name: 'connectionClick',     from: 'Starting',                   to: 'EditStart'      },
-          { name: 'backgroundMouseMove', from: 'EditStart',                  to: 'EditMove'       },
-          { name: 'backgroundMouseUp',   from: 'EditMove',                   to: 'EditEnd'        },
+          { name: 'connectionClick',     from: 'Starting',                   to: 'Editing'        },
+          { name: 'backgroundMouseDown', from: 'Editing',                    to: 'EditMoving'     },
+          { name: 'backgroundMouseUp',   from: 'EditMoving',                 to: 'EditEnd'        },
 
           { name: 'backgroundMouseUp',   from: 'EditStart',                  to: 'EditSelect'     },
+          { name: 'backgroundMouseMove', from: 'EditMoving',                 to: 'EditMoving'     },
           { name: 'keyEnter',            from: 'EditStart',                  to: 'EditEnd'        },
           { name: 'keyDelete',           from: 'EditSelect',                 to: 'EditEnd'        }
         ],
@@ -61,6 +62,15 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
             $scope.debugText = $scope.stateMachine.current;
           },
           onenterComponentEnd: function() {
+            $scope.piConnection = undefined;
+            $scope.stateMachine.idle();
+            $scope.debugText = $scope.stateMachine.current;
+
+            $timeout(function() {
+              $scope.stateMachine.init();
+            }, 500);
+          },
+          onenterEditEnd: function() {
             $scope.piConnection = undefined;
             $scope.stateMachine.idle();
             $scope.debugText = $scope.stateMachine.current;
@@ -152,6 +162,48 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       /***
+       * Given an x,y position and a connection, return the node on the connection nearest the position.
+       * @method findNearestNode
+       * @param pos
+       * @param piConnection
+       */
+      var findNearestNode = function(pos, piConnection) {
+        var pts = piConnection.route.points;
+        var nearest;
+        for(var i=0; i<pts.length; i++) {
+          var pt = pts[i].pos;
+          var distSqr = (pos.x-pt.x)*(pos.x-pt.x)+(pos.y-pt.y)*(pos.y-pt.y);
+          if(!nearest || distSqr < nearest.distSqr) {
+            nearest = { distSqr: distSqr, x: pt.x, y: pt.y, index: i };
+          }
+        }
+
+        if(nearest) {
+          nearest.dist = Math.sqrt(nearest.distSqr);
+        }
+        return nearest;
+      };
+
+      /***
+       * Given a new snap for the node, set the point in the route and update the
+       * connection if there is a change.
+       * @method updateRouteNode
+       * @param piConection
+       * @param index - Index of the node to move
+       * @param point
+       */
+      var updateRouteNode = function(piConnection, index, point) {
+        var routePoint = piConnection.route.points[index];
+        if(routePoint.x !== point.x || routePoint.y !== point.y) {
+          routePoint.pos.x = point.x;
+          routePoint.pos.y = point.y;
+          piConnection.$$isDirty = true;
+          piConnection.setRoute(piConnection.route);
+        }
+      };
+
+
+      /***
        * When completing a trace it then becomes clear
        * @method offsetTrace
        * @param x - the x amount to offset the trace
@@ -180,6 +232,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
         $scope.sceneSignals['component-click'].add($scope.onComponentClick);
         $scope.sceneSignals['background-click'].add($scope.onBackgroundClick);
+        $scope.sceneSignals['background-mouse-down'].add($scope.onBackgroundMouseDown);
         $scope.sceneSignals['component-move'].add($scope.onComponentMove);
         $scope.sceneSignals['background-move'].add($scope.onBackgroundMove);
         $scope.sceneSignals['connection-enter'].add($scope.onConnectionEnter);
@@ -354,23 +407,28 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         });
       };
 
+      $scope.onBackgroundMouseDown = function(event) {
+        if($scope.stateMachine.can('backgroundMouseDown')) {
+          $scope.stateMachine.backgroundMouseDown();
+          $scope.moveStart = event.snap;
+          $scope.editConnectionNode = findNearestNode($scope.moveStart, $scope.editTarget);
+          updateRouteNode($scope.editTarget, $scope.editConnectionNode.index, $scope.moveStart);
+        }
+      };
+
       $scope.onDocumentKeyUp = function(event) {
-        $scope.$apply(function() {
-          var k = event.keyCode;
-          if(event.keyCode === 13) {
-            if($scope.stateMachine.can('keyEnter')) {
-              $scope.$apply(function() {
-                endConnectionHighlight();
-                $scope.stateMachine.keyEnter();
-
-
-
-
-
-              });
-            }
+        var k = event.keyCode;
+        if(event.keyCode === 13) {
+          if($scope.stateMachine.can('keyEnter')) {
+            $scope.$apply(function() {
+              // TODO: save the connection
+              // $scope.editTarget = eventData.piConnection;
+              $scope.editTarget = event.piConnection;
+              endConnectionHighlight();
+              $scope.stateMachine.keyEnter();
+            });
           }
-        });
+        }
       };
 
       $scope.onComponentMove = function(event) {
@@ -399,7 +457,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
       $scope.onBackgroundMove = function(event) {
         $scope.$apply(function() {
-          if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
+          if($scope.stateMachine.current === 'EditMoving') {
+            updateRouteNode($scope.editTarget, $scope.editConnectionNode.index, event.snap);
+          }
+          else if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
             $scope.lastSnapX = event.snap.x;
             $scope.lastSnapY = event.snap.y;
             var net = event.piNetwork;
@@ -415,6 +476,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.$apply(function() {
           if($scope.stateMachine.can('connectionClick')) {
             beginConnectionHighlight(eventData.piConnection);
+            $scope.editTarget = eventData.piConnection;
             $scope.stateMachine.connectionClick();
           }
         });
@@ -422,13 +484,15 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
       $scope.onConnectionEnter = function(eventData) {
         $scope.$apply(function() {
-          beginConnectionHighlight(eventData.piConnection);
+          if($scope.stateMachine.current.indexOf('Edit') !== 0) {
+            beginConnectionHighlight(eventData.piConnection);
+          }
         });
       };
 
       $scope.onConnectionLeave = function(eventData) {
         $scope.$apply(function() {
-          if($scope.stateMachine.current !== 'EditStart' && $scope.stateMachine.current !== 'EditSelect') {
+          if($scope.stateMachine.current.indexOf('Edit') !== 0) {
             endConnectionHighlight();
           }
         });

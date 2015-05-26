@@ -18,6 +18,7 @@ $top-bar-height: 70px;
   display: block;
 
   .info-bar {
+    position: relative;
     height: $top-bar-height;
     width: 100%;
     font-size: 12px;
