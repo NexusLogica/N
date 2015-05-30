@@ -221,14 +221,10 @@ All Rights Reserved.
 .soften-component .pi-compartment-name {
   opacity: 0.3; }
 
-.soften-connection {
-  transition-duration: 0.2s; }
-  .soften-connection .pi-connection, .soften-connection .pi-connection-end {
-    opacity: 0.3;
-    transition-duration: 0.2s; }
-  .soften-connection .pi-connection.highlight, .soften-connection .pi-connection-end.highlight {
-    opacity: 1.0;
-    transition-duration: 0.2s; }
+.soften-connection .pi-connection, .soften-connection .pi-connection-end {
+  opacity: 0.3; }
+.soften-connection .pi-connection.highlight, .soften-connection .pi-connection-end.highlight {
+  opacity: 1.0; }
 
 .pointer-transparent {
   pointer-events: none; }

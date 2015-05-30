@@ -255,14 +255,12 @@ $gap-junction-color: darken(papayawhip, 10%);
 }
 
 .soften-connection {
-  transition-duration: 0.2s;
   .pi-connection, .pi-connection-end {
     opacity: 0.3;
-    transition-duration: 0.2s;
+//    transition-duration: 0.2s;
   }
   .pi-connection.highlight, .pi-connection-end.highlight {
     opacity: 1.0;
-    transition-duration: 0.2s;
   }
 }
 

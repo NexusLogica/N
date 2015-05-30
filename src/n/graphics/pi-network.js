@@ -85,6 +85,32 @@ N.UI.PiNetwork.prototype.getRoot = function() {
   return this.parentPiNetwork ? this.parentPiNetwork.getRoot() : this;
 };
 
+/**
+ * Gets the offset of this Pi Network object in its parent.
+ * @method getOffset
+ * @returns {x,y} Returns the x and y values of the offset of this network inside its parent display.
+ */
+N.UI.PiNetwork.prototype.getOffset = function() {
+  if(this.parentPiNetwork) {
+    var offset = this.parentPiNetwork;
+    offset.x += this.x;
+    offset.y += this.y;
+    N.log('***** getOffset with parent = '+offset.x+','+offset.y);
+    return offset;
+  } else {
+    N.log('***** getOffset only = '+this.x+','+this.y);
+    return { x: this.x, y: this.y };
+  }
+};
+
+/**
+ * Gets the outerRect SVG object of self or, if none, its parent network.
+ * @returns {object} Returns the outer rectangle object.
+ */
+N.UI.PiNetwork.prototype.getOuterRect = function() {
+  return this.outerRect || this.parentPiNetwork.getOuterRect();
+};
+
 N.UI.PiNetwork.prototype.layout = function() {
 
   var width = this.network.display.width;
@@ -300,10 +326,10 @@ N.UI.PiNetwork.prototype.onBackgroundClick = function(event) {
 };
 
 N.UI.PiNetwork.prototype.dispatchEvent = function(name, event) {
-  var eventData = this.positionFromEvent(event);
-  eventData.piNetwork = this;
-  eventData.network = this.network;
-  this.sceneSignals[name].dispatch(eventData);
+  this.positionFromEvent(event);
+  event.piNetwork = this;
+  event.network = this.network;
+  this.sceneSignals[name].dispatch(event);
 };
 
 /***
@@ -320,7 +346,8 @@ N.UI.PiNetwork.prototype.positionFromEvent = function(event) {
   var s = this.scale;
   snap.x /= s;
   snap.y /= s;
-  return { pos: { x: x/s, y: y/s }, snap: snap };
+  event.pos = { x: x/s, y: y/s };
+  event.snap = snap;
 };
 
 N.UI.PiNetwork.prototype.addEventHandlers = function() {

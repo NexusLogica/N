@@ -41,6 +41,8 @@ N.UI.PiConnection = function(piNetwork, connection) {
 
   // It is the 'default' because it is used only when no connection is availaible (if that is ever likely to happen...).
   this.defaultCategory = connection ? connection.category : 'Excitatory';
+
+  this.addedClasses = {};
 };
 
 N.UI.PiConnection.prototype.getPath = function() {
@@ -96,6 +98,8 @@ N.UI.PiConnection.prototype.render = function(svgGroup) {
 };
 
 N.UI.PiConnection.prototype.addClass = function(className) {
+  this.addedClasses[className] = true;
+
   if(this.path) {
     this.path.addClass(className);
   }
@@ -105,6 +109,8 @@ N.UI.PiConnection.prototype.addClass = function(className) {
 };
 
 N.UI.PiConnection.prototype.removeClass = function(className) {
+  delete this.addedClasses[className];
+
   if(this.path) {
     this.path.removeClass(className);
   }
@@ -223,7 +229,6 @@ N.UI.PiConnection.prototype.createEnd = function(endInfo) {
   var c = endInfo.endNeuronCenter;
   var o = endInfo.endNeuronOuter;
   var angle = Math.atan2(o.y-c.y, o.x-c.x);
-
   var category = this.getCategory();
 
   if(category === 'Spine') {
@@ -237,7 +242,7 @@ N.UI.PiConnection.prototype.createEnd = function(endInfo) {
         'l-'+(2*h2)+' 0'+
         'a'+w2+' '+w2+' 0 1 0 0 '+(2*w2)+
         'l'+(2*h2)+' 0';
-    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y);
   }
   else if(category === 'GapJunction') {
     var w = 9.0*scale;
@@ -249,7 +254,7 @@ N.UI.PiConnection.prototype.createEnd = function(endInfo) {
         'l0 -'+w+
         'l-'+h+' 0'+
         'l0 '+w;
-    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y);
   }
   else if(category === 'Electrode') {
     w2 = 2.25*scale;
@@ -260,22 +265,31 @@ N.UI.PiConnection.prototype.createEnd = function(endInfo) {
         'l'+h2+' '+w2+
         'l0 -'+(2*w2)+
         'l-'+h2+' '+w2;
-    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.path(routeString).rotate(N.deg(angle), c.x, c.y);
   }
   else {
     var r = 0.02*scale;
     center = o.shorten(c, -r-gap).offset(-r, -r);
-    this.endPath = this.group.circle(2*r).move(center.x, center.y).attr( { class: 'pi-connection-end '+N.UI.PiConnectionClasses[category] } );
+    this.endPath = this.group.circle(2*r).move(center.x, center.y);
   }
+
+  var classes = 'pi-connection-end '+N.UI.PiConnectionClasses[category];
+  for(var cl in this.addedClasses) {
+    classes += ' '+cl;
+  }
+
+  this.endPath.attr( { class: classes } );
 };
 
 N.UI.PiConnection.prototype.addEventHandlers = function() {
   var onMouseEnter = N.UI.PiConnection.prototype.onMouseEnter.bind(this);
+  var onMouseMove = N.UI.PiConnection.prototype.onMouseMove.bind(this);
   var onMouseLeave = N.UI.PiConnection.prototype.onMouseLeave.bind(this);
   var onClick      = N.UI.PiConnection.prototype.onClick.bind(this);
 
   if(this.path) {
     $(this.path.node).on('mouseenter', onMouseEnter);
+    $(this.path.node).on('mousemove', onMouseMove);
     $(this.path.node).on('mouseleave', onMouseLeave);
     $(this.path.node).on('click', onClick);
   }
@@ -283,6 +297,10 @@ N.UI.PiConnection.prototype.addEventHandlers = function() {
 
 N.UI.PiConnection.prototype.onMouseEnter = function(event) {
   this.dispatchMouseEvent('connection-enter', event);
+};
+
+N.UI.PiConnection.prototype.onMouseMove = function(event) {
+  this.dispatchMouseEvent('connection-move', event);
 };
 
 N.UI.PiConnection.prototype.onMouseLeave = function(event) {
@@ -294,10 +312,10 @@ N.UI.PiConnection.prototype.onClick = function(event) {
 };
 
 N.UI.PiConnection.prototype.dispatchMouseEvent = function(name, event) {
-  var eventData = this.positionFromEvent(event);
-  eventData.piConnection = this;
-  eventData.piNetwork = this.piNetwork;
-  this.sceneSignals[name].dispatch(eventData);
+  this.positionFromEvent(event);
+  event.piConnection = this;
+  event.piNetwork = this.piNetwork;
+  this.sceneSignals[name].dispatch(event);
 };
 
 /***
@@ -306,21 +324,25 @@ N.UI.PiConnection.prototype.dispatchMouseEvent = function(name, event) {
  * @returns {{pos: {x: number, y: number}, snap: *}}
  */
 N.UI.PiConnection.prototype.positionFromEvent = function(event) {
-  var clientRect = this.path.node.getBoundingClientRect();
-  var x = event.clientX-clientRect.left;
-  var y = event.clientY-clientRect.top;
+//  var clientRect = this.path.node.getBoundingClientRect();
+  var clientRect = this.piNetwork.getOuterRect().node.getBoundingClientRect();
+//  var offset = this.piNetwork.getOffset();
+  var x = event.clientX-clientRect.left;//+offset.x;
+  var y = event.clientY-clientRect.top;//+offset.y;
   var snap = this.getNearestGridPoint(x, y);
 
-  var s = this.scale;
+  var s = this.piNetwork.scale;
   snap.x /= s;
   snap.y /= s;
-  return { pos: { x: x/s, y: y/s }, snap: snap };
+  event.pos = { x: x/s, y: y/s };
+  event.snap = snap;
 };
 
 N.UI.PiConnection.prototype.getNearestGridPoint = function(x, y) {
   var gridSpacing = this.piNetwork.gridSpacing;
-  var nx = Math.floor(x/this.scale/gridSpacing+0.5)*this.scale*gridSpacing;
-  var ny = Math.floor(y/this.scale/gridSpacing+0.5)*this.scale*gridSpacing;
+  var s = this.piNetwork.scale;
+  var nx = Math.floor(x/s/gridSpacing+0.5)*s*gridSpacing;
+  var ny = Math.floor(y/s/gridSpacing+0.5)*s*gridSpacing;
   return { x: nx, y: ny};
 };
 

@@ -29,6 +29,7 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
         'component-move': new signals.Signal(),
         'component-click': new signals.Signal(),
         'connection-enter': new signals.Signal(),
+        'connection-move': new signals.Signal(),
         'connection-leave': new signals.Signal(),
         'connection-click': new signals.Signal(),
         'background-move': new signals.Signal(),

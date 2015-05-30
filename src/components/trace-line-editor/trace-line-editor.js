@@ -40,12 +40,14 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           { name: 'idle',                from: '*',                          to: 'Idle'           },
 
           { name: 'connectionClick',     from: 'Starting',                   to: 'Editing'        },
-          { name: 'backgroundMouseDown', from: 'Editing',                    to: 'EditMoving'     },
-          { name: 'backgroundMouseUp',   from: 'EditMoving',                 to: 'EditEnd'        },
+          { name: 'connectionClick',     from: 'Editing',                    to: 'EditMoving'     },
+          { name: 'backgroundClick',     from: 'Editing',                    to: 'EditMoving'     },
+          { name: 'connectionClick',     from: 'EditMoving',                 to: 'EditEnd'        },
+          { name: 'backgroundClick',     from: 'EditMoving',                 to: 'EditEnd'        },
 
-          { name: 'backgroundMouseUp',   from: 'EditStart',                  to: 'EditSelect'     },
           { name: 'backgroundMouseMove', from: 'EditMoving',                 to: 'EditMoving'     },
-          { name: 'keyEnter',            from: 'EditStart',                  to: 'EditEnd'        },
+          { name: 'keyEnter',            from: 'Editing',                    to: 'Starting'       },
+          { name: 'keyEscape',           from: 'EditSelect',                 to: 'EditEnd'        },
           { name: 'keyDelete',           from: 'EditSelect',                 to: 'EditEnd'        }
         ],
         timeouts: [],
@@ -78,6 +80,9 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
             $timeout(function() {
               $scope.stateMachine.init();
             }, 500);
+          },
+          onenterstate: function(event, from, to) {
+            N.log('**** TraceLine: '+event+': '+from+'->'+to);
           }
         }
       });
@@ -180,8 +185,50 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
         if(nearest) {
           nearest.dist = Math.sqrt(nearest.distSqr);
+          N.log('********** findNearestNode');
+          N.log('*** in pos ='+pos.x+','+pos.y);
+          N.log('*** out pt = '+nearest.x+','+nearest.y);
         }
         return nearest;
+      };
+
+      /***
+       * A click on a connection starts the connection editing. This function sets the targetConnection
+       * @method beginConnectionEdit
+       * @param event
+       */
+      var beginConnectionEdit = function(event) {
+        $scope.$apply(function() {
+          $scope.targetConnection = event.piConnection;
+          $scope.targetNodeInitalPosition = undefined;
+        });
+      };
+
+      /***
+       * When in 'connection edit' mode, a click on or near a connection starts the node repositioning.
+       * This function sets the targetConnection and initial position.
+       * @method beginConnectionNodeMove
+       * @param event
+       */
+      var beginConnectionNodeMove = function(event) {
+        $scope.$apply(function() {
+          $scope.targetConnectionNode = findNearestNode(event.snap, $scope.targetConnection);
+          updateRouteNode($scope.targetConnection, $scope.targetConnectionNode.index, event.snap);
+        });
+      };
+
+      /***
+       * When in connection edit mode a click on or near aa connection starts the node repositioning.
+       * This function sets the targetConnectionNode to undefined.
+       * @method endConnectionNodeMove
+       * @param event
+       */
+      var endConnectionNodeMove = function(event) {
+        $scope.$apply(function() {
+          $scope.targetConnectionNode = findNearestNode($scope.targetNodeInitalPosition, $scope.targetConnection);
+          updateRouteNode($scope.targetConnection, $scope.targetConnectionNode.index, event.snap);
+          $scope.targetConnectionNode = undefined;
+        });
       };
 
       /***
@@ -232,10 +279,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
         $scope.sceneSignals['component-click'].add($scope.onComponentClick);
         $scope.sceneSignals['background-click'].add($scope.onBackgroundClick);
-        $scope.sceneSignals['background-mouse-down'].add($scope.onBackgroundMouseDown);
         $scope.sceneSignals['component-move'].add($scope.onComponentMove);
         $scope.sceneSignals['background-move'].add($scope.onBackgroundMove);
         $scope.sceneSignals['connection-enter'].add($scope.onConnectionEnter);
+        $scope.sceneSignals['connection-move'].add($scope.onConnectionMove);
         $scope.sceneSignals['connection-leave'].add($scope.onConnectionLeave);
         $scope.sceneSignals['connection-click'].add($scope.onConnectionClick);
         $(document).on('keyup', $scope.onDocumentKeyUp);
@@ -391,8 +438,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.onBackgroundClick = function(event) {
-        $scope.$apply(function() {
-          if($scope.stateMachine.can('backgroundClick')) {
+        if($scope.stateMachine.current === 'ComponentStart') {
+          $scope.$apply(function() {
             if (event.snap.x !== $scope.lastX || event.snap.y !== $scope.lastY) {
               $scope.lastX = event.snap.x;
               $scope.lastY = event.snap.y;
@@ -403,16 +450,13 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               $scope.debugText = 'State: ' + $scope.stateMachine.current + ' - ' + JSON.stringify(point.pos);
               $scope.piConnection.setRoute($scope.trace);
             }
-          }
-        });
-      };
-
-      $scope.onBackgroundMouseDown = function(event) {
-        if($scope.stateMachine.can('backgroundMouseDown')) {
-          $scope.stateMachine.backgroundMouseDown();
-          $scope.moveStart = event.snap;
-          $scope.editConnectionNode = findNearestNode($scope.moveStart, $scope.editTarget);
-          updateRouteNode($scope.editTarget, $scope.editConnectionNode.index, $scope.moveStart);
+          });
+        } else if($scope.stateMachine.current === 'Editing') {
+          $scope.stateMachine.backgroundClick();
+          beginConnectionNodeMove(event);
+        } else if($scope.stateMachine.current === 'EditMoving') {
+          $scope.stateMachine.backgroundClick();
+          endConnectionNodeMove(event);
         }
       };
 
@@ -422,8 +466,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           if($scope.stateMachine.can('keyEnter')) {
             $scope.$apply(function() {
               // TODO: save the connection
-              // $scope.editTarget = eventData.piConnection;
-              $scope.editTarget = event.piConnection;
+              // $scope.targetConnection = eventData.piConnection;
+              $scope.targetConnection = event.piConnection;
               endConnectionHighlight();
               $scope.stateMachine.keyEnter();
             });
@@ -458,7 +502,12 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       $scope.onBackgroundMove = function(event) {
         $scope.$apply(function() {
           if($scope.stateMachine.current === 'EditMoving') {
-            updateRouteNode($scope.editTarget, $scope.editConnectionNode.index, event.snap);
+            N.log('***** onBackgroundMove = '+event.snap.x+','+event.snap.y);
+            updateRouteNode($scope.targetConnection, $scope.targetConnectionNode.index, event.snap);
+            if(event.stopPropagation) { event.stopPropagation(); }
+            if(event.preventDefault) { event.preventDefault(); }
+            event.cancelBubble = true;
+            event.returnValue = false;
           }
           else if ($scope.trace && (event.snap.x !== $scope.lastSnapX || event.snap.y !== $scope.lastSnapY)) {
             $scope.lastSnapX = event.snap.x;
@@ -476,7 +525,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.$apply(function() {
           if($scope.stateMachine.can('connectionClick')) {
             beginConnectionHighlight(eventData.piConnection);
-            $scope.editTarget = eventData.piConnection;
+            $scope.targetConnection = eventData.piConnection;
             $scope.stateMachine.connectionClick();
           }
         });
@@ -486,6 +535,19 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
         $scope.$apply(function() {
           if($scope.stateMachine.current.indexOf('Edit') !== 0) {
             beginConnectionHighlight(eventData.piConnection);
+          }
+        });
+      };
+
+      $scope.onConnectionMove = function(event) {
+        $scope.$apply(function() {
+          if($scope.stateMachine.current === 'EditMoving') {
+            N.log('***** onConnectionMove = '+event.snap.x+','+event.snap.y);
+            updateRouteNode($scope.targetConnection, $scope.targetConnectionNode.index, event.snap);
+            if(event.stopPropagation) { event.stopPropagation(); }
+            if(event.preventDefault) { event.preventDefault(); }
+            event.cancelBubble = true;
+            event.returnValue = false;
           }
         });
       };
