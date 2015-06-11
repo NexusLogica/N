@@ -370,6 +370,51 @@ N.toFixed = function(value, precision) {
   return stringValue;
 };
 
+/***
+ * Returns the distance to the nearest point on the line
+ * @method nearestPointOnLineSegment
+ * @param x - point X
+ * @param y - point Y
+ * @param x1 - first line end X
+ * @param y1 - first line end Y
+ * @param x2 - second line end X
+ * @param y2 - second line end Y
+ * @returns {{ distSqr: Number, x: Number, y: Number}}
+ */
+N.nearestPointOnLineSegment = function(x, y, x1, y1, x2, y2) {
+
+  var A = x - x1;
+  var B = y - y1;
+  var C = x2 - x1;
+  var D = y2 - y1;
+
+  var dot = A * C + B * D;
+  var lenSq = C * C + D * D;
+  var param = -1;
+  if(lenSq !== 0) { //in case of 0 length line
+    param = dot / lenSq;
+  }
+
+  var xx, yy;
+
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  }
+  else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  }
+  else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+
+  var dx = x - xx;
+  var dy = y - yy;
+  return { distSqr: (dx * dx + dy * dy), x: xx, y: yy };
+};
+
 /**
  * Take capitals of camel case identifier and make an abbreviation, AsAnExample123 -> AAE123.
  * @method shortenName

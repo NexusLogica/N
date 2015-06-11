@@ -92,14 +92,12 @@ N.UI.PiNetwork.prototype.getRoot = function() {
  */
 N.UI.PiNetwork.prototype.getOffset = function() {
   if(this.parentPiNetwork) {
-    var offset = this.parentPiNetwork;
-    offset.x += this.x;
-    offset.y += this.y;
-    N.log('***** getOffset with parent = '+offset.x+','+offset.y);
+    var offset = this.parentPiNetwork.getOffset();
+    offset.x += this.x/this.scale;
+    offset.y += this.y/this.scale;
     return offset;
   } else {
-    N.log('***** getOffset only = '+this.x+','+this.y);
-    return { x: this.x, y: this.y };
+    return { x: 0, y: 0 };
   }
 };
 
