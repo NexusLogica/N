@@ -125,13 +125,19 @@ N.compileTemplateFunction = function(templateText, identifier) {
  * @return {Object} A deferred object used for attaching done and fail callbacks
  */
 N.newN = function(className) {
-  var parts = className.split('.');
-  if(parts.length > 0 && parts[0] === 'N') {
+  var ns = 'N';
+  var cn = className;
+  if(className.namespace) {
+    ns = className.namespace;
+    cn = className.className;
+  }
+  var parts = cn.split('.');
+  if(parts.length > 0 && parts[0] === ns) {
     var objConstructor = N;
     for(var i=1; i<parts.length; i++) {
       objConstructor = objConstructor[parts[i]];
       if(!objConstructor) {
-        N.log('ERROR: Unable to find constructor for '+className);
+        N.log('ERROR: Unable to find constructor for '+cn+' in namespace '+ns);
         return null;
       }
     }
@@ -157,7 +163,7 @@ N.newN = function(className) {
       return Object(ret) === ret ? ret : inst;
     }
     catch(err) {
-      N.log('ERROR: Unable to create object of class '+className);
+      N.log('ERROR: Unable to create object of class '+cn+' in namespace '+ns);
     }
   }
   return null;

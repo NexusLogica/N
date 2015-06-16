@@ -162,6 +162,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
       $scope.initializePage = function() {
         if ($routeParams.src) {
           $scope.srcPath = $routeParams.src;
+          $scope.modulePath = $routeParams.module;
           buildNetwork();
         }
       };
@@ -171,7 +172,7 @@ angular.module('nSimulationApp').directive('networkBuilder', [function() {
         $scope.sources = $scope.parentSources || new N.Sources();
 
         var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
-        compiler.compileAndBuild($scope.srcPath).then(function(builtObj) {
+        compiler.compileAndBuild($scope.srcPath, $scope.modulePath).then(function(builtObj) {
           $scope.$apply(function() {
             $scope.shellVisible = false;
             $scope.editorPanel.addNetworkViewer(builtObj);
