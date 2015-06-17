@@ -398,14 +398,6 @@ N.UI.PiNetwork.prototype.getTemplate = function(renderMappings, groupName) {
   return template;
 };
 
-N.UI.PiNetwork.prototype.loadFrom = function(json) {
-  for(var i in json) {
-    this[i] = json[i];
-  }
-
-  return this;
-};
-
 N.UI.PiNetwork.prototype.showRoutes = function() {
   var r = this.routeInfo;
   for(var i=0; i< r.laneRows.length; i++) {
@@ -516,6 +508,41 @@ N.UI.PiNetwork.prototype.getGroupNameData = function(name) {
     }
   }
   return { name: name,  groupName: name };
+};
+
+N.UI.PiNetwork.prototype.load = function(loader) {
+  var deferred = Q.defer();
+  var _this = this;
+
+  loader(this.displaySource).then(function(json) {
+    _.extend(this, json);
+    var promises = [];
+
+    _this.networks = _this.networks || [];
+    for(var i=0; i<_this.networks.length; i++) {
+      var netConfig = _this.networks[i];
+      var networkName = netConfig.name;
+
+      var network = _this.network.getNetworkByName(networkName);
+      if (network) {
+        var piNetwork = new N.UI.PiNetwork(_this.sceneSignals, _this);
+        piNetwork.setNetwork(network);
+        piNetwork.scale = _this.scale;
+        var promise = piNetwork.load(loader);
+      } else {
+        N.log('ERROR: N.UI.PiNetwork.render: No network of name ' + networkName + ' was found in ' + _this.network.name);
+      }
+    }
+    Q.all(promises).then(function() {
+      deferred.resolve();
+    }, function(err) {
+      deferred.reject(err);
+    });
+  }, function(err) {
+    deferred.reject(err);
+  });
+
+  return deferred.promise;
 };
 
 

@@ -49,7 +49,16 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
     }],
     link: function($scope, $element, $attrs, ctrl) {
       $scope.view = { scene: new N.UI.NetworkScene($scope.sceneSignals) };
-      $scope.view.scene.layout($scope.network);
+      $scope.view.scene.load($scope.network, $scope.scriptHost).then(function() {
+          $scope.view.scene.layout();
+        }, function(err) {
+          debugger;
+          N.log('ERROR: PiEditor.link: Unable to load the network display - '+err.description);
+        }
+      ).catch(function(err) {
+        debugger;
+          N.log('CATCH: PiEditor.link: Unable to load the network display - '+err.description);
+      });
 
       $scope.traceEdit = function() {
         $scope.activeUI = 'traceEditor';
@@ -58,8 +67,6 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
       $scope.$on('traceLineEditor:closing', function() {
         $scope.activeUI = null;
       });
-
-      $scope.autoShowTraceEditor();
     }
   };
 }]);

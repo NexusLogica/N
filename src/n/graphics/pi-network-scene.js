@@ -35,13 +35,57 @@ N.UI.NetworkScene = function(sceneSignals) {
 
 /**
  *
+ * @method load
+ * @param {Object} network - The N.Network object to be displayed in the scene.
+ * @param  {Object} scopeWithLoad - A scope or other object with a file loader method .loadFile(path).
+ * @return {Q.Promise} promise
+ */
+N.UI.NetworkScene.prototype.load = function(network, scopeWithLoad) {
+  var deferred = Q.defer();
+  this.piNetwork = new N.UI.PiNetwork(this.sceneSignals);
+  this.piNetwork.setNetwork(network);
+  this.piNetwork.scale = this.scale;
+
+  var loader = function(path) {
+    var msg;
+    var deferred = Q.defer();
+    scopeWithLoad.loadFile(path).then(function(source) {
+      try {
+        var json = JSON.parse(source.getText());
+        if(json) {
+          deferred.resolve(json);
+        } else {
+          msg = 'ERROR: N.UI.NetworkScene.load: Invalid JSON';
+          console.log(msg);
+          deferred.reject({ description: msg });
+        }
+      } catch(err) {
+        msg = 'CATCH: N.UI.NetworkScene.load: Invalid JSON, error thrown: '+err.description;
+        console.log(msg);
+        deferred.reject({ description: msg });
+      }
+    }, function(err) {
+      msg = 'ERROR: N.UI.NetworkScene.load: Unable to load JSON';
+      console.log(msg);
+      deferred.reject({ description: msg });
+    });
+  };
+
+  this.piNetwork.load(loader).then(function() {
+    deferred.resolve();
+  }, function(err) {
+    deferred.reject(err);
+  });
+
+  return deferred.promise;
+};
+
+/**
+ *
  * @method layout
- * @param network {Object} The N.Network object to be displayed in the scene.
  * @return {N.UI.NetworkScene} this
  */
-N.UI.NetworkScene.prototype.layout = function(network) {
-  this.piNetwork = (new N.UI.PiNetwork(this.sceneSignals)).loadFrom(network.display).setNetwork(network);
-  this.piNetwork.scale = this.scale;
+N.UI.NetworkScene.prototype.layout = function() {
   this.piNetwork.layout();
   return this;
 };
