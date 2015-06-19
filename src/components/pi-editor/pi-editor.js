@@ -24,6 +24,7 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
     },
     controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
       ComponentExtensions.initialize(this, 'piEditor', $scope, $element, $attrs);
+      $scope.view = { scene: null };
 
       $scope.sceneSignals = {
         'component-move': new signals.Signal(),
@@ -48,25 +49,29 @@ angular.module('nSimulationApp').directive('piEditor', [function() {
 
     }],
     link: function($scope, $element, $attrs, ctrl) {
-      $scope.view = { scene: new N.UI.NetworkScene($scope.sceneSignals) };
-      $scope.view.scene.load($scope.network, $scope.scriptHost).then(function() {
-          $scope.view.scene.layout();
+      var scene = new N.UI.NetworkScene($scope.sceneSignals);
+      scene.load($scope.network, $scope.piParentComponent.piParentComponent).then(function() {
+          $scope.$apply(function() {
+            scene.layout();
+            $scope.view.scene = scene;
+            $scope.buildEditors();
+          });
         }, function(err) {
-          debugger;
           N.log('ERROR: PiEditor.link: Unable to load the network display - '+err.description);
         }
       ).catch(function(err) {
-        debugger;
           N.log('CATCH: PiEditor.link: Unable to load the network display - '+err.description);
       });
 
-      $scope.traceEdit = function() {
-        $scope.activeUI = 'traceEditor';
-        $scope.$broadcast('traceLineEditor:begin');
-      };
-      $scope.$on('traceLineEditor:closing', function() {
-        $scope.activeUI = null;
-      });
+      $scope.buildEditors = function() {
+        $scope.traceEdit = function () {
+          $scope.activeUI = 'traceEditor';
+          $scope.$broadcast('traceLineEditor:begin');
+        };
+        $scope.$on('traceLineEditor:closing', function () {
+          $scope.activeUI = null;
+        });
+      }
     }
   };
 }]);

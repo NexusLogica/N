@@ -163,40 +163,20 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
   var y = 0.0;
   var patternSize = this.gridSpacing*this.scale;
 
-  this.networks = this.networks || [];
-  for(var ii=0; ii<this.networks.length; ii++) {
-    var netConfig = this.networks[ii];
-    var networkName = netConfig.name;
+  for(var ii=0; ii<this.piNetworks.length; ii++) {
+    var piNetwork = this.piNetworks[ii];
+    piNetwork.layout();
 
-    var network = this.network.getNetworkByName(networkName);
-    if (!network) {
-      N.log('ERROR: N.UI.PiNetwork.render: No network of name '+networkName+' was found in '+this.network.name);
-    } else {
+    var backgroundColor = piNetwork.backgroundColor;
+    piNetwork.$$backgroundPattern = this.group.pattern(patternSize, patternSize, function(add) {
+      add.rect(patternSize, patternSize).fill(backgroundColor);
+    });
+    this.group.rect(this.width, piNetwork.height*this.scale)
+      .move(0.0, piNetwork.y)
+      .fill(piNetwork.$$backgroundPattern)
+      .addClass('pointer-transparent');
 
-      var piNetwork = (new N.UI.PiNetwork(this.sceneSignals, this)).loadFrom(network.display).setNetwork(network);
-      piNetwork.scale = this.scale;
-      piNetwork.layout();
-
-      this.piNetworks.push(piNetwork);
-      this.piNetworksByName[networkName] = piNetwork;
-
-      piNetwork.x = netConfig.x*this.scale;
-      piNetwork.y = netConfig.y*this.scale;
-      piNetwork.backgroundColor = netConfig.backgroundColor;
-      piNetwork.drawBorder = false;
-      piNetwork.labelFontSize = this.labelFontSize;
-
-      var backgroundColor = piNetwork.backgroundColor;
-      piNetwork.$$backgroundPattern = this.group.pattern(patternSize, patternSize, function(add) {
-        add.rect(patternSize, patternSize).fill(backgroundColor);
-      });
-      this.group.rect(this.width, piNetwork.height*this.scale)
-        .move(0.0, piNetwork.y)
-        .fill(piNetwork.$$backgroundPattern)
-        .addClass('pointer-transparent');
-
-      piNetwork.render(this.group, this.scale, this.signals);
-    }
+    piNetwork.render(this.group, this.scale, this.signals);
   }
 
   var neuronsDisplay = this.network.display.neurons || [];
@@ -514,13 +494,13 @@ N.UI.PiNetwork.prototype.load = function(loader) {
   var deferred = Q.defer();
   var _this = this;
 
-  loader(this.displaySource).then(function(json) {
-    _.extend(this, json);
+  loader(this.network.displaySource).then(function(json) {
+    _.extend(_this, json);
     var promises = [];
 
-    _this.networks = _this.networks || [];
-    for(var i=0; i<_this.networks.length; i++) {
-      var netConfig = _this.networks[i];
+    _this.piNetworks = _this.piNetworks || [];
+    for(var i=0; i<_this.piNetworks.length; i++) {
+      var netConfig = _this.piNetworks[i];
       var networkName = netConfig.name;
 
       var network = _this.network.getNetworkByName(networkName);
@@ -528,6 +508,16 @@ N.UI.PiNetwork.prototype.load = function(loader) {
         var piNetwork = new N.UI.PiNetwork(_this.sceneSignals, _this);
         piNetwork.setNetwork(network);
         piNetwork.scale = _this.scale;
+
+        piNetwork.x = netConfig.x*_this.scale;
+        piNetwork.y = netConfig.y*_this.scale;
+        piNetwork.backgroundColor = netConfig.backgroundColor;
+        piNetwork.drawBorder = false;
+        piNetwork.labelFontSize = _this.labelFontSize;
+
+        _this.piNetworks.push(piNetwork);
+        _this.piNetworksByName[networkName] = piNetwork;
+
         var promise = piNetwork.load(loader);
       } else {
         N.log('ERROR: N.UI.PiNetwork.render: No network of name ' + networkName + ' was found in ' + _this.network.name);

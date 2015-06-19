@@ -95,7 +95,6 @@ N.Compiler.prototype.compile = function(filePath, projectModuleName) {
           }
         }
 
-        debugger;
         var compiledObj = projectModule.create();
         deferred.resolve(compiledObj);
       }, function(err) {

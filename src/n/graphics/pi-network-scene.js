@@ -44,6 +44,7 @@ N.UI.NetworkScene.prototype.load = function(network, scopeWithLoad) {
   var deferred = Q.defer();
   this.piNetwork = new N.UI.PiNetwork(this.sceneSignals);
   this.piNetwork.setNetwork(network);
+  debugger;
   this.piNetwork.scale = this.scale;
 
   var loader = function(path) {
@@ -69,6 +70,7 @@ N.UI.NetworkScene.prototype.load = function(network, scopeWithLoad) {
       console.log(msg);
       deferred.reject({ description: msg });
     });
+    return deferred.promise;
   };
 
   this.piNetwork.load(loader).then(function() {
