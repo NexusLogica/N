@@ -215,6 +215,15 @@ N.Compiler.Context.prototype.createEmptyNetwork = function(name) {
   }
 };
 
+N.Compiler.Context.prototype.createEmptyNeuron = function(name) {
+  return {
+    'className': 'N.Neuron',
+    'name': name,
+    'description': '',
+    'compartments': []
+  }
+};
+
 /**********************************************************************
  * An object for waiting on multiple promises, often requested asynchronously.
  * @class N.Compiler.DeferredRequestGroup

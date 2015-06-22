@@ -24,12 +24,12 @@ N.UI.NeuronScene = function() {
   this.neurons = {};
   this.origin = 'center';
   this.id = N.generateUUID();
-}
+};
 
 N.UI.NeuronScene.prototype.setNeuron = function(neuron, template) {
   this.template = template;
   this.neuronObj = neuron;
-}
+};
 
 /**
  * Calculates the scale that will fit the network to a given width.
@@ -43,9 +43,9 @@ N.UI.NeuronScene.prototype.scaleToFitWidth = function(width, paddingHoriz, paddi
   this.scale = 0.5*w;
   this.idealContainerWidth = width;
   this.idealContainerHeight = width;
-}
+};
 
 N.UI.NeuronScene.prototype.render = function(svgParent) {
-  this.neuron = N.UI.PiNeuronFactory.createPiNeuron(this.template, this.scale);
+  this.neuron = N.UI.PiNeuronTemplateBuilder.createPiNeuron(this.template, this.scale);
   this.neuron.render(this.neuronObj, svgParent);
-}
+};

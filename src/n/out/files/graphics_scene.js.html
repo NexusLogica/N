@@ -212,7 +212,7 @@ N.UI.Scene.Neuron = function() {
 }
 
 N.UI.Scene.Neuron.prototype.SetNeuron = function(neuron, radius, position) {
-  var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, radius);
+  var piGraphic = N.UI.PiNeuronTemplateBuilder.CreatePiNeuron(neuron.Display.Template, radius);
   this.Neuron = neuron;
   this.NeuronGraphic = piGraphic;
   this.Radius = radius;

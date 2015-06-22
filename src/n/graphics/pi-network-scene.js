@@ -42,9 +42,9 @@ N.UI.NetworkScene = function(sceneSignals) {
  */
 N.UI.NetworkScene.prototype.load = function(network, scopeWithLoad) {
   var deferred = Q.defer();
+  N.UI.PiNeuronTemplateBuilder.clear();
   this.piNetwork = new N.UI.PiNetwork(this.sceneSignals);
   this.piNetwork.setNetwork(network);
-  debugger;
   this.piNetwork.scale = this.scale;
 
   var loader = function(path) {
@@ -61,7 +61,7 @@ N.UI.NetworkScene.prototype.load = function(network, scopeWithLoad) {
           deferred.reject({ description: msg });
         }
       } catch(err) {
-        msg = 'CATCH: N.UI.NetworkScene.load: Invalid JSON, error thrown: '+err.description;
+        msg = 'CATCH: N.UI.NetworkScene.load: Invalid JSON ['+path+']: '+err.message;
         console.log(msg);
         deferred.reject({ description: msg });
       }

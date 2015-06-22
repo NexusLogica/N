@@ -181,7 +181,7 @@ N.UI.PiNetwork.prototype.Render = function(network, svgParent, scale) {
     var neuron = this._network.NeuronsByName[i];
 
     var template = neuron.Display.Template;
-    var piGraphic = N.UI.PiNeuronFactory.CreatePiNeuron(neuron.Display.Template, scale*neuron.Display.Radius);
+    var piGraphic = N.UI.PiNeuronTemplateBuilder.CreatePiNeuron(neuron.Display.Template, scale*neuron.Display.Radius);
     piGraphic.NeuronClassName = neuron.ShortName;
     this._piNeurons[i] = { neuron: neuron, piGraphic: piGraphic };
 

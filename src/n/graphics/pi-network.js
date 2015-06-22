@@ -111,11 +111,9 @@ N.UI.PiNetwork.prototype.getOuterRect = function() {
 
 N.UI.PiNetwork.prototype.layout = function() {
 
-  var width = this.network.display.width;
-  var height = this.network.display.height;
+  this.widthScaled = this.width*this.scale;
+  this.heightScaled = this.height*this.scale;
 
-  this.unscaledWidth = width;
-  this.unscaledHeight = (height !== 0 ? height : 0.3);
   return this;
 };
 
@@ -132,16 +130,10 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
   this.scale = scale;
   this.createBackgroundPattern();
 
-  // If no
-  //if(!this.parentPiNetwork) {
-    this.width = this.scale*(_.isUndefined(this.width) ? this.unscaledWidth : this.width);
-  //}
-  this.height = this.scale*(_.isUndefined(this.height) ? this.unscaledHeight : this.height);
-
-  this.rect = { left: 0, top: 0, right: this.width, bottom: this.height };
+  this.rect = { left: 0, top: 0, right: this.widthScaled, bottom: this.heightScaled };
 
   if(!this.parentPiNetwork) {
-    this.outerRect = this.group.rect(this.width, this.height)
+    this.outerRect = this.group.rect(this.widthScaled, this.heightScaled)
       .radius(2)
       .move(this.rect.left, this.rect.top)
       .fill(this.backgroundPattern);
@@ -171,7 +163,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
     piNetwork.$$backgroundPattern = this.group.pattern(patternSize, patternSize, function(add) {
       add.rect(patternSize, patternSize).fill(backgroundColor);
     });
-    this.group.rect(this.width, piNetwork.height*this.scale)
+    this.group.rect(this.widthScaled, piNetwork.heightScaled)
       .move(0.0, piNetwork.y)
       .fill(piNetwork.$$backgroundPattern)
       .addClass('pointer-transparent');
@@ -179,27 +171,13 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
     piNetwork.render(this.group, this.scale, this.signals);
   }
 
-  var neuronsDisplay = this.network.display.neurons || [];
-  for(var i=0; i<neuronsDisplay.length; i++) {
-    var nd = neuronsDisplay[i];
-    var neuron = this.network.getNeuronByName(nd.name);
-    if(neuron) {
-      var template = this.getTemplate(this.renderMappings, neuron.name);
-      var radius = this.scale*(nd.radius || template.radius);
-      var piNeuron = N.UI.PiNeuronFactory.createPiNeuron(template.template, radius);
-      piNeuron.sceneSignals = this.sceneSignals;
-      piNeuron.scale = this.scale;
-      piNeuron.network = this;
-      piNeuron.neuronClassName = neuron.name;
-      this.piNeurons.push(piNeuron);
-      this.piNeuronsByName[neuron.name] = piNeuron;
+  this.neuronGroup = this.group.group();
+  if(this.alignment === 'center') {
+    this.neuronGroup.dmove(0.5*this.widthScaled, 0.0);
+  }
 
-      piNeuron.radius = radius;
-
-      piNeuron.x = nd.x*this.scale;
-      piNeuron.y = nd.y*this.scale;
-      piNeuron.render(neuron, this.group);
-    }
+  for(var i=0; i<this.piNeurons.length; i++) {
+    this.piNeurons[i].render(this.neuronGroup);
   }
 
   for(var path in this.connections) {
@@ -359,170 +337,65 @@ N.UI.PiNetwork.prototype.getGroup = function() {
   return this.group;
 };
 
-N.UI.PiNetwork.prototype.getTemplate = function(renderMappings, groupName) {
-  var template = renderMappings[groupName];
-  if(!template) {
-    var gn = groupName;
-    while(true) {
-      var gnNew = this.getGroupName(gn);
-      if(gnNew === gn) {
-        return null;
-      }
-      template = renderMappings[gnNew];
-      if(template) {
-        return template;
-      }
-      gn = gnNew;
-    }
-  }
-  return template;
-};
-
-N.UI.PiNetwork.prototype.showRoutes = function() {
-  var r = this.routeInfo;
-  for(var i=0; i< r.laneRows.length; i++) {
-    var laneRow = r.laneRows[i];
-    var yNeg = laneRow.thruNeg.yPos;
-    var yPos = laneRow.thruPos.yNeg;
-    var radius = 5.0;
-    for(var j=0; j<laneRow.length; j++) {
-      var lane = laneRow[j];
-      this.group.rect(lane.right-lane.left, yPos-yNeg).move(lane.left, yNeg);
-      this.group.circle(2*radius).move(lane.left+0.5*(lane.right-lane.left)-radius, yNeg+0.5*(yPos-yNeg)-radius).fill('red');
-    }
-  }
-};
-
-N.UI.PiNetwork.prototype.createStackedLayout = function(renderMappings) {
-  return this.appendNetworkToStackedLayout(this.network, renderMappings);
-};
-
-N.UI.PiNetwork.prototype.appendNetworkToStackedLayout = function(network, renderMappings) {
-  var networkJson = { };
-
-  for(var i in network.networks) {
-    var childNetwork = (new N.UI.PiNetwork(this.sceneSignals, this)).setNetwork(network.networks[i]);
-    childNetwork.layout(renderMappings);
-    this.networks.push(childNetwork);
-    this.networksByName[childNetwork.network.name] = childNetwork;
-  }
-
-  var neurons = network.neurons;
-  var groups = {};
-  for(i in neurons) {
-    var name = neurons[i].name;
-    var groupName = this.getGroupNameData(name);
-    if(!groups[groupName.groupName]) { groups[groupName.groupName] = [ groupName ]; } else { groups[groupName.groupName].push(groupName); }
-  }
-
-  var cols = [];
-  var singles = [];
-  for(i in groups) {
-    if(groups[i].length === 1) { singles.push(groups[i][0]); } else { cols.push(groups[i]); }
-  }
-  if(singles.length > 0) { cols.push(singles); }
-
-  var maxWidth = 0;
-  var totalHeight = 0;
-  var rows = [];
-  for(i in cols) {
-    var dimensions = this.calculateRowDimensions(cols[i], renderMappings);
-    maxWidth = (dimensions.width > maxWidth ? dimensions.width : maxWidth);
-    totalHeight += dimensions.height;
-    rows.push({ cols: cols[i], spacing: dimensions.spacing, height: dimensions.height, width: dimensions.width });
-  }
-  totalHeight += (cols.length+1)*renderMappings.rowSpacing;
-
-  networkJson.rows = rows;
-  networkJson.idealWidth = maxWidth+2*renderMappings.columnSpacing;
-  networkJson.idealHeight = totalHeight;
-
-  return networkJson;
-};
-
-N.UI.PiNetwork.prototype.calculateRowDimensions = function(row, renderMappings) {
-  var offset = 0;
-  var spacing = renderMappings.columnSpacing;
-  var rFirst, rLast;
-  var height = 0;
-  for(var i = 0; i<row.length; i++) {
-    var neuron = row[i];
-    var data = this.getTemplate(renderMappings, neuron.groupName);
-    if(!data) {
-      data = renderMappings.default;
-    }
-    var neuronObj = this.network.neuronsByName[neuron.name];
-    var r = (neuronObj.display && neuronObj.display.radius ? neuronObj.display.radius : data.radius);
-    neuron.radius = r;
-    var d = 2*r;
-    if(i === 0) { rFirst = r; }
-    else if(i === row.length-1) { rLast = r; }
-
-    neuron.offset = offset;
-    offset += 2*r+spacing;
-    height = (2*r > height ? 2*r : height);
-  }
-  row.width = offset-spacing;
-  var actualSpacing = row.width-rFirst-rLast;
-  var finalSpacing = (row.length > 2 ? actualSpacing/(row.length-1) : 1);
-  return { width: row.width, spacing: spacing, height: height };
-};
-
-N.UI.PiNetwork.prototype.getGroupName = function(name) {
-  var i1 = name.lastIndexOf('[');
-  if(i1 !== -1) {
-    var i2 = name.indexOf(']', i1);
-    if(i2 !== -1) {
-      return name.substr(0, i1);
-    }
-  }
-  return name;
-};
-
-N.UI.PiNetwork.prototype.getGroupNameData = function(name) {
-  var i1 = name.lastIndexOf('[');
-  if(i1 !== -1) {
-    var i2 = name.indexOf(']', i1);
-    if(i2 !== -1) {
-      return { name: name, groupName: name.substr(0, i1), index: name.substr(i1+1, i2-i1-1) };
-    }
-  }
-  return { name: name,  groupName: name };
-};
-
 N.UI.PiNetwork.prototype.load = function(loader) {
   var deferred = Q.defer();
   var _this = this;
 
   loader(this.network.displaySource).then(function(json) {
     _.extend(_this, json);
+    if(_this.parentConfig) {
+      _this.x = _this.parentConfig.x*_this.scale;
+      _this.y = _this.parentConfig.y*_this.scale;
+      _this.backgroundColor = _this.parentConfig.backgroundColor;
+    }
     var promises = [];
+    var i, parentConfig, promise;
 
-    _this.piNetworks = _this.piNetworks || [];
-    for(var i=0; i<_this.piNetworks.length; i++) {
-      var netConfig = _this.piNetworks[i];
-      var networkName = netConfig.name;
+    _this.networks = _this.networks || [];
+    for(i=0; i<_this.networks.length; i++) {
+      parentConfig = _this.networks[i];
+      var networkName = parentConfig.name;
 
       var network = _this.network.getNetworkByName(networkName);
       if (network) {
         var piNetwork = new N.UI.PiNetwork(_this.sceneSignals, _this);
         piNetwork.setNetwork(network);
         piNetwork.scale = _this.scale;
+        piNetwork.parentConfig = _.cloneDeep(parentConfig);
 
-        piNetwork.x = netConfig.x*_this.scale;
-        piNetwork.y = netConfig.y*_this.scale;
-        piNetwork.backgroundColor = netConfig.backgroundColor;
         piNetwork.drawBorder = false;
         piNetwork.labelFontSize = _this.labelFontSize;
 
         _this.piNetworks.push(piNetwork);
         _this.piNetworksByName[networkName] = piNetwork;
 
-        var promise = piNetwork.load(loader);
+        promise = piNetwork.load(loader);
+        promises.push(promise);
       } else {
         N.log('ERROR: N.UI.PiNetwork.render: No network of name ' + networkName + ' was found in ' + _this.network.name);
       }
     }
+
+    _this.neurons = _this.neurons || [];
+    for(i=0; i<_this.neurons.length; i++) {
+      parentConfig = _this.neurons[i];
+      var neuronName = parentConfig.name;
+
+      var neuron = _this.network.getNeuronByName(neuronName);
+      if (neuron) {
+        var piNeuron = new N.UI.PiNeuron(neuron, _this.sceneSignals, _this);
+        piNeuron.scale = _this.scale;
+        piNeuron.parentConfig = _.cloneDeep(parentConfig);
+
+        _this.piNeurons.push(piNeuron);
+
+        promise = piNeuron.load(loader);
+        promises.push(promise);
+      } else {
+        N.log('ERROR: N.UI.PiNetwork.render: No neuron of name ' + neuronName + ' was found in ' + _this.neuron.name);
+      }
+    }
+
     Q.all(promises).then(function() {
       deferred.resolve();
     }, function(err) {
@@ -534,5 +407,3 @@ N.UI.PiNetwork.prototype.load = function(loader) {
 
   return deferred.promise;
 };
-
-
