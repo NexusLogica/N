@@ -344,6 +344,7 @@ N.UI.PiNetwork.prototype.load = function(loader) {
   var _this = this;
 
   loader(this.network.displaySource).then(function(json) {
+    _this.display = json;
     _.extend(_this, json);
     if(_this.parentConfig) {
       _this.x = _this.parentConfig.x;

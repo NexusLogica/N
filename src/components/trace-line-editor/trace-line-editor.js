@@ -654,8 +654,9 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.saveNetwork = function(piNetwork) {
-        var display = piNetwork.network.display;
         var path = piNetwork.network.displaySource;
+
+        var display = piNetwork.display;
         var displayCopy = _.cloneDeep(display);
 
         var connections = piNetwork.piConnections;
