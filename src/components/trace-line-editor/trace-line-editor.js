@@ -98,7 +98,6 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
       var getConnections = function() {
         $scope.connections = [];
-        var connections = $scope.scene.piNetwork.network.connections;
         getConnectionsForNetwork($scope.scene.piNetwork);
 
         $scope.stateMachine.init();
@@ -361,17 +360,17 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
             $scope.lastSnapX = undefined;
             $scope.lastSnapY = undefined;
             var n = event.piCompartment.neuron;
-            var x = n.x;
-            var y = n.y;
+
+            // These are in map (unscaled) units, not scaled ones.
+            var offset = n.parentPiNetwork.getOffset();
+            var x = n.x+offset.x;
+            var y = n.y+offset.y;
 
             // TODO: Loop through parents adding x,y each time.
-            if(n.network.parentPiNetwork) {
-              x += n.network.x;
-              y += n.network.y;
-            }
             var s = n.scale;
-            x /= s;
-            y /= s;
+            // Was...
+            // x /= s;
+            // y /= s;
 
             if($scope.stateMachine.is('Starting')) {
               var connectionHalfPath = event.compartment.getPath();
@@ -398,7 +397,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                 start: {
                   component: event.compartment.getPath(),
                   center: {x: x, y: y },
-                  radius: n.radius / s
+                  radius: n.radius
                 },
                 points: []
               };
@@ -406,7 +405,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
               // Find the other connection.
               if(event.compartment.category === 'Output') {
                 var px = x;
-                var py = y+n.radius/s+0.1;
+                var py = y+n.radius+0.1;
                 //$scope.lastX = px;
                 $scope.lastSnapX = px;
                 $scope.lastSnapY = py;
@@ -447,7 +446,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                 $scope.trace.end = {
                   component: event.compartment.getPath(),
                   center: {x: x, y: y},
-                  radius: n.radius / s
+                  radius: n.radius
                 };
 
                 // If the user started the connection on the sink compartment we will need to reverse it.
@@ -468,8 +467,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   connectionsPiNetwork = N.fromPath($scope.scene.piNetwork, connectionsNetworkPath);
 
                   // Get the offset of x,y.
-                  offsetX = connectionsPiNetwork.x / s;
-                  offsetY = connectionsPiNetwork.y / s;
+                  offsetX = connectionsPiNetwork.x;
+                  offsetY = connectionsPiNetwork.y;
                 }
 
                 $scope.piConnection.setConnection(found.connection);
@@ -500,7 +499,9 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
       };
 
       $scope.onBackgroundClick = function(event) {
-        if($scope.stateMachine.current === 'ComponentStart') {
+        if($scope.stateMachine.current === 'ComponentStart' ||
+          $scope.stateMachine.current === 'TraceBegin'      ||
+          $scope.stateMachine.current === 'TracePoint') {
           $scope.$apply(function() {
             if (event.snap.x !== $scope.lastX || event.snap.y !== $scope.lastY) {
               $scope.lastX = event.snap.x;
@@ -548,18 +549,15 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
             var n = event.piCompartment.neuron;
             var s = n.scale;
-            var x = n.x;
-            var y = n.y;
-            if(n.network.parentPiNetwork) {
-              x += n.network.x;
-              y += n.network.y;
-            }
+            var offsets = n.parentPiNetwork.getOffset();
+            var x = n.x+offsets.x;
+            var y = n.y+offsets.y;
 
             var traceCopy = _.cloneDeep($scope.trace);
             traceCopy.end = {
               component: event.compartment.name,
-              center: {x: x / s, y: y / s},
-              radius: n.radius / s
+              center: {x: x, y: y},
+              radius: n.radius
             };
             $scope.piConnection.setRoute(traceCopy);
           }
@@ -657,9 +655,8 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
       $scope.saveNetwork = function(piNetwork) {
         var display = piNetwork.network.display;
-        var path = display.$$path;
+        var path = piNetwork.network.displaySource;
         var displayCopy = _.cloneDeep(display);
-        delete displayCopy.$$path;
 
         var connections = piNetwork.piConnections;
         var connectionJson = {};

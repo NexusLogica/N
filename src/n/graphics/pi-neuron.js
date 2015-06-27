@@ -286,6 +286,8 @@ N.UI.TemplateReplicator = function(skeletonTemplate, graphicRadius) {
   var template = skeletonTemplate;
   var filledTemplate = null;
   var radius = graphicRadius;
+  var defaultPadding = 0.02;
+
 
   function createNewGraphic(piNeuron) {
     if(!filledTemplate) {

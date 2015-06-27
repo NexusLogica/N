@@ -21,6 +21,8 @@ N.UI.PiNetwork = function(sceneSignals, parentPiNetwork) {
   this.parentPiNetwork = parentPiNetwork;
   this.x = 0;
   this.y = 0;
+  this.xScaled = 0;
+  this.yScaled = 0;
   this._set = null;
   this.scale = 100.0;
   this.piNeurons = [];
@@ -93,8 +95,8 @@ N.UI.PiNetwork.prototype.getRoot = function() {
 N.UI.PiNetwork.prototype.getOffset = function() {
   if(this.parentPiNetwork) {
     var offset = this.parentPiNetwork.getOffset();
-    offset.x += this.x/this.scale;
-    offset.y += this.y/this.scale;
+    offset.x += this.x;
+    offset.y += this.y;
     return offset;
   } else {
     return { x: 0, y: 0 };
@@ -113,6 +115,10 @@ N.UI.PiNetwork.prototype.layout = function() {
 
   this.widthScaled = this.width*this.scale;
   this.heightScaled = this.height*this.scale;
+  if(this.parentConfig) {
+    this.xScaled = this.parentConfig.x * this.scale;
+    this.yScaled = this.parentConfig.y * this.scale;
+  }
 
   return this;
 };
@@ -121,7 +127,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
   this.signals = signals;
 
   this.group = svgParent.group();
-  this.group.translate(this.x, this.y);
+  this.group.translate(this.xScaled, this.yScaled);
 
   var classNameFull = 'pi-network';
   if(this.hasOwnProperty('className')) { classNameFull += ' '+this.className; }
@@ -129,7 +135,6 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
 
   this.scale = scale;
   this.createBackgroundPattern();
-
   this.rect = { left: 0, top: 0, right: this.widthScaled, bottom: this.heightScaled };
 
   if(!this.parentPiNetwork) {
@@ -157,6 +162,7 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
 
   for(var ii=0; ii<this.piNetworks.length; ii++) {
     var piNetwork = this.piNetworks[ii];
+    piNetwork.scale = this.scale;
     piNetwork.layout();
 
     var backgroundColor = piNetwork.backgroundColor;
@@ -164,20 +170,16 @@ N.UI.PiNetwork.prototype.render = function(svgParent, scale, signals) {
       add.rect(patternSize, patternSize).fill(backgroundColor);
     });
     this.group.rect(this.widthScaled, piNetwork.heightScaled)
-      .move(0.0, piNetwork.y)
+      .move(0.0, piNetwork.yScaled)
       .fill(piNetwork.$$backgroundPattern)
       .addClass('pointer-transparent');
 
     piNetwork.render(this.group, this.scale, this.signals);
   }
 
-  this.neuronGroup = this.group.group();
-  if(this.alignment === 'center') {
-    this.neuronGroup.dmove(0.5*this.widthScaled, 0.0);
-  }
-
   for(var i=0; i<this.piNeurons.length; i++) {
-    this.piNeurons[i].render(this.neuronGroup);
+    this.piNeurons[i].scale = this.scale;
+    this.piNeurons[i].render(this.group);
   }
 
   for(var path in this.connections) {
@@ -344,8 +346,8 @@ N.UI.PiNetwork.prototype.load = function(loader) {
   loader(this.network.displaySource).then(function(json) {
     _.extend(_this, json);
     if(_this.parentConfig) {
-      _this.x = _this.parentConfig.x*_this.scale;
-      _this.y = _this.parentConfig.y*_this.scale;
+      _this.x = _this.parentConfig.x;
+      _this.y = _this.parentConfig.y;
       _this.backgroundColor = _this.parentConfig.backgroundColor;
     }
     var promises = [];
@@ -388,6 +390,7 @@ N.UI.PiNetwork.prototype.load = function(loader) {
         piNeuron.parentConfig = _.cloneDeep(parentConfig);
 
         _this.piNeurons.push(piNeuron);
+        _this.piNeuronsByName[neuronName] = piNeuron;
 
         promise = piNeuron.load(loader);
         promises.push(promise);

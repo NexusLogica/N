@@ -103,8 +103,8 @@ N.UI.NetworkScene.prototype.scaleToFitWidth = function(width, padding) {
   this.scale = w/this.piNetwork.unscaledWidth;
   this.idealContainerWidth = w;
   this.idealContainerHeight = this.piNetwork.unscaledHeight*this.scale+padding.vertical();
-  this.piNetwork.x = padding.left();
-  this.piNetwork.y = padding.top();
+  this.piNetwork.xScaled = padding.left();
+  this.piNetwork.yScaled = padding.top();
 };
 
 /**
@@ -130,15 +130,17 @@ N.UI.NetworkScene.prototype.scaleToFit = function(width, height, padding) {
     this.scale = hCtnr/h;
     this.idealContainerHeight = hCtnr;
     this.idealContainerWidth = hCtnr*ar;
-    this.piNetwork.x = 0.5*(wCtnr-this.idealContainerWidth)+padding.left();
-    this.piNetwork.y = padding.top();
+    this.piNetwork.xScaled = 0.5*(wCtnr-this.idealContainerWidth)+padding.left();
+    this.piNetwork.yScaled = padding.top();
   } else {
     this.scale = wCtnr/w;
     this.idealContainerWidth = wCtnr;
     this.idealContainerHeight = wCtnr/ar;
-    this.piNetwork.x = padding.left();
-    this.piNetwork.y = 0.5*(hCtnr-this.idealContainerHeight)+padding.top();
+    this.piNetwork.xScaled = padding.left();
+    this.piNetwork.yScaled = 0.5*(hCtnr-this.idealContainerHeight)+padding.top();
   }
+  this.piNetwork.scale = this.scale;
+  this.piNetwork.layout();
 };
 
 N.UI.NetworkScene.prototype.render = function(svgParent) {

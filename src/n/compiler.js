@@ -14,6 +14,9 @@ All Rights Reserved.
 
 // Modules attach to this namespace.
 N.Mod = N.Mod || {};
+N.Mod.Network = N.Mod.Network || {};
+N.Mod.Neuron  = N.Mod.Neuron  || {};
+N.Mod.Synapse = N.Mod.Synapse || {};
 
 /**********************************************************************
  * A connection object. This object is essentially a shell around N.Compartment objects.
@@ -221,6 +224,18 @@ N.Compiler.Context.prototype.createEmptyNeuron = function(name) {
     'name': name,
     'description': '',
     'compartments': []
+  }
+};
+
+N.Compiler.Context.prototype.createEmptyConnection = function(source, sink, category) {
+  return {
+    'className': 'N.Connection',
+    'description': '',
+    'path': source+'->'+sink,
+    'output': 0.0,
+    'gain': 1.0,
+    'delay': N.timeStep,
+    'category': category        // 'Excitatory' or 'Inhibitory', 'Spine', 'GapJunction'
   }
 };
 
