@@ -141,6 +141,26 @@ N.UI.PiConnection.prototype.renderRoute = function() {
     this.endPath.remove();
   }
 
+  // Correct the end points if a connection exists.
+  if(this.connection) {
+    var ends = N.fromConnectionPaths(this.piNetwork, this.connection.getPath());
+    var offsetSrc = ends.source.neuron.parentPiNetwork.getOffsetTo(this.piNetwork);
+    var offsetSnk = ends.sink.neuron.parentPiNetwork.getOffsetTo(this.piNetwork);
+    var offset = ends.sink.neuron.parentPiNetwork.getOffset();
+    offset.x = 0;
+    offset.y = 0;
+
+    var x = ends.source.neuron.x;
+    var y = ends.source.neuron.y;
+    this.route.start.center.x = x+offsetSrc.x;
+    this.route.start.center.y = y+offsetSrc.y;
+
+    x = ends.sink.neuron.x;
+    y = ends.sink.neuron.y;
+    this.route.end.center.x = x+offsetSnk.x;
+    this.route.end.center.y = y+offsetSnk.y;
+  }
+
   if(st && ((pt && pt.length) || end)) {
     var s = this.piNetwork.scale;
     var dx, dy, xy, cosX, sinY, routeString, edx, edy, exy, ecosX, esinY, ed;

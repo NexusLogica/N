@@ -158,6 +158,8 @@ All Rights Reserved.
     fill: #dceef4; }
   .pi-neuron .compartment.inhibitory-body {
     fill: bisque; }
+  .pi-neuron .compartment.inhibitory-body-slow {
+    fill: #ffc4cc; }
   .pi-neuron .compartment.proximal-basal-dendrites {
     fill: #f1efe2; }
   .pi-neuron .compartment.distal-basal-dendrites {

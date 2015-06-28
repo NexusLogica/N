@@ -104,6 +104,23 @@ N.UI.PiNetwork.prototype.getOffset = function() {
 };
 
 /**
+ * Gets the offset of this Pi Network object relative to is parent, but only up to a certain network.
+ * @method getOffsetTo
+ * @parameter piNetwork - Get only up to this network.
+ * @returns {x,y} Returns the x and y values of the offset of this network inside its parent display.
+ */
+N.UI.PiNetwork.prototype.getOffsetTo = function(piNetwork) {
+  if(piNetwork !== this && this.parentPiNetwork) {
+    var offset = this.parentPiNetwork.getOffsetTo(piNetwork);
+    offset.x += this.x;
+    offset.y += this.y;
+    return offset;
+  } else {
+    return { x: 0, y: 0 };
+  }
+};
+
+/**
  * Gets the outerRect SVG object of self or, if none, its parent network.
  * @returns {object} Returns the outer rectangle object.
  */

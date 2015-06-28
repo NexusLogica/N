@@ -150,6 +150,10 @@ $gap-junction-color: darken(papayawhip, 10%);
       fill: darken(bisque, $darker);
     }
 
+    &.inhibitory-body-slow {
+      fill: darken(#FFC4CC, $darker);
+    }
+
     &.proximal-basal-dendrites {
       fill: darken(#F1EFE2, $darker);
     }
