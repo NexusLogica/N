@@ -173,7 +173,6 @@ N.Neuron.prototype.loadFrom = function(json) {
 
       _this.loadCompartments(mergedJson).then(
         function() {
-          console.log('RESOLVE: N.Neuron.loadFrom[0]: '+_this.name);
           deferred.resolve();
         }, function(status) {
           console.log('REJECT: N.Neuron.loadFrom[0]: '+status.description);

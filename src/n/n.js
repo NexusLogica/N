@@ -549,6 +549,8 @@ N.generateUUID = function() {
   return uuid;
 };
 
+SVG.defaults.attrs['font-family'] = 'Roboto Condensed, sans-serif';
+
 /***
  * Draw text
  * @method drawSvgText
@@ -569,12 +571,12 @@ N.drawSvgText = function(text, group, size, x, y, horizontalAlign, verticalAlign
   //N.Left    = 1;
   //N.Center  = 2;
   //N.Right   = 3;
-  var textNode = group.plain(text).attr('font-size', size);
+  var textNode = group.plain(text).attr('font-size', size).attr('font-family', 'Roboto Condensed');
   var box = textNode.bbox();
 
   var moveX = x;
   if(horizontalAlign === N.Center) {
-    moveX -= 0.5*box.width;
+    moveX -= 0.45*box.width;
   } else if(horizontalAlign === N.Right) {
     moveX -= box.width;
   }

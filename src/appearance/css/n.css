@@ -97,7 +97,6 @@ All Rights Reserved.
   stroke: wheat; }
 
 .pi-connection {
-  stroke-width: 3.25;
   transition-duration: 0.2s; }
   .pi-connection.pi-excitatory-connection {
     stroke: darkseagreen; }
@@ -107,14 +106,11 @@ All Rights Reserved.
     stroke: #73B2D9; }
   .pi-connection.pi-gap-junction-connection {
     stroke: #ffdca2;
-    stroke: #EEAEEE;
-    stroke-width: 1.5; }
+    stroke: #EEAEEE; }
   .pi-connection.pi-electrode-connection {
-    stroke: #d07ad0;
-    stroke-width: 1.5; }
+    stroke: #d07ad0; }
 
 .pi-connection-end {
-  stroke-width: 2.0;
   fill: white; }
   .pi-connection-end.pi-excitatory-connection {
     stroke: darkseagreen;

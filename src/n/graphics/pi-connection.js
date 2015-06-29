@@ -43,6 +43,8 @@ N.UI.PiConnection = function(piNetwork, connection) {
   this.defaultCategory = connection ? connection.category : 'Excitatory';
 
   this.addedClasses = {};
+
+  this.strokeWidth = 0.02;
 };
 
 N.UI.PiConnection.prototype.getPath = function() {
@@ -87,6 +89,7 @@ N.UI.PiConnection.prototype.createRoute = function(svgGroup, pathString) {
     .attr({
       'fill': 'none',
       'stroke-linejoin': 'round',
+      'stroke-width': this.strokeWidth*this.piNetwork.scale,
       class: 'pi-connection '+N.UI.PiConnectionClasses[this.getCategory()] });
 };
 
@@ -232,6 +235,7 @@ N.UI.PiConnection.prototype.renderRoute = function() {
         .attr({
           'fill': 'none',
           'stroke-linejoin': 'round',
+          'stroke-width': this.strokeWidth*this.piNetwork.scale,
           class: 'pi-connection ' + N.UI.PiConnectionClasses[this.getCategory()]
         });
       if(!this.connection) {
