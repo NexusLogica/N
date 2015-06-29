@@ -487,9 +487,10 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
 
                   offsetTrace(offsetX, offsetY);
 
-                  $scope.piConnection.setRoute($scope.trace);
                   $scope.piConnection.remove();
+                  $scope.piConnection.piNetwork = connectionsPiNetwork;
                   connectionsPiNetwork.addConnection($scope.piConnection);
+                  $scope.piConnection.setRoute($scope.trace);
                   connectionsPiNetwork.$$isDirty = true;
                 } else {
                   // It was removed as anonymous and now is a proper connection.
