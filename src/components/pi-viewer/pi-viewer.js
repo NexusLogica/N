@@ -21,7 +21,7 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
       parentScriptHost: '=scriptHost',
       parentSources: '=sourceFiles'
     },
-    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', function (ComponentExtensions, $scope, $element, $attrs, $timeout) {
+    controller: ['ComponentExtensions', '$scope', '$element', '$attrs', '$timeout', '$routeParams', function (ComponentExtensions, $scope, $element, $attrs, $timeout, $routeParams) {
       ComponentExtensions.initialize(this, 'piViewer', $scope, $element, $attrs);
 
       $scope.sceneSignals = {
@@ -38,70 +38,54 @@ angular.module('nSimulationApp').directive('piViewer', [function() {
 
       $scope.errorText = undefined;
 
-    }],
-    link: function($scope, $element, $attrs, ctrl) {
+      $scope.buildNetwork = function () {
+        $scope.srcPath = $routeParams.src;
+        $scope.modulePath = $routeParams.module;
+        if(!$scope.srcPath || !$scope.modulePath) {
+          console.log('ERROR: piViewer::buildNetwork: Both "module" and "src" URL parameters must be specified.');
+          return;
+        }
+        $scope.scriptHost = !_.isEmpty($scope.parentScriptHost) ? $scope.parentScriptHost : N.getScriptHost();
+        $scope.sources = $scope.parentSources || new N.Sources();
 
-      var buildNetwork = function () {
-        if ($scope.scriptPath) {
+        var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
+        compiler.compileAndBuild($scope.srcPath, $scope.modulePath).then(function(builtObj) {
+          $scope.$apply(function() {
+            if (builtObj.className === 'N.System') {
+              $scope.system = builtObj;
+              $scope.network = $scope.system.network;
+            } else {
+              $scope.network = builtObj;
+            }
 
-          $scope.scriptHost = !_.isEmpty($scope.parentScriptHost) ? $scope.parentScriptHost : N.getScriptHost();
-          $scope.sources = $scope.parentSources || new N.Sources();
-
-          var compiler = new N.Compiler($scope.scriptHost, $scope.sources);
-          compiler.compileAndBuild($scope.scriptPath).then(function(builtObj) {
-            $scope.$apply(function() {
-              if (builtObj.className === 'N.System') {
-                $scope.system = builtObj;
-                $scope.network = $scope.system.network;
-              } else {
-                $scope.network = builtObj;
+            var scene = new N.UI.NetworkScene($scope.sceneSignals);
+            scene.load($scope.network, compiler).then(function() {
+                $scope.$apply(function() {
+                  scene.layout();
+                  $scope.view = { 'scene': scene };
+                });
+              }, function(err) {
+                N.log('ERROR: PiViewer.link: Unable to load the network display - '+err.description);
               }
-
-              $scope.view = {scene: new N.UI.NetworkScene($scope.sceneSignals)};
-              $scope.view.scene.layout($scope.network);
-            });
-          }, function(err) {
-            $scope.$apply(function() {
-              $scope.errorText = ('An error occurred building the network: ' + err.description).split('\n').join('<br/>');
-            });
-          }).catch(function(err) {
-            $scope.$apply(function() {
-              $scope.errorText = ('An error occurred building the network: ' + err.description + '\n' + err.stack).split('\n').join('<br/>');
+            ).catch(function(err) {
+                N.log('CATCH: PiViewer.link: Unable to load the network display - '+err.description);
             });
           });
-
-          watchDomChanges();
-        }
+        }, function(err) {
+          $scope.$apply(function() {
+            $scope.errorText = ('An error occurred building the network: ' + err.description).split('\n').join('<br/>');
+          });
+        }).catch(function(err) {
+          $scope.$apply(function() {
+            $scope.errorText = ('An error occurred building the network: ' + err.description + '\n' + err.stack).split('\n').join('<br/>');
+          });
+        });
       };
 
-      var watchDomChanges = function() {
+    }],
 
-        //$scope.inWatchDom = false;
-        //// Create an observer instance and get callbacks
-        //
-        //var observer = new MutationObserver(function(mutations)  {
-        //  if(!$scope.inWatchDom) {
-        //    $scope.inWatchDom = true;
-        //    mutations.forEach(function (mutation) {
-        //      console.log(mutation.type);
-        //      //$scope.setUpdateRequired(true);
-        //      $scope.inWatchDom = false;
-        //    });
-        //  }
-        //});
-        //
-        //// configuration of the observer:
-        //var config = {attributes: true, childList: true, characterData: true, subtree: true };
-        //
-        //// pass in the target node, as well as the observer options
-        //observer.observe($element.find('pi-canvas').get(0), config);
-        //
-        //// later, you can stop observing
-        ////////////observer.disconnect();
-      };
-
-
-      buildNetwork();
+    link: function($scope, $element, $attrs, ctrl) {
+      $scope.buildNetwork();
     }
   };
 }]);

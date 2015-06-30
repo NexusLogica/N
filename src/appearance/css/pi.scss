@@ -126,7 +126,6 @@ $gap-junction-color: darken(papayawhip, 10%);
   }
   .compartment {
     stroke: lighten(black, 60%);
-    stroke-width: 1.75px;
     stroke-linejoin: round;
     transition-property: stroke, stroke-width;
     transition-duration: 0.5s;

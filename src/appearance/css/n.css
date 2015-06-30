@@ -141,7 +141,6 @@ All Rights Reserved.
   font-family: "Roboto Condensed", sans-serif; }
 .pi-neuron .compartment {
   stroke: #999999;
-  stroke-width: 1.75px;
   stroke-linejoin: round;
   transition-property: stroke, stroke-width;
   transition-duration: 0.5s; }
