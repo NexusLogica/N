@@ -74,8 +74,14 @@ $gap-junction-color: darken(papayawhip, 10%);
   &.pi-inhibitory-connection {
     stroke: #E9967A;
   }
+  &.pi-fast-inhibitory-connection {
+    stroke:#feb1a3;
+  }
+  &.pi-slow-inhibitory-connection {
+    stroke: lighten(pink, 5%);
+  }
   &.pi-spine-connection {
-    stroke: #73B2D9;
+    stroke: darkseagreen;
   }
   &.pi-gap-junction-connection {
     stroke: $gap-junction-color;
@@ -89,16 +95,24 @@ $gap-junction-color: darken(papayawhip, 10%);
   fill: white;
 
   &.pi-excitatory-connection {
-    stroke: darkseagreen;
-    fill: darkseagreen;
-  }
-  &.pi-inhibitory-connection {
-    stroke: lighten(pink, 5%);
-    fill: lighten(pink, 8%);
-  }
-  &.pi-spine-connection {
     stroke: #73B2D9;
     fill: #73B2D9;
+  }
+  &.pi-inhibitory-connection {
+    stroke: pink;
+    fill: pink;
+  }
+  &.pi-fast-inhibitory-connection {
+    stroke:#feb1a3;
+    fill: #feb1a3;
+  }
+  &.pi-slow-inhibitory-connection {
+    stroke: #fed6dd;
+    fill: #fed6dd;
+  }
+  &.pi-spine-connection {
+    stroke: darkseagreen;
+    fill: darkseagreen;
   }
   &.pi-gap-junction-connection {
     stroke: $gap-junction-color;
@@ -142,11 +156,15 @@ $gap-junction-color: darken(papayawhip, 10%);
     }
 
     &.inhibitory-body {
-      fill: darken(bisque, $darker);
+      fill: darken(#ffc4cc, $darker);
+    }
+
+    &.inhibitory-body-fast {
+      fill: darken(#ecb4bc, $darker);
     }
 
     &.inhibitory-body-slow {
-      fill: darken(#FFC4CC, $darker);
+      fill: darken(bisque, $darker);
     }
 
     &.proximal-basal-dendrites {

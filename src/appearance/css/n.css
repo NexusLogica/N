@@ -102,8 +102,12 @@ All Rights Reserved.
     stroke: darkseagreen; }
   .pi-connection.pi-inhibitory-connection {
     stroke: #E9967A; }
+  .pi-connection.pi-fast-inhibitory-connection {
+    stroke: #feb1a3; }
+  .pi-connection.pi-slow-inhibitory-connection {
+    stroke: #ffdae0; }
   .pi-connection.pi-spine-connection {
-    stroke: #73B2D9; }
+    stroke: darkseagreen; }
   .pi-connection.pi-gap-junction-connection {
     stroke: #ffdca2;
     stroke: #EEAEEE; }
@@ -113,14 +117,20 @@ All Rights Reserved.
 .pi-connection-end {
   fill: white; }
   .pi-connection-end.pi-excitatory-connection {
-    stroke: darkseagreen;
-    fill: darkseagreen; }
-  .pi-connection-end.pi-inhibitory-connection {
-    stroke: #ffdae0;
-    fill: #ffe9ed; }
-  .pi-connection-end.pi-spine-connection {
     stroke: #73B2D9;
     fill: #73B2D9; }
+  .pi-connection-end.pi-inhibitory-connection {
+    stroke: pink;
+    fill: pink; }
+  .pi-connection-end.pi-fast-inhibitory-connection {
+    stroke: #feb1a3;
+    fill: #feb1a3; }
+  .pi-connection-end.pi-slow-inhibitory-connection {
+    stroke: #fed6dd;
+    fill: #fed6dd; }
+  .pi-connection-end.pi-spine-connection {
+    stroke: darkseagreen;
+    fill: darkseagreen; }
   .pi-connection-end.pi-gap-junction-connection {
     stroke: #ffdca2;
     fill: #ffdca2; }
@@ -152,9 +162,11 @@ All Rights Reserved.
   .pi-neuron .compartment.excitatory-body {
     fill: #dceef4; }
   .pi-neuron .compartment.inhibitory-body {
-    fill: bisque; }
-  .pi-neuron .compartment.inhibitory-body-slow {
     fill: #ffc4cc; }
+  .pi-neuron .compartment.inhibitory-body-fast {
+    fill: #ecb4bc; }
+  .pi-neuron .compartment.inhibitory-body-slow {
+    fill: bisque; }
   .pi-neuron .compartment.proximal-basal-dendrites {
     fill: #f1efe2; }
   .pi-neuron .compartment.distal-basal-dendrites {

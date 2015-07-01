@@ -19,6 +19,8 @@ N.UI.PiConnectionClasses = {
   'Excitatory' : 'pi-excitatory-connection',
   'Spine'      : 'pi-spine-connection',
   'Inhibitory' : 'pi-inhibitory-connection',
+  'FastInhibitory' : 'pi-fast-inhibitory-connection',
+  'SlowInhibitory' : 'pi-slow-inhibitory-connection',
   'GapJunction': 'pi-gap-junction-connection',
   'Electrode'  : 'pi-electrode-connection'
 };
@@ -27,6 +29,8 @@ N.UI.PiConnectionEndLengths = {
   'Excitatory' : 0.04,
   'Spine'      : 0.075,
   'Inhibitory' : 0.02,
+  'FastInhibitory' : 0.02,
+  'SlowInhibitory' : 0.02,
   'GapJunction': 0.02,
   'Electrode'  : 0.02
 };
