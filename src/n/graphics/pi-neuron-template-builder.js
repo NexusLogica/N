@@ -59,8 +59,8 @@ N.UI.TemplateReplicator = function(skeletonTemplate, graphicRadius) {
     if(!filledTemplate) {
       buildFromTemplate();
     }
-    piNeuron.labelFontSize = template.hasOwnProperty('labelFontSize') ? template.labelFontSize : 0.07;
-    piNeuron.compartmentLabelFontSize = template.hasOwnProperty('compartmentLabelFontSize') ? template.compartmentLabelFontSize: 0.05;
+    piNeuron.labelFontSize = radius*(template.hasOwnProperty('labelFontSize') ? template.labelFontSize : 0.14);
+    piNeuron.compartmentLabelFontSize = radius*(template.hasOwnProperty('compartmentLabelFontSize') ? template.compartmentLabelFontSize: 0.1);
 
     for(var i in filledTemplate) {
       if (filledTemplate.hasOwnProperty(i)) {

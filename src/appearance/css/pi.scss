@@ -126,16 +126,13 @@ $gap-junction-color: darken(papayawhip, 10%);
 
 .pi-neuron {
   .pi-neuron-name {
-    stroke: #666;
-    fill: #666;
-    font-weight: 100;
+    fill: #333;
+    font-weight: 200;
     font-family: $secondary-font;
   }
   .pi-compartment-name {
-    stroke: #666;
-    fill: #666;
-    letter-spacing: 0.1em;
-    font-weight: 100;
+    fill: #333;
+    font-weight: 200;
     font-family: $secondary-font;
   }
   .compartment {
@@ -145,7 +142,6 @@ $gap-junction-color: darken(papayawhip, 10%);
     transition-duration: 0.5s;
 
     &.selected {
-      stroke-width: 2.25px;
       stroke: lighten(black, 20%);
       transition-property: stroke, stroke-width;
       transition-duration: 0.5s;
@@ -197,7 +193,6 @@ $gap-junction-color: darken(papayawhip, 10%);
 
     &.highlight-component {
       opacity: 1.0 !important;
-      stroke-width: 2.5px;
       stroke: lighten(black, 10%);
       transition-property: stroke, stroke-width;
       transition-duration: 0.5s;
@@ -230,9 +225,8 @@ $gap-junction-color: darken(papayawhip, 10%);
 
   &.highlight {
     .compartment {
-      stroke-width: 2.5px;
       stroke: lighten(black, 10%);
-      transition-property: stroke, stroke-width;
+      transition-property: stroke;
       transition-duration: 0.5s;
     }
 

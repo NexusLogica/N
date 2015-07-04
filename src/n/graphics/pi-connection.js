@@ -49,6 +49,7 @@ N.UI.PiConnection = function(piNetwork, connection) {
   this.addedClasses = {};
 
   this.strokeWidth = 0.02;
+  this.eventHandlersAdded = false;
 };
 
 N.UI.PiConnection.prototype.getPath = function() {
@@ -310,12 +311,14 @@ N.UI.PiConnection.prototype.createEnd = function(endInfo) {
 };
 
 N.UI.PiConnection.prototype.addEventHandlers = function() {
-  var onMouseEnter = N.UI.PiConnection.prototype.onMouseEnter.bind(this);
-  var onMouseMove = N.UI.PiConnection.prototype.onMouseMove.bind(this);
-  var onMouseLeave = N.UI.PiConnection.prototype.onMouseLeave.bind(this);
-  var onClick      = N.UI.PiConnection.prototype.onClick.bind(this);
-
   if(this.path) {
+    this.eventHandlersAdded = true;
+
+    var onMouseEnter = N.UI.PiConnection.prototype.onMouseEnter.bind(this);
+    var onMouseMove = N.UI.PiConnection.prototype.onMouseMove.bind(this);
+    var onMouseLeave = N.UI.PiConnection.prototype.onMouseLeave.bind(this);
+    var onClick      = N.UI.PiConnection.prototype.onClick.bind(this);
+
     $(this.path.node).on('mouseenter', onMouseEnter);
     $(this.path.node).on('mousemove', onMouseMove);
     $(this.path.node).on('mouseleave', onMouseLeave);

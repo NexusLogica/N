@@ -36,6 +36,7 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
           { name: 'backgroundClick',     from: 'ComponentStart',             to: 'TraceBegin'     },
           { name: 'componentClick',      from: 'ComponentStart',             to: 'ComponentEnd'   },
           { name: 'backgroundClick',     from: ['TraceBegin', 'TracePoint'], to: 'TracePoint'     },
+          { name: 'connectionClick',     from: ['TraceBegin', 'TracePoint'], to: 'TracePoint'     },
           { name: 'componentClick',      from: ['TraceBegin', 'TracePoint'], to: 'ComponentEnd'   },
           { name: 'idle',                from: '*',                          to: 'Idle'           },
 
@@ -499,9 +500,13 @@ angular.module('nSimulationApp').directive('traceLineEditor', [function() {
                   $scope.scene.piNetwork.$$isDirty = true;
                 }
 
+                $scope.piConnection.setSceneSignals($scope.sceneSignals);
+
                 $scope.trace = undefined;
                 $scope.isDirty = true;
                 $scope.stateMachine.componentClick();
+
+                getConnections();
               }
             }
           }

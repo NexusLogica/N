@@ -67,7 +67,7 @@ N.UI.PiNeuron.prototype.render = function(svgParent) {
 
     var compartmentClassName = 'compartment';
     if(compartment.hasOwnProperty('className')) { compartmentClassName += ' '+compartment.className; }
-    compartment.path.attr( { 'class': compartmentClassName, 'stroke-width': 0.01*scale } );
+    compartment.path.attr( { 'class': compartmentClassName, 'stroke-width': 0.015*scale } );
 
     var compartmentObj = this.neuron.getCompartmentByName(compartment.name);
 
@@ -93,7 +93,7 @@ N.UI.PiNeuron.prototype.render = function(svgParent) {
       N.drawSvgText(
         compartment.name,
         this.group,
-        this.compartmentLabelFontSize * scale,
+        this.compartmentLabelFontSize,
         0,
         0,
         N.Left,
@@ -102,7 +102,7 @@ N.UI.PiNeuron.prototype.render = function(svgParent) {
     }
   }
 
-  N.drawSvgText(this.neuron.name, this.group, this.labelFontSize*scale, 0, 0, N.Center, N.Middle).addClass('pi-neuron-name');
+  N.drawSvgText(this.neuron.name, this.group, this.labelFontSize, 0, 0, N.Center, N.Middle).addClass('pi-neuron-name');
 
   this.drawCallouts();
 
