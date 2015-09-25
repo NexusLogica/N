@@ -1,6 +1,6 @@
-#Pi
+#N
 
-A biological neural simulator system, Pi being the user interface and experience and N being the simulation language being developed.
+N is a biological neural simulator language and system. The user interface side of it is referred to as Pi, owing to the same of the neurons in diagrams.
 
 There are two extremes when simulating neuronal systems. The first is to have an extremely detailed model, with spikes, compartments, ion channels,
 and so on. The other extreme is a simple linear summing neuron with a thresholded output function. The former is difficult to model correctly, executes slowly, and
